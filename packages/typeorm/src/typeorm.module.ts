@@ -5,6 +5,7 @@ import { TYPEORM_OPTIONS, DEFAULT_DATA_SOURCE_NAME } from './constants.js';
 import { TypeormExtension } from './typeorm.extension.js';
 import { EntitiesMetadataStorage } from './entities-metadata-storage.js';
 import { createRepositoryProviders } from './typeorm.providers.js';
+import { getDataSourceToken, getEntityManagerToken } from './typeorm.utils.js';
 import type { EntityClassOrSchema, TypeormModuleOptions } from './types.js';
 
 /**
@@ -47,6 +48,10 @@ export class TypeormModule {
    *   (retry, autoLoadEntities, etc.).
    */
   static forRoot(options: TypeormModuleOptions = {}): DynamicModule<TypeormModule> {
+    const name = options.name || DEFAULT_DATA_SOURCE_NAME;
+    const dsToken = getDataSourceToken(name);
+    const emToken = getEntityManagerToken(name);
+
     return {
       module: this,
       providersPerApp: [
@@ -54,6 +59,14 @@ export class TypeormModule {
           token: TYPEORM_OPTIONS,
           useValue: options,
           multi: true,
+        },
+        {
+          token: dsToken,
+          useValue: null,
+        },
+        {
+          token: emToken,
+          useValue: null,
         },
       ],
     };

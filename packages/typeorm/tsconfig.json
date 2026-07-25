@@ -2,9 +2,10 @@
   "compilerOptions": {
     "outDir": "dist",
     "types": ["node", "jest"],
-      "paths": {
+    "paths": {
+      "#src/*": ["./src/*"],
       "@ditsmod/core": ["../core/src/index.js"],
-      "@ditsmod/rest": ["../rest/src/index.js"],
+      "@ditsmod/rest": ["../rest/src/index.js"]
     },
     "module": "nodenext",
     "moduleResolution": "nodenext",
@@ -22,11 +23,13 @@
     "noImplicitAny": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "removeComments": false,
+    "removeComments": false
   },
   "include": ["src", "e2e"],
   "files": [],
   "references": [
     { "path": "../core/tsconfig.build.json" },
+    { "path": "../rest/tsconfig.build.json" },
+    { "path": "../rest-testing/tsconfig.build.json" },
   ]
 }

@@ -92,14 +92,23 @@ export class TypeormExtension implements Extension<void> {
       );
     }
 
-    // Register providers into providersPerApp
+    // Register or update providers into providersPerApp
     const dsToken = getDataSourceToken(name);
     const emToken = getEntityManagerToken(name);
 
-    this.providersPerApp.push(
-      { token: dsToken, useValue: dataSource },
-      { token: emToken, useValue: dataSource.manager },
-    );
+    const dsProvider = this.providersPerApp.find((p) => (p as any).token === dsToken);
+    if (dsProvider && 'useValue' in (dsProvider as any)) {
+      (dsProvider as any).useValue = dataSource;
+    } else {
+      this.providersPerApp.push({ token: dsToken, useValue: dataSource });
+    }
+
+    const emProvider = this.providersPerApp.find((p) => (p as any).token === emToken);
+    if (emProvider && 'useValue' in (emProvider as any)) {
+      (emProvider as any).useValue = dataSource.manager;
+    } else {
+      this.providersPerApp.push({ token: emToken, useValue: dataSource.manager });
+    }
   }
 
   async stage2(injectorPerMod: Injector): Promise<void> {

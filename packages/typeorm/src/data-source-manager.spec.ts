@@ -1,0 +1,93 @@
+import { jest } from '@jest/globals';
+import type { Logger } from '@ditsmod/core';
+import type { DataSource } from 'typeorm';
+
+import { DataSourceManager } from './data-source-manager.js';
+
+describe('DataSourceManager', () => {
+  let manager: DataSourceManager;
+  let loggerMock: jest.Mocked<Logger>;
+
+  beforeEach(() => {
+    loggerMock = {
+      log: jest.fn(),
+    } as any;
+    manager = new DataSourceManager(loggerMock);
+  });
+
+  it('should register and retrieve a DataSource', () => {
+    const mockDs = {} as DataSource;
+    manager.register('default', mockDs);
+
+    expect(manager.get('default')).toBe(mockDs);
+  });
+
+  it('should return undefined for unregistered DataSource', () => {
+    expect(manager.get('unknown')).toBeUndefined();
+  });
+
+  it('should warn when registering a DataSource with duplicate name', () => {
+    const mockDs1 = {} as DataSource;
+    const mockDs2 = {} as DataSource;
+
+    manager.register('default', mockDs1);
+    manager.register('default', mockDs2);
+
+    expect(loggerMock.log).toHaveBeenCalledWith(
+      'warn',
+      'DataSource "default" is already registered. It will be overwritten.',
+    );
+    expect(manager.get('default')).toBe(mockDs2);
+  });
+
+  it('should return a copy of all registered DataSources via getAll()', () => {
+    const ds1 = {} as DataSource;
+    const ds2 = {} as DataSource;
+
+    manager.register('default', ds1);
+    manager.register('analytics', ds2);
+
+    const all = manager.getAll();
+    expect(all.size).toBe(2);
+    expect(all.get('default')).toBe(ds1);
+    expect(all.get('analytics')).toBe(ds2);
+  });
+
+  it('should destroy all initialized DataSources on shutdown', async () => {
+    const destroy1 = jest.fn<any>().mockResolvedValue(undefined);
+    const destroy2 = jest.fn<any>().mockResolvedValue(undefined);
+
+    const ds1 = { isInitialized: true, destroy: destroy1 } as any;
+    const ds2 = { isInitialized: true, destroy: destroy2 } as any;
+    const dsUninit = { isInitialized: false, destroy: jest.fn() } as any;
+
+    manager.register('ds1', ds1);
+    manager.register('ds2', ds2);
+    manager.register('dsUninit', dsUninit);
+
+    await manager.onShutdown();
+
+    expect(destroy1).toHaveBeenCalledTimes(1);
+    expect(destroy2).toHaveBeenCalledTimes(1);
+    expect(dsUninit.destroy).not.toHaveBeenCalled();
+    expect(manager.getAll().size).toBe(0);
+  });
+
+  it('should catch and log errors during DataSource destroy on shutdown', async () => {
+    const destroyError = new Error('Connection error during close');
+    const destroyFail = jest.fn<any>().mockRejectedValue(destroyError);
+    const destroySuccess = jest.fn<any>().mockResolvedValue(undefined);
+
+    const dsFail = { isInitialized: true, destroy: destroyFail } as any;
+    const dsSuccess = { isInitialized: true, destroy: destroySuccess } as any;
+
+    manager.register('fail', dsFail);
+    manager.register('success', dsSuccess);
+
+    await expect(manager.onShutdown()).resolves.not.toThrow();
+
+    expect(loggerMock.log).toHaveBeenCalledWith('error', `Failed to close DataSource "fail": ${destroyError.message}`);
+    expect(destroySuccess).toHaveBeenCalledTimes(1);
+    expect(manager.getAll().size).toBe(0);
+  });
+});
