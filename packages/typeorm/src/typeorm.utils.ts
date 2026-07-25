@@ -80,5 +80,5 @@ function getEntityName(entity: EntityClassOrSchema): string {
   if (entity instanceof EntitySchema) {
     return entity.options.target ? entity.options.target.name : entity.options.name;
   }
-  return (entity as Function).name;
+  return entity.name;
 }

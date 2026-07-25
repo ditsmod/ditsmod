@@ -1,6 +1,7 @@
+import type { Class } from '@ditsmod/core';
 import type { DataSource, DataSourceOptions, EntitySchema } from 'typeorm';
 
-export type EntityClassOrSchema = Function | EntitySchema;
+export type EntityClassOrSchema<T = any> = Class<T> | EntitySchema<T>;
 
 export type TypeormModuleOptions = {
   /**
