@@ -12,13 +12,15 @@ npm i @ditsmod/typeorm typeorm
 
 ### 1. Configure Connection in Root Module
 
-Import `TypeormModule.forRoot()` in your root module (`AppModule`) and pass your TypeORM configuration options:
+Import `TypeormModule.forRoot()` in your root module (`AppModule`) and attach feature modules via `appends`:
 
 ```ts
 import { restRootModule } from '@ditsmod/rest';
 import { TypeormModule } from '@ditsmod/typeorm';
+import { UserModule } from './user.module.js';
 
 @restRootModule({
+  appends: [UserModule],
   imports: [
     TypeormModule.forRoot({
       type: 'postgres',
@@ -37,7 +39,7 @@ export class AppModule {}
 
 ### 2. Register Entities in Feature Modules
 
-In your feature module, call `TypeormModule.forFeature()` with an array of entity classes or schemas:
+In your feature module, call `TypeormModule.forFeature()` with an array of entity classes or schemas (both entity classes and `EntitySchema` instances are supported; tree entities automatically receive a `TreeRepository`):
 
 ```ts
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
@@ -53,12 +55,12 @@ export class User {
 ```
 
 ```ts
-import { featureModule } from '@ditsmod/core';
+import { restModule } from '@ditsmod/rest';
 import { TypeormModule } from '@ditsmod/typeorm';
 import { User } from './user.entity.js';
 import { UserController } from './user.controller.js';
 
-@featureModule({
+@restModule({
   imports: [TypeormModule.forFeature([User])],
   controllers: [UserController],
 })
@@ -144,8 +146,11 @@ export class AppModule {}
 Register entities for the specific database in feature modules by specifying the `dataSourceName`:
 
 ```ts
-@featureModule({
+import { restModule } from '@ditsmod/rest';
+
+@restModule({
   imports: [TypeormModule.forFeature([LogEntity], 'analytics')],
+  controllers: [AnalyticsController],
 })
 export class AnalyticsModule {}
 ```
