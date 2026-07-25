@@ -1,4 +1,4 @@
-import type { AnyObj} from '@ditsmod/core';
+import type { AnyObj } from '@ditsmod/core';
 import { InjectionToken } from '@ditsmod/core';
 import { DataSource, EntityManager, EntitySchema } from 'typeorm';
 import type { Repository } from 'typeorm';

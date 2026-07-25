@@ -3,12 +3,12 @@ import type { Provider, ValueProvider } from '@ditsmod/core';
 import { DataSource } from 'typeorm';
 import type { DataSourceOptions, EntityManager } from 'typeorm';
 
-import { TYPEORM_OPTIONS, DEFAULT_DATA_SOURCE_NAME } from './constants.js';
+import { TYPEORM_OPTIONS, TYPEORM_ASYNC_OPTIONS, DEFAULT_DATA_SOURCE_NAME } from './constants.js';
 import { DataSourceManager } from './data-source-manager.js';
 import { EntitiesMetadataStorage } from './entities-metadata-storage.js';
 import { initializeWithRetry } from './retry.js';
 import { TypeormLogMediator } from './typeorm.log-mediator.js';
-import type { TypeormModuleOptions } from './types.js';
+import type { TypeormAsyncOptionsDescriptor, TypeormModuleOptions } from './types.js';
 import { getDataSourceToken, getEntityManagerToken } from './typeorm.utils.js';
 
 /**
@@ -18,6 +18,9 @@ import { getDataSourceToken, getEntityManagerToken } from './typeorm.utils.js';
  * This extension runs in `stage1()` with `isLastModule` guard to ensure
  * all `TypeormModule.forFeature()` calls have registered their entities
  * in `EntitiesMetadataStorage` before `DataSource` creation.
+ *
+ * Handles both sync options (from `forRoot()`) and async options
+ * (from `forRootAsync()`) in a single `stage1()` pass.
  */
 @injectable()
 export class TypeormExtension implements Extension<void> {
@@ -32,9 +35,10 @@ export class TypeormExtension implements Extension<void> {
       return;
     }
 
-    const optionsList = this.tempInjectorPerMod.get(TYPEORM_OPTIONS, []);
     const seenNames = new Set<string>();
 
+    // 1. Process sync options from forRoot()
+    const optionsList = this.tempInjectorPerMod.get(TYPEORM_OPTIONS, []);
     for (const options of optionsList) {
       const name = options.name || DEFAULT_DATA_SOURCE_NAME;
       if (seenNames.has(name)) {
@@ -43,6 +47,35 @@ export class TypeormExtension implements Extension<void> {
       seenNames.add(name);
       await this.initDataSource(options);
     }
+
+    // 2. Process async options from forRootAsync()
+    const asyncDescriptors = this.tempInjectorPerMod.get(TYPEORM_ASYNC_OPTIONS, []);
+    for (const descriptor of asyncDescriptors) {
+      const name = descriptor.name;
+      if (seenNames.has(name)) {
+        this.log.duplicateDataSourceName(this, name);
+      }
+      seenNames.add(name);
+
+      const options = await this.resolveAsyncOptions(descriptor);
+      // Ensure the name from the descriptor takes precedence
+      options.name = name;
+      await this.initDataSource(options);
+    }
+  }
+
+  /**
+   * Resolves `TypeormModuleOptions` from an async options descriptor.
+   * Supports both `configurationClass` and `useFactory` patterns.
+   */
+  private async resolveAsyncOptions(descriptor: TypeormAsyncOptionsDescriptor): Promise<TypeormModuleOptions> {
+    if ('configurationClass' in descriptor) {
+      const factory = this.tempInjectorPerMod.get(descriptor.configurationClass);
+      return factory.createTypeormOptions(descriptor.name);
+    }
+    // useFactory pattern — resolve deps from the injector and call the factory
+    const resolvedDeps = descriptor.deps.map((dep: any) => this.tempInjectorPerMod.get(dep));
+    return descriptor.useFactory(...resolvedDeps);
   }
 
   private async initDataSource(options: TypeormModuleOptions): Promise<void> {
@@ -111,8 +144,11 @@ export class TypeormExtension implements Extension<void> {
   }
 
   async stage2(injectorPerMod: Injector): Promise<void> {
-    const options = this.tempInjectorPerMod.get(TYPEORM_OPTIONS, null);
-    if (!options) {
+    // Collect all data source names from both sync and async options
+    const syncOptions = this.tempInjectorPerMod.get(TYPEORM_OPTIONS, []);
+    const asyncDescriptors = this.tempInjectorPerMod.get(TYPEORM_ASYNC_OPTIONS, []);
+
+    if (syncOptions.length === 0 && asyncDescriptors.length === 0) {
       return;
     }
 
@@ -123,8 +159,12 @@ export class TypeormExtension implements Extension<void> {
       return;
     }
 
-    for (const opt of options) {
-      const name = opt.name || DEFAULT_DATA_SOURCE_NAME;
+    const allNames = [
+      ...syncOptions.map((opt) => opt.name || DEFAULT_DATA_SOURCE_NAME),
+      ...asyncDescriptors.map((d) => d.name),
+    ];
+
+    for (const name of allNames) {
       const dsToken = getDataSourceToken(name);
       const dataSource = injectorPerMod.parent?.get(dsToken, null) as DataSource | null;
       if (dataSource) {

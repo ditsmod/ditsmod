@@ -45,3 +45,65 @@ export type TypeormModuleOptions = {
    */
   dataSourceFactory?: (options: DataSourceOptions) => Promise<DataSource>;
 } & Partial<DataSourceOptions>;
+
+/**
+ * Interface that a configuration class must implement to provide
+ * `TypeormModuleOptions` for `TypeormModule.forRootAsync()`.
+ *
+ * @example
+ * ```ts
+ * @injectable()
+ * class DbConfigFactory implements TypeormOptionsFactory {
+ *   constructor(private configService: ConfigService) {}
+ *
+ *   createTypeormOptions(): TypeormModuleOptions {
+ *     return {
+ *       type: 'postgres',
+ *       host: this.configService.get('DB_HOST'),
+ *       database: this.configService.get('DB_NAME'),
+ *     };
+ *   }
+ * }
+ * ```
+ */
+export interface TypeormOptionsFactory {
+  createTypeormOptions(dataSourceName?: string): TypeormModuleOptions | Promise<TypeormModuleOptions>;
+}
+
+/**
+ * Options for `TypeormModule.forRootAsync()`.
+ *
+ * Provide **either** `configurationClass` or `useFactory` (not both).
+ */
+export type TypeormModuleAsyncOptions = {
+  /**
+   * Data source name for multi-database setups. Defaults to `'default'`.
+   */
+  name?: string;
+  /**
+   * An `@injectable()` class implementing `TypeormOptionsFactory`.
+   * The class is instantiated by Ditsmod's DI, so its constructor
+   * dependencies are resolved automatically from `providersPerApp`.
+   *
+   * Cannot be used together with `useFactory`.
+   */
+  configurationClass?: Class<TypeormOptionsFactory>;
+  /**
+   * Factory function that returns `TypeormModuleOptions` (sync or async).
+   * Cannot be used together with `configurationClass`.
+   */
+  useFactory?: (...args: any[]) => TypeormModuleOptions | Promise<TypeormModuleOptions>;
+  /**
+   * Tokens to inject as arguments into the `useFactory` function.
+   * Only used when `useFactory` is provided.
+   */
+  deps?: any[];
+};
+
+/**
+ * Internal descriptor stored in the `TYPEORM_ASYNC_OPTIONS` multi-provider.
+ * Consumed by `TypeormExtension.stage1()` to resolve async options.
+ */
+export type TypeormAsyncOptionsDescriptor =
+  | { name: string; configurationClass: Class<TypeormOptionsFactory> }
+  | { name: string; useFactory: (...args: any[]) => TypeormModuleOptions | Promise<TypeormModuleOptions>; deps: any[] };

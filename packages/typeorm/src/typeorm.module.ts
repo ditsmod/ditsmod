@@ -1,12 +1,17 @@
 import { featureModule, getTokens } from '@ditsmod/core';
-import type { DynamicModule } from '@ditsmod/core';
+import type { DynamicModule, Provider } from '@ditsmod/core';
 
-import { TYPEORM_OPTIONS, DEFAULT_DATA_SOURCE_NAME } from './constants.js';
+import { TYPEORM_OPTIONS, TYPEORM_ASYNC_OPTIONS, DEFAULT_DATA_SOURCE_NAME } from './constants.js';
 import { TypeormExtension } from './typeorm.extension.js';
 import { EntitiesMetadataStorage } from './entities-metadata-storage.js';
 import { createRepositoryProviders } from './typeorm.providers.js';
 import { getDataSourceToken, getEntityManagerToken } from './typeorm.utils.js';
-import type { EntityClassOrSchema, TypeormModuleOptions } from './types.js';
+import type {
+  EntityClassOrSchema,
+  TypeormAsyncOptionsDescriptor,
+  TypeormModuleAsyncOptions,
+  TypeormModuleOptions,
+} from './types.js';
 import { DataSourceManager } from './data-source-manager.js';
 import { TypeormLogMediator } from './typeorm.log-mediator.js';
 
@@ -19,6 +24,14 @@ import { TypeormLogMediator } from './typeorm.log-mediator.js';
  * ```ts
  * @restRootModule({
  *   imports: [TypeormModule.forRoot({ type: 'postgres', ... })],
+ * })
+ * export class AppModule {}
+ * ```
+ *
+ * **Async configuration** — resolves options from a DI-managed class:
+ * ```ts
+ * @restRootModule({
+ *   imports: [TypeormModule.forRootAsync({ configurationClass: DbConfigFactory })],
  * })
  * export class AppModule {}
  * ```
@@ -72,6 +85,70 @@ export class TypeormModule {
           useValue: null,
         },
       ],
+    };
+  }
+
+  /**
+   * Configures a TypeORM `DataSource` using an async configuration source.
+   *
+   * Use this when the `DataSource` options must be resolved from a DI-managed
+   * service (e.g., a `ConfigService`) rather than being provided as a plain object.
+   *
+   * Provide **either** `configurationClass` or `useFactory` (not both):
+   *
+   * - **`configurationClass`** — an `@injectable()` class implementing
+   *   `TypeormOptionsFactory`. Its constructor dependencies are resolved from
+   *   `providersPerApp`.
+   * - **`useFactory`** — a factory function returning `TypeormModuleOptions`
+   *   (sync or async). Pass `deps` to inject arguments into the factory.
+   *
+   * @example
+   * ```ts
+   * // Using configurationClass
+   * TypeormModule.forRootAsync({ configurationClass: DbConfigFactory })
+   *
+   * // Using useFactory + deps
+   * TypeormModule.forRootAsync({
+   *   useFactory: (config: ConfigService) => ({
+   *     type: 'postgres',
+   *     host: config.get('DB_HOST'),
+   *   }),
+   *   deps: [ConfigService],
+   * })
+   * ```
+   */
+  static forRootAsync(asyncOptions: TypeormModuleAsyncOptions): DynamicModule<TypeormModule> {
+    const name = asyncOptions.name || DEFAULT_DATA_SOURCE_NAME;
+    const dsToken = getDataSourceToken(name);
+    const emToken = getEntityManagerToken(name);
+
+    const providersPerApp: Provider[] = [
+      { token: dsToken, useValue: null },
+      { token: emToken, useValue: null },
+    ];
+
+    let descriptor: TypeormAsyncOptionsDescriptor;
+    if (asyncOptions.configurationClass) {
+      // Register the class so DI can resolve its constructor dependencies
+      providersPerApp.push(asyncOptions.configurationClass);
+      descriptor = { name, configurationClass: asyncOptions.configurationClass };
+    } else if (asyncOptions.useFactory) {
+      descriptor = { name, useFactory: asyncOptions.useFactory, deps: asyncOptions.deps || [] };
+    } else {
+      throw new Error(
+        'TypeormModule.forRootAsync() requires either "configurationClass" or "useFactory" to be provided.',
+      );
+    }
+
+    providersPerApp.push({
+      token: TYPEORM_ASYNC_OPTIONS,
+      useValue: descriptor,
+      multi: true,
+    });
+
+    return {
+      module: this,
+      providersPerApp,
     };
   }
 

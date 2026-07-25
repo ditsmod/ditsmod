@@ -1,13 +1,14 @@
 import { jest } from '@jest/globals';
 import type { Provider } from '@ditsmod/core';
-import { Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@ditsmod/core';
 import type { DataSource } from 'typeorm';
 
-import { TYPEORM_OPTIONS } from './constants.js';
+import { TYPEORM_OPTIONS, TYPEORM_ASYNC_OPTIONS } from './constants.js';
 import { DataSourceManager } from './data-source-manager.js';
 import { EntitiesMetadataStorage } from './entities-metadata-storage.js';
 import { TypeormExtension } from './typeorm.extension.js';
 import type { TypeormLogMediator } from './typeorm.log-mediator.js';
+import type { TypeormOptionsFactory, TypeormModuleOptions } from './types.js';
 import { getDataSourceToken, getEntityManagerToken } from './typeorm.utils.js';
 
 class User {}
@@ -316,6 +317,100 @@ describe('TypeormExtension', () => {
 
       expect(mockManager.register).not.toHaveBeenCalled();
       expect(logMediatorMock.dataSourceNotFoundInAppInjector).toHaveBeenCalledWith(extension, 'missing');
+    });
+  });
+
+  describe('stage1() with forRootAsync() async options', () => {
+    it('should resolve options from configurationClass and init DataSource', async () => {
+      const mockDs = { isInitialized: true, manager: {} };
+
+      @injectable()
+      class TestConfigFactory implements TypeormOptionsFactory {
+        createTypeormOptions(): TypeormModuleOptions {
+          return {
+            manualInitialization: true,
+            dataSourceFactory: async () => mockDs as any,
+          };
+        }
+      }
+
+      const tempInjectorPerMod = Injector.resolveAndCreate([
+        TestConfigFactory,
+        {
+          token: TYPEORM_ASYNC_OPTIONS,
+          useValue: { name: 'default', configurationClass: TestConfigFactory },
+          multi: true,
+        },
+      ]);
+      const extension = new TypeormExtension(providersPerApp, logMediatorMock, tempInjectorPerMod);
+
+      await extension.stage1(true);
+
+      const dsToken = getDataSourceToken('default');
+      const dsProvider = providersPerApp.find((p: any) => p.token === dsToken);
+      expect(dsProvider).toBeDefined();
+      expect((dsProvider as any).useValue).toBe(mockDs);
+    });
+
+    it('should resolve options from useFactory with deps and init DataSource', async () => {
+      const mockDs = { isInitialized: true, manager: {} };
+
+      class ConfigService {
+        get(key: string) {
+          return key === 'DB_TYPE' ? 'postgres' : 'test';
+        }
+      }
+
+      const tempInjectorPerMod = Injector.resolveAndCreate([
+        ConfigService,
+        {
+          token: TYPEORM_ASYNC_OPTIONS,
+          useValue: {
+            name: 'default',
+            useFactory: (config: ConfigService) => ({
+              manualInitialization: true,
+              dataSourceFactory: async () => mockDs as any,
+            }),
+            deps: [ConfigService],
+          },
+          multi: true,
+        },
+      ]);
+      const extension = new TypeormExtension(providersPerApp, logMediatorMock, tempInjectorPerMod);
+
+      await extension.stage1(true);
+
+      const dsToken = getDataSourceToken('default');
+      const dsProvider = providersPerApp.find((p: any) => p.token === dsToken);
+      expect(dsProvider).toBeDefined();
+      expect((dsProvider as any).useValue).toBe(mockDs);
+    });
+
+    it('should warn on duplicate names across sync and async options', async () => {
+      const mockDs = { isInitialized: true, manager: {} };
+      const factory = jest.fn<any>().mockResolvedValue(mockDs);
+
+      const tempInjectorPerMod = Injector.resolveAndCreate([
+        {
+          token: TYPEORM_OPTIONS,
+          useValue: { name: 'default', manualInitialization: true, dataSourceFactory: factory },
+          multi: true,
+        },
+        {
+          token: TYPEORM_ASYNC_OPTIONS,
+          useValue: {
+            name: 'default',
+            useFactory: () => ({ manualInitialization: true, dataSourceFactory: factory }),
+            deps: [],
+          },
+          multi: true,
+        },
+      ]);
+      const extension = new TypeormExtension(providersPerApp, logMediatorMock, tempInjectorPerMod);
+
+      await extension.stage1(true);
+
+      expect(logMediatorMock.duplicateDataSourceName).toHaveBeenCalledWith(extension, 'default');
     });
   });
 });
