@@ -102,6 +102,8 @@ app.server.listen(3000);
 | `@ditsmod/rest` | REST HTTP layer |
 | `@ditsmod/trpc` | tRPC support |
 | `@ditsmod/openapi` | OpenAPI 3.x generation |
+| `@ditsmod/authjs` | [Auth.js](https://authjs.dev/) support |
+| `@ditsmod/typeorm` | [TypeORM](https://typeorm.io/) support |
 | `@ditsmod/body-parser` | Request body parsing |
 | `@ditsmod/cors` | CORS support |
 | `@ditsmod/jwt` | JWT authentication |
