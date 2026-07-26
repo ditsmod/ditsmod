@@ -69,7 +69,18 @@ describe('AuthjsInterceptor', () => {
     expect(nextHandler.handle).not.toHaveBeenCalled();
   });
 
-  it('deletes location header, applies headers, and calls next.handle when status is 302 (FOUND) with no body', async () => {
+  it('calls applyResponse and returns when status is 302 (FOUND) with an external Location header', async () => {
+    const externalUrl = 'https://github.com/login/oauth/authorize?client_id=123';
+    const headers = new Headers({ location: externalUrl });
+    mockAuthResponse = new Response(null, { status: 302, headers });
+
+    await interceptor.intercept(nextHandler, reqCtx);
+
+    expect(applyResponseSpy).toHaveBeenCalledWith(mockAuthResponse, reqCtx.rawRes);
+    expect(nextHandler.handle).not.toHaveBeenCalled();
+  });
+
+  it('deletes location header, applies headers, and calls next.handle when status is 302 (FOUND) with relative/internal Location header', async () => {
     const headers = new Headers({ location: '/redirect', 'set-cookie': 'session=abc' });
     mockAuthResponse = new Response(null, { status: 302, headers });
 

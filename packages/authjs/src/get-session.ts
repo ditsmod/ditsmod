@@ -4,15 +4,20 @@ import type { AuthjsConfig } from './authjs.config.js';
 
 export async function getSession(req: ReqForSession, config: AuthjsConfig): GetSessionResult {
   setEnvDefaults(process.env, config);
-  const url = createActionURL(
-    'session',
-    req.protocol,
-    new Headers(req.rawReq.headers as HeadersInit),
-    process.env,
-    config,
-  );
+  const headers = new Headers();
+  Object.entries(req.rawReq.headers).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((v) => v && headers.append(key, v));
+      return;
+    }
+    if (value) {
+      headers.append(key, value);
+    }
+  });
 
-  const request = new Request(url, { headers: { cookie: req.rawReq.headers.cookie ?? '' } });
+  const url = createActionURL('session', req.protocol, headers, process.env, config);
+
+  const request = new Request(url, { headers });
   const response = await Auth(request, config);
   const { status = 200 } = response;
   const data = await response.json();

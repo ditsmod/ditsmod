@@ -1,11 +1,25 @@
 import type { AnyObj } from '@ditsmod/core';
 import type { RequestContext } from '@ditsmod/rest';
 
+function getHeaderValue(val: string | string[] | undefined): string | undefined {
+  if (!val) {
+    return undefined;
+  }
+  const str = Array.isArray(val) ? val[0] : val;
+  return str.split(',')[0].trim() || undefined;
+}
+
 /**
  * Adapts Ditsmod Request to a Web Request, returning the Web Request.
  */
 export function toWebRequest(ctx: RequestContext, alternativeUrl?: string) {
-  const url = `${ctx.protocol}://${process.env.HOST ?? 'localhost'}${alternativeUrl || ctx.rawReq.url}`;
+  const host =
+    getHeaderValue(ctx.rawReq.headers['x-forwarded-host']) ??
+    getHeaderValue(ctx.rawReq.headers.host) ??
+    process.env.HOST ??
+    'localhost';
+  const protocol = getHeaderValue(ctx.rawReq.headers['x-forwarded-proto']) ?? ctx.protocol;
+  const url = `${protocol}://${host}${alternativeUrl || ctx.rawReq.url}`;
   const headers = new Headers();
 
   Object.entries(ctx.rawReq.headers).forEach(([key, value]) => {

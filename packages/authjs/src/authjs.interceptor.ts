@@ -12,12 +12,26 @@ export class AuthjsInterceptor implements HttpInterceptor {
   }
 
   async intercept(next: HttpHandler, ctx: RequestContext) {
-    let response = await Auth(toWebRequest(ctx), this.config);
+    const webReq = toWebRequest(ctx);
+    let response = await Auth(webReq, this.config);
     if (response.body || (response.status != HttpStatus.OK && response.status != HttpStatus.FOUND)) {
       await applyResponse(response, ctx.rawRes);
       return;
     }
     if (response.status == HttpStatus.FOUND) {
+      const location = response.headers.get('location');
+      if (location) {
+        try {
+          const locOrigin = new URL(location, webReq.url).origin;
+          const reqOrigin = new URL(webReq.url).origin;
+          if (locOrigin !== reqOrigin) {
+            await applyResponse(response, ctx.rawRes);
+            return;
+          }
+        } catch {
+          // Ignore invalid URLs
+        }
+      }
       const headers = new Headers(response.headers);
       headers.delete('location');
       response = new Response(undefined, { headers });

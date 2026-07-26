@@ -4,12 +4,16 @@ import { AuthjsConfig } from './authjs.config.js';
 import type { ReqForSession } from './types.js';
 
 let mockAuthResponse: Response;
+let lastAuthRequest: Request | undefined;
 
 jest.unstable_mockModule('@auth/core', async () => {
   const mod = await jest.requireActual<typeof AuthCore>('@auth/core');
   return {
     ...mod,
-    Auth: jest.fn(async () => mockAuthResponse),
+    Auth: jest.fn(async (request: Request) => {
+      lastAuthRequest = request;
+      return mockAuthResponse;
+    }),
   };
 });
 
@@ -52,5 +56,17 @@ describe('getSession', () => {
     const errorData = { message: 'Unauthorized access' };
     mockAuthResponse = new Response(JSON.stringify(errorData), { status: 401 });
     await expect(getSession(req, config)).rejects.toThrow('Unauthorized access');
+  });
+
+  it('forwards custom headers and header arrays to Auth() request', async () => {
+    req.rawReq.headers['user-agent'] = 'CustomAgent/1.0';
+    req.rawReq.headers['x-custom-array'] = ['value1', 'value2'];
+    mockAuthResponse = new Response(JSON.stringify({ user: { name: 'Bob' } }), { status: 200 });
+
+    await getSession(req, config);
+
+    expect(lastAuthRequest?.headers.get('user-agent')).toBe('CustomAgent/1.0');
+    expect(lastAuthRequest?.headers.get('cookie')).toBe('authjs.session-token=123');
+    expect(lastAuthRequest?.headers.get('x-custom-array')).toBe('value1, value2');
   });
 });

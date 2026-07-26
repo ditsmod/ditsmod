@@ -1,11 +1,4 @@
-import {
-  Extension,
-  ExtensionManager,
-  HttpMethod,
-  injectable,
-  Injector,
-  ExtensionGroupMeta,
-} from '@ditsmod/core';
+import { Extension, ExtensionManager, HttpMethod, injectable, Injector, ExtensionGroupMeta } from '@ditsmod/core';
 import { ChainError } from '@ditsmod/core/errors';
 import { RouteExtensionMeta, RestRouteExtension } from '@ditsmod/rest';
 import { LoggerInstance } from '@auth/core/types';
@@ -40,7 +33,14 @@ export class AuthjsExtension implements Extension {
           }
           const basePath = splitedPath.slice(0, -2).join('/');
           (authjsConfig.basePath as unknown as string) = `/${basePath}`;
-          controllersMeta.push({ ...obj, httpMethods: ['GET'], fullPath: `${basePath}/:action` });
+          let actionHttpMethods: HttpMethod[] = obj.httpMethods;
+          if (!actionHttpMethods.includes('ALL')) {
+            const methodsSet = new Set(actionHttpMethods);
+            methodsSet.add('GET');
+            methodsSet.add('POST');
+            actionHttpMethods = Array.from(methodsSet);
+          }
+          controllersMeta.push({ ...obj, httpMethods: actionHttpMethods, fullPath: `${basePath}/:action` });
           break parent;
         }
       }

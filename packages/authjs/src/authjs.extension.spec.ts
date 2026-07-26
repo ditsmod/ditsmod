@@ -74,12 +74,12 @@ describe('AuthjsExtension', () => {
       await expect(extension.stage2(injectorPerMod)).rejects.toThrow('Unexpected URL for Auth.js: "GET api/auth"');
     });
 
-    it('configures basePath and pushes GET route when valid AuthjsInterceptor route is found', async () => {
+    it('configures basePath and pushes GET and POST methods when valid AuthjsInterceptor route is found', async () => {
       const controllersMeta: any[] = [
         {
           fullPath: 'api/auth/:action/:param',
           interceptors: [AuthjsInterceptor],
-          httpMethods: ['POST'],
+          httpMethods: ['GET'],
         },
       ];
       (extension as any).extensionGroupMeta = {
@@ -93,7 +93,29 @@ describe('AuthjsExtension', () => {
       expect(controllersMeta[1]).toEqual({
         fullPath: 'api/auth/:action',
         interceptors: [AuthjsInterceptor],
-        httpMethods: ['GET'],
+        httpMethods: ['GET', 'POST'],
+      });
+    });
+
+    it('does not modify methods when route has ALL method', async () => {
+      const controllersMeta: any[] = [
+        {
+          fullPath: 'api/auth/:action/:param',
+          interceptors: [AuthjsInterceptor],
+          httpMethods: ['ALL'],
+        },
+      ];
+      (extension as any).extensionGroupMeta = {
+        groupData: [{ controllersMeta }],
+      };
+
+      await extension.stage2(injectorPerMod);
+
+      expect(controllersMeta.length).toBe(2);
+      expect(controllersMeta[1]).toEqual({
+        fullPath: 'api/auth/:action',
+        interceptors: [AuthjsInterceptor],
+        httpMethods: ['ALL'],
       });
     });
 

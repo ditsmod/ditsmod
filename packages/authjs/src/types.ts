@@ -22,12 +22,6 @@ export const actions: AuthAction[] = [
   'webauthn-options',
 ];
 
-export const providerTypes: ProviderType[] = [
-  'credentials',
-  'oidc',
-  'oauth',
-  'email',
-  'webauthn'
-];
+export const providerTypes: ProviderType[] = ['credentials', 'oidc', 'oauth', 'email', 'webauthn'];
 
 export type GetSessionResult = Promise<Session | null>;
