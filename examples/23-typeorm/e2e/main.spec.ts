@@ -8,7 +8,7 @@ import type { DataSource, EntityManager } from 'typeorm';
 
 import { UserModule } from '#app/modules/user/user.module.js';
 import { SystemModule } from '#app/modules/system/system.module.js';
-import { User } from '#app/modules/user/user.entity.js';
+import { UserEntity } from '#app/modules/user/user.entity.js';
 
 function createMockDataSource() {
   const users: any[] = [];
@@ -31,7 +31,7 @@ function createMockDataSource() {
 
   const ds = {
     isInitialized: false,
-    entityMetadatas: [{ target: User }],
+    entityMetadatas: [{ target: UserEntity }],
     initialize: jest.fn<any>().mockImplementation(async () => {
       (ds as any).isInitialized = true;
       return ds;

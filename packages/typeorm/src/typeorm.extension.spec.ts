@@ -11,8 +11,8 @@ import type { TypeormLogMediator } from './typeorm.log-mediator.js';
 import type { TypeormOptionsFactory, TypeormModuleOptions } from './types.js';
 import { getDataSourceToken, getEntityManagerToken } from './typeorm.utils.js';
 
-class User {}
-class Post {}
+class UserEntity {}
+class PostEntity {}
 
 describe('TypeormExtension', () => {
   let providersPerApp: Provider[];
@@ -53,7 +53,7 @@ describe('TypeormExtension', () => {
     });
 
     it('should initialize DataSource and register providers into providersPerApp', async () => {
-      EntitiesMetadataStorage.addEntities('default', [User]);
+      EntitiesMetadataStorage.addEntities('default', [UserEntity]);
 
       const mockManager = {};
       const mockDs = {
@@ -80,7 +80,7 @@ describe('TypeormExtension', () => {
 
       expect(dataSourceFactory).toHaveBeenCalledWith(
         expect.objectContaining({
-          entities: [User],
+          entities: [UserEntity],
         }),
       );
 
@@ -158,7 +158,7 @@ describe('TypeormExtension', () => {
     });
 
     it('should skip auto-loaded entities when autoLoadEntities is false', async () => {
-      EntitiesMetadataStorage.addEntities('default', [User]);
+      EntitiesMetadataStorage.addEntities('default', [UserEntity]);
 
       const mockDs = { isInitialized: true, manager: {} };
       const dataSourceFactory = jest.fn<any>().mockResolvedValue(mockDs);
@@ -178,7 +178,7 @@ describe('TypeormExtension', () => {
     });
 
     it('should merge explicit entities with auto-loaded entities', async () => {
-      EntitiesMetadataStorage.addEntities('default', [Post]);
+      EntitiesMetadataStorage.addEntities('default', [PostEntity]);
 
       const mockDs = { isInitialized: true, manager: {} };
       const dataSourceFactory = jest.fn<any>().mockResolvedValue(mockDs);
@@ -186,7 +186,7 @@ describe('TypeormExtension', () => {
       const tempInjectorPerMod = Injector.resolveAndCreate([
         {
           token: TYPEORM_OPTIONS,
-          useValue: { manualInitialization: true, dataSourceFactory, entities: [User] },
+          useValue: { manualInitialization: true, dataSourceFactory, entities: [UserEntity] },
           multi: true,
         },
       ]);
@@ -194,7 +194,7 @@ describe('TypeormExtension', () => {
 
       await extension.stage1(true);
 
-      expect(dataSourceFactory).toHaveBeenCalledWith(expect.objectContaining({ entities: [User, Post] }));
+      expect(dataSourceFactory).toHaveBeenCalledWith(expect.objectContaining({ entities: [UserEntity, PostEntity] }));
     });
 
     it('should update existing placeholder providers rather than pushing duplicates', async () => {

@@ -60,7 +60,7 @@ export function getEntityManagerToken(
  *
  * Always returns a cached `InjectionToken` (even for the default data source)
  * because `Repository` is generic and the class reference alone cannot
- * distinguish between `Repository<User>` and `Repository<Post>`.
+ * distinguish between `Repository<UserEntity>` and `Repository<PostEntity>`.
  */
 export function getRepositoryToken<T extends AnyObj = AnyObj>(
   entity: EntityClassOrSchema<T>,

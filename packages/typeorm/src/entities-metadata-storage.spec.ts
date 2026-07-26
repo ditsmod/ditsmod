@@ -1,8 +1,8 @@
 import { EntitiesMetadataStorage } from './entities-metadata-storage.js';
 
-class User {}
-class Post {}
-class Comment {}
+class UserEntity {}
+class PostEntity {}
+class CommentEntity {}
 
 describe('EntitiesMetadataStorage', () => {
   beforeEach(() => {
@@ -10,23 +10,23 @@ describe('EntitiesMetadataStorage', () => {
   });
 
   it('should store entities for default data source', () => {
-    EntitiesMetadataStorage.addEntities('default', [User, Post]);
-    expect(EntitiesMetadataStorage.getEntities('default')).toEqual([User, Post]);
+    EntitiesMetadataStorage.addEntities('default', [UserEntity, PostEntity]);
+    expect(EntitiesMetadataStorage.getEntities('default')).toEqual([UserEntity, PostEntity]);
   });
 
   it('should store entities for named data sources separately', () => {
-    EntitiesMetadataStorage.addEntities('default', [User]);
-    EntitiesMetadataStorage.addEntities('analytics', [Post, Comment]);
+    EntitiesMetadataStorage.addEntities('default', [UserEntity]);
+    EntitiesMetadataStorage.addEntities('analytics', [PostEntity, CommentEntity]);
 
-    expect(EntitiesMetadataStorage.getEntities('default')).toEqual([User]);
-    expect(EntitiesMetadataStorage.getEntities('analytics')).toEqual([Post, Comment]);
+    expect(EntitiesMetadataStorage.getEntities('default')).toEqual([UserEntity]);
+    expect(EntitiesMetadataStorage.getEntities('analytics')).toEqual([PostEntity, CommentEntity]);
   });
 
   it('should prevent adding duplicate entities', () => {
-    EntitiesMetadataStorage.addEntities('default', [User, Post]);
-    EntitiesMetadataStorage.addEntities('default', [User, Comment]);
+    EntitiesMetadataStorage.addEntities('default', [UserEntity, PostEntity]);
+    EntitiesMetadataStorage.addEntities('default', [UserEntity, CommentEntity]);
 
-    expect(EntitiesMetadataStorage.getEntities('default')).toEqual([User, Post, Comment]);
+    expect(EntitiesMetadataStorage.getEntities('default')).toEqual([UserEntity, PostEntity, CommentEntity]);
   });
 
   it('should return empty array for unknown data source', () => {
@@ -34,8 +34,8 @@ describe('EntitiesMetadataStorage', () => {
   });
 
   it('should clear all stored entities on clear()', () => {
-    EntitiesMetadataStorage.addEntities('default', [User]);
-    EntitiesMetadataStorage.addEntities('analytics', [Post]);
+    EntitiesMetadataStorage.addEntities('default', [UserEntity]);
+    EntitiesMetadataStorage.addEntities('analytics', [PostEntity]);
 
     EntitiesMetadataStorage.clear();
 
@@ -44,20 +44,20 @@ describe('EntitiesMetadataStorage', () => {
   });
 
   it('should clear entities for a single data source via clearForDataSource()', () => {
-    EntitiesMetadataStorage.addEntities('default', [User]);
-    EntitiesMetadataStorage.addEntities('analytics', [Post]);
+    EntitiesMetadataStorage.addEntities('default', [UserEntity]);
+    EntitiesMetadataStorage.addEntities('analytics', [PostEntity]);
 
     EntitiesMetadataStorage.clearForDataSource('analytics');
 
     // 'analytics' is cleared, 'default' is untouched
     expect(EntitiesMetadataStorage.getEntities('analytics')).toEqual([]);
-    expect(EntitiesMetadataStorage.getEntities('default')).toEqual([User]);
+    expect(EntitiesMetadataStorage.getEntities('default')).toEqual([UserEntity]);
   });
 
   it('should be a no-op when clearForDataSource() is called for an unknown name', () => {
-    EntitiesMetadataStorage.addEntities('default', [User]);
+    EntitiesMetadataStorage.addEntities('default', [UserEntity]);
 
     expect(() => EntitiesMetadataStorage.clearForDataSource('nonexistent')).not.toThrow();
-    expect(EntitiesMetadataStorage.getEntities('default')).toEqual([User]);
+    expect(EntitiesMetadataStorage.getEntities('default')).toEqual([UserEntity]);
   });
 });

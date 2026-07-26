@@ -39,7 +39,7 @@ import { TypeormLogMediator } from './typeorm.log-mediator.js';
  * **Feature module** — registers entities and creates repository providers:
  * ```ts
  * @restModule({
- *   imports: [TypeormModule.forFeature([User, Post])],
+ *   imports: [TypeormModule.forFeature([UserEntity, PostEntity])],
  * })
  * export class UserModule {}
  * ```

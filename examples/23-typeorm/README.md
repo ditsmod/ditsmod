@@ -6,8 +6,8 @@ Demonstrates how to integrate TypeORM into a Ditsmod REST application using `@di
 
 - **Root Connection Setup**: `TypeormModule.forRoot()` configured for MySQL in `AppModule`.
 - **Native `.env` Support**: Environment variables (`MYSQL_HOST`, `MYSQL_PORT`, etc.) loaded natively via Node's `--env-file=.env`.
-- **Feature Entity Registration**: `TypeormModule.forFeature([User])` configured in `UserModule`.
-- **Repository Injection**: `@injectRepository(User)` injected in `UserController`.
+- **Feature Entity Registration**: `TypeormModule.forFeature([UserEntity])` configured in `UserModule`.
+- **Repository Injection**: `@injectRepository(UserEntity)` injected in `UserController`.
 - **DataSource & EntityManager Injection**: `@injectDataSource()` and `@injectEntityManager()` injected in `SystemController`.
 - **Routed Feature Modules**: `appends: [UserModule, SystemModule]` configured in `AppModule`.
 

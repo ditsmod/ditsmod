@@ -7,7 +7,7 @@ import { DataSource, Repository, EntityManager } from 'typeorm';
 
 import { TypeormModule, injectRepository, injectDataSource, injectEntityManager } from '#src/index.js';
 
-class User {
+class UserEntity {
   id!: number;
   name!: string;
 }
@@ -20,7 +20,7 @@ class LogEntity {
 @controller()
 class UserController {
   constructor(
-    @injectRepository(User) private userRepo: Repository<User>,
+    @injectRepository(UserEntity) private userRepo: Repository<UserEntity>,
     @injectDataSource() private ds: DataSource,
     @injectEntityManager() private em: EntityManager,
   ) {}
@@ -37,7 +37,7 @@ class UserController {
 }
 
 @restModule({
-  imports: [TypeormModule.forFeature([User])],
+  imports: [TypeormModule.forFeature([UserEntity])],
   controllers: [UserController],
 })
 class UserModule {}
@@ -90,7 +90,7 @@ function createMockDataSource(name: string, entities: any[]) {
   return ds;
 }
 
-const mockDefaultDs = createMockDataSource('default', [User]);
+const mockDefaultDs = createMockDataSource('default', [UserEntity]);
 const mockAnalyticsDs = createMockDataSource('analytics', [LogEntity]);
 
 @restRootModule({

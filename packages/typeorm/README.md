@@ -45,7 +45,7 @@ In your feature module, call `TypeormModule.forFeature()` with an array of entit
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
-export class User {
+export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -57,11 +57,11 @@ export class User {
 ```ts
 import { restModule } from '@ditsmod/rest';
 import { TypeormModule } from '@ditsmod/typeorm';
-import { User } from './user.entity.js';
+import { UserEntity } from './user.entity.js';
 import { UserController } from './user.controller.js';
 
 @restModule({
-  imports: [TypeormModule.forFeature([User])],
+  imports: [TypeormModule.forFeature([UserEntity])],
   controllers: [UserController],
 })
 export class UserModule {}
@@ -75,11 +75,11 @@ Inject entity repositories into your controllers or services using `@injectRepos
 import { controller, route } from '@ditsmod/rest';
 import { injectRepository } from '@ditsmod/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './user.entity.js';
+import { UserEntity } from './user.entity.js';
 
 @controller()
 export class UserController {
-  constructor(@injectRepository(User) private userRepo: Repository<User>) {}
+  constructor(@injectRepository(UserEntity) private userRepo: Repository<UserEntity>) {}
 
   @route('GET', 'users')
   async getUsers() {

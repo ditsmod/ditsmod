@@ -4,12 +4,12 @@ import { DataSource, EntityManager, EntitySchema } from 'typeorm';
 import { getDataSourceToken, getEntityManagerToken, getRepositoryToken } from './typeorm.utils.js';
 import { DEFAULT_DATA_SOURCE_NAME } from './constants.js';
 
-class User {
+class UserEntity {
   id!: number;
   name!: string;
 }
 
-class Post {
+class PostEntity {
   id!: number;
   title!: string;
 }
@@ -24,7 +24,7 @@ const CategorySchema = new EntitySchema({
 
 const TagSchema = new EntitySchema({
   name: 'Tag',
-  target: class Tag {},
+  target: class TagEntity {},
   columns: {
     id: { type: Number, primary: true },
   },
@@ -63,23 +63,23 @@ describe('typeorm.utils', () => {
 
   describe('getRepositoryToken()', () => {
     it('should return cached InjectionToken for entity class in default data source', () => {
-      const token1 = getRepositoryToken(User);
-      const token2 = getRepositoryToken(User);
+      const token1 = getRepositoryToken(UserEntity);
+      const token2 = getRepositoryToken(UserEntity);
 
       expect(token1).toBeInstanceOf(InjectionToken);
       expect(token1).toBe(token2);
     });
 
     it('should return different tokens for different entity classes', () => {
-      const userToken = getRepositoryToken(User);
-      const postToken = getRepositoryToken(Post);
+      const userToken = getRepositoryToken(UserEntity);
+      const postToken = getRepositoryToken(PostEntity);
 
       expect(userToken).not.toBe(postToken);
     });
 
     it('should return different tokens for named data sources', () => {
-      const defaultToken = getRepositoryToken(User);
-      const analyticsToken = getRepositoryToken(User, 'analytics');
+      const defaultToken = getRepositoryToken(UserEntity);
+      const analyticsToken = getRepositoryToken(UserEntity, 'analytics');
 
       expect(defaultToken).not.toBe(analyticsToken);
     });

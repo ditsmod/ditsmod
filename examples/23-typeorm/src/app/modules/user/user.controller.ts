@@ -3,7 +3,7 @@ import { controller, route, RequestContext } from '@ditsmod/rest';
 import { HTTP_BODY } from '@ditsmod/body-parser';
 
 import { UserService } from './user.service.js';
-import { User } from './user.entity.js';
+import { UserEntity } from './user.entity.js';
 
 @controller()
 export class UserController {
@@ -15,13 +15,13 @@ export class UserController {
   }
 
   @route('POST', 'users')
-  async createUser(ctx: RequestContext, @ctx(HTTP_BODY) body: Partial<User>) {
+  async createUser(ctx: RequestContext, @ctx(HTTP_BODY) body: Partial<UserEntity>) {
     const userData = body?.name ? body : { name: 'Alice', email: 'alice@example.com' };
     return this.userService.create(userData);
   }
 
   @route('POST', 'users/batch')
-  async createUsersBatch(ctx: RequestContext, @ctx(HTTP_BODY) body: Partial<User>[]) {
+  async createUsersBatch(ctx: RequestContext, @ctx(HTTP_BODY) body: Partial<UserEntity>[]) {
     const usersData =
       Array.isArray(body) && body.length > 0
         ? body

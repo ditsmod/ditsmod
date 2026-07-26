@@ -8,8 +8,8 @@ import { TypeormModule } from './typeorm.module.js';
 import { getDataSourceToken, getEntityManagerToken } from './typeorm.utils.js';
 import type { TypeormOptionsFactory, TypeormModuleOptions } from './types.js';
 
-class User {}
-class Post {}
+class UserEntity {}
+class PostEntity {}
 
 @injectable()
 class MockConfigFactory implements TypeormOptionsFactory {
@@ -123,18 +123,18 @@ describe('TypeormModule', () => {
 
   describe('forFeature()', () => {
     it('should add entities to EntitiesMetadataStorage and return repository providers', () => {
-      const dynamicModule = TypeormModule.forFeature([User, Post]);
+      const dynamicModule = TypeormModule.forFeature([UserEntity, PostEntity]);
 
-      expect(EntitiesMetadataStorage.getEntities('default')).toEqual([User, Post]);
+      expect(EntitiesMetadataStorage.getEntities('default')).toEqual([UserEntity, PostEntity]);
       expect(dynamicModule.module).toBe(TypeormModule);
       expect((dynamicModule.providersPerMod as Provider[])?.length).toBe(2);
       expect(dynamicModule.exports?.length).toBe(2);
     });
 
     it('should support named data sources in forFeature()', () => {
-      const dynamicModule = TypeormModule.forFeature([User], 'analytics');
+      const dynamicModule = TypeormModule.forFeature([UserEntity], 'analytics');
 
-      expect(EntitiesMetadataStorage.getEntities('analytics')).toEqual([User]);
+      expect(EntitiesMetadataStorage.getEntities('analytics')).toEqual([UserEntity]);
       expect((dynamicModule.providersPerMod as Provider[])?.length).toBe(1);
     });
 
