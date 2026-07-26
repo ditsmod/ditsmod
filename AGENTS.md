@@ -5,8 +5,6 @@ This file provides rules and context for AI agents working inside the **Ditsmod 
 > [!NOTE]
 > `@ts-stack/*` packages are always published with their source files in the `src` folder, so agents can utilize them if needed.
 
----
-
 ## Repository Overview
 
 Ditsmod is a Node.js web framework written in TypeScript (ESM). Its name reflects its three pillars:
@@ -46,21 +44,17 @@ Run `yarn docs-en` to preview changes locally.
 - **Line-by-line synchronization**: The English and Ukrainian documentation files must always be synchronized line-by-line. For example, if a header starts at line `N` in the Ukrainian version, the corresponding English header must also start at line `N`.
 - **Header IDs**: Every header must have an ID in English using the syntax: `## Some header {#some-header}` where `{#some-header}` is the ID. The exact same English ID must also be included in the corresponding Ukrainian header (e.g. `## Заголовок {#some-header}`) to keep anchor links identical and working across both language versions.
 
----
-
 ## Verification
 
 - **Running Prettier**: The agent must run Prettier to auto-format every new or modified file with the `.ts` extension before finishing changes (e.g., `npx prettier --write path/to/file.ts`).
 - **Running ESLint**: After completing any code changes, the agent must run ESLint. To avoid running it for the entire project (which can cause memory issues), run it only for the modified packages (e.g., `yarn lint packages/cli` from the project root) or specifically for the modified files.
 - **Running Tests**: **DO NOT run tests if you only modified comments or documentation files.** Run tests only if there are functional code changes. To run unit tests for a specific package, the agent should run them using the package workspace (e.g., `yarn workspace @ditsmod/cli test` or `yarn --cwd packages/cli test`). Avoid running `yarn test packages/<package-name>` from the root of the project, as this compiles tests for the entire monorepo and can fail due to compilation errors in other packages. If you only modify tests in a specific file, run only that test file (e.g., `yarn workspace @ditsmod/core test dist/init/module-manager.spec.js` instead of running all tests in the package).
 
----
-
 ## Code style
 
 - **Internal Package Imports**: Never map the current package's own name (e.g., mapping `@ditsmod/schedule` inside the `schedule` package) in `tsconfig.json` `paths` to reference local files. Self-mapping is not allowed; package-name mapping is reserved exclusively for external packages. To import files from the current package (e.g., inside E2E tests), use Node.js subpath imports (like `#src/*` or specific aliases) that resolve to `./src/*` in `tsconfig.json` and `./dist/*` in `package.json`'s `imports` block.
-
----
+- Do not use barrel files (e.g., `index.ts` files intended to simplify symbol imports), as they increase the likelihood of circular dependencies.
+- Do not add horizontal lines (`---`) in Markdown files.
 
 ## Language Rules
 
