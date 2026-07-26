@@ -74,7 +74,7 @@ describe('20-authjs', () => {
       });
 
     expect(formLoginRes.status).toBe(HttpStatus.FOUND);
-    expect(formLoginRes.headers.location).toBeDefined();
+    expect(formLoginRes.headers.location).toContain('/status');
 
     // 6. Sign in with valid credentials via JSON API (application/json)
     const loginRes = await testAgent

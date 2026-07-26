@@ -30,8 +30,9 @@ export class AuthController {
     ctx.rawRes.setHeader('content-type', 'text/html; charset=utf-8');
     return `
       <h1>Ditsmod Auth.js Example</h1>
+      <p><strong>Test Credentials:</strong> Username: <code>johnsmith</code> | Password: <code>password123</code></p>
       <ul>
-        <li><a href="/auth/signin">Sign in</a></li>
+        <li><a href="/auth/signin?callbackUrl=/status">Sign in</a></li>
         <li><a href="/profile">Protected Profile (requires auth)</a></li>
         <li><a href="/status">Public Status (optional auth)</a></li>
         <li><a href="/auth/signout">Sign out</a></li>
