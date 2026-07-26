@@ -1,18 +1,16 @@
+import { jest } from '@jest/globals';
 import supertest from 'supertest';
-import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { route, RequestContext, controller, HttpServer, restRootModule } from '@ditsmod/rest';
 import { TestRestApplication } from '@ditsmod/rest-testing';
 
-import credentials from '#mod/providers/credentials.js';
-import { AuthjsModule } from '#mod/authjs.module.js';
-import { AuthjsInterceptor } from '#mod/authjs.interceptor.js';
+import type * as HttpApiAdapters from '#mod/http-api-adapters.js';
 
 // mock the toWebRequest, make it throw if "X-Test-Header" = 'throw'
-vi.mock('#mod/http-api-adapters.js', async (importOriginal) => {
-  const mod = await importOriginal<typeof import('#mod/http-api-adapters.js')>();
+jest.unstable_mockModule('#mod/http-api-adapters.js', async () => {
+  const mod = await jest.requireActual<typeof HttpApiAdapters>('#mod/http-api-adapters.js');
   return {
     ...mod,
-    toWebRequest: vi.fn((ctx: RequestContext) => {
+    toWebRequest: jest.fn((ctx: RequestContext) => {
       if (ctx.rawReq.headers['x-test-header'] == 'throw') {
         throw new Error('Test error');
       }
@@ -20,6 +18,10 @@ vi.mock('#mod/http-api-adapters.js', async (importOriginal) => {
     }),
   };
 });
+
+const credentials = (await import('#mod/providers/credentials.js')).default;
+const { AuthjsModule } = await import('#mod/authjs.module.js');
+const { AuthjsInterceptor } = await import('#mod/authjs.interceptor.js');
 
 @controller()
 export class Controller1 {

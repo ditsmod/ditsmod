@@ -1,8 +1,10 @@
+import { jest } from '@jest/globals';
 import supertest from 'supertest';
-import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { HttpStatus } from '@ditsmod/core';
 import { route, controller, HttpServer, restRootModule, RequestContext } from '@ditsmod/rest';
 import { TestRestApplication } from '@ditsmod/rest-testing';
+
+import type * as AuthCore from '@auth/core';
 
 const sessionJson = {
   user: {
@@ -14,11 +16,11 @@ const sessionJson = {
   expires: '',
 };
 
-vi.mock('@auth/core', async (importOriginal) => {
-  const mod = await importOriginal<typeof import('@auth/core')>();
+jest.unstable_mockModule('@auth/core', async () => {
+  const mod = await jest.requireActual<typeof AuthCore>('@auth/core');
   return {
     ...mod,
-    Auth: vi.fn((request, config) => {
+    Auth: jest.fn((request: any, config: any) => {
       return new Response(JSON.stringify(sessionJson), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -30,7 +32,7 @@ vi.mock('@auth/core', async (importOriginal) => {
 // dynamic import to avoid loading Auth before hoisting
 const { getSession } = await import('#mod/get-session.js');
 
-const expectation = vi.fn((data?: any) => data);
+const expectation = jest.fn((data?: any) => data);
 
 @controller()
 export class Controller1 {
@@ -65,6 +67,6 @@ describe('getSession', () => {
     const { status } = await client.get('/').set('X-Test-Header', 'foo').set('Accept', 'application/json');
 
     expect(status).toBe(HttpStatus.OK);
-    expect(expectation).lastCalledWith(sessionJson);
+    expect(expectation).toHaveBeenLastCalledWith(sessionJson);
   });
 });

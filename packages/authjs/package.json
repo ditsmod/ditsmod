@@ -12,7 +12,8 @@
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "clean": "rm -rf dist*",
-    "test": "yarn build-test && vitest",
+    "test": "yarn build-test && yarn esm-jest",
+    "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "build-test": "tsc -b tsconfig.e2e.json"
   },
   "exports": {
@@ -61,8 +62,8 @@
     "access": "public"
   },
   "devDependencies": {
-    "typescript-7": "npm:typescript@^7.0.2",
-    "vitest": "^4.1.10"
+    "jest": "^30.4.2",
+    "typescript-7": "npm:typescript@^7.0.2"
   },
   "gitHead": "eaf8f20b4e75e38c7a51fd1c3174b691cea756fa"
 }

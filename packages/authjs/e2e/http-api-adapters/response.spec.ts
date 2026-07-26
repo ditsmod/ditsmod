@@ -1,5 +1,4 @@
 import supertest from 'supertest';
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { controller, route, applyResponse, RequestContext, HttpServer, restRootModule } from '@ditsmod/rest';
 import { TestRestApplication } from '@ditsmod/rest-testing';
 

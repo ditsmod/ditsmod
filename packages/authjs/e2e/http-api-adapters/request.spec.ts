@@ -1,5 +1,4 @@
 import supertest from 'supertest';
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { HttpStatus } from '@ditsmod/core';
 import { controller, RequestContext, RawRequest, restRootModule } from '@ditsmod/rest';
 import { route, HttpServer } from '@ditsmod/rest';

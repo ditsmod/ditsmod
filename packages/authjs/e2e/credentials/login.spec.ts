@@ -1,5 +1,4 @@
 import supertest from 'supertest';
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { HttpStatus } from '@ditsmod/core';
 import { TestRestApplication } from '@ditsmod/rest-testing';
 import type { HttpServer } from '@ditsmod/rest';
