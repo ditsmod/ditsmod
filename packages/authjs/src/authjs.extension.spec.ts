@@ -135,5 +135,20 @@ describe('AuthjsExtension', () => {
       logger.error?.(err);
       expect(logMediator.message).toHaveBeenCalledWith('error', expect.stringContaining('test error'));
     });
+
+    it('authjs logger logs expected client authentication errors as warn without stack trace', async () => {
+      (extension as any).extensionGroupMeta = { groupData: [] };
+      await extension.stage2(injectorPerMod);
+
+      const logger = authjsConfig.logger!;
+      const credErr = new Error('Read more at https://errors.authjs.dev#credentialssignin');
+      credErr.name = 'CredentialsSignin';
+      logger.error?.(credErr);
+
+      expect(logMediator.message).toHaveBeenCalledWith(
+        'warn',
+        'CredentialsSignin: Read more at https://errors.authjs.dev#credentialssignin',
+      );
+    });
   });
 });

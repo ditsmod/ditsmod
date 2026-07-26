@@ -58,7 +58,20 @@ export class AuthjsExtension implements Extension {
   protected setAuthjsLogger(authjsConfig: AuthjsConfig) {
     authjsConfig.logger ??= {
       error: (err) => {
-        this.logMediator.message('error', ChainError.getFullStack(err)!);
+        const name = (err && ((err as any).name || (err as any).type)) || '';
+        const expectedClientErrors = new Set([
+          'CredentialsSignin',
+          'AccessDenied',
+          'OAuthAccountNotLinked',
+          'OAuthCallbackError',
+          'Verification',
+        ]);
+        if (expectedClientErrors.has(name)) {
+          const msg = (err as any).message || err.toString();
+          this.logMediator.message('warn', msg.startsWith(name) ? msg : `${name}: ${msg}`);
+        } else {
+          this.logMediator.message('error', ChainError.getFullStack(err)!);
+        }
       },
       debug: (message) => {
         this.logMediator.message('debug', message);
