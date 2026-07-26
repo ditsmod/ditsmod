@@ -56,10 +56,27 @@ describe('20-authjs', () => {
       .set('Cookie', [csrfTokenCookie, callbackCookie])
       .send({ csrfToken: csrfTokenValue, username: 'johnsmith', password: 'wrongpassword' });
 
+    expect(badLoginRes.status).toBe(HttpStatus.FOUND);
+    expect(badLoginRes.headers.location).toContain('error=CredentialsSignin');
     const badSessionCookie = extractCookieValue(badLoginRes.headers['set-cookie'] || [], 'authjs.session-token');
     expect(badSessionCookie).toBeUndefined();
 
-    // 6. Sign in with valid credentials
+    // 5.1 Simulate browser HTML form login (application/x-www-form-urlencoded)
+    const formLoginRes = await testAgent
+      .post('/auth/callback/credentials')
+      .type('form')
+      .set('Cookie', [csrfTokenCookie, callbackCookie])
+      .send({
+        csrfToken: csrfTokenValue,
+        username: 'johnsmith',
+        password: 'password123',
+        email: 'johnsmith@i.ua',
+      });
+
+    expect(formLoginRes.status).toBe(HttpStatus.FOUND);
+    expect(formLoginRes.headers.location).toBeDefined();
+
+    // 6. Sign in with valid credentials via JSON API (application/json)
     const loginRes = await testAgent
       .post('/auth/callback/credentials')
       .set('Cookie', [csrfTokenCookie, callbackCookie])

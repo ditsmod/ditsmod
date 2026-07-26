@@ -22,9 +22,12 @@ export class AuthjsInterceptor implements HttpInterceptor {
       const location = response.headers.get('location');
       if (location) {
         try {
+          const contentType = webReq.headers.get('content-type') || '';
+          const isFormRequest =
+            contentType.includes('application/x-www-form-urlencoded') || contentType.includes('multipart/form-data');
           const locOrigin = new URL(location, webReq.url).origin;
           const reqOrigin = new URL(webReq.url).origin;
-          if (locOrigin !== reqOrigin) {
+          if (locOrigin !== reqOrigin || location.includes('error=') || isFormRequest) {
             await applyResponse(response, ctx.rawRes);
             return;
           }

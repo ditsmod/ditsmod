@@ -80,7 +80,28 @@ describe('AuthjsInterceptor', () => {
     expect(nextHandler.handle).not.toHaveBeenCalled();
   });
 
-  it('deletes location header, applies headers, and calls next.handle when status is 302 (FOUND) with relative/internal Location header', async () => {
+  it('calls applyResponse and returns when status is 302 (FOUND) with an error parameter in Location header', async () => {
+    const headers = new Headers({ location: '/auth/signin?error=CredentialsSignin' });
+    mockAuthResponse = new Response(null, { status: 302, headers });
+
+    await interceptor.intercept(nextHandler, reqCtx);
+
+    expect(applyResponseSpy).toHaveBeenCalledWith(mockAuthResponse, reqCtx.rawRes);
+    expect(nextHandler.handle).not.toHaveBeenCalled();
+  });
+
+  it('calls applyResponse and returns when status is 302 (FOUND) from a form-urlencoded request', async () => {
+    reqCtx.rawReq.headers['content-type'] = 'application/x-www-form-urlencoded';
+    const headers = new Headers({ location: '/' });
+    mockAuthResponse = new Response(null, { status: 302, headers });
+
+    await interceptor.intercept(nextHandler, reqCtx);
+
+    expect(applyResponseSpy).toHaveBeenCalledWith(mockAuthResponse, reqCtx.rawRes);
+    expect(nextHandler.handle).not.toHaveBeenCalled();
+  });
+
+  it('deletes location header, applies headers, and calls next.handle when status is 302 (FOUND) with relative/internal Location header on JSON API request', async () => {
     const headers = new Headers({ location: '/redirect', 'set-cookie': 'session=abc' });
     mockAuthResponse = new Response(null, { status: 302, headers });
 
