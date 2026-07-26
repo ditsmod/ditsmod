@@ -1,28 +1,8 @@
-import { controller, route, restRootModule, RequestContext } from '@ditsmod/rest';
-import { AuthjsConfig, AUTHJS_SESSION, AuthjsGuard, AuthjsModule, AuthjsInterceptor } from '@ditsmod/authjs';
-import { ctx } from '@ditsmod/core';
+import { restRootModule } from '@ditsmod/rest';
+import { AuthjsConfig, AuthjsModule } from '@ditsmod/authjs';
 
 import { OverriddenAuthConfig } from './authjs.config.js';
-
-@controller()
-export class InjScopedController {
-  @route('POST', 'auth/:action/:providerId', [], [AuthjsInterceptor])
-  auth() {
-    return 'ok';
-  }
-
-  @route('GET', 'per-req', [AuthjsGuard])
-  getSession(@ctx(AUTHJS_SESSION) session: any) {
-    return session.user;
-  }
-
-  @route('GET')
-  goto(ctx: RequestContext) {
-    ctx.rawRes.setHeader('content-type', 'text/html');
-    const url = 'http://0.0.0.0:3000/auth/signin';
-    return `Open your browser on <a href="${url}">${url}</a>`;
-  }
-}
+import { AuthController } from './auth.controller.js';
 
 @restRootModule({
   imports: [
@@ -31,6 +11,6 @@ export class InjScopedController {
       useFactory: [OverriddenAuthConfig, OverriddenAuthConfig.prototype.initAuthjsConfig],
     }),
   ],
-  controllers: [InjScopedController],
+  controllers: [AuthController],
 })
 export class AppModule {}

@@ -10,10 +10,12 @@ describe('20-authjs', () => {
   let testAgent: ReturnType<typeof request>;
 
   function extractCookieValue(cookieHeader: string | string[], name: string) {
+    if (!cookieHeader) return undefined;
     const cookieStringFull = Array.isArray(cookieHeader)
       ? cookieHeader.find((header) => header.includes(name))
       : cookieHeader;
-    return name + cookieStringFull?.split(name)[1].split(';')[0];
+    if (!cookieStringFull) return undefined;
+    return name + cookieStringFull.split(name)[1].split(';')[0];
   }
 
   beforeAll(async () => {
@@ -25,38 +27,85 @@ describe('20-authjs', () => {
     server?.close();
   });
 
-  it('case1', async () => {
-    const response = await testAgent.get('/auth/csrf');
-    expect(response.status).toBe(200);
-    expect(response.type).toBe('application/json');
-    expect(response.body).toEqual({ csrfToken: expect.any(String) });
-    expect(response.headers['set-cookie']).toEqual(expect.any(Array));
+  it('demonstrates authentication flow, role claims, and guarded vs optional sessions', async () => {
+    // 1. Verify home page navigation
+    const homeRes = await testAgent.get('/');
+    expect(homeRes.status).toBe(HttpStatus.OK);
+    expect(homeRes.text).toContain('Ditsmod Auth.js Example');
 
-    await expect(testAgent.get('/per-req')).resolves.toMatchObject({ status: HttpStatus.UNAUTHORIZED });
+    // 2. Check public status before logging in
+    const guestStatusRes = await testAgent.get('/status');
+    expect(guestStatusRes.status).toBe(HttpStatus.OK);
+    expect(guestStatusRes.body).toEqual({ status: 'guest', message: 'You are not logged in' });
 
-    const csrfTokenCookie = extractCookieValue(response.headers['set-cookie'], 'authjs.csrf-token');
-    const callbackCookie = extractCookieValue(response.headers['set-cookie'], 'authjs.callback-url');
+    // 3. Attempt to access protected route without auth
+    await expect(testAgent.get('/profile')).resolves.toMatchObject({ status: HttpStatus.UNAUTHORIZED });
+
+    // 4. Get CSRF token and initial cookies
+    const csrfRes = await testAgent.get('/auth/csrf');
+    expect(csrfRes.status).toBe(200);
+    expect(csrfRes.body).toEqual({ csrfToken: expect.any(String) });
+
+    const csrfTokenCookie = extractCookieValue(csrfRes.headers['set-cookie'], 'authjs.csrf-token')!;
+    const callbackCookie = extractCookieValue(csrfRes.headers['set-cookie'], 'authjs.callback-url')!;
     const csrfTokenValue = csrfTokenCookie.split('%')[0].split('=')[1];
 
-    // Sign in
-    const responseCredentials = await testAgent
+    // 5. Attempt login with incorrect credentials
+    const badLoginRes = await testAgent
       .post('/auth/callback/credentials')
-      .set('Cookie', [csrfTokenCookie, callbackCookie]) // Send the cookie with the request
-      .send({ csrfToken: csrfTokenValue, username: 'johnsmith', email: 'johnsmith@i.ua', iAgree: true });
+      .set('Cookie', [csrfTokenCookie, callbackCookie])
+      .send({ csrfToken: csrfTokenValue, username: 'johnsmith', password: 'wrongpassword' });
 
-    expect(responseCredentials.status).toBe(HttpStatus.OK);
-    expect(responseCredentials.text).toBe('ok');
+    const badSessionCookie = extractCookieValue(badLoginRes.headers['set-cookie'] || [], 'authjs.session-token');
+    expect(badSessionCookie).toBeUndefined();
 
-    // Parse cookie for session token
-    const sessionTokenCookie = extractCookieValue(responseCredentials.headers['set-cookie'], 'authjs.session-token');
+    // 6. Sign in with valid credentials
+    const loginRes = await testAgent
+      .post('/auth/callback/credentials')
+      .set('Cookie', [csrfTokenCookie, callbackCookie])
+      .send({
+        csrfToken: csrfTokenValue,
+        username: 'johnsmith',
+        password: 'password123',
+        email: 'johnsmith@i.ua',
+      });
 
-    // Call test route
-    const { status, body } = await testAgent.get('/per-req').set('Cookie', [sessionTokenCookie]);
+    expect(loginRes.status).toBe(HttpStatus.OK);
+    expect(loginRes.text).toBe('ok');
 
-    expect(status).toBe(HttpStatus.OK);
-    expect(body).toEqual({
-      name: expect.any(String),
-      email: expect.any(String),
+    const sessionTokenCookie = extractCookieValue(loginRes.headers['set-cookie'], 'authjs.session-token')!;
+    expect(sessionTokenCookie).toBeDefined();
+
+    // 7. Call protected profile route with valid session cookie
+    const profileRes = await testAgent.get('/profile').set('Cookie', [sessionTokenCookie]);
+    expect(profileRes.status).toBe(HttpStatus.OK);
+    expect(profileRes.body).toEqual({
+      name: 'johnsmith',
+      email: 'johnsmith@i.ua',
+      role: 'admin',
     });
+
+    // 8. Call optional status route with valid session cookie
+    const authStatusRes = await testAgent.get('/status').set('Cookie', [sessionTokenCookie]);
+    expect(authStatusRes.status).toBe(HttpStatus.OK);
+    expect(authStatusRes.body).toEqual({
+      status: 'logged in',
+      user: {
+        name: 'johnsmith',
+        email: 'johnsmith@i.ua',
+        role: 'admin',
+      },
+    });
+
+    // 9. Sign out
+    const signoutRes = await testAgent
+      .post('/auth/signout')
+      .set('Cookie', [csrfTokenCookie, sessionTokenCookie])
+      .send({ csrfToken: csrfTokenValue });
+
+    expect(signoutRes.status).toBe(200);
+    expect(signoutRes.headers['set-cookie']).toBeDefined();
+
+    await expect(testAgent.get('/profile')).resolves.toMatchObject({ status: HttpStatus.UNAUTHORIZED });
   });
 });

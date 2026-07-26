@@ -7,10 +7,16 @@ export class OverriddenAuthConfig extends AuthjsConfig {
   override session: AuthjsConfig['session'] = { strategy: 'jwt' };
 
   override callbacks: AuthjsConfig['callbacks'] = {
-    async jwt({ token, user, trigger }) {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = (user as any).role;
+      }
       return token;
     },
     async session({ session, token }) {
+      if (session.user && token.role) {
+        (session.user as any).role = token.role;
+      }
       return session;
     },
   };
@@ -19,25 +25,26 @@ export class OverriddenAuthConfig extends AuthjsConfig {
   initAuthjsConfig() {
     const credentialsConfig: Partial<CredentialsConfig> = {
       credentials: {
-        username: { label: 'Username' },
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
-        iAgree: { label: 'I agree', type: 'checkbox' },
+        username: { label: 'Username', type: 'text', placeholder: 'johnsmith' },
+        password: { label: 'Password', type: 'password', placeholder: 'password123' },
+        email: { label: 'Email', type: 'email', placeholder: 'johnsmith@i.ua' },
       },
 
       authorize: async (formData: any) => {
-        if (formData?.iAgree) {
-          // Validation, transformation here.
-          return { name: formData?.username, email: formData?.email }; // This returns as session data.
+        if (formData?.username === 'johnsmith' && formData?.password === 'password123') {
+          return {
+            name: formData.username,
+            email: formData.email || 'johnsmith@i.ua',
+            role: 'admin',
+          };
         }
 
-        // When access is denied.
         return null;
       },
     };
 
     this.providers = [credentials(credentialsConfig)];
 
-    return this; // It is important to return `this`, it will be used as a `AuthjsConfig`.
+    return this; // It is important to return `this`, as it will be used as AuthjsConfig.
   }
 }
