@@ -447,10 +447,25 @@ export class ModuleManager {
    * @param inputModuleId The module you need to find.
    * @param targetModuleId Module where to search `inputModule`.
    */
-  protected includesInSomeModule(inputModuleId: ModuleId, targetModuleId: ModuleId): boolean {
+  protected includesInSomeModule(
+    inputModuleId: ModuleId,
+    targetModuleId: ModuleId,
+    visited = new Set<ModuleId>(),
+  ): boolean {
+    if (visited.has(targetModuleId)) {
+      return false;
+    }
+    visited.add(targetModuleId);
+
     const targetMeta = this.getNormalizedModuleMetaFromSnapshot(targetModuleId);
     if (!targetMeta) {
       return false;
+    }
+    if (targetMeta.modRefId !== targetModuleId) {
+      if (visited.has(targetMeta.modRefId)) {
+        return false;
+      }
+      visited.add(targetMeta.modRefId);
     }
 
     const modRefIds = this.propsWithModules
@@ -459,7 +474,7 @@ export class ModuleManager {
 
     return (
       modRefIds.some((modRefId) => inputModuleId === modRefId) ||
-      modRefIds.some((modRefId) => this.includesInSomeModule(inputModuleId, modRefId))
+      modRefIds.some((modRefId) => this.includesInSomeModule(inputModuleId, modRefId, visited))
     );
   }
 

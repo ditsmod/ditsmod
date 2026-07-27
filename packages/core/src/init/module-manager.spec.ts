@@ -213,6 +213,28 @@ describe('ModuleManager', () => {
       expect(mock.getNormalizedModuleMeta(Module1)?.importsModules).toEqual([Module3]);
       expect(mock.getNormalizedModuleMeta(Module3)?.importsModules).toEqual([Module2]);
     });
+
+    it('should not throw maximum call stack size exceeded in includesInSomeModule during removeImport with circular imports', () => {
+      @featureModule({ providersPerApp: [Service1], imports: [forwardRef(() => Module2)] })
+      class Module1 {}
+
+      @featureModule({ providersPerApp: [Service1], imports: [Module1] })
+      class Module2 {}
+
+      @featureModule({ providersPerApp: [Service1], imports: [Module1] })
+      class Module3 {}
+
+      @featureModule({ providersPerApp: [Service1] })
+      class Module4 {}
+
+      @rootModule({
+        imports: [Module3, Module4],
+      })
+      class AppModule {}
+
+      mock.scanRootModule(AppModule);
+      expect(() => mock.removeImport(Module4)).not.toThrow();
+    });
   });
 
   describe('dynamic imports (addImport)', () => {
@@ -898,8 +920,9 @@ describe('ModuleManager', () => {
       interface InitMeta extends NormalizedInitMeta {
         path?: string;
       }
-      const initSome: InitDecorator<RootModuleOptions, { path?: string }, InitMeta> =
-        Reflector.makeClassDecorator((d) => new InitHooks1(d));
+      const initSome: InitDecorator<RootModuleOptions, { path?: string }, InitMeta> = Reflector.makeClassDecorator(
+        (d) => new InitHooks1(d),
+      );
 
       class InitHooks1Local extends InitHooks<RootModuleOptions> {
         override normalize({ modRefId }: NormalizedModuleMeta): InitMeta {
@@ -916,8 +939,9 @@ describe('ModuleManager', () => {
 
       const dynamicModule: DynamicModule = { module: Module1 };
 
-      const initSomeLocal: InitDecorator<RootModuleOptions, { path?: string }, InitMeta> =
-        Reflector.makeClassDecorator((d) => new InitHooks1Local(d));
+      const initSomeLocal: InitDecorator<RootModuleOptions, { path?: string }, InitMeta> = Reflector.makeClassDecorator(
+        (d) => new InitHooks1Local(d),
+      );
 
       @initSomeLocal({ one: 'some-here', imports: [{ dynamicModule: dynamicModule, path: 'some-prefix' }] })
       @rootModule()
@@ -950,8 +974,9 @@ describe('ModuleManager', () => {
       @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
       class Module1 {}
 
-      const initSomeLocal: InitDecorator<RootModuleOptions, { path?: string }, InitMeta> =
-        Reflector.makeClassDecorator((d) => new InitHooks1Local(d));
+      const initSomeLocal: InitDecorator<RootModuleOptions, { path?: string }, InitMeta> = Reflector.makeClassDecorator(
+        (d) => new InitHooks1Local(d),
+      );
 
       @initSomeLocal({ one: 'some-here', imports: [Module1] })
       @rootModule()
@@ -981,8 +1006,9 @@ describe('ModuleManager', () => {
         }
       }
 
-      const initSomeLocal: InitDecorator<RootModuleOptions, { path?: string }, InitMeta> =
-        Reflector.makeClassDecorator((d) => new InitHooks1Local(d));
+      const initSomeLocal: InitDecorator<RootModuleOptions, { path?: string }, InitMeta> = Reflector.makeClassDecorator(
+        (d) => new InitHooks1Local(d),
+      );
 
       @featureModule({
         inheritsContext: false,
