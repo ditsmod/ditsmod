@@ -14,7 +14,7 @@ Start from first terminal:
 
 ```bash
 cd examples/10*
-npm run start:dev
+npm start
 ```
 
 Open your browser with http://0.0.0.0:3000/openapi and there should be OpenAPI documentation.

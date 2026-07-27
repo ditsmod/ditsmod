@@ -14,7 +14,7 @@ Start from first terminal:
 
 ```bash
 cd examples/06*
-npm run start:dev
+npm start
 ```
 
 From second terminal, send JSON as POST method:

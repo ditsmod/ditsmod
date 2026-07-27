@@ -12,5 +12,5 @@ Start from terminal:
 
 ```bash
 cd examples/00*
-npm run start:dev
+npm start
 ```

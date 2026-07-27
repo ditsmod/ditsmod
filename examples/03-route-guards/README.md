@@ -26,7 +26,7 @@ cp .env-example .env
 Start from first terminal:
 
 ```bash
-npm run start:dev
+npm start
 ```
 
 From second terminal:

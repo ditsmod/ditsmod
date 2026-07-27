@@ -12,7 +12,7 @@ Start from first terminal:
 
 ```bash
 cd examples/01*
-npm run start:dev
+npm start
 ```
 
 From second terminal:
