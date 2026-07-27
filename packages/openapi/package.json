@@ -49,16 +49,16 @@
   },
   "devDependencies": {
     "@types/swagger-ui": "^5.32.0",
-    "copy-webpack-plugin": "^13.0.1",
+    "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.4",
-    "html-webpack-plugin": "^5.6.7",
+    "html-webpack-plugin": "^5.6.8",
     "jest": "^30.4.2",
     "json-loader": "^0.5.7",
     "style-loader": "^4.0.0",
     "swagger-ui": "~5.27.1",
     "typescript-7": "npm:typescript@^7.0.2",
-    "webpack": "^5.106.2",
-    "yaml-loader": "^0.8.1"
+    "webpack": "^5.109.0",
+    "yaml-loader": "^0.9.0"
   },
   "peerDependencies": {
     "@ditsmod/core": "^3.0.0-next.15",

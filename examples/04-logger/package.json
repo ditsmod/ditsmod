@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "bunyan": "^1.8.15",
-    "pino": "^9.14.0",
+    "pino": "^10.3.1",
     "winston": "^3.19.0"
   },
   "devDependencies": {

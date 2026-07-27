@@ -51,7 +51,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@auth/core": "^0.41.2"
+    "@auth/core": "^0.41.3"
   },
   "peerDependencies": {
     "@ditsmod/body-parser": "^3.0.0-next.15",

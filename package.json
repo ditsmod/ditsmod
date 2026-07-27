@@ -58,17 +58,17 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^26.1.1",
     "@types/supertest": "^7.2.1",
-    "eslint": "^10.7.0",
+    "eslint": "^10.8.0",
     "husky": "^9.1.7",
     "jest": "^30.4.2",
     "lerna": "9.0.7",
-    "prettier": "^3.9.5",
+    "prettier": "^3.9.6",
     "reflect-metadata": "^0.2.2",
     "supertest": "^7.2.2",
     "ts-node": "^10.9.2",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-7": "npm:typescript@^7.0.2",
-    "typescript-eslint": "^8.64.0"
+    "typescript-eslint": "^8.65.0"
   },
   "resolutions": {
     "@swagger-api/apidom-ns-asyncapi-2": "npm:-@0.0.1",

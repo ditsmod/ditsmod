@@ -19,8 +19,8 @@
   "devDependencies": {
     "@ditsmod/cli": "^3.0.0-next.17",
     "jest": "^30.4.2",
-    "mysql2": "^3.12.0",
-    "typeorm": "^1.0.0",
+    "mysql2": "^3.23.1",
+    "typeorm": "^1.1.0",
     "typescript-7": "npm:typescript@^7.0.2"
   }
 }
