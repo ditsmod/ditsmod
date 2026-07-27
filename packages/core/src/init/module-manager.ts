@@ -49,7 +49,7 @@ export class ModuleManager {
   protected oldSnapshotMapId = new Map<string, ModRefId>();
   protected mapId = new Map<'root' | (string & {}), ModRefId>();
   protected unfinishedScanModules = new Set<ModRefId>();
-  protected scanedModules = new Set<ModRefId>();
+  protected scannedModules = new Set<ModRefId>();
   protected moduleNormalizer = new ModuleNormalizer();
   protected childrenMap = new Map<ModRefId, Set<ModRefId>>();
   protected oldChildrenMap = new Map<ModRefId, Set<ModRefId>>();
@@ -81,14 +81,14 @@ export class ModuleManager {
 
     this.injectorPerModMap.clear();
     this.unfinishedScanModules.clear();
-    this.scanedModules.clear();
+    this.scannedModules.clear();
     clearDebugClassNames();
     this.mapId.set('root', appModule);
     this.saveSnapshot();
     return normalizedModuleMeta;
   }
 
-  scanModule(modRefId: ModRefId | ForwardRefFn<StaticModule>, allInitHooks?: AllInitHooks, saveToShapshot?: boolean) {
+  scanModule(modRefId: ModRefId | ForwardRefFn<StaticModule>, allInitHooks?: AllInitHooks, saveToSnapshot?: boolean) {
     const isRootScan = this.unfinishedScanModules.size == 0;
     allInitHooks ??= new Map();
     modRefId = resolveForwardRef(modRefId);
@@ -111,13 +111,13 @@ export class ModuleManager {
 
     for (const input of inputs) {
       children.add(input);
-      if (this.unfinishedScanModules.has(input) || this.scanedModules.has(input)) {
+      if (this.unfinishedScanModules.has(input) || this.scannedModules.has(input)) {
         continue;
       }
       this.unfinishedScanModules.add(input);
-      this.scanModule(input, normalizedModuleMeta.allInitHooks, saveToShapshot);
+      this.scanModule(input, normalizedModuleMeta.allInitHooks, saveToSnapshot);
       this.unfinishedScanModules.delete(input);
-      this.scanedModules.add(input);
+      this.scannedModules.add(input);
     }
 
     this.callInitHooksAfterScan(normalizedModuleMeta);
@@ -128,7 +128,7 @@ export class ModuleManager {
     }
     const providersPerApp = isRootModule(normalizedModuleMeta) ? [] : normalizedModuleMeta.providersPerApp;
     this.providersPerApp.push(...providersPerApp);
-    if (saveToShapshot) {
+    if (saveToSnapshot) {
       this.snapshotMap.set(modRefId, normalizedModuleMeta);
     } else {
       this.map.set(modRefId, normalizedModuleMeta);
