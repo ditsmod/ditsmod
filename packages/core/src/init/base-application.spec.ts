@@ -227,6 +227,9 @@ describe('BaseApplication', () => {
       const app = mock;
       app.init();
 
+      jest.spyOn(app.log, 'shutdownStart').mockImplementation(() => {});
+      jest.spyOn(app.log, 'shutdownComplete').mockImplementation(() => {});
+
       const customShutdownSpy = jest.spyOn(app as any, 'customShutdown').mockImplementation(async () => {
         order.push('custom');
       });

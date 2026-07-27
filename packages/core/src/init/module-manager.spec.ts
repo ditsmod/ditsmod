@@ -35,6 +35,7 @@ describe('ModuleManager', () => {
   class Service3 {}
 
   class MockModuleManager extends ModuleManager {
+    declare systemLogMediator: SystemLogMediator;
     declare map: Map<ModRefId, NormalizedModuleMeta>;
     declare mapId: Map<string, ModRefId>;
     declare snapshotMap: Map<ModRefId, NormalizedModuleMeta>;
@@ -105,7 +106,7 @@ describe('ModuleManager', () => {
       class AppModule {}
 
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
-      const spy = jest.spyOn(systemLogMediator, 'forbiddenRescanRootModule');
+      const spy = jest.spyOn(systemLogMediator, 'forbiddenRescanRootModule').mockImplementation(() => {});
       const manager = new MockModuleManager(systemLogMediator);
 
       const meta1 = manager.scanRootModule(AppModule);
@@ -313,7 +314,9 @@ describe('ModuleManager', () => {
       mock.commit();
       mock.reset();
 
+      const spy = jest.spyOn(mock.systemLogMediator, 'moduleAlreadyImported').mockImplementation(() => {});
       expect(mock.addImport(Module1)).toBe(false);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should throw ImportAdditionFailure when target module ID is not found', () => {
@@ -477,12 +480,16 @@ describe('ModuleManager', () => {
     it('should return false when trying to remove a module that is not imported', () => {
       mock.scanRootModule(AppModule);
       mock.removeImport(Module2);
+      const spy = jest.spyOn(mock.systemLogMediator, 'moduleNotFound').mockImplementation(() => {});
       expect(mock.removeImport(Module2)).toBe(false);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should return false if input module to remove is not found in snapshot', () => {
       mock.scanRootModule(AppModule);
+      const spy = jest.spyOn(mock.systemLogMediator, 'moduleNotFound').mockImplementation(() => {});
       expect(mock.removeImport('non-existent')).toBe(false);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should throw ImportRemovalFailure if target module ID is not found', () => {
