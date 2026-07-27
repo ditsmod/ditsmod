@@ -35,14 +35,14 @@ export {
   GuardedInterceptor,
   RouteScopedGuardedInterceptor,
   InstantiatedGuard,
-} from '#interceptors/interceptor-with-guards-per-rou.js';
-export { RequestScopedGuardedInterceptor } from '#interceptors/interceptor-with-guards.js';
-export { RouteScopedHttpBackendImpl } from '#interceptors/default-http-backend-per-rou.js';
-export { RequestScopedHttpBackend } from '#interceptors/default-http-backend.js';
+} from '#interceptors/route-scoped-guarded.interceptor.js';
+export { RequestScopedGuardedInterceptor } from '#interceptors/request-scoped-guarded.interceptor.js';
+export { RouteScopedHttpBackendImpl } from '#interceptors/route-scoped-http-backend.js';
+export { RequestScopedHttpBackend } from '#interceptors/request-scoped-http-backend.js';
 export { ChainMaker } from '#interceptors/chain-maker.js';
-export { RouteScopedChainMaker } from '#interceptors/default-chain-maker-per-rou.js';
-export { RouteScopedHttpFrontend } from '#interceptors/default-http-frontend-per-rou.js';
-export { RequestScopedHttpFrontend } from '#interceptors/default-http-frontend.js';
+export { RouteScopedChainMaker } from '#interceptors/route-scoped-chain-maker.js';
+export { RouteScopedHttpFrontend } from '#interceptors/route-scoped-http-frontend.js';
+export { RequestScopedHttpFrontend } from '#interceptors/request-scoped-http-frontend.js';
 export {
   HttpBackend,
   HttpFrontend,
@@ -68,10 +68,7 @@ export {
 } from './top/constants.js';
 export { applyResponse, applyHeaders } from './utils/apply-web-response.js';
 export { RawRequest, RawResponse, RequestListener } from './services/request.js';
-export {
-  createGuardHelper,
-  GuardHelper,
-} from './utils/create-helper-for-guards-with-params.js';
+export { createGuardHelper, GuardHelper } from './utils/create-helper-for-guards-with-params.js';
 export {
   controller,
   ControllerOptions,

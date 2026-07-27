@@ -25,15 +25,15 @@ import { routeChannel } from '#diagnostics-channel';
 import { RouteExtensionMeta, PreparedRouteMeta } from '../types/types.js';
 import { HTTP_INTERCEPTORS } from '../top/constants.js';
 import { ControllerMeta } from '../types/controller-metadata.js';
-import { RouteScopedGuardedInterceptor } from '#interceptors/interceptor-with-guards-per-rou.js';
-import { RequestScopedGuardedInterceptor } from '#interceptors/interceptor-with-guards.js';
+import { RouteScopedGuardedInterceptor } from '#interceptors/route-scoped-guarded.interceptor.js';
+import { RequestScopedGuardedInterceptor } from '#interceptors/request-scoped-guarded.interceptor.js';
 import { RouteMeta } from '../types/route-data.js';
 import { ChainMaker } from '#interceptors/chain-maker.js';
-import { RequestScopedHttpBackend } from '#interceptors/default-http-backend.js';
-import { RouteScopedHttpBackendImpl } from '#interceptors/default-http-backend-per-rou.js';
-import { RouteScopedChainMaker } from '#interceptors/default-chain-maker-per-rou.js';
-import { RouteScopedHttpFrontend } from '#interceptors/default-http-frontend-per-rou.js';
-import { RequestScopedHttpFrontend } from '#interceptors/default-http-frontend.js';
+import { RequestScopedHttpBackend } from '#interceptors/request-scoped-http-backend.js';
+import { RouteScopedHttpBackendImpl } from '#interceptors/route-scoped-http-backend.js';
+import { RouteScopedChainMaker } from '#interceptors/route-scoped-chain-maker.js';
+import { RouteScopedHttpFrontend } from '#interceptors/route-scoped-http-frontend.js';
+import { RequestScopedHttpFrontend } from '#interceptors/request-scoped-http-frontend.js';
 import { HttpBackend, HttpFrontend } from '#interceptors/tokens-and-types.js';
 import { ModuleScopedGuard, NormalizedGuard } from '#interceptors/guard.js';
 import { RouteHandler, Router } from '#services/router.js';
@@ -54,7 +54,7 @@ export class DispatcherExtension implements Extension<void> {
     protected moduleManager: ModuleManager,
     protected log: SystemLogMediator,
     protected extensionContext: ExtensionContext,
-    protected requestDispatcher: RequestDispatcher
+    protected requestDispatcher: RequestDispatcher,
   ) {}
 
   async stage1() {
@@ -386,9 +386,7 @@ export class DispatcherExtension implements Extension<void> {
 
   protected checkPresenceOfRoutesInApplication(groupDataPerApp: AppExtensionGroupMeta<RouteExtensionMeta>[]) {
     return groupDataPerApp.reduce((prev1, curr1) => {
-      return (
-        prev1 || curr1.groupData.reduce((prev2, curr2) => prev2 || Boolean(curr2.controllersMeta.length), false)
-      );
+      return prev1 || curr1.groupData.reduce((prev2, curr2) => prev2 || Boolean(curr2.controllersMeta.length), false);
     }, false);
   }
 }

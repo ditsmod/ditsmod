@@ -1,7 +1,7 @@
 import { parse } from 'querystring';
 import { AnyObj, injectable, Context } from '@ditsmod/core';
 
-import { RouteScopedHttpFrontend } from './default-http-frontend-per-rou.js';
+import { RouteScopedHttpFrontend } from './route-scoped-http-frontend.js';
 import { RequestContext } from '#services/request-context.js';
 import { PATH_PARAMS, QUERY_PARAMS } from '../top/constants.js';
 

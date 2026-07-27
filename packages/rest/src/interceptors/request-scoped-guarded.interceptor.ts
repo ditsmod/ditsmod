@@ -9,7 +9,7 @@ import {
   SystemLogMediator,
 } from '@ditsmod/core';
 
-import { CanActivate } from '../interceptors/guard.js';
+import { CanActivate } from './guard.js';
 import { RouteMeta } from '../types/route-data.js';
 import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 import { applyResponse } from '#utils/apply-web-response.js';
