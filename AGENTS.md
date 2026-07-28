@@ -69,12 +69,3 @@ Run `yarn docs-en` to preview changes locally.
 ## User Interaction
 
 - If the user asks a question, do not modify any code immediately. It is sufficient to answer the question first. Only modify the code when the user explicitly instructs to do so.
-
-## Usability Feedback Loop
-
-### Confusing Behavior Tracking
-
-When agents receive a new task to modify code or write tests (especially E2E tests), they must actively track and note down any aspects of the framework that are confusing, unintuitive, or poorly documented.
-
-- **Post-Task Report**: Upon completing the task, agents must explicitly include a separate section in their final response detailing whether all framework behaviors were expected, and listing anything that was confusing.
-- **Exemption**: If no changes were made to the codebase, this report is not required.
