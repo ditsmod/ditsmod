@@ -35,7 +35,7 @@ export class FeatureModuleOptions<T extends AnyObj = AnyObj> {
    */
   declare imports?: (ModRefId | ForwardRefFn<StaticModule>)[];
   /**
-   * List of modules, {@link DynamicModule} or tokens of providers exported by this
+   * List of {@link StaticModule}, {@link DynamicModule} or tokens of providers exported by this
    * module.
    */
   declare exports?: any[];

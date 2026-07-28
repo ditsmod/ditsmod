@@ -17,8 +17,8 @@ import { initRest, restRootModule } from '#decorators/rest-init-hooks-and-metada
 let mock: MockModuleManager;
 
 class MockModuleManager extends ModuleManager {
-  override map = new Map<ModRefId, NormalizedModuleMeta>();
-  override mapId = new Map<string, ModRefId>();
+  declare map: Map<ModRefId, NormalizedModuleMeta>;
+  declare mapId: Map<string, ModRefId>;
 }
 
 beforeEach(() => {

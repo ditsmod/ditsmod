@@ -5,9 +5,9 @@ import { AnyObj } from '#types/mix.js';
 import { StaticModule, ModRefId } from '#decorators/module-decorator-options.js';
 import { DynamicModule } from '#decorators/module-decorator-options.js';
 import { NormalizedInitMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
+import { ModuleGraphState } from '#init/module-graph-state.js';
 import { isDynamicModule, isRootModule } from '#decorators/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
-import { objectKeys } from '#utils/object-keys.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
 import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
 import {
@@ -41,25 +41,88 @@ export type ModuleId = string | ModRefId;
  */
 @injectable()
 export class ModuleManager {
-  providersPerApp: Provider[] = [];
+  protected state = new ModuleGraphState();
+  protected oldState?: ModuleGraphState;
   protected injectorPerModMap = new Map<ModRefId, Injector>();
   protected map: ModulesMap = new Map();
-  protected snapshotMap: ModulesMap = new Map();
-  protected snapshotMapId = new Map<string, ModRefId>();
-  protected oldSnapshotMap: ModulesMap = new Map();
-  protected oldSnapshotMapId = new Map<string, ModRefId>();
   protected mapId = new Map<'root' | (string & {}), ModRefId>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected scannedModules = new Set<ModRefId>();
   protected moduleNormalizer = new ModuleNormalizer();
-  protected childrenMap = new Map<ModRefId, Set<ModRefId>>();
-  protected oldChildrenMap = new Map<ModRefId, Set<ModRefId>>();
   protected propsWithModules = [
     'importedStaticModules',
     'importedDynamicModules',
     'exportedStaticModules',
     'exportedDynamicModules',
   ] satisfies (keyof NormalizedInitMeta)[];
+
+  get providersPerApp(): Provider[] {
+    return this.state.providersPerApp;
+  }
+  set providersPerApp(val: Provider[]) {
+    this.state.providersPerApp = val;
+  }
+
+  protected get oldProvidersPerApp(): Provider[] {
+    return this.oldState?.providersPerApp ?? [];
+  }
+  protected set oldProvidersPerApp(val: Provider[]) {
+    if (!this.oldState) {
+      this.oldState = new ModuleGraphState();
+    }
+    this.oldState.providersPerApp = val;
+  }
+
+  protected get snapshotMap(): ModulesMap {
+    return this.state.snapshotMap;
+  }
+  protected set snapshotMap(val: ModulesMap) {
+    this.state.snapshotMap = val;
+  }
+
+  protected get snapshotMapId(): Map<string, ModRefId> {
+    return this.state.snapshotMapId;
+  }
+  protected set snapshotMapId(val: Map<string, ModRefId>) {
+    this.state.snapshotMapId = val;
+  }
+
+  protected get childrenMap(): Map<ModRefId, Set<ModRefId>> {
+    return this.state.childrenMap;
+  }
+  protected set childrenMap(val: Map<ModRefId, Set<ModRefId>>) {
+    this.state.childrenMap = val;
+  }
+
+  protected get oldSnapshotMap(): ModulesMap {
+    return this.oldState?.snapshotMap ?? new Map();
+  }
+  protected set oldSnapshotMap(val: ModulesMap) {
+    if (!this.oldState) {
+      this.oldState = new ModuleGraphState();
+    }
+    this.oldState.snapshotMap = val;
+  }
+
+  protected get oldSnapshotMapId(): Map<string, ModRefId> {
+    return this.oldState?.snapshotMapId ?? new Map();
+  }
+  protected set oldSnapshotMapId(val: Map<string, ModRefId>) {
+    if (!this.oldState) {
+      this.oldState = new ModuleGraphState();
+    }
+    this.oldState.snapshotMapId = val;
+  }
+
+  protected get oldChildrenMap(): Map<ModRefId, Set<ModRefId>> {
+    return this.oldState?.childrenMap ?? new Map();
+  }
+  protected set oldChildrenMap(val: Map<ModRefId, Set<ModRefId>>) {
+    if (!this.oldState) {
+      this.oldState = new ModuleGraphState();
+    }
+    this.oldState.childrenMap = val;
+  }
 
   constructor(protected systemLogMediator: SystemLogMediator) {}
 
@@ -272,11 +335,7 @@ export class ModuleManager {
         targetChildren.delete(inputNormalizedModuleMeta.modRefId);
       }
       if (!this.includesInSomeModule(inputModuleId, 'root')) {
-        if (inputNormalizedModuleMeta.id) {
-          this.snapshotMapId.delete(inputNormalizedModuleMeta.id);
-        }
-        this.snapshotMap.delete(inputNormalizedModuleMeta.modRefId);
-        this.childrenMap.delete(inputNormalizedModuleMeta.modRefId);
+        this.state.removeOrphanModule(inputNormalizedModuleMeta.modRefId, inputNormalizedModuleMeta.id);
       }
       this.systemLogMediator.moduleSuccessfulRemoved(this, inputNormalizedModuleMeta.name, targetMeta.name);
       return true;
@@ -286,41 +345,31 @@ export class ModuleManager {
   }
 
   /**
-   * Initiates an atomic transaction by saving backups of the current snapshot maps and dependency hierarchies.
+   * Initiates an atomic transaction by capturing an immutable backup of the current {@link ModuleGraphState}.
    * Returns `true` if a new transaction was started, or `false` if a transaction is already active.
    */
   startTransaction() {
-    if (this.oldSnapshotMapId.has('root')) {
+    if (this.oldState) {
       // Transaction already started.
       return false;
     }
 
-    this.snapshotMap.forEach((normalizedModuleMeta, key) =>
-      this.oldSnapshotMap.set(key, this.copyNormalizedModuleMeta(normalizedModuleMeta)),
-    );
-    this.oldSnapshotMapId = new Map(this.snapshotMapId);
-
-    this.oldChildrenMap = new Map();
-    this.childrenMap.forEach((val, key) => {
-      this.oldChildrenMap.set(key, new Set(val));
-    });
+    this.oldState = this.state.clone();
 
     return true;
   }
 
   /**
-   * Reverts all snapshot mappings and child relationships back to the state saved when {@link startTransaction} was called.
+   * Reverts all snapshot mappings and child relationships back to the backed-up {@link ModuleGraphState}.
    * Automatically commits (clears backup history) after restoring state.
    *
    * @throws ForbiddenRollback if invoked without an active transaction.
    */
   rollback(err?: Error) {
-    if (!this.oldSnapshotMapId.size) {
+    if (!this.oldState) {
       throw new ForbiddenRollback();
     }
-    this.snapshotMapId = this.oldSnapshotMapId;
-    this.snapshotMap = this.oldSnapshotMap;
-    this.childrenMap = this.oldChildrenMap;
+    this.state = this.oldState;
     this.commit();
     if (err) {
       throw err;
@@ -329,25 +378,23 @@ export class ModuleManager {
   }
 
   /**
-   * Successfully finishes the active transaction by clearing the backed-up historical snapshot maps.
+   * Successfully finishes the active transaction by clearing the backed-up {@link ModuleGraphState}.
    */
   commit() {
-    this.oldSnapshotMapId = new Map();
-    this.oldSnapshotMap = new Map();
-    this.oldChildrenMap = new Map();
+    this.oldState = undefined;
     return this;
   }
 
   /**
    * Resets any modifications made to {@link NormalizedModuleMeta} in the active workspace mapping (`this.map`)
-   * by restoring fresh deep clones from the immutable snapshot map (`this.snapshotMap`).
+   * by restoring fresh deep clones from the immutable snapshot map (`this.state.snapshotMap`).
    */
   reset() {
     this.map = new Map();
-    this.snapshotMap.forEach((normalizedModuleMeta, key) =>
+    this.state.snapshotMap.forEach((normalizedModuleMeta, key) =>
       this.map.set(key, this.copyNormalizedModuleMeta(normalizedModuleMeta)),
     );
-    this.mapId = new Map(this.snapshotMapId);
+    this.mapId = new Map(this.state.snapshotMapId);
     return this;
   }
 
@@ -457,49 +504,18 @@ export class ModuleManager {
   }
 
   /**
-   * Performs a deep clone of a {@link NormalizedModuleMeta} instance, duplicating arrays, maps, and extension metadata
-   * while re-evaluating init hooks to maintain isolated metadata structures across resets and transactions.
+   * Performs a deep clone of a {@link NormalizedModuleMeta} instance by delegating to its internal `clone()` method.
    */
   protected copyNormalizedModuleMeta(normalizedModuleMeta: NormalizedModuleMeta) {
-    const copy = Object.create(
-      Object.getPrototypeOf(normalizedModuleMeta || ({} as NormalizedModuleMeta)),
-    ) as NormalizedModuleMeta;
-    Object.assign(copy, normalizedModuleMeta);
+    return normalizedModuleMeta.clone();
+  }
 
-    objectKeys(copy).forEach((p) => {
-      if (Array.isArray(copy[p])) {
-        (copy as any)[p] = copy[p].slice();
-      }
-    });
-
-    if (copy.extensionsMeta) {
-      copy.extensionsMeta = { ...copy.extensionsMeta };
-    }
-    copy.initHooksMap = new Map(copy.initHooksMap);
-    copy.allInitHooks = new Map(copy.allInitHooks);
-    copy.extensionGroupTokenMap = new Map(copy.extensionGroupTokenMap);
-    copy.exportedExtensionGroupTokenMap = new Map(copy.exportedExtensionGroupTokenMap);
-    copy.initMeta = new Map();
-    copy.initHooksMap.forEach((initHooks, decorator) => {
-      const meta = initHooks.normalize(copy);
-      if (meta) {
-        copy.initMeta.set(decorator, meta);
-      }
-    });
-    copy.allInitHooks.forEach((initHooks, decorator) => {
-      if (!copy.initHooksMap.has(decorator)) {
-        const meta = initHooks.clone().normalize(copy);
-        if (meta) {
-          copy.initMeta.set(decorator, meta);
-        }
-      }
-    });
-
-    return copy;
+  protected rebuildProvidersPerAppFromSnapshot() {
+    this.state.rebuildProvidersPerApp();
   }
 
   /**
-   * Recursively searches for an input module across the dependency tree.
+   * Recursively searches for an input module across the dependency tree using the O(1) adjacency map (`childrenMap`).
    * Returns `true` if `inputModuleId` is included in the static or dynamic imports/exports of `targetModuleId` or its submodules.
    *
    * @param inputModuleId The target module reference or ID to find.
@@ -526,14 +542,26 @@ export class ModuleManager {
       visited.add(targetMeta.modRefId);
     }
 
-    const modRefIds = this.propsWithModules
-      .map((p) => targetMeta[p])
-      .reduce<ModRefId[]>((prev, curr) => prev.concat(curr), []);
+    const targetModRefId = targetMeta.modRefId;
+    const children = this.childrenMap.get(targetModRefId);
+    if (!children || children.size === 0) {
+      return false;
+    }
 
-    return (
-      modRefIds.some((modRefId) => inputModuleId === modRefId) ||
-      modRefIds.some((modRefId) => this.includesInSomeModule(inputModuleId, modRefId, visited))
-    );
+    const resolvedInputId =
+      typeof inputModuleId === 'string' ? this.snapshotMapId.get(inputModuleId) || inputModuleId : inputModuleId;
+
+    if (children.has(resolvedInputId as ModRefId)) {
+      return true;
+    }
+
+    for (const child of children) {
+      if (this.includesInSomeModule(resolvedInputId, child, visited)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**

@@ -8,6 +8,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleId, ModuleManager } from './module-manager.js';
 import { AllInitHooks, InitDecoratorOptions, InitDecorator, InitHooks } from '#decorators/init-hooks-and-metadata.js';
 import { NormalizedInitMeta, NormalizedModuleMeta, getProxyForInitMeta } from '#init/normalized-meta.js';
+import { ModuleGraphState } from '#init/module-graph-state.js';
 import { ModRefId } from '#decorators/module-decorator-options.js';
 import { DynamicModule } from '#decorators/module-decorator-options.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
@@ -38,10 +39,32 @@ describe('ModuleManager', () => {
     declare systemLogMediator: SystemLogMediator;
     declare map: Map<ModRefId, NormalizedModuleMeta>;
     declare mapId: Map<string, ModRefId>;
-    declare snapshotMap: Map<ModRefId, NormalizedModuleMeta>;
-    declare snapshotMapId: Map<string, ModRefId>;
-    declare oldSnapshotMap: Map<ModRefId, NormalizedModuleMeta>;
-    declare oldSnapshotMapId: Map<string, ModRefId>;
+    override get snapshotMap() {
+      return super.snapshotMap;
+    }
+    override set snapshotMap(val) {
+      super.snapshotMap = val;
+    }
+    override get snapshotMapId() {
+      return super.snapshotMapId;
+    }
+    override set snapshotMapId(val) {
+      super.snapshotMapId = val;
+    }
+    override get oldSnapshotMap() {
+      return super.oldSnapshotMap;
+    }
+    override set oldSnapshotMap(val) {
+      super.oldSnapshotMap = val;
+    }
+    override get oldSnapshotMapId() {
+      return super.oldSnapshotMapId;
+    }
+    override set oldSnapshotMapId(val) {
+      super.oldSnapshotMapId = val;
+    }
+    declare state: ModuleGraphState;
+    declare oldState: ModuleGraphState | undefined;
 
     override normalizeMeta(modRefId: ModRefId, allInitHooks: AllInitHooks): NormalizedModuleMeta {
       return super.normalizeMeta(modRefId, allInitHooks);
@@ -1094,6 +1117,125 @@ describe('ModuleManager', () => {
       expect(getParams(dynamicModule1)).toEqual([{ one: 'initSome1-1' }]);
       expect(getParams(dynamicModule2)).toEqual([{ three: 'initSome2-2' }]);
       expect(getParams(dynamicModule3)).toEqual([{ three: 'initSome2-3' }, { one: 'initSome1-3' }]);
+    });
+  });
+
+  describe('refactored cloning, rollback, and providersPerApp cleanup', () => {
+    it('should deeply clone NormalizedModuleMeta and isolate array/object mutations in extensionsMeta', () => {
+      const meta = new NormalizedModuleMeta();
+      meta.name = 'TestModule';
+      meta.providersPerMod = [Service1];
+      meta.extensionsMeta = {
+        group1: ['config1', 'config2'],
+        group2: { setting: true },
+      };
+
+      const clone = meta.clone();
+      expect(clone).not.toBe(meta);
+      expect(clone.providersPerMod).toEqual([Service1]);
+      expect(clone.providersPerMod).not.toBe(meta.providersPerMod);
+
+      // Mutate clone
+      clone.providersPerMod.push(Service2);
+      (clone.extensionsMeta as any).group1.push('config3');
+      (clone.extensionsMeta as any).group2.setting = false;
+
+      // Verify original untouched
+      expect(meta.providersPerMod).toEqual([Service1]);
+      expect((meta.extensionsMeta as any).group1).toEqual(['config1', 'config2']);
+      expect((meta.extensionsMeta as any).group2.setting).toBe(true);
+    });
+
+    it('should correctly restore providersPerApp during startTransaction and rollback', () => {
+      @featureModule({ providersPerApp: [{ token: 'tokenA', useValue: 'valueA' }] })
+      class ModuleA {}
+
+      @rootModule()
+      class AppModule {}
+
+      mock.scanRootModule(AppModule);
+      expect(mock.providersPerApp).toEqual([]);
+
+      mock.addImport(ModuleA);
+      mock.commit();
+      expect(mock.providersPerApp).toEqual([{ token: 'tokenA', useValue: 'valueA' }]);
+
+      // Start manual transaction and push temporary providersPerApp
+      mock.startTransaction();
+      mock.providersPerApp.push({ token: 'tokenB', useValue: 'valueB' });
+      expect(mock.providersPerApp.length).toBe(2);
+
+      // Rollback should restore oldProvidersPerApp
+      mock.rollback();
+      expect(mock.providersPerApp).toEqual([{ token: 'tokenA', useValue: 'valueA' }]);
+    });
+
+    it('should remove orphaned providersPerApp when a module is removed via removeImport', () => {
+      @featureModule({ providersPerApp: [{ token: 'globalToken1', useValue: 'val1' }] })
+      class RemovableModule {}
+
+      @rootModule({
+        imports: [RemovableModule],
+      })
+      class AppModule {}
+
+      mock.scanRootModule(AppModule);
+      expect(mock.providersPerApp).toEqual([{ token: 'globalToken1', useValue: 'val1' }]);
+
+      // Remove RemovableModule from AppModule
+      expect(mock.removeImport(RemovableModule, AppModule)).toBe(true);
+      expect(mock.providersPerApp).toEqual([]);
+    });
+  });
+
+  describe('ModuleGraphState (Memento pattern) integration', () => {
+    it('should clone state and preserve independent snapshots during transactions', () => {
+      @featureModule({ providersPerApp: [{ token: 'stateToken', useValue: 'stateVal' }] })
+      class StateModule {}
+
+      @rootModule({
+        imports: [StateModule],
+      })
+      class AppModule {}
+
+      mock.scanRootModule(AppModule);
+      expect(mock.state).toBeInstanceOf(ModuleGraphState);
+      expect(mock.oldState).toBeUndefined();
+
+      // Start transaction
+      expect(mock.startTransaction()).toBe(true);
+      expect(mock.oldState).toBeInstanceOf(ModuleGraphState);
+      expect(mock.oldState).not.toBe(mock.state);
+
+      // Verify deep copying of NormalizedModuleMeta
+      const activeMeta = mock.state.snapshotMap.get(StateModule);
+      const backupMeta = mock.oldState?.snapshotMap.get(StateModule);
+      expect(backupMeta).toEqual(activeMeta);
+      expect(backupMeta).not.toBe(activeMeta);
+
+      // Rollback restores exact previous oldState reference
+      const savedOldState = mock.oldState;
+      mock.rollback();
+      expect(mock.state).toBe(savedOldState!);
+      expect(mock.oldState).toBeUndefined();
+    });
+
+    it('should return false when starting a transaction while one is already active and preserve original backup', () => {
+      @featureModule({ providersPerApp: [{ token: 'stateToken2', useValue: 'stateVal2' }] })
+      class StateModule {}
+
+      @rootModule({ imports: [StateModule] })
+      class AppModule {}
+
+      mock.scanRootModule(AppModule);
+      expect(mock.startTransaction()).toBe(true);
+      const originalBackup = mock.oldState;
+      expect(mock.startTransaction()).toBe(false);
+      expect(mock.oldState).toBe(originalBackup);
+    });
+
+    it('should throw ForbiddenRollback when rollback is invoked without startTransaction', () => {
+      expect(() => mock.rollback()).toThrow(new ForbiddenRollback());
     });
   });
 });

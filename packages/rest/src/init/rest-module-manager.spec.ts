@@ -36,12 +36,32 @@ describe('ModuleManager', () => {
   type ModuleId = string | ModRefId;
 
   class MockModuleManager extends ModuleManager {
-    override map = new Map<ModRefId, NormalizedModuleMeta>();
-    override mapId = new Map<string, ModRefId>();
-    override snapshotMap = new Map<ModRefId, NormalizedModuleMeta>();
-    override snapshotMapId = new Map<string, ModRefId>();
-    override oldSnapshotMap = new Map<ModRefId, NormalizedModuleMeta>();
-    override oldSnapshotMapId = new Map<string, ModRefId>();
+    declare map: Map<ModRefId, NormalizedModuleMeta>;
+    declare mapId: Map<string, ModRefId>;
+    override get snapshotMap() {
+      return super.snapshotMap;
+    }
+    override set snapshotMap(val) {
+      super.snapshotMap = val;
+    }
+    override get snapshotMapId() {
+      return super.snapshotMapId;
+    }
+    override set snapshotMapId(val) {
+      super.snapshotMapId = val;
+    }
+    override get oldSnapshotMap() {
+      return super.oldSnapshotMap;
+    }
+    override set oldSnapshotMap(val) {
+      super.oldSnapshotMap = val;
+    }
+    override get oldSnapshotMapId() {
+      return super.oldSnapshotMapId;
+    }
+    override set oldSnapshotMapId(val) {
+      super.oldSnapshotMapId = val;
+    }
   }
 
   let mock: MockModuleManager;
@@ -54,6 +74,7 @@ describe('ModuleManager', () => {
   beforeEach(() => {
     clearDebugClassNames();
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
+    jest.spyOn(systemLogMediator, 'externalModuleDetectionFailed').mockImplementation(() => {});
     mock = new MockModuleManager(systemLogMediator);
   });
 

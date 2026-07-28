@@ -1,0 +1,55 @@
+import { NormalizedModuleMeta } from '#init/normalized-meta.js';
+import { injectable } from '#di/decorators.js';
+import { GroupToken } from '#di/key-registry.js';
+import type { Extension } from '#extension/extension-types.js';
+
+describe('NormalizedModuleMeta', () => {
+  @injectable()
+  class Provider1 {}
+
+  @injectable()
+  class Provider2 {}
+
+  class DummyExtension implements Extension<void> {
+    async stage1() {}
+  }
+
+  it('should deep clone arrays, extensionsMeta, and maps without mutating original on modification', () => {
+    const original = new NormalizedModuleMeta();
+    original.name = 'TestModule';
+    original.providersPerMod = [Provider1];
+    original.extensionsMeta = {
+      group1: [Provider1],
+      config1: { key: 'value1' },
+    };
+    const groupToken = new GroupToken('group1');
+    original.extensionGroupTokenMap.set(DummyExtension, groupToken);
+
+    const copy = original.clone();
+    expect(copy).not.toBe(original);
+    expect(copy.name).toBe('TestModule');
+    expect(copy.providersPerMod).toEqual([Provider1]);
+    expect(copy.providersPerMod).not.toBe(original.providersPerMod);
+    expect(copy.extensionGroupTokenMap.get(DummyExtension)).toBe(groupToken);
+
+    // Modify array in copy
+    copy.providersPerMod.push(Provider2);
+    expect(original.providersPerMod).toEqual([Provider1]);
+    expect(copy.providersPerMod).toEqual([Provider1, Provider2]);
+
+    // Modify extensionsMeta in copy
+    if (copy.extensionsMeta) {
+      (copy.extensionsMeta.group1 as unknown[]).push(Provider2);
+      (copy.extensionsMeta.config1 as any).key = 'modified';
+    }
+
+    expect(original.extensionsMeta).toEqual({
+      group1: [Provider1],
+      config1: { key: 'value1' },
+    });
+    expect(copy.extensionsMeta).toEqual({
+      group1: [Provider1, Provider2],
+      config1: { key: 'modified' },
+    });
+  });
+});

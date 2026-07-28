@@ -7,6 +7,7 @@ import type { InitMetaMap, InitHooks, AllInitHooks } from '#decorators/init-hook
 import type { ExtensionClass } from '#extension/extension-types.js';
 import type { GroupToken } from '#di/key-registry.js';
 import type { MultiProvider } from '#di/utils.js';
+import { objectKeys } from '#utils/object-keys.js';
 
 export class NormalizedInitMeta<A extends AnyObj = AnyObj> {
   /**
@@ -221,5 +222,55 @@ export class NormalizedModuleMeta<
     this.extensionConfigs = [];
     this.exportedExtensionConfigs = [];
     this.extensionsMeta = {} as ExtensionMeta;
+  }
+
+  /**
+   * Creates a deep clone of the current normalized metadata instance, duplicating arrays, maps, and extension
+   * configurations while re-evaluating initialization hooks to ensure complete metadata isolation.
+   */
+  clone(): this {
+    const copy = Object.create(Object.getPrototypeOf(this)) as this;
+    Object.assign(copy, this);
+
+    objectKeys(copy).forEach((p) => {
+      if (Array.isArray(copy[p])) {
+        (copy as any)[p] = copy[p].slice();
+      }
+    });
+
+    if (copy.extensionsMeta) {
+      const extensionsMeta = { ...copy.extensionsMeta } as any;
+      Reflect.ownKeys(extensionsMeta).forEach((key) => {
+        const val = extensionsMeta[key];
+        if (Array.isArray(val)) {
+          extensionsMeta[key] = val.slice();
+        } else if (val && typeof val == 'object' && val.constructor === Object) {
+          extensionsMeta[key] = { ...val };
+        }
+      });
+      copy.extensionsMeta = extensionsMeta;
+    }
+
+    copy.initHooksMap = new Map(copy.initHooksMap);
+    copy.allInitHooks = new Map(copy.allInitHooks);
+    copy.extensionGroupTokenMap = new Map(copy.extensionGroupTokenMap);
+    copy.exportedExtensionGroupTokenMap = new Map(copy.exportedExtensionGroupTokenMap);
+    copy.initMeta = new Map();
+    copy.initHooksMap.forEach((initHooks, decorator) => {
+      const meta = initHooks.normalize(copy);
+      if (meta) {
+        copy.initMeta.set(decorator, meta);
+      }
+    });
+    copy.allInitHooks.forEach((initHooks, decorator) => {
+      if (!copy.initHooksMap.has(decorator)) {
+        const meta = initHooks.clone().normalize(copy);
+        if (meta) {
+          copy.initMeta.set(decorator, meta);
+        }
+      }
+    });
+
+    return copy;
   }
 }
