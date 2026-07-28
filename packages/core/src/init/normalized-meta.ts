@@ -13,33 +13,93 @@ export class NormalizedInitMeta<A extends AnyObj = AnyObj> {
    * The module ID.
    */
   id?: string = '';
+  /**
+   * Static modules imported by this module.
+   */
   importsModules: StaticModule[];
   /**
-   * Import dynamic modules.
+   * Dynamic modules (modules with options) imported by this module.
    */
   importsWithOpts: DynamicModule[];
+  /**
+   * Providers configured at the application scope (`providersPerApp`).
+   */
   providersPerApp: Provider[];
+  /**
+   * Providers configured at the module scope (`providersPerMod`).
+   */
   providersPerMod: Provider[];
+  /**
+   * Providers configured at the route scope (`providersPerRou`).
+   */
   providersPerRou: Provider[];
+  /**
+   * Providers configured at the request scope (`providersPerReq`).
+   */
   providersPerReq: Provider[];
+  /**
+   * Static modules exported by this module.
+   */
   exportsModules: StaticModule[];
   /**
-   * Export dynamic modules.
+   * Dynamic modules (modules with options) exported by this module.
    */
   exportsWithOpts: DynamicModule[];
+  /**
+   * Module-scoped providers exported by this module.
+   */
   exportedProvidersPerMod: Provider[];
+  /**
+   * Route-scoped providers exported by this module.
+   */
   exportedProvidersPerRou: Provider[];
+  /**
+   * Request-scoped providers exported by this module.
+   */
   exportedProvidersPerReq: Provider[];
+  /**
+   * Module-scoped multi-providers exported by this module.
+   */
   exportedMultiProvidersPerMod: MultiProvider[];
+  /**
+   * Route-scoped multi-providers exported by this module.
+   */
   exportedMultiProvidersPerRou: MultiProvider[];
+  /**
+   * Request-scoped multi-providers exported by this module.
+   */
   exportedMultiProvidersPerReq: MultiProvider[];
+  /**
+   * Resolved provider collisions at the application scope.
+   */
   resolvedCollisionsPerApp: [any, ModRefId][];
+  /**
+   * Resolved provider collisions at the module scope.
+   */
   resolvedCollisionsPerMod: [any, ModRefId][];
+  /**
+   * Resolved provider collisions at the route scope.
+   */
   resolvedCollisionsPerRou: [any, ModRefId][];
+  /**
+   * Resolved provider collisions at the request scope.
+   */
   resolvedCollisionsPerReq: [any, ModRefId][];
+  /**
+   * Extension providers registered in this module.
+   */
   extensionProviders: Provider[];
+  /**
+   * Extension providers exported by this module.
+   */
   exportedExtensionProviders: Provider[];
+  /**
+   * Configurations for extensions registered in this module.
+   */
   extensionConfigs: ExtensionConfig[];
+  /**
+   * Configurations for extensions exported by this module.
+   */
   exportedExtensionConfigs: ExtensionConfig[];
   /**
    * This property allows you to pass any information to extensions.
@@ -93,7 +153,7 @@ export class NormalizedModuleMeta<
    */
   moduleOptions: AnyObj;
   /**
-   * The module setted here must be identical to the module
+   * The module set here must be identical to the module
    * passed to "imports", "exports" array of `@featureModule` metadata.
    */
   modRefId: ModRefId<TypeOfModule>;
@@ -131,7 +191,7 @@ export class NormalizedModuleMeta<
    */
   extensionGroupTokenMap = new Map<ExtensionClass, GroupToken>();
   /**
-   * The mapping between an extension specified in {@link BaseExtensionConfig.groups | ExtensionConfig.groups}
+   * The mapping between an exported extension specified in {@link BaseExtensionConfig.groups | ExtensionConfig.groups}
    * and the extension group token assigned to it.
    */
   exportedExtensionGroupTokenMap = new Map<ExtensionClass, GroupToken>();
