@@ -54,10 +54,10 @@ export class ModuleManager {
   protected childrenMap = new Map<ModRefId, Set<ModRefId>>();
   protected oldChildrenMap = new Map<ModRefId, Set<ModRefId>>();
   protected propsWithModules = [
-    'importsModules',
-    'importsWithOpts',
-    'exportsModules',
-    'exportsWithOpts',
+    'importedStaticModules',
+    'importedDynamicModules',
+    'exportedStaticModules',
+    'exportedDynamicModules',
   ] satisfies (keyof NormalizedInitMeta)[];
 
   constructor(protected systemLogMediator: SystemLogMediator) {}
@@ -188,7 +188,7 @@ export class ModuleManager {
       throw new ImportAdditionFailure(modName, modIdStr);
     }
 
-    const prop = isDynamicModule(inputModule) ? 'importsWithOpts' : 'importsModules';
+    const prop = isDynamicModule(inputModule) ? 'importedDynamicModules' : 'importedStaticModules';
     if (targetNormalizedModuleMeta[prop].some((imp: ModRefId) => imp === inputModule)) {
       const modIdStr = format(targetModuleId).slice(0, 50);
       this.systemLogMediator.moduleAlreadyImported(this, inputModule, modIdStr);
@@ -229,7 +229,9 @@ export class ModuleManager {
       const modIdStr = format(targetModuleId).slice(0, 50);
       throw new ImportRemovalFailure(inputNormalizedModuleMeta.name, modIdStr);
     }
-    const prop = isDynamicModule(inputNormalizedModuleMeta.modRefId) ? 'importsWithOpts' : 'importsModules';
+    const prop = isDynamicModule(inputNormalizedModuleMeta.modRefId)
+      ? 'importedDynamicModules'
+      : 'importedStaticModules';
     const index = targetMeta[prop].findIndex((imp: ModRefId) => imp === inputNormalizedModuleMeta.modRefId);
     if (index == -1) {
       const modIdStr = format(inputModuleId).slice(0, 50);

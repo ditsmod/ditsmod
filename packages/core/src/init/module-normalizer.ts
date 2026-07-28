@@ -204,16 +204,16 @@ export class ModuleNormalizer {
       }
       if (isDynamicModule(exp)) {
         // @todo Review this condition later
-        if (!this.normalizedModuleMeta.exportsWithOpts.includes(exp)) {
-          this.normalizedModuleMeta.exportsWithOpts.push(exp);
+        if (!this.normalizedModuleMeta.exportedDynamicModules.includes(exp)) {
+          this.normalizedModuleMeta.exportedDynamicModules.push(exp);
         }
       } else if (isProvider(exp) || declaredTokens.includes(exp)) {
         // Provider or token of provider
         this.exportProviders(exp);
       } else if (this.getDecoratorMeta(exp)) {
         // @todo Review this condition later
-        if (!this.normalizedModuleMeta.exportsModules.includes(exp)) {
-          this.normalizedModuleMeta.exportsModules.push(exp);
+        if (!this.normalizedModuleMeta.exportedStaticModules.includes(exp)) {
+          this.normalizedModuleMeta.exportedStaticModules.push(exp);
         }
       } else {
         throw new UnknownExport(this.normalizedModuleMeta.name, stringify(exp));
@@ -272,9 +272,9 @@ export class ModuleNormalizer {
         throw new UndefinedSymbol('Imports', this.normalizedModuleMeta.name, i);
       }
       if (isDynamicModule(imp)) {
-        this.normalizedModuleMeta.importsWithOpts.push(imp);
+        this.normalizedModuleMeta.importedDynamicModules.push(imp);
       } else {
-        this.normalizedModuleMeta.importsModules.push(imp);
+        this.normalizedModuleMeta.importedStaticModules.push(imp);
       }
     });
   }
@@ -357,8 +357,14 @@ export class ModuleNormalizer {
   }
 
   protected checkReexportModules() {
-    const imports = [...this.normalizedModuleMeta.importsModules, ...this.normalizedModuleMeta.importsWithOpts];
-    const exports = [...this.normalizedModuleMeta.exportsModules, ...this.normalizedModuleMeta.exportsWithOpts];
+    const imports = [
+      ...this.normalizedModuleMeta.importedStaticModules,
+      ...this.normalizedModuleMeta.importedDynamicModules,
+    ];
+    const exports = [
+      ...this.normalizedModuleMeta.exportedStaticModules,
+      ...this.normalizedModuleMeta.exportedDynamicModules,
+    ];
 
     exports.forEach((modRefId) => {
       if (!imports.includes(modRefId)) {
@@ -381,7 +387,7 @@ export class ModuleNormalizer {
   }
 
   /**
-   * Ensures the host module (if any) is added to `importsModules` for the current module,
+   * Ensures the host module (if any) is added to `importedStaticModules` for the current module,
    * unless the current module itself is the host module.
    */
   protected ensureHostModuleImported(initHooks: InitHooks): void {
@@ -389,9 +395,9 @@ export class ModuleNormalizer {
     if (
       hostModule &&
       hostModule !== this.normalizedModuleMeta.modRefId &&
-      !this.normalizedModuleMeta.importsModules.includes(hostModule)
+      !this.normalizedModuleMeta.importedStaticModules.includes(hostModule)
     ) {
-      this.normalizedModuleMeta.importsModules.push(hostModule);
+      this.normalizedModuleMeta.importedStaticModules.push(hostModule);
     }
   }
 
@@ -489,8 +495,8 @@ export class AppModule {}
           delete params.dynamicModule;
           this.mergeInitDynamicOptions(decorator, params, imp.dynamicModule);
         } else {
-          if (!this.normalizedModuleMeta.importsModules.includes(imp)) {
-            this.normalizedModuleMeta.importsModules.push(imp);
+          if (!this.normalizedModuleMeta.importedStaticModules.includes(imp)) {
+            this.normalizedModuleMeta.importedStaticModules.push(imp);
           }
         }
       });
@@ -507,8 +513,8 @@ export class AppModule {}
     } else {
       dynamicModule.initOpts.set(decorator, params);
     }
-    if (!this.normalizedModuleMeta.importsWithOpts.includes(dynamicModule)) {
-      this.normalizedModuleMeta.importsWithOpts.push(dynamicModule);
+    if (!this.normalizedModuleMeta.importedDynamicModules.includes(dynamicModule)) {
+      this.normalizedModuleMeta.importedDynamicModules.push(dynamicModule);
     }
   }
 
@@ -535,16 +541,16 @@ export class AppModule {}
     if (initDecoratorOptions.exports) {
       this.resolveAllForwardRefs(initDecoratorOptions.exports).forEach((exp) => {
         if (isDynamicModule(exp)) {
-          if (!this.normalizedModuleMeta.exportsWithOpts.includes(exp)) {
-            this.normalizedModuleMeta.exportsWithOpts.push(exp);
+          if (!this.normalizedModuleMeta.exportedDynamicModules.includes(exp)) {
+            this.normalizedModuleMeta.exportedDynamicModules.push(exp);
           }
         } else if (isDynamicModuleWrapper(exp)) {
-          if (!this.normalizedModuleMeta.exportsWithOpts.includes(exp.dynamicModule)) {
-            this.normalizedModuleMeta.exportsWithOpts.push(exp.dynamicModule);
+          if (!this.normalizedModuleMeta.exportedDynamicModules.includes(exp.dynamicModule)) {
+            this.normalizedModuleMeta.exportedDynamicModules.push(exp.dynamicModule);
           }
         } else if (Reflector.getClassLevelMeta(exp, isFeatureModule)) {
-          if (!this.normalizedModuleMeta.exportsModules.includes(exp)) {
-            this.normalizedModuleMeta.exportsModules.push(exp);
+          if (!this.normalizedModuleMeta.exportedStaticModules.includes(exp)) {
+            this.normalizedModuleMeta.exportedStaticModules.push(exp);
           }
         }
       });
@@ -584,9 +590,9 @@ export class AppModule {}
       !normalizedModuleMeta.initHooksMap.size &&
       !normalizedModuleMeta.exportedProvidersPerMod.length &&
       !normalizedModuleMeta.exportedMultiProvidersPerMod.length &&
-      !normalizedModuleMeta.exportsModules.length &&
+      !normalizedModuleMeta.exportedStaticModules.length &&
       !normalizedModuleMeta.providersPerApp.length &&
-      !normalizedModuleMeta.exportsWithOpts.length &&
+      !normalizedModuleMeta.exportedDynamicModules.length &&
       !normalizedModuleMeta.exportedExtensionProviders.length &&
       !normalizedModuleMeta.extensionProviders.length
     ) {

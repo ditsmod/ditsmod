@@ -196,8 +196,8 @@ export class ShallowModulesImporter {
   }
 
   protected importModules() {
-    const modRefIdss = this.normalizedModuleMeta.importsModules.concat(
-      this.normalizedModuleMeta.importsWithOpts as any[],
+    const modRefIdss = this.normalizedModuleMeta.importedStaticModules.concat(
+      this.normalizedModuleMeta.importedDynamicModules as any[],
     ) as ModRefId[];
     for (const modRefId of modRefIdss) {
       const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
@@ -229,9 +229,9 @@ export class ShallowModulesImporter {
    * @param normalizedModuleMeta1 Module metadata from where imports providers.
    */
   protected importProvidersAndExtensions(normalizedModuleMeta1: NormalizedModuleMeta, reexporter?: ModRefId) {
-    const { modRefId, exportsModules, exportsWithOpts } = normalizedModuleMeta1;
+    const { modRefId, exportedStaticModules, exportedDynamicModules } = normalizedModuleMeta1;
 
-    for (const modRefId2 of [...exportsModules, ...exportsWithOpts]) {
+    for (const modRefId2 of [...exportedStaticModules, ...exportedDynamicModules]) {
       if (this.unfinishedExportModules.has(modRefId2)) {
         continue;
       }

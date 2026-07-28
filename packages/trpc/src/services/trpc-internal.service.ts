@@ -42,8 +42,8 @@ export class TrpcInternalService {
 
   protected getRouters() {
     const rootNormalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta('root', true);
-    const modulesWithTrpcRoutes = (rootNormalizedModuleMeta.importsModules as ModRefId[]).concat(
-      rootNormalizedModuleMeta.importsWithOpts,
+    const modulesWithTrpcRoutes = (rootNormalizedModuleMeta.importedStaticModules as ModRefId[]).concat(
+      rootNormalizedModuleMeta.importedDynamicModules,
     );
     return modulesWithTrpcRoutes.filter(isModuleWithTrpcRoutes).map((modRefId) => {
       return this.t.router(this.getModuleTrpcConfigs(modRefId));
@@ -53,8 +53,8 @@ export class TrpcInternalService {
   protected getModuleTrpcConfigs(modRefId: ModRefId<ModuleWithTrpcRoutes>) {
     const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
     const importedModulesWithTrpcRoutes = new Map<AnyFn, ModRefId<ModuleWithTrpcRoutes>>();
-    (normalizedModuleMeta.importsModules as ModRefId[])
-      .concat(normalizedModuleMeta.importsWithOpts)
+    (normalizedModuleMeta.importedStaticModules as ModRefId[])
+      .concat(normalizedModuleMeta.importedDynamicModules)
       .forEach((imp) => {
         if (isModuleWithTrpcRoutes(imp)) {
           // Method as key in the map

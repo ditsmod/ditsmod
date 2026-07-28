@@ -16,11 +16,11 @@ export class NormalizedInitMeta<A extends AnyObj = AnyObj> {
   /**
    * Static modules imported by this module.
    */
-  importsModules: StaticModule[];
+  importedStaticModules: StaticModule[];
   /**
    * Dynamic modules (modules with options) imported by this module.
    */
-  importsWithOpts: DynamicModule[];
+  importedDynamicModules: DynamicModule[];
   /**
    * Providers configured at the application scope (`providersPerApp`).
    */
@@ -40,11 +40,11 @@ export class NormalizedInitMeta<A extends AnyObj = AnyObj> {
   /**
    * Static modules exported by this module.
    */
-  exportsModules: StaticModule[];
+  exportedStaticModules: StaticModule[];
   /**
    * Dynamic modules (modules with options) exported by this module.
    */
-  exportsWithOpts: DynamicModule[];
+  exportedDynamicModules: DynamicModule[];
   /**
    * Module-scoped providers exported by this module.
    */
@@ -198,14 +198,14 @@ export class NormalizedModuleMeta<
 
   constructor() {
     super();
-    this.importsModules = [];
-    this.importsWithOpts = [];
+    this.importedStaticModules = [];
+    this.importedDynamicModules = [];
     this.providersPerApp = [];
     this.providersPerMod = [];
     this.providersPerRou = [];
     this.providersPerReq = [];
-    this.exportsModules = [];
-    this.exportsWithOpts = [];
+    this.exportedStaticModules = [];
+    this.exportedDynamicModules = [];
     this.exportedProvidersPerMod = [];
     this.exportedProvidersPerRou = [];
     this.exportedProvidersPerReq = [];

@@ -125,9 +125,9 @@ export class RestModuleNormalizer {
       !isRootModule(this.normalizedModuleMeta) &&
       !meta.exportedProvidersPerMod.length &&
       !meta.exportedMultiProvidersPerMod.length &&
-      !meta.exportsModules.length &&
+      !meta.exportedStaticModules.length &&
       !meta.providersPerApp.length &&
-      !meta.exportsWithOpts.length &&
+      !meta.exportedDynamicModules.length &&
       !meta.exportedExtensionProviders.length &&
       !meta.extensionProviders.length &&
       !meta.exportedProvidersPerReq.length &&

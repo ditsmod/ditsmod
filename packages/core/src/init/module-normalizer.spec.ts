@@ -98,9 +98,9 @@ describe('ModuleNormalizer', () => {
 
       const normalizedModuleMeta = normalizer.normalize(AppModule);
       expect(normalizedModuleMeta.declaredInDir).toEqual(expect.any(String));
-      expect(normalizedModuleMeta.importsModules).toEqual([ImportedModule]);
-      expect(normalizedModuleMeta.importsWithOpts).toEqual([dynamicModule]);
-      expect(normalizedModuleMeta.exportsModules).toEqual([ImportedModule]);
+      expect(normalizedModuleMeta.importedStaticModules).toEqual([ImportedModule]);
+      expect(normalizedModuleMeta.importedDynamicModules).toEqual([dynamicModule]);
+      expect(normalizedModuleMeta.exportedStaticModules).toEqual([ImportedModule]);
       expect(normalizedModuleMeta.providersPerApp).toEqual([AppService]);
       expect(normalizedModuleMeta.providersPerMod).toEqual([ModService, multiProvider]);
       expect(normalizedModuleMeta.providersPerRou).toEqual([RouService]);
@@ -211,8 +211,8 @@ describe('ModuleNormalizer', () => {
       class Module1 {}
 
       const normalizedModuleMeta = normalizer.normalize(Module1);
-      expect(normalizedModuleMeta.importsModules).toEqual([ImportedModule]);
-      expect(normalizedModuleMeta.exportsModules).toEqual([ImportedModule]);
+      expect(normalizedModuleMeta.importedStaticModules).toEqual([ImportedModule]);
+      expect(normalizedModuleMeta.exportedStaticModules).toEqual([ImportedModule]);
     });
 
     it('throws UnknownExport when re-export target has no module decorator metadata', () => {
@@ -274,8 +274,8 @@ describe('ModuleNormalizer', () => {
       class Module1 {}
 
       const normalizedModuleMeta = normalizer.normalize({ module: Module1, exports: [dynamicModule] });
-      expect(normalizedModuleMeta.importsWithOpts).toEqual([dynamicModule]);
-      expect(normalizedModuleMeta.exportsWithOpts).toEqual([dynamicModule]);
+      expect(normalizedModuleMeta.importedDynamicModules).toEqual([dynamicModule]);
+      expect(normalizedModuleMeta.exportedDynamicModules).toEqual([dynamicModule]);
       expect(normalizedModuleMeta.providersPerMod).toEqual([Service2]);
     });
   });
@@ -401,10 +401,10 @@ describe('ModuleNormalizer', () => {
       class AppModule {}
 
       const normalizedModuleMeta = normalizer.normalize(AppModule);
-      expect(normalizedModuleMeta.importsModules).toEqual([ImportedModule]);
-      expect(normalizedModuleMeta.importsWithOpts).toEqual([{ module: DynamicImportedModule }]);
-      expect(normalizedModuleMeta.exportsModules).toEqual([ImportedModule]);
-      expect(normalizedModuleMeta.exportsWithOpts).toEqual([{ module: DynamicImportedModule }]);
+      expect(normalizedModuleMeta.importedStaticModules).toEqual([ImportedModule]);
+      expect(normalizedModuleMeta.importedDynamicModules).toEqual([{ module: DynamicImportedModule }]);
+      expect(normalizedModuleMeta.exportedStaticModules).toEqual([ImportedModule]);
+      expect(normalizedModuleMeta.exportedDynamicModules).toEqual([{ module: DynamicImportedModule }]);
       expect(normalizedModuleMeta.providersPerApp).toEqual([
         AppService,
         { token: AppMultiService, useClass: AppMultiService, multi: true },
@@ -677,14 +677,14 @@ describe('ModuleNormalizer', () => {
       class AppModule {}
 
       const normalizedModuleMeta = normalizer.normalize(AppModule);
-      expect(normalizedModuleMeta.importsModules).toEqual([Module1]);
-      expect(normalizedModuleMeta.exportsModules).toEqual([Module1]);
-      expect(normalizedModuleMeta.importsWithOpts).toEqual<DynamicModule[]>([
+      expect(normalizedModuleMeta.importedStaticModules).toEqual([Module1]);
+      expect(normalizedModuleMeta.exportedStaticModules).toEqual([Module1]);
+      expect(normalizedModuleMeta.importedDynamicModules).toEqual<DynamicModule[]>([
         dynamicModule2,
         { module: Module3, initOpts: expect.any(Map) },
         dynamicModule4,
       ]);
-      expect(normalizedModuleMeta.exportsWithOpts).toEqual([dynamicModule2, dynamicModule4]);
+      expect(normalizedModuleMeta.exportedDynamicModules).toEqual([dynamicModule2, dynamicModule4]);
     });
 
     it('resolves forwardRef in init decorator imports and exports', () => {
@@ -717,14 +717,14 @@ describe('ModuleNormalizer', () => {
       class AppModule {}
 
       const normalizedModuleMeta = normalizer.normalize(AppModule);
-      expect(normalizedModuleMeta.importsModules).toEqual([Module1]);
-      expect(normalizedModuleMeta.importsWithOpts).toEqual<DynamicModule[]>([
+      expect(normalizedModuleMeta.importedStaticModules).toEqual([Module1]);
+      expect(normalizedModuleMeta.importedDynamicModules).toEqual<DynamicModule[]>([
         dynamicModule2,
         { module: Module3, initOpts: expect.any(Map) },
         dynamicModule4,
       ]);
-      expect(normalizedModuleMeta.exportsModules).toEqual([Module1]);
-      expect(normalizedModuleMeta.exportsWithOpts).toEqual([dynamicModule2, dynamicModule4]);
+      expect(normalizedModuleMeta.exportedStaticModules).toEqual([Module1]);
+      expect(normalizedModuleMeta.exportedDynamicModules).toEqual([dynamicModule2, dynamicModule4]);
       expect(dynamicModule2.module).toBe(Module2);
       expect(dynamicModule4.module).toBe(Module4);
     });
@@ -755,7 +755,7 @@ describe('ModuleNormalizer', () => {
       expect(normalizedModuleMeta.initMeta.get(hostInitSome)).toEqual({ flag: true, targetModRefId: HostModule });
     });
 
-    it('does not add host module to importsModules when the current module is the host module itself', () => {
+    it('does not add host module to importedStaticModules when the current module is the host module itself', () => {
       @featureModule()
       class HostModule {}
 
@@ -778,7 +778,7 @@ describe('ModuleNormalizer', () => {
 
       const normalizedModuleMeta = normalizer.normalize(HostModule, allInitHooks);
       expect(normalizedModuleMeta.initHooksMap.has(hostInitSome)).toBe(true);
-      expect(normalizedModuleMeta.importsModules).not.toContain(HostModule);
+      expect(normalizedModuleMeta.importedStaticModules).not.toContain(HostModule);
     });
 
     it('imports the host module when an init decorator declares hostModule on a different module', () => {
@@ -800,7 +800,7 @@ describe('ModuleNormalizer', () => {
       class Module1 {}
 
       const normalizedModuleMeta = normalizer.normalize(Module1);
-      expect(normalizedModuleMeta.importsModules).toContain(HostModule);
+      expect(normalizedModuleMeta.importedStaticModules).toContain(HostModule);
     });
 
     it('adds init hooks from allInitHooks for an imported dynamic module whose class does not have that init decorator', () => {

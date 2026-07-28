@@ -121,7 +121,7 @@ export class RestShallowModulesImporter {
 
   protected importAndAppendModules() {
     this.importOrAppendModules(
-      [...this.normalizedModuleMeta.importsModules, ...this.normalizedModuleMeta.importsWithOpts],
+      [...this.normalizedModuleMeta.importedStaticModules, ...this.normalizedModuleMeta.importedDynamicModules],
       true,
     );
     this.importOrAppendModules([...this.meta.appendsModules, ...this.meta.appendsWithOpts]);
@@ -229,8 +229,8 @@ export class RestShallowModulesImporter {
       }
       const mod = getModule(modRefId);
       if (
-        normalizedModuleMeta.importsModules.includes(mod) ||
-        normalizedModuleMeta.importsWithOpts.some((imp) => imp.module === mod)
+        normalizedModuleMeta.importedStaticModules.includes(mod) ||
+        normalizedModuleMeta.importedDynamicModules.some((imp) => imp.module === mod)
       ) {
         throw new ModuleIncludesInImportsAndAppends(normalizedModuleMeta.name, appendedNormalizedModuleMeta.name);
       }

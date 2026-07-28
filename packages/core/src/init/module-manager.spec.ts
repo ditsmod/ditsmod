@@ -213,8 +213,8 @@ describe('ModuleManager', () => {
       class AppModule {}
 
       expect(() => mock.scanRootModule(AppModule)).not.toThrow();
-      expect(mock.getNormalizedModuleMeta(Module1)?.importsModules).toEqual([Module3]);
-      expect(mock.getNormalizedModuleMeta(Module3)?.importsModules).toEqual([Module2]);
+      expect(mock.getNormalizedModuleMeta(Module1)?.importedStaticModules).toEqual([Module3]);
+      expect(mock.getNormalizedModuleMeta(Module3)?.importedStaticModules).toEqual([Module2]);
     });
 
     it('should not throw maximum call stack size exceeded in includesInSomeModule during removeImport with circular imports', () => {
@@ -342,7 +342,7 @@ describe('ModuleManager', () => {
       expectedMeta3.id = '';
       expectedMeta3.name = 'AppModule';
       expectedMeta3.modRefId = AppModule;
-      expectedMeta3.importsModules = [Module1, Module2, Module4];
+      expectedMeta3.importedStaticModules = [Module1, Module2, Module4];
       expectedMeta3.providersPerMod = [Service1];
       expectedMeta3.declaredInDir = expect.any(String);
       expectedMeta3.isExternal = false;
@@ -362,7 +362,7 @@ describe('ModuleManager', () => {
       expectedMeta3.id = '';
       expectedMeta3.name = 'AppModule';
       expectedMeta3.modRefId = AppModule;
-      expectedMeta3.importsModules = [Module1];
+      expectedMeta3.importedStaticModules = [Module1];
       expectedMeta3.providersPerMod = [Service1];
       expectedMeta3.declaredInDir = expect.any(String);
       expectedMeta3.isExternal = false;
@@ -374,7 +374,7 @@ describe('ModuleManager', () => {
       expect(mock.map.size).toBe(2);
       expect(mock.getNormalizedModuleMetaFromSnapshot('root')).toEqual({
         ...expectedMeta3,
-        importsWithOpts: [module3WithProviders],
+        importedDynamicModules: [module3WithProviders],
       });
 
       mock.rollback();
@@ -434,8 +434,8 @@ describe('ModuleManager', () => {
       expectedMeta1.id = '';
       expectedMeta1.name = 'AppModule';
       expectedMeta1.modRefId = AppModule;
-      expectedMeta1.importsModules = [Module1, Module2];
-      expectedMeta1.importsWithOpts = [module3WithProviders, module4WithProviders];
+      expectedMeta1.importedStaticModules = [Module1, Module2];
+      expectedMeta1.importedDynamicModules = [module3WithProviders, module4WithProviders];
       expectedMeta1.providersPerMod = [Service1];
       expectedMeta1.declaredInDir = expect.any(String);
       expectedMeta1.isExternal = false;
@@ -451,12 +451,12 @@ describe('ModuleManager', () => {
       expect(mock.getNormalizedModuleMeta('root')).toEqual(getExpectedMeta1());
 
       expect(mock.removeImport(Module0, Module1)).toBe(true);
-      expect(mock.snapshotMap.get(Module1)?.importsModules).toEqual([]);
-      expect(mock.map.get(Module1)?.importsModules).toEqual([Module0]);
+      expect(mock.snapshotMap.get(Module1)?.importedStaticModules).toEqual([]);
+      expect(mock.map.get(Module1)?.importedStaticModules).toEqual([Module0]);
 
       expect(mock.removeImport(Module0, Module2)).toBe(true);
-      expect(mock.snapshotMap.get(Module2)?.importsModules).toEqual([]);
-      expect(mock.map.get(Module2)?.importsModules).toEqual([Module0]);
+      expect(mock.snapshotMap.get(Module2)?.importedStaticModules).toEqual([]);
+      expect(mock.map.get(Module2)?.importedStaticModules).toEqual([Module0]);
       expect(mock.snapshotMap.size).toBe(5);
       expect(mock.map.size).toBe(6);
 
@@ -466,13 +466,13 @@ describe('ModuleManager', () => {
       expect(mock.map.size).toBe(5);
 
       expect(mock.removeImport(Module2)).toBe(true);
-      expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importsModules).toEqual([Module1]);
-      expect(mock.getNormalizedModuleMeta('root')?.importsModules).toEqual([Module1, Module2]);
+      expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importedStaticModules).toEqual([Module1]);
+      expect(mock.getNormalizedModuleMeta('root')?.importedStaticModules).toEqual([Module1, Module2]);
       expect(mock.snapshotMap.size).toBe(4);
       expect(mock.map.size).toBe(5);
 
       expect(mock.removeImport(module3WithProviders)).toBe(true);
-      expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importsWithOpts).toEqual([module4WithProviders]);
+      expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importedDynamicModules).toEqual([module4WithProviders]);
       expect(mock.snapshotMap.size).toBe(3);
 
       expect(mock.removeImport(moduleId)).toBe(true);
@@ -712,7 +712,7 @@ describe('ModuleManager', () => {
       expectedMeta3.id = '';
       expectedMeta3.name = 'Module3';
       expectedMeta3.modRefId = Module3;
-      expectedMeta3.importsModules = [Module1];
+      expectedMeta3.importedStaticModules = [Module1];
       expectedMeta3.declaredInDir = expect.any(String);
       expectedMeta3.isExternal = false;
       expectedMeta3.initHooksMap = expect.any(Map);
@@ -761,8 +761,8 @@ describe('ModuleManager', () => {
       expectedMeta3.id = '';
       expectedMeta3.name = 'Module3';
       expectedMeta3.modRefId = Module3;
-      expectedMeta3.importsModules = [Module1];
-      expectedMeta3.exportsModules = [Module1];
+      expectedMeta3.importedStaticModules = [Module1];
+      expectedMeta3.exportedStaticModules = [Module1];
       expectedMeta3.declaredInDir = expect.any(String);
       expectedMeta3.isExternal = false;
       expectedMeta3.moduleOptions = expect.any(Object);
@@ -814,7 +814,7 @@ describe('ModuleManager', () => {
       expectedMeta3.id = '';
       expectedMeta3.name = 'Module3';
       expectedMeta3.modRefId = Module3;
-      expectedMeta3.importsModules = [Module1];
+      expectedMeta3.importedStaticModules = [Module1];
       expectedMeta3.declaredInDir = expect.any(String);
       expectedMeta3.isExternal = false;
       expectedMeta3.moduleOptions = expect.any(Object);
@@ -994,7 +994,7 @@ describe('ModuleManager', () => {
       mock.scanRootModule(AppModuleLocal);
       const mod1 = mock.getNormalizedModuleMeta(Module1)!;
       expect(mod1.initMeta.get(initSomeLocal)).toEqual({ path: 'static-default' });
-      expect(mod1.importsModules.includes(HostModule1Local)).toBe(true);
+      expect(mod1.importedStaticModules.includes(HostModule1Local)).toBe(true);
     });
 
     it('should not propagate context hooks when inheritsContext is false for static Module1', () => {
@@ -1032,7 +1032,7 @@ describe('ModuleManager', () => {
       mock.scanRootModule(AppModuleLocal);
       const mod1 = mock.getNormalizedModuleMeta(Module1)!;
       expect(mod1.initMeta.has(initSomeLocal)).toBe(false);
-      expect(mod1.importsModules.includes(HostModule1Local)).toBe(false);
+      expect(mod1.importedStaticModules.includes(HostModule1Local)).toBe(false);
     });
 
     it('should retrieve initOpts for three different modules with params', () => {

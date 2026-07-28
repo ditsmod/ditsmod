@@ -157,8 +157,8 @@ describe('rest ModuleNormalizer', () => {
     const meta3 = moduleManager.getNormalizedModuleMeta(appendWithOpts, true).initMeta.get(initRest)!;
     expect(meta3.params.path).toEqual('test2');
 
-    expect(normalizedModuleMeta.importsModules).toEqual([Module1, RestModule]);
-    expect(normalizedModuleMeta.importsWithOpts).toEqual([
+    expect(normalizedModuleMeta.importedStaticModules).toEqual([Module1, RestModule]);
+    expect(normalizedModuleMeta.importedDynamicModules).toEqual([
       { id: 'test-id', module: Module2, initOpts: expect.any(Map) },
     ]);
   });
@@ -201,8 +201,8 @@ describe('rest ModuleNormalizer', () => {
     const meta1 = moduleManager.getNormalizedModuleMeta(AppModule, true).initMeta.get(initRest)!;
     const modRefIds = normalizedModuleMeta.allInitHooks.get(initRest)?.getModulesToScan(meta1);
     expect(modRefIds).toEqual([appendsWithOpts]);
-    expect(normalizedModuleMeta.importsModules).toEqual([RestModule]);
-    expect(normalizedModuleMeta.importsWithOpts).toEqual([]);
+    expect(normalizedModuleMeta.importedStaticModules).toEqual([RestModule]);
+    expect(normalizedModuleMeta.importedDynamicModules).toEqual([]);
 
     const meta2 = moduleManager.getNormalizedModuleMeta(appendsWithOpts, true).initMeta.get(initRest)!;
     expect(meta2.params.path).toBe('one');
@@ -273,8 +273,8 @@ describe('rest ModuleNormalizer', () => {
     const meta1 = moduleManager.getNormalizedModuleMeta(AppModule, true).initMeta.get(initRest)!;
     const modRefIds = normalizedModuleMeta.allInitHooks.get(initRest)?.getModulesToScan(meta1);
     expect(modRefIds).toEqual([]);
-    expect(normalizedModuleMeta.importsModules).toEqual([RestModule]);
-    expect(normalizedModuleMeta.importsWithOpts).toEqual([dynamicModule]);
+    expect(normalizedModuleMeta.importedStaticModules).toEqual([RestModule]);
+    expect(normalizedModuleMeta.importedDynamicModules).toEqual([dynamicModule]);
 
     const meta2 = moduleManager.getNormalizedModuleMeta(dynamicModule, true).initMeta.get(initRest)!;
     expect(meta2.params.path).toBe('one');

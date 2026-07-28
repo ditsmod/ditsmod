@@ -75,7 +75,7 @@ export class TrpcShallowModulesImporter {
     this.guardsPerMod = guardsPerMod || [];
     this.unfinishedScanModules = unfinishedScanModules;
     this.importModules(
-      [...this.normalizedModuleMeta.importsModules, ...this.normalizedModuleMeta.importsWithOpts],
+      [...this.normalizedModuleMeta.importedStaticModules, ...this.normalizedModuleMeta.importedDynamicModules],
       true,
     );
 

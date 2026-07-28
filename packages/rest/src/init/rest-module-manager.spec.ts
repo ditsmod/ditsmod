@@ -409,10 +409,10 @@ describe('ModuleManager', () => {
     expect(mock.map.get(Module2)?.initMeta.get(initRest)?.providersPerRou).toEqual([Provider1]);
     expect(mock.map.get(Module2)?.initMeta.get(initRest)?.exportedProvidersPerRou).toEqual([Provider1]);
 
-    expect(getInitMeta('root')?.importsModules).toEqual([Module1, Module2, RestModule]);
+    expect(getInitMeta('root')?.importedStaticModules).toEqual([Module1, Module2, RestModule]);
 
     const initMeta = mock.map.get(module4WithOpts)?.initMeta.get(initRest);
-    expect(initMeta?.importsModules).toEqual([RestModule]);
+    expect(initMeta?.importedStaticModules).toEqual([RestModule]);
   });
 
   it('imports and appends with gruards for some modules', () => {
@@ -551,7 +551,7 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     const expectedMeta1 = {} as RestInitMeta;
-    expectedMeta1.importsModules = [RestModule];
+    expectedMeta1.importedStaticModules = [RestModule];
     expectedMeta1.exportedProvidersPerReq = [Provider3];
     expectedMeta1.providersPerReq = providersPerReq;
     expectedMeta1.exportedMultiProvidersPerReq = [
@@ -562,7 +562,7 @@ describe('ModuleManager', () => {
     ];
 
     mock.scanRootModule(AppModule);
-    expect(getInitMeta('root')?.importsModules).toEqual([Module1]);
+    expect(getInitMeta('root')?.importedStaticModules).toEqual([Module1]);
     expect(getInitMeta(Module1)).toMatchObject(expectedMeta1);
   });
 });
