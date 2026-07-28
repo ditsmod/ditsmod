@@ -1,3 +1,5 @@
+import { jest } from '@jest/globals';
+
 import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { NormalizedModuleMeta } from '#init/normalized-meta.js';
@@ -61,7 +63,9 @@ describe('ShallowModulesImporter', () => {
   beforeEach(() => {
     clearDebugClassNames();
     mock = new MockShallowModulesImporter();
-    moduleManager = new ModuleManager(new SystemLogMediator({ moduleName: 'fakeName' }));
+    const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
+    jest.spyOn(systemLogMediator, 'externalModuleDetectionFailed').mockImplementation(() => {});
+    moduleManager = new ModuleManager(systemLogMediator);
   });
 
   describe('exportAppProviders()', () => {

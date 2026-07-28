@@ -5,7 +5,7 @@ import { rootModule, RootModuleOptions } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
 import { Extension } from '#extension/extension-types.js';
 import { AnyObj } from '#types/mix.js';
-import { ModRefId } from '#decorators/module-decorator-options.js';
+import { ModRefId, type StaticModule } from '#decorators/module-decorator-options.js';
 import {
   DynamicModuleOptions,
   FeatureModuleOptions,
@@ -37,7 +37,7 @@ import { DecoratorMeta } from '#di/top/decorator-and-value.js';
 describe('ModuleNormalizer', () => {
   class MockModuleNormalizer extends ModuleNormalizer {
     override normalize(modRefId: ModRefId, allInitHooks = new Map()): NormalizedModuleMeta {
-      return super.normalize(modRefId, allInitHooks);
+      return super.normalize(modRefId, allInitHooks, { externalModuleDetectionFailed: () => {} } as any);
     }
   }
 
@@ -976,10 +976,10 @@ describe('ModuleNormalizer', () => {
 
   describe('external module detection', () => {
     class ExternalModuleNormalizer extends ModuleNormalizer {
-      customMeta = new Map<any, DecoratorMeta[]>();
+      customMeta = new Map<StaticModule, DecoratorMeta[]>();
 
       override normalize(modRefId: any, allInitHooks = new Map()): NormalizedModuleMeta {
-        return super.normalize(modRefId, allInitHooks);
+        return super.normalize(modRefId, allInitHooks, { externalModuleDetectionFailed: () => {} } as any);
       }
 
       protected override getDecoratorMeta(modRefId: any) {
@@ -1019,7 +1019,7 @@ describe('ModuleNormalizer', () => {
       );
       externalModuleNormalizer.customMeta.set(InternalModule, [internalDec]);
 
-      expect(externalModuleNormalizer.normalize(AppModule).isExternal).toBeUndefined();
+      expect(externalModuleNormalizer.normalize(AppModule).isExternal).toBe(false);
       expect(externalModuleNormalizer.normalize(ExternalModule).isExternal).toBe(true);
       expect(externalModuleNormalizer.normalize(InternalModule).isExternal).toBe(false);
     });

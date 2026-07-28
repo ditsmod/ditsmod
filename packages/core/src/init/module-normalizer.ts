@@ -47,6 +47,8 @@ import {
   EmptyModuleMeta,
 } from '#errors';
 import type { RootModuleOptions } from '#decorators/root-module.js';
+import type { DecoratorMeta } from '#di/top/decorator-and-value.js';
+import type { SystemLogMediator } from '#logger/system-log-mediator.js';
 
 /**
  * Normalizes and validates module metadata.
@@ -57,11 +59,13 @@ export class ModuleNormalizer {
    * The directory in which the class was declared.
    */
   protected rootDeclaredInDir: string;
+  protected systemLogMediator: SystemLogMediator;
 
   /**
    * Returns normalized module metadata.
    */
-  normalize(modRefId: ModRefId, allInitHooks: AllInitHooks) {
+  normalize(modRefId: ModRefId, allInitHooks: AllInitHooks, systemLogMediator: SystemLogMediator) {
+    this.systemLogMediator = systemLogMediator;
     const normalizedModuleMeta = this.initNormalizedModuleMeta(modRefId);
     const { moduleOptions } = normalizedModuleMeta;
     this.checkAndMarkExternalModule(moduleOptions);
@@ -112,7 +116,7 @@ export class ModuleNormalizer {
     return normalizedModuleMeta;
   }
 
-  protected getDecoratorMeta(modRefId: ModRefId) {
+  protected getDecoratorMeta(modRefId: ModRefId): DecoratorMeta[] | undefined {
     modRefId = resolveForwardRef(modRefId);
     const staticModule = isDynamicModule(modRefId) ? resolveForwardRef(modRefId.module) : modRefId;
     return Reflector.getClassLevelMeta(staticModule);
@@ -123,16 +127,21 @@ export class ModuleNormalizer {
    * during scanning the {@link ModuleManager} must first scan the root module.
    */
   protected checkAndMarkExternalModule(moduleOptions: RootModuleOptions) {
-    if (isRootModule(moduleOptions)) {
-      this.rootDeclaredInDir = this.normalizedModuleMeta.declaredInDir;
-    } else if (this.rootDeclaredInDir) {
+    if (this.rootDeclaredInDir) {
       const { declaredInDir } = this.normalizedModuleMeta;
-      if (this.rootDeclaredInDir !== '.' && declaredInDir !== '.') {
+      if (declaredInDir !== '.') {
         // Case when CallsiteUtils.getCallerDir() works correctly.
         this.normalizedModuleMeta.isExternal =
           !declaredInDir.startsWith(this.rootDeclaredInDir) ||
           (!this.rootDeclaredInDir.includes('ditsmod/packages') && declaredInDir.includes('ditsmod/packages'));
       }
+    } else if (isRootModule(moduleOptions) && this.normalizedModuleMeta.declaredInDir !== '.') {
+      this.rootDeclaredInDir = this.normalizedModuleMeta.declaredInDir;
+      this.normalizedModuleMeta.isExternal = false;
+    }
+
+    if (this.normalizedModuleMeta.isExternal === undefined) {
+      this.systemLogMediator.externalModuleDetectionFailed(this);
     }
 
     if (moduleOptions.inheritsContext !== undefined) {

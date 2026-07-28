@@ -58,6 +58,14 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
+   * `warn: ${className}: External module detection is not working correctly.`
+   */
+  externalModuleDetectionFailed(self: object) {
+    const className = self.constructor.name;
+    this.setLog('warn', `${className}: External module detection is not working correctly.`);
+  }
+
+  /**
    * `warn: ${className}: Rescan of root module is forbidden: it must only be loaded once at startup.`
    */
   forbiddenRescanRootModule(self: object) {

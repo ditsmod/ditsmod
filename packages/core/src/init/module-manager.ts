@@ -480,7 +480,7 @@ export class ModuleManager {
 
   protected normalizeMeta(modRefId: ModRefId, allInitHooks: AllInitHooks): NormalizedModuleMeta {
     try {
-      return this.moduleNormalizer.normalize(modRefId, allInitHooks);
+      return this.moduleNormalizer.normalize(modRefId, allInitHooks, this.systemLogMediator);
     } catch (err: any) {
       const moduleName = getDebugClassName(modRefId);
       let path = [...this.unfinishedScanModules].map((id) => getDebugClassName(id)).join(' -> ');

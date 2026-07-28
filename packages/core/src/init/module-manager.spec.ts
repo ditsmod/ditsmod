@@ -65,6 +65,7 @@ describe('ModuleManager', () => {
   beforeEach(() => {
     clearDebugClassNames();
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
+    jest.spyOn(systemLogMediator, 'externalModuleDetectionFailed').mockImplementation(() => {});
     mock = new MockModuleManager(systemLogMediator);
   });
 
@@ -106,6 +107,7 @@ describe('ModuleManager', () => {
       class AppModule {}
 
       const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
+      jest.spyOn(systemLogMediator, 'externalModuleDetectionFailed').mockImplementation(() => {});
       const spy = jest.spyOn(systemLogMediator, 'forbiddenRescanRootModule').mockImplementation(() => {});
       const manager = new MockModuleManager(systemLogMediator);
 
@@ -268,7 +270,7 @@ describe('ModuleManager', () => {
       expectedMeta1.modRefId = AppModule;
       expectedMeta1.providersPerMod = [Service1];
       expectedMeta1.declaredInDir = expect.any(String);
-      expectedMeta1.isExternal = undefined;
+      expectedMeta1.isExternal = false;
       expectedMeta1.initHooksMap = expect.any(Map);
       expectedMeta1.moduleOptions = expect.any(Object);
       return expectedMeta1;
@@ -343,7 +345,7 @@ describe('ModuleManager', () => {
       expectedMeta3.importsModules = [Module1, Module2, Module4];
       expectedMeta3.providersPerMod = [Service1];
       expectedMeta3.declaredInDir = expect.any(String);
-      expectedMeta3.isExternal = undefined;
+      expectedMeta3.isExternal = false;
       expectedMeta3.initHooksMap = expect.any(Map);
       expectedMeta3.moduleOptions = expect.any(Object);
 
@@ -363,7 +365,7 @@ describe('ModuleManager', () => {
       expectedMeta3.importsModules = [Module1];
       expectedMeta3.providersPerMod = [Service1];
       expectedMeta3.declaredInDir = expect.any(String);
-      expectedMeta3.isExternal = undefined;
+      expectedMeta3.isExternal = false;
       expectedMeta3.initHooksMap = expect.any(Map);
       expectedMeta3.moduleOptions = expect.any(Object);
 
@@ -436,7 +438,7 @@ describe('ModuleManager', () => {
       expectedMeta1.importsWithOpts = [module3WithProviders, module4WithProviders];
       expectedMeta1.providersPerMod = [Service1];
       expectedMeta1.declaredInDir = expect.any(String);
-      expectedMeta1.isExternal = undefined;
+      expectedMeta1.isExternal = false;
       expectedMeta1.initHooksMap = expect.any(Map);
       expectedMeta1.moduleOptions = expect.any(Object);
       return expectedMeta1;
@@ -712,7 +714,7 @@ describe('ModuleManager', () => {
       expectedMeta3.modRefId = Module3;
       expectedMeta3.importsModules = [Module1];
       expectedMeta3.declaredInDir = expect.any(String);
-      expectedMeta3.isExternal = undefined;
+      expectedMeta3.isExternal = false;
       expectedMeta3.initHooksMap = expect.any(Map);
       expectedMeta3.moduleOptions = expect.any(Object);
       delete (expectedMeta3 as any).extensionConfigs;
@@ -762,7 +764,7 @@ describe('ModuleManager', () => {
       expectedMeta3.importsModules = [Module1];
       expectedMeta3.exportsModules = [Module1];
       expectedMeta3.declaredInDir = expect.any(String);
-      expectedMeta3.isExternal = undefined;
+      expectedMeta3.isExternal = false;
       expectedMeta3.moduleOptions = expect.any(Object);
       expectedMeta3.initHooksMap = expect.any(Map);
       delete (expectedMeta3 as any).extensionConfigs;
@@ -814,7 +816,7 @@ describe('ModuleManager', () => {
       expectedMeta3.modRefId = Module3;
       expectedMeta3.importsModules = [Module1];
       expectedMeta3.declaredInDir = expect.any(String);
-      expectedMeta3.isExternal = undefined;
+      expectedMeta3.isExternal = false;
       expectedMeta3.moduleOptions = expect.any(Object);
       expectedMeta3.initHooksMap = expect.any(Map);
 
