@@ -27,16 +27,33 @@ import {
   type KeyOfClass,
 } from './reflector-helpers.js';
 
+/**
+ * Provides a unified, cached, and high-level abstraction over standard metadata reflection and decorator registration.
+ *
+ * `Reflector` enables:
+ * - Creating type-safe decorator factories for classes, properties, methods, and parameters ({@link makeClassDecorator},
+ * {@link makePropDecorator}, and {@link makeParamDecorator}).
+ * - Resolving and merging decorator and parameter metadata across class inheritance hierarchies.
+ * - Inspecting normalized class metadata via {@link collectMeta} and {@link getClassLevelMeta}, utilizing built-in caching for performance.
+ */
 export class Reflector {
   /**
-   * Creates a factory of decorators that operate work at the class level.
+   * Creates a factory of decorators that operate at the class level.
    *
-   * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
-   * because at this stage the `resolveForwardRef()` function will not work correctly.
-   * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
-   * @param decoratorId Acts as an identifier for a group of decorators whose transformers return metadata
-   * of a specific base type. Essentially, it is an alternative to the class inheritance mechanism and
-   * the use of `instanceof` for identifying the types returned by transformers.
+   * Decorators created by this method automatically capture the filesystem directory where they
+   * are declared and evaluated (`declaredInDir`), which is utilized during module discovery for
+   * resolving relative paths and metadata.
+   *
+   * @param transform A function that transforms decorator arguments into a structured value stored
+   * in {@link DecoratorMeta.value}. Such a transformer should not use symbols that can be wrapped
+   * with `forwardRef()`, because at this stage the `resolveForwardRef()` function will not work
+   * correctly.
+   * @param debugFactoryName Gives a name to the decorator function that can be viewed during
+   * debugging.
+   * @param decoratorId Acts as an identifier for a group of decorators whose transformers return
+   * metadata of a specific base type or belong to a shared logical group. Essentially, it is an
+   * alternative to the class inheritance mechanism and the use of `instanceof` for identifying the
+   * types returned by transformers.
    */
   static makeClassDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string, decoratorId?: AnyFn) {
     function classDecoratorFactory(...args: Parameters<T>) {
@@ -56,12 +73,16 @@ export class Reflector {
   /**
    * Creates a factory of decorators that operate at the property or method level.
    *
-   * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
-   * because at this stage the `resolveForwardRef()` function will not work correctly.
-   * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
-   * @param decoratorId Acts as an identifier for a group of decorators whose transformers return metadata
-   * of a specific base type. Essentially, it is an alternative to the class inheritance mechanism and
-   * the use of `instanceof` for identifying the types returned by transformers.
+   * @param transform A function that transforms decorator arguments into a structured value stored
+   * in {@link DecoratorMeta.value}. Such a transformer should not use symbols that can be wrapped
+   * with `forwardRef()`, because at this stage the `resolveForwardRef()` function will not work
+   * correctly.
+   * @param debugFactoryName Gives a name to the decorator function that can be viewed during
+   * debugging.
+   * @param decoratorId Acts as an identifier for a group of decorators whose transformers return
+   * metadata of a specific base type or belong to a shared logical group. Essentially, it is an
+   * alternative to the class inheritance mechanism and the use of `instanceof` for identifying the
+   * types returned by transformers.
    */
   static makePropDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string, decoratorId?: AnyFn) {
     function propDecorFactory(...args: Parameters<T>) {
@@ -79,14 +100,18 @@ export class Reflector {
     return propDecorFactory;
   }
   /**
-   * Creates a factory of decorators that operate at the method parameter level.
+   * Creates a factory of decorators that operate at the class constructor and method parameter level.
    *
-   * @param transform Such a transformer should not use symbols that can be wrapped with `forwardRef()`,
-   * because at this stage the `resolveForwardRef()` function will not work correctly.
-   * @param debugFactoryName Gives a name to the decorator that can be viewed during debugging.
-   * @param decoratorId Acts as an identifier for a group of decorators whose transformers return metadata
-   * of a specific base type. Essentially, it is an alternative to the class inheritance mechanism and
-   * the use of `instanceof` for identifying the types returned by transformers.
+   * @param transform A function that transforms decorator arguments into a structured value stored
+   * in {@link DecoratorMeta.value}. Such a transformer should not use symbols that can be wrapped
+   * with `forwardRef()`, because at this stage the `resolveForwardRef()` function will not work
+   * correctly.
+   * @param debugFactoryName Gives a name to the decorator function that can be viewed during
+   * debugging.
+   * @param decoratorId Acts as an identifier for a group of decorators whose transformers return
+   * metadata of a specific base type or belong to a shared logical group. Essentially, it is an
+   * alternative to the class inheritance mechanism and the use of `instanceof` for identifying the
+   * types returned by transformers.
    */
   static makeParamDecorator<T extends AnyFn>(transform?: T, debugFactoryName?: string, decoratorId?: AnyFn) {
     function paramDecorFactory(...args: Parameters<T>) {
@@ -118,24 +143,25 @@ export class Reflector {
     return paramDecorFactory;
   }
   /**
-   * Returns metadata from class-level decorators.
+   * Retrieves decorator metadata attached directly at the class level, filtered by the provided
+   * type guard.
    *
-   * @param Cls The class from which to return the metadata.
-   * @param typeGuard Type guard, which will search for necessary decorators.
-   * @returns Returns an array of `DecoratorMeta` for the passed `Cls`, using the passed `typeGuard`,
-   * or `undefined` if no appropriate decorators.
+   * @param Cls The class from which to retrieve the metadata.
+   * @param typeGuard A type guard function used to filter and refine the returned array of
+   * decorator metadata.
+   * @returns An array of {@link DecoratorMeta} instances matching the type guard, or `undefined` if
+   * no matching decorators are found.
    */
   static getClassLevelMeta<T extends DecoratorMeta>(
     Cls: Class | AbstractClass,
     typeGuard: TypeGuard<T>,
   ): (T extends DecoratorMeta<infer V> ? DecoratorMeta<V> : never)[] | undefined;
   /**
-   * Returns metadata from class-level decorators.
+   * Retrieves all decorator metadata attached directly at the class level.
    *
-   * @param Cls The class from which to return the metadata.
-   * @param typeGuard Type guard, which will search for necessary decorators.
-   * @returns Returns an array of `DecoratorMeta` for the passed `Cls`,
-   * or `undefined` if no appropriate decorators.
+   * @param Cls The class from which to retrieve the metadata.
+   * @returns An array of {@link DecoratorMeta} instances attached to the class, or `undefined` if
+   * no decorators are found.
    */
   static getClassLevelMeta<T = any>(Cls: Class): DecoratorMeta<T>[] | undefined;
   static getClassLevelMeta<T extends DecoratorMeta>(Cls: Class, typeGuard?: TypeGuard<T>) {
@@ -147,26 +173,35 @@ export class Reflector {
   }
 
   /**
-   * Collects metadata from decorators at any level:
+   * Collects and merges metadata from decorators across the inheritance chain at all levels:
    * - class level;
    * - method or property level;
    * - parameter level.
    *
    * Returns an instance of {@link ClassMetaIterator}, which implements the [iterable protocol][1].
-   * Each property of this class corresponds to a property with a decorator in the `Cls` parameter, and the value
-   * of that property contains the normalized metadata with {@link MergedClassPropMeta}.
+   * Each property of this iterator corresponds to a property or method with decorators in the
+   * `Cls` parameter, and the value of that property contains normalized metadata represented as
+   * {@link MergedClassPropMeta}. The object also features a `constructor` property containing
+   * class-level decorator and constructor parameter metadata.
    *
    * [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol
    *
-   * @param Cls A class that has decorators.
+   * @param Cls The class from which to collect decorator and reflection metadata.
+   * @returns Normalized and merged class metadata, or `undefined` if `Cls` is not a constructor
+   * function.
    */
   static collectMeta<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
   ): MergedClassMeta<DecorValue, Proto> | undefined;
   /**
-   * Returns the metadata for the constructor or methods of the passed class.
+   * Retrieves the merged decorator and parameter metadata for a specific property, method, or the
+   * constructor of the given class.
    *
-   * @param Cls A class that has decorators.
+   * @param Cls The class from which to collect decorator and reflection metadata.
+   * @param propertyKey The name of the property or method to inspect. If omitted or passed as
+   * `undefined` when invoking with two arguments, retrieves metadata for the class constructor.
+   * @returns Normalized property metadata {@link MergedClassPropMeta}, or `undefined` if `Cls` is
+   * not a constructor function.
    */
   static collectMeta<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
@@ -194,7 +229,14 @@ export class Reflector {
   }
 
   /**
-   * __Disclaimer__: This method has experimental support.
+   * Programmatically applies a class decorator factory to a target class without using decorator
+   * syntax directly. Useful for code generators, dynamic module setups, or testing environments.
+   *
+   * __Disclaimer__: This method has experimental support and is not part of the public API.
+   *
+   * @param Cls The target class constructor to decorate.
+   * @param decoratorFactory The decorator factory produced by {@link makeClassDecorator}.
+   * @param args Arguments to pass to the decorator factory.
    */
   protected static setClassMeta<Args extends any[]>(
     Cls: Class | AbstractClass,
@@ -205,7 +247,17 @@ export class Reflector {
   }
 
   /**
-   * __Disclaimer__: This method has experimental support.
+   * Programmatically defines runtime `'design:type'` reflection metadata and applies a property
+   * decorator factory to a target property or method without using decorator syntax directly.
+   *
+   * __Disclaimer__: This method has experimental support and is not part of the public API.
+   *
+   * @param Cls The target class constructor whose prototype holds the property.
+   * @param propertyKey The name of the property or method.
+   * @param propertyType The runtime type constructor (e.g., `String`, `Number`, or a custom
+   * class) to define as `'design:type'`.
+   * @param decoratorFactory The decorator factory produced by {@link makePropDecorator}.
+   * @param args Arguments to pass to the decorator factory.
    */
   protected static setPropertyMeta<Args extends any[]>(
     Cls: Class | AbstractClass,
@@ -219,12 +271,30 @@ export class Reflector {
   }
 
   /**
-   * __Disclaimer__: This method has experimental support.
+   * Programmatically defines `'design:paramtypes'` reflection metadata and applies parameter
+   * decorators to a constructor without using decorator syntax directly.
+   *
+   * __Disclaimer__: This method has experimental support and is not part of the public API.
+   *
+   * @param Cls The target class constructor.
+   * @param parameterMeta An array of tuples representing parameter definitions: `[parameterType,
+   * decoratorFactory, ...args]`. Use `null` or `undefined` for parameters without decorators.
    */
   protected static setParameterMeta<Args extends any[]>(
     Cls: Class | AbstractClass,
     parameterMeta: ([any, AnyFn<Args, ParameterDecorator>, ...Args] | null | undefined)[],
   ): void;
+  /**
+   * Programmatically defines `'design:paramtypes'` reflection metadata and applies parameter
+   * decorators to a specific method without using decorator syntax directly.
+   *
+   * __Disclaimer__: This method has experimental support and is not part of the public API.
+   *
+   * @param Cls The target class constructor.
+   * @param propertyKey The name of the target method on the class prototype.
+   * @param parameterMeta An array of tuples representing parameter definitions: `[parameterType,
+   * decoratorFactory, ...args]`. Use `null` or `undefined` for parameters without decorators.
+   */
   protected static setParameterMeta<Args extends any[]>(
     Cls: Class | AbstractClass,
     propertyKey: string | symbol,
@@ -256,6 +326,10 @@ export class Reflector {
     Reflect.defineMetadata('design:paramtypes', params, Cls.prototype, propertyKey);
   }
 
+  /**
+   * Traverses the inheritance chain of a class and merges decorator and parameter metadata from
+   * parent classes down to the target class.
+   */
   protected static mergeClassMeta<DecorValue = any, Proto extends AnyObj = AnyObj>(Cls: Class<Proto>) {
     const mergedClassMeta = new ClassMetaIterator() as MergedClassMeta<DecorValue, Proto>;
     mergedClassMeta.constructor = new MergedClassPropMeta();
@@ -282,7 +356,7 @@ export class Reflector {
     mergedClassMeta: MergedClassMeta<DecorValue, Proto>,
     classMetaChain: ClassMetaChain<any, Proto> | undefined,
   ) {
-    // If a child class overrides a parent method but does not have a property decoratoror params decorator,
+    // If a child class overrides a parent method but does not have a property decorator or params decorator,
     // the parent parameters must be removed.
     if (classMetaChain && classMetaChain.size > 1) {
       this.removeOverridenParams(Cls, mergedClassMeta);
@@ -327,6 +401,10 @@ export class Reflector {
     });
   }
 
+  /**
+   * Builds and caches the class metadata chain by traversing up the prototype inheritance
+   * hierarchy, mapping each class constructor in the ancestry to its own metadata view.
+   */
   protected static collectMetaChain<DecorValue = any, Proto extends AnyObj = AnyObj>(
     Cls: Class<Proto>,
   ): ClassMetaChain<DecorValue, Proto> | undefined {
@@ -347,11 +425,19 @@ export class Reflector {
     }
   }
 
+  /**
+   * Retrieves the direct parent class constructor of the provided class, or `undefined` if the
+   * prototype directly inherits from `Object`.
+   */
   protected static getParentClass(Cls: Class): Class | undefined {
     const parentClass = Object.getPrototypeOf(Cls.prototype).constructor;
     return parentClass == Object ? undefined : parentClass;
   }
 
+  /**
+   * Collects direct (own) decorator and parameter reflection metadata for a class constructor,
+   * its properties, and methods without merging parent class metadata.
+   */
   protected static getClassMeta<DecorValue = any, Proto extends AnyObj = object>(Cls: Class<Proto>) {
     const classMeta = new ClassMetaIterator() as ClassMeta<DecorValue, Proto>;
 
@@ -382,11 +468,12 @@ export class Reflector {
   }
 
   /**
-   * Returns array of parameters for given method.
+   * Returns an array of parameter metadata for a given method or constructor.
    *
-   * @param Cls A class that has decorators.
-   * @param propertyKey If this method is called without `propertyKey`,
-   * it's returns parameters of class constructor.
+   * @param Cls A class that has decorators or reflection metadata.
+   * @param propertyKey The method name. If called without `propertyKey` (or with
+   * `'constructor'`), it returns parameter metadata for the class constructor.
+   * @param propertyType The expected runtime type of the property (e.g., `Function` for methods).
    */
   protected static collectParamMeta<T extends object>(
     Cls: Class<T>,
@@ -430,15 +517,15 @@ export class Reflector {
   /**
    * Returns an array with the metadata of the method parameters. The following example shows
    * one case when the method has three parameters:
-   * 
-   ```ts
-const paramsMeta = [
-  [ SomeClass, DecoratorMeta ], // First parameter
-  [ DecoratorMeta ], // Second parameter
-  [ OtherClass ] // Third parameter
-];
-   ```
-   * 
+   *
+   * ```ts
+   * const paramsMeta = [
+   *   [ SomeClass, DecoratorMeta ], // First parameter
+   *   [ DecoratorMeta ], // Second parameter
+   *   [ OtherClass ] // Third parameter
+   * ];
+   * ```
+   *
    * That is, the parameter metadata is presented as an array, where the class type can come first
    * (if the TypeScript compiler was able to determine it), or an instance of the `DecoratorMeta`
    * class immediately follows (if a decorator is used at the parameter level).
@@ -457,7 +544,7 @@ const paramsMeta = [
 
     for (let paramIndex = 0; paramIndex < mergedParamMeta.length; paramIndex++) {
       if (!paramTypes || paramTypes[paramIndex] === Object) {
-        // TypeScript emit `Object` for types like `any`. Treat it as unknown
+        // TypeScript emits `Object` for types like `any`. Treat it as unknown
         // instead of using Object as an injection token.
         mergedParamMeta[paramIndex] = [];
       } else if (paramTypes?.[paramIndex]) {
@@ -476,6 +563,11 @@ const paramsMeta = [
     }
   }
 
+  /**
+   * Resolves either the entire class metadata object or the metadata for a specific property or
+   * method. If a requested property or method has no decorators, a synthetic metadata structure
+   * is returned to allow inspection of function parameters based on `Function.length`.
+   */
   protected static getClassMetaOrParamMeta<DecorValue = any, Proto extends object = object>(
     Cls: Class<Proto>,
     classMeta: MergedClassMeta<DecorValue, Proto> | undefined,
