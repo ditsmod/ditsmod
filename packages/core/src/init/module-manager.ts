@@ -32,11 +32,12 @@ export type ModuleId = string | ModRefId;
 
 /**
  * Recursively scans metadata attached to module classes via decorators, normalizes it, and validates it.
- * As a result of this process, a mapping is created between the class's `modRefId` and its normalized data.
- * Essentially, `modRefId` is the form in which a module is passed in the `imports` array — that is,
- * either the module class itself or an object containing the module with parameters.
+ * As a result of this process, a mapping is created between the module reference (`ModRefId`) and its normalized metadata.
+ * Essentially, `ModRefId` is the form in which a module is passed in the `imports` array — that is,
+ * either the static module class itself (`StaticModule`) or a dynamic module configuration object (`DynamicModule`).
  *
- * The `ModuleManager` can also add or remove modules from the imports.
+ * `ModuleManager` also stores module-level DI injectors, manages application-scoped providers, propagates initialization hooks,
+ * and enables dynamic runtime modifications to module imports with atomic transaction support (rollback and commit).
  */
 @injectable()
 export class ModuleManager {
@@ -63,8 +64,10 @@ export class ModuleManager {
   constructor(protected systemLogMediator: SystemLogMediator) {}
 
   /**
-   * Creates a snapshot of {@link NormalizedModuleMeta} for the root module, stores locally and returns it.
-   * You can also get the result this way: `moduleManager.getMetadata('root')`.
+   * Creates an immutable snapshot of {@link NormalizedModuleMeta} for the root module, stores it locally, and returns it.
+   * You can later retrieve the result via: `moduleManager.getNormalizedModuleMeta('root')`.
+   *
+   * Resets internal scan state and initiates recursive metadata resolution for all imported feature modules in the dependency graph.
    */
   scanRootModule(appModule: StaticModule): NormalizedModuleMeta {
     if (this.snapshotMap.size) {
@@ -88,6 +91,13 @@ export class ModuleManager {
     return normalizedModuleMeta;
   }
 
+  /**
+   * Recursively normalizes and registers metadata for a specified static or dynamic module reference.
+   *
+   * Traverses module dependencies (`imports`, `exports`, and modules discovered via specialized init hooks such as `appends`
+   * or `controllers`), builds the module dependency graph (`childrenMap`), accumulates global providers into `providersPerApp`,
+   * and executes initialization hooks across the hierarchy.
+   */
   scanModule(modRefId: ModRefId | ForwardRefFn<StaticModule>, allInitHooks?: AllInitHooks, saveToSnapshot?: boolean) {
     const isRootScan = this.unfinishedScanModules.size == 0;
     allInitHooks ??= new Map();
@@ -145,8 +155,12 @@ export class ModuleManager {
   }
 
   /**
-   * Returns a mutable {@link NormalizedModuleMeta}. Therefore, if you retrieve a {@link NormalizedModuleMeta} from this method and then modify it,
-   * the next call to this method will return the already modified {@link NormalizedModuleMeta}.
+   * Returns a mutable {@link NormalizedModuleMeta} from the active workspace mapping (`this.map`).
+   * Therefore, if you retrieve a {@link NormalizedModuleMeta} using this method and subsequently modify it,
+   * the next call will return the already modified {@link NormalizedModuleMeta}.
+   *
+   * @param moduleId Can be the string alias `'root'`, an explicit module ID, or a `ModRefId` reference.
+   * @param throwErrIfNotFound If set to `true`, throws a {@link ModuleIdNotFound} error when the module cannot be resolved.
    */
   getNormalizedModuleMeta(moduleId: ModuleId, throwErrIfNotFound?: boolean): NormalizedModuleMeta | undefined;
   getNormalizedModuleMeta(moduleId: ModuleId, throwErrIfNotFound: true): NormalizedModuleMeta;
@@ -175,10 +189,14 @@ export class ModuleManager {
   }
 
   /**
-   * If `inputModule` added, returns `true`, otherwise - returns `false`.
+   * Dynamically appends a new module (`inputModule`) to the imports of a specified target module in the snapshot mapping.
+   * This operation runs within a transaction; if recursive scanning or normalization of the added module fails,
+   * all changes are rolled back to the previous snapshot state.
    *
-   * @param inputModule Module to be added.
-   * @param targetModuleId Module ID to which the input module will be added.
+   * Returns `true` if `inputModule` was successfully added, or `false` if it was already imported or could not be processed.
+   *
+   * @param inputModule Module to be added (`StaticModule` or `DynamicModule`).
+   * @param targetModuleId Module ID to which the input module will be added (defaults to `'root'`).
    */
   addImport(inputModule: ModRefId, targetModuleId: ModuleId = 'root'): boolean | void {
     const targetNormalizedModuleMeta = this.getNormalizedModuleMetaFromSnapshot(targetModuleId);
@@ -214,7 +232,14 @@ export class ModuleManager {
   }
 
   /**
-   * @param targetModuleId Module ID from where the input module will be removed.
+   * Removes an imported module from a target module's import array within the snapshot mapping.
+   * Runs inside a transaction; if the removed module is no longer referenced anywhere within the application module graph,
+   * its normalized metadata and child relationships are safely garbage collected.
+   *
+   * Returns `true` if removed successfully, or `false` if the target or imported module was not found.
+   *
+   * @param inputModuleId Module ID or reference to remove from imports.
+   * @param targetModuleId Module ID from where the input module will be removed (defaults to `'root'`).
    */
   removeImport(inputModuleId: ModuleId, targetModuleId: ModuleId = 'root'): boolean | void {
     const inputNormalizedModuleMeta = this.getNormalizedModuleMetaFromSnapshot(inputModuleId);
@@ -260,6 +285,10 @@ export class ModuleManager {
     }
   }
 
+  /**
+   * Initiates an atomic transaction by saving backups of the current snapshot maps and dependency hierarchies.
+   * Returns `true` if a new transaction was started, or `false` if a transaction is already active.
+   */
   startTransaction() {
     if (this.oldSnapshotMapId.has('root')) {
       // Transaction already started.
@@ -279,6 +308,12 @@ export class ModuleManager {
     return true;
   }
 
+  /**
+   * Reverts all snapshot mappings and child relationships back to the state saved when {@link startTransaction} was called.
+   * Automatically commits (clears backup history) after restoring state.
+   *
+   * @throws ForbiddenRollback if invoked without an active transaction.
+   */
   rollback(err?: Error) {
     if (!this.oldSnapshotMapId.size) {
       throw new ForbiddenRollback();
@@ -293,6 +328,9 @@ export class ModuleManager {
     return this;
   }
 
+  /**
+   * Successfully finishes the active transaction by clearing the backed-up historical snapshot maps.
+   */
   commit() {
     this.oldSnapshotMapId = new Map();
     this.oldSnapshotMap = new Map();
@@ -301,7 +339,8 @@ export class ModuleManager {
   }
 
   /**
-   * Resets changes made to {@link NormalizedModuleMeta} after normalization.
+   * Resets any modifications made to {@link NormalizedModuleMeta} in the active workspace mapping (`this.map`)
+   * by restoring fresh deep clones from the immutable snapshot map (`this.snapshotMap`).
    */
   reset() {
     this.map = new Map();
@@ -313,16 +352,22 @@ export class ModuleManager {
   }
 
   /**
-   * Returns shapshot of current map for all modules.
+   * Returns a shallow copy of the active mapping between module reference IDs (`ModRefId`) and their {@link NormalizedModuleMeta}.
    */
   getModulesMap() {
     return new Map(this.map);
   }
 
+  /**
+   * Returns the internal registry mapping module reference IDs (`ModRefId`) to their instantiated module-level injectors.
+   */
   getInjectorsPerMod() {
     return this.injectorPerModMap;
   }
 
+  /**
+   * Registers an instantiated module-level DI {@link Injector} for the specified module reference or ID.
+   */
   setInjectorPerMod(moduleId: ModuleId, injectorPerMod: Injector) {
     if (typeof moduleId == 'string') {
       const modRefId = this.mapId.get(moduleId);
@@ -336,6 +381,9 @@ export class ModuleManager {
     }
   }
 
+  /**
+   * Retrieves the module-level DI {@link Injector} associated with the given module ID or reference.
+   */
   getInjectorPerMod(moduleId: ModuleId, throwErrIfNotFound: true): Injector;
   getInjectorPerMod(moduleId: ModuleId, throwErrIfNotFound?: false): Injector | undefined;
   getInjectorPerMod(moduleId: ModuleId, throwErrIfNotFound?: boolean): Injector | undefined {
@@ -357,7 +405,7 @@ export class ModuleManager {
   }
 
   /**
-   * Returns instance of a module.
+   * Retrieves the instantiated singleton class instance of a module from its corresponding module-level injector.
    */
   getInstanceOf<T extends AnyObj>(modRefId: ModRefId<T>, throwErrIfNotFound: true): T;
   getInstanceOf<T extends AnyObj>(modRefId: ModRefId<T>, throwErrIfNotFound?: false): T | undefined;
@@ -373,6 +421,9 @@ export class ModuleManager {
     return this.getInjectorPerMod(moduleId, throwErrIfNotFound)?.get(Mod);
   }
 
+  /**
+   * Retrieves immutable {@link NormalizedModuleMeta} directly from the saved snapshot map, resolving string aliases if necessary.
+   */
   protected getNormalizedModuleMetaFromSnapshot(moduleId: ModuleId) {
     let normalizedModuleMeta: NormalizedModuleMeta | undefined;
     if (typeof moduleId == 'string') {
@@ -388,10 +439,11 @@ export class ModuleManager {
   }
 
   /**
-   * The current module may sometimes lack the init decorators that are present in imported modules.
+   * The current module may sometimes lack explicit init decorators that are present in imported modules
+   * (for example, importing an architectural feature module without decorating the importer).
    * In such cases, after scanning all imported modules, the collected init hooks from them are also
    * executed for the current module. The result of executing these init hooks is objects with initialized
-   * properties, into which certain metadata can later be imported.
+   * properties, into which relevant metadata (such as controllers or appended routes) can later be imported.
    */
   protected callInitHooksAfterScan(normalizedModuleMeta: NormalizedModuleMeta) {
     normalizedModuleMeta.allInitHooks.forEach((initHooks, decorator) => {
@@ -404,6 +456,10 @@ export class ModuleManager {
     });
   }
 
+  /**
+   * Performs a deep clone of a {@link NormalizedModuleMeta} instance, duplicating arrays, maps, and extension metadata
+   * while re-evaluating init hooks to maintain isolated metadata structures across resets and transactions.
+   */
   protected copyNormalizedModuleMeta(normalizedModuleMeta: NormalizedModuleMeta) {
     const copy = Object.create(
       Object.getPrototypeOf(normalizedModuleMeta || ({} as NormalizedModuleMeta)),
@@ -443,11 +499,11 @@ export class ModuleManager {
   }
 
   /**
-   * Recursively searches for input module.
-   * Returns true if input module includes in imports/exports of target module.
+   * Recursively searches for an input module across the dependency tree.
+   * Returns `true` if `inputModuleId` is included in the static or dynamic imports/exports of `targetModuleId` or its submodules.
    *
-   * @param inputModuleId The module you need to find.
-   * @param targetModuleId Module where to search `inputModule`.
+   * @param inputModuleId The target module reference or ID to find.
+   * @param targetModuleId Module within which to search for `inputModuleId`.
    */
   protected includesInSomeModule(
     inputModuleId: ModuleId,
@@ -480,6 +536,10 @@ export class ModuleManager {
     );
   }
 
+  /**
+   * Delegates module decorator reflection and metadata normalization to {@link ModuleNormalizer}.
+   * On failure, enriches the error message with the full dependency scan trajectory (e.g., `ModuleA -> ModuleB`).
+   */
   protected normalizeMeta(modRefId: ModRefId, allInitHooks: AllInitHooks): NormalizedModuleMeta {
     try {
       return this.moduleNormalizer.normalize(modRefId, allInitHooks, this.systemLogMediator);
@@ -491,6 +551,10 @@ export class ModuleManager {
     }
   }
 
+  /**
+   * Freezes the initialized module metadata mapping into an immutable baseline snapshot (`this.snapshotMap`).
+   * Throws {@link ForbiddenSavingSnapshot} if a snapshot has already been established.
+   */
   protected saveSnapshot() {
     if (this.snapshotMap.size) {
       throw new ForbiddenSavingSnapshot();
@@ -502,6 +566,11 @@ export class ModuleManager {
     }
   }
 
+  /**
+   * Recursively traverses the module dependency graph (`childrenMap`) from `startModule`, propagating parent init hooks
+   * down to child modules that have no init hooks of their own. This ensures consistent contextual decorator evaluation
+   * across architectural hierarchies (e.g., REST or tRPC routes).
+   */
   protected propagateContextHooks(
     startModule: ModRefId,
     inheritedHooks: AllInitHooks = new Map(),
@@ -538,6 +607,10 @@ export class ModuleManager {
     }
   }
 
+  /**
+   * Validates all modules in both active and snapshot registries, verifying that no module possesses completely empty metadata
+   * (which typically indicates missing module decorators or invalid import structures).
+   */
   protected checkEmptyMetaForAllModules() {
     this.map.forEach((meta) => {
       try {
