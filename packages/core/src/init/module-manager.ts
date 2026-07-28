@@ -63,67 +63,6 @@ export class ModuleManager {
     this.state.providersPerApp = val;
   }
 
-  protected get oldProvidersPerApp(): Provider[] {
-    return this.oldState?.providersPerApp ?? [];
-  }
-  protected set oldProvidersPerApp(val: Provider[]) {
-    if (!this.oldState) {
-      this.oldState = new ModuleGraphState();
-    }
-    this.oldState.providersPerApp = val;
-  }
-
-  protected get snapshotMap(): ModulesMap {
-    return this.state.snapshotMap;
-  }
-  protected set snapshotMap(val: ModulesMap) {
-    this.state.snapshotMap = val;
-  }
-
-  protected get snapshotMapId(): Map<string, ModRefId> {
-    return this.state.snapshotMapId;
-  }
-  protected set snapshotMapId(val: Map<string, ModRefId>) {
-    this.state.snapshotMapId = val;
-  }
-
-  protected get childrenMap(): Map<ModRefId, Set<ModRefId>> {
-    return this.state.childrenMap;
-  }
-  protected set childrenMap(val: Map<ModRefId, Set<ModRefId>>) {
-    this.state.childrenMap = val;
-  }
-
-  protected get oldSnapshotMap(): ModulesMap {
-    return this.oldState?.snapshotMap ?? new Map();
-  }
-  protected set oldSnapshotMap(val: ModulesMap) {
-    if (!this.oldState) {
-      this.oldState = new ModuleGraphState();
-    }
-    this.oldState.snapshotMap = val;
-  }
-
-  protected get oldSnapshotMapId(): Map<string, ModRefId> {
-    return this.oldState?.snapshotMapId ?? new Map();
-  }
-  protected set oldSnapshotMapId(val: Map<string, ModRefId>) {
-    if (!this.oldState) {
-      this.oldState = new ModuleGraphState();
-    }
-    this.oldState.snapshotMapId = val;
-  }
-
-  protected get oldChildrenMap(): Map<ModRefId, Set<ModRefId>> {
-    return this.oldState?.childrenMap ?? new Map();
-  }
-  protected set oldChildrenMap(val: Map<ModRefId, Set<ModRefId>>) {
-    if (!this.oldState) {
-      this.oldState = new ModuleGraphState();
-    }
-    this.oldState.childrenMap = val;
-  }
-
   constructor(protected systemLogMediator: SystemLogMediator) {}
 
   /**
@@ -133,7 +72,7 @@ export class ModuleManager {
    * Resets internal scan state and initiates recursive metadata resolution for all imported feature modules in the dependency graph.
    */
   scanRootModule(appModule: StaticModule): NormalizedModuleMeta {
-    if (this.snapshotMap.size) {
+    if (this.state.snapshotMap.size) {
       this.systemLogMediator.forbiddenRescanRootModule(this);
       return this.getNormalizedModuleMeta('root', true);
     }
@@ -142,7 +81,7 @@ export class ModuleManager {
       throw new MissingRootDecorator(appModule.name);
     }
 
-    this.childrenMap.clear();
+    this.state.childrenMap.clear();
     const normalizedModuleMeta = this.scanModule(appModule);
 
     this.injectorPerModMap.clear();
@@ -158,7 +97,7 @@ export class ModuleManager {
    * Recursively normalizes and registers metadata for a specified static or dynamic module reference.
    *
    * Traverses module dependencies (`imports`, `exports`, and modules discovered via specialized init hooks such as `appends`
-   * or `controllers`), builds the module dependency graph (`childrenMap`), accumulates global providers into `providersPerApp`,
+   * or `controllers`), builds the module dependency graph (`this.state.childrenMap`), accumulates global providers into `providersPerApp`,
    * and executes initialization hooks across the hierarchy.
    */
   scanModule(modRefId: ModRefId | ForwardRefFn<StaticModule>, allInitHooks?: AllInitHooks, saveToSnapshot?: boolean) {
@@ -180,7 +119,7 @@ export class ModuleManager {
       .reduce<ModRefId[]>((prev, curr) => prev.concat(curr), importsOrExports);
 
     const children = new Set<ModRefId>();
-    this.childrenMap.set(normalizedModuleMeta.modRefId, children);
+    this.state.childrenMap.set(normalizedModuleMeta.modRefId, children);
 
     for (const input of inputs) {
       children.add(input);
@@ -202,7 +141,7 @@ export class ModuleManager {
     const providersPerApp = isRootModule(normalizedModuleMeta) ? [] : normalizedModuleMeta.providersPerApp;
     this.providersPerApp.push(...providersPerApp);
     if (saveToSnapshot) {
-      this.snapshotMap.set(modRefId, normalizedModuleMeta);
+      this.state.snapshotMap.set(modRefId, normalizedModuleMeta);
     } else {
       this.map.set(modRefId, normalizedModuleMeta);
     }
@@ -279,10 +218,10 @@ export class ModuleManager {
     this.startTransaction();
     try {
       (targetNormalizedModuleMeta[prop] as ModRefId[]).push(inputModule);
-      let children = this.childrenMap.get(targetNormalizedModuleMeta.modRefId);
+      let children = this.state.childrenMap.get(targetNormalizedModuleMeta.modRefId);
       if (!children) {
         children = new Set();
-        this.childrenMap.set(targetNormalizedModuleMeta.modRefId, children);
+        this.state.childrenMap.set(targetNormalizedModuleMeta.modRefId, children);
       }
       children.add(inputModule);
 
@@ -330,7 +269,7 @@ export class ModuleManager {
     this.startTransaction();
     try {
       targetMeta[prop].splice(index, 1);
-      const targetChildren = this.childrenMap.get(targetMeta.modRefId);
+      const targetChildren = this.state.childrenMap.get(targetMeta.modRefId);
       if (targetChildren) {
         targetChildren.delete(inputNormalizedModuleMeta.modRefId);
       }
@@ -474,12 +413,12 @@ export class ModuleManager {
   protected getNormalizedModuleMetaFromSnapshot(moduleId: ModuleId) {
     let normalizedModuleMeta: NormalizedModuleMeta | undefined;
     if (typeof moduleId == 'string') {
-      const mapId = this.snapshotMapId.get(moduleId);
+      const mapId = this.state.snapshotMapId.get(moduleId);
       if (mapId) {
-        normalizedModuleMeta = this.snapshotMap.get(mapId);
+        normalizedModuleMeta = this.state.snapshotMap.get(mapId);
       }
     } else {
-      normalizedModuleMeta = this.snapshotMap.get(moduleId);
+      normalizedModuleMeta = this.state.snapshotMap.get(moduleId);
     }
 
     return normalizedModuleMeta;
@@ -515,7 +454,7 @@ export class ModuleManager {
   }
 
   /**
-   * Recursively searches for an input module across the dependency tree using the O(1) adjacency map (`childrenMap`).
+   * Recursively searches for an input module across the dependency tree using the O(1) adjacency map (`this.state.childrenMap`).
    * Returns `true` if `inputModuleId` is included in the static or dynamic imports/exports of `targetModuleId` or its submodules.
    *
    * @param inputModuleId The target module reference or ID to find.
@@ -543,13 +482,13 @@ export class ModuleManager {
     }
 
     const targetModRefId = targetMeta.modRefId;
-    const children = this.childrenMap.get(targetModRefId);
+    const children = this.state.childrenMap.get(targetModRefId);
     if (!children || children.size === 0) {
       return false;
     }
 
     const resolvedInputId =
-      typeof inputModuleId === 'string' ? this.snapshotMapId.get(inputModuleId) || inputModuleId : inputModuleId;
+      typeof inputModuleId === 'string' ? this.state.snapshotMapId.get(inputModuleId) || inputModuleId : inputModuleId;
 
     if (children.has(resolvedInputId as ModRefId)) {
       return true;
@@ -580,22 +519,22 @@ export class ModuleManager {
   }
 
   /**
-   * Freezes the initialized module metadata mapping into an immutable baseline snapshot (`this.snapshotMap`).
+   * Freezes the initialized module metadata mapping into an immutable baseline snapshot (`this.state.snapshotMap`).
    * Throws {@link ForbiddenSavingSnapshot} if a snapshot has already been established.
    */
   protected saveSnapshot() {
-    if (this.snapshotMap.size) {
+    if (this.state.snapshotMap.size) {
       throw new ForbiddenSavingSnapshot();
     } else {
       this.map.forEach((normalizedModuleMeta, modRefId) =>
-        this.snapshotMap.set(modRefId, this.copyNormalizedModuleMeta(normalizedModuleMeta)),
+        this.state.snapshotMap.set(modRefId, this.copyNormalizedModuleMeta(normalizedModuleMeta)),
       );
-      this.snapshotMapId = new Map(this.mapId);
+      this.state.snapshotMapId = new Map(this.mapId);
     }
   }
 
   /**
-   * Recursively traverses the module dependency graph (`childrenMap`) from `startModule`, propagating parent init hooks
+   * Recursively traverses the module dependency graph (`this.state.childrenMap`) from `startModule`, propagating parent init hooks
    * down to child modules that have no init hooks of their own. This ensures consistent contextual decorator evaluation
    * across architectural hierarchies (e.g., REST or tRPC routes).
    */
@@ -609,7 +548,7 @@ export class ModuleManager {
     }
     visited.add(startModule);
 
-    const startMeta = this.map.get(startModule) || this.snapshotMap.get(startModule);
+    const startMeta = this.map.get(startModule) || this.state.snapshotMap.get(startModule);
     if (!startMeta) {
       return;
     }
@@ -627,7 +566,7 @@ export class ModuleManager {
       }
     }
 
-    const children = this.childrenMap.get(startModule);
+    const children = this.state.childrenMap.get(startModule);
     if (children) {
       for (const child of children) {
         this.propagateContextHooks(child, activeHooks, visited);
@@ -647,7 +586,7 @@ export class ModuleManager {
         throw new NormalizationFailure(meta.name, err);
       }
     });
-    this.snapshotMap.forEach((meta) => {
+    this.state.snapshotMap.forEach((meta) => {
       try {
         this.moduleNormalizer.checkEmptyMeta(meta);
       } catch (err: any) {

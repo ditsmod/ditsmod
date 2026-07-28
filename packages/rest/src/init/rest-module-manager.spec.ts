@@ -38,30 +38,6 @@ describe('ModuleManager', () => {
   class MockModuleManager extends ModuleManager {
     declare map: Map<ModRefId, NormalizedModuleMeta>;
     declare mapId: Map<string, ModRefId>;
-    override get snapshotMap() {
-      return super.snapshotMap;
-    }
-    override set snapshotMap(val) {
-      super.snapshotMap = val;
-    }
-    override get snapshotMapId() {
-      return super.snapshotMapId;
-    }
-    override set snapshotMapId(val) {
-      super.snapshotMapId = val;
-    }
-    override get oldSnapshotMap() {
-      return super.oldSnapshotMap;
-    }
-    override set oldSnapshotMap(val) {
-      super.oldSnapshotMap = val;
-    }
-    override get oldSnapshotMapId() {
-      return super.oldSnapshotMapId;
-    }
-    override set oldSnapshotMapId(val) {
-      super.oldSnapshotMapId = val;
-    }
   }
 
   let mock: MockModuleManager;
