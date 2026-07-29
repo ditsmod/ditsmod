@@ -927,7 +927,7 @@ describe('ModuleNormalizer', () => {
       @featureModule({ providersPerMod: [Service1], exports: [undefined as any] })
       class Module1 {}
 
-      expect(() => normalizer.normalize(Module1)).toThrow(new UndefinedSymbol('Exports', 'Module1', 0));
+      expect(() => normalizer.normalize(Module1)).toThrow(new UndefinedSymbol('Static exports', 'Module1', 0));
     });
 
     it('throws UndefinedSymbol with Exports with params context when dynamic module exports contains undefined', () => {
@@ -937,7 +937,7 @@ describe('ModuleNormalizer', () => {
       class Module1 {}
 
       expect(() => normalizer.normalize({ module: Module1, exports: [undefined as any] })).toThrow(
-        new UndefinedSymbol('Exports with params', 'Module1-DynamicModule', 0),
+        new UndefinedSymbol('Dynamic exports', 'Module1-DynamicModule', 0),
       );
     });
 

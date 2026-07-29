@@ -275,7 +275,7 @@ export class ReexportFailure extends CustomError {
  * "forwardRef(() => YourModule)".`
  */
 export class UndefinedSymbol extends CustomError {
-  constructor(action: 'Exports' | 'Exports with params' | 'Imports', moduleName: string, i: number) {
+  constructor(action: 'Static exports' | 'Dynamic exports' | 'Imports', moduleName: string, i: number) {
     const lowerAction = action.toLowerCase();
     super({
       msg1:
