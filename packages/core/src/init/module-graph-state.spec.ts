@@ -26,12 +26,12 @@ describe('ModuleGraphState', () => {
     const meta1 = new NormalizedModuleMeta();
     meta1.modRefId = FeatureModule1;
     meta1.providersPerApp = [Provider1];
-    meta1.moduleOptions = new FeatureModuleOptions();
+    meta1.staticModuleOptions = new FeatureModuleOptions();
 
     const rootMeta = new NormalizedModuleMeta();
     rootMeta.modRefId = RootAppModule;
     rootMeta.providersPerApp = [Provider2];
-    rootMeta.moduleOptions = new RootModuleOptions();
+    rootMeta.staticModuleOptions = new RootModuleOptions();
 
     state.snapshotMap.set(FeatureModule1, meta1);
     state.snapshotMap.set(RootAppModule, rootMeta);

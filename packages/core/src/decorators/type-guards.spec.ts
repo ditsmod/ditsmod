@@ -69,20 +69,20 @@ describe('type guards', () => {
 
       const normalizedModuleMeta = new NormalizedModuleMeta();
       const metadata = Reflector.getClassLevelMeta(Module1)![0];
-      normalizedModuleMeta.moduleOptions = metadata.value;
+      normalizedModuleMeta.staticModuleOptions = metadata.value;
       expect(isFeatureModule(normalizedModuleMeta)).toBe(true);
     });
 
     it('returns false for NormalizedModuleMeta with empty moduleOptions', () => {
       const normalizedModuleMeta = new NormalizedModuleMeta();
-      normalizedModuleMeta.moduleOptions = {};
+      normalizedModuleMeta.staticModuleOptions = {};
       expect(isFeatureModule(normalizedModuleMeta)).toBe(false);
     });
 
     it('returns false for NormalizedModuleMeta with InitHooks when moduleRole is not feature', () => {
       const initHooks = new InitHooks({});
       const normalizedModuleMeta = new NormalizedModuleMeta();
-      normalizedModuleMeta.moduleOptions = initHooks;
+      normalizedModuleMeta.staticModuleOptions = initHooks;
       expect(isFeatureModule(normalizedModuleMeta)).toBe(false);
     });
 
@@ -90,7 +90,7 @@ describe('type guards', () => {
       const initHooks = new InitHooks({});
       initHooks.moduleRole = 'feature';
       const normalizedModuleMeta = new NormalizedModuleMeta();
-      normalizedModuleMeta.moduleOptions = initHooks;
+      normalizedModuleMeta.staticModuleOptions = initHooks;
       expect(isFeatureModule(normalizedModuleMeta)).toBe(true);
     });
 
@@ -150,20 +150,20 @@ describe('type guards', () => {
 
       const normalizedModuleMeta = new NormalizedModuleMeta();
       const metadata = Reflector.getClassLevelMeta(Module1)![0];
-      normalizedModuleMeta.moduleOptions = metadata.value;
+      normalizedModuleMeta.staticModuleOptions = metadata.value;
       expect(isRootModule(normalizedModuleMeta)).toBe(true);
     });
 
     it('returns false for NormalizedModuleMeta with empty moduleOptions', () => {
       const normalizedModuleMeta = new NormalizedModuleMeta();
-      normalizedModuleMeta.moduleOptions = {};
+      normalizedModuleMeta.staticModuleOptions = {};
       expect(isRootModule(normalizedModuleMeta)).toBe(false);
     });
 
     it('returns false for NormalizedModuleMeta with InitHooks when moduleRole is not root', () => {
       const initHooks = new InitHooks({});
       const normalizedModuleMeta = new NormalizedModuleMeta();
-      normalizedModuleMeta.moduleOptions = initHooks;
+      normalizedModuleMeta.staticModuleOptions = initHooks;
       expect(isRootModule(normalizedModuleMeta)).toBe(false);
     });
 
@@ -171,7 +171,7 @@ describe('type guards', () => {
       const initHooks = new InitHooks({});
       initHooks.moduleRole = 'root';
       const normalizedModuleMeta = new NormalizedModuleMeta();
-      normalizedModuleMeta.moduleOptions = initHooks;
+      normalizedModuleMeta.staticModuleOptions = initHooks;
       expect(isRootModule(normalizedModuleMeta)).toBe(true);
     });
 

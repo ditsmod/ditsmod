@@ -24,10 +24,10 @@ export function isRootModule(
     }
     return arg.value instanceof RootModuleOptions;
   } else if (arg instanceof NormalizedModuleMeta) {
-    if (arg.moduleOptions instanceof InitHooks) {
-      return arg.moduleOptions.moduleRole === 'root';
+    if (arg.staticModuleOptions instanceof InitHooks) {
+      return arg.staticModuleOptions.moduleRole === 'root';
     }
-    return arg.moduleOptions instanceof RootModuleOptions;
+    return arg.staticModuleOptions instanceof RootModuleOptions;
   } else if (arg instanceof InitHooks) {
     return arg.moduleRole === 'root';
   }
@@ -48,10 +48,10 @@ export function isFeatureModule(
     }
     return arg.value instanceof FeatureModuleOptions;
   } else if (arg instanceof NormalizedModuleMeta) {
-    if (arg.moduleOptions instanceof InitHooks) {
-      return arg.moduleOptions.moduleRole === 'feature';
+    if (arg.staticModuleOptions instanceof InitHooks) {
+      return arg.staticModuleOptions.moduleRole === 'feature';
     }
-    return arg.moduleOptions instanceof FeatureModuleOptions;
+    return arg.staticModuleOptions instanceof FeatureModuleOptions;
   } else if (arg instanceof InitHooks) {
     return arg.moduleRole === 'feature';
   }
