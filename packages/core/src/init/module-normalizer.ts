@@ -181,7 +181,7 @@ export class ModuleNormalizer {
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
       const resolvedCollisionKey = `resolvedCollisionsPer${level}` as const;
       if (staticModuleOptions[resolvedCollisionKey]) {
-        staticModuleOptions[resolvedCollisionKey]!.forEach(([token, module]) => {
+        staticModuleOptions[resolvedCollisionKey].forEach(([token, module]) => {
           token = resolveForwardRef(token);
           module = resolveForwardRef(module);
           if (isDynamicModule(module)) {
@@ -283,7 +283,7 @@ export class ModuleNormalizer {
   protected throwIfResolvingNormalizedProvider(
     staticModuleOptions: MixinOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>,
   ) {
-    const resolvedCollisionsPerLevel: [any, ModRefId | ForwardRefFn<StaticModule>][] = [];
+    const resolvedCollisionsPerLevel: [any, ModRefId | ForwardRefFn<StaticModule | DynamicModule>][] = [];
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
       if (Array.isArray(staticModuleOptions[`resolvedCollisionsPer${level}`])) {
         resolvedCollisionsPerLevel.push(...staticModuleOptions[`resolvedCollisionsPer${level}`]!);

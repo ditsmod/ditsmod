@@ -1,5 +1,5 @@
 import type { ForwardRefFn } from '#di/forward-ref.js';
-import type { ModRefId, StaticModule } from './module-decorator-options.js';
+import type { ModRefId } from './module-decorator-options.js';
 import { Reflector } from '#di/reflector.js';
 import { objectKeys } from '#utils/object-keys.js';
 import { ProviderBuilder } from '#utils/providers.js';
@@ -13,7 +13,7 @@ export class RootModuleOptions extends FeatureModuleOptions {
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  declare resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<StaticModule>][];
+  declare resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<ModRefId>][];
 }
 
 export const rootModule: RootModuleDecorator = Reflector.makeClassDecorator(transformModule, 'rootModule');

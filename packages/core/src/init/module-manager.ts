@@ -100,7 +100,7 @@ export class ModuleManager {
    * or `controllers`), builds the module dependency graph (`this.state.childrenMap`), accumulates global providers into `providersPerApp`,
    * and executes initialization hooks across the hierarchy.
    */
-  scanModule(modRefId: ModRefId | ForwardRefFn<StaticModule>, allModuleMixin?: AllModuleMixins, saveToSnapshot?: boolean) {
+  scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>, allModuleMixin?: AllModuleMixins, saveToSnapshot?: boolean) {
     const isRootScan = this.unfinishedScanModules.size == 0;
     allModuleMixin ??= new Map();
     modRefId = resolveForwardRef(modRefId);

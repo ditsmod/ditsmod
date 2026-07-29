@@ -119,6 +119,60 @@ describe('ModuleNormalizer', () => {
       expect(normalizedModuleMeta.exportedExtensionProviders).toEqual([Extension1]);
       expect(normalizedModuleMeta.extensionsMeta).toEqual({ feature: 'enabled' });
     });
+
+    it('normalizes resolved collisions when dynamic modules are passed directly', () => {
+      class AppService {}
+      class ModService {}
+      class RouService {}
+      class ReqService {}
+
+      @featureModule()
+      class ImportedModule {}
+
+      const dynamicModule: DynamicModule = { module: ImportedModule, id: 'dynamic-id' };
+
+      @rootModule({
+        imports: [dynamicModule],
+        resolvedCollisionsPerApp: [[AppService, dynamicModule]],
+        resolvedCollisionsPerMod: [[ModService, dynamicModule]],
+        resolvedCollisionsPerRou: [[RouService, dynamicModule]],
+        resolvedCollisionsPerReq: [[ReqService, dynamicModule]],
+      })
+      class AppModule {}
+
+      const normalizedModuleMeta = normalizer.normalize(AppModule);
+      expect(normalizedModuleMeta.resolvedCollisionsPerApp).toEqual([[AppService, dynamicModule]]);
+      expect(normalizedModuleMeta.resolvedCollisionsPerMod).toEqual([[ModService, dynamicModule]]);
+      expect(normalizedModuleMeta.resolvedCollisionsPerRou).toEqual([[RouService, dynamicModule]]);
+      expect(normalizedModuleMeta.resolvedCollisionsPerReq).toEqual([[ReqService, dynamicModule]]);
+    });
+
+    it('normalizes resolved collisions when dynamic modules are passed via forwardRef', () => {
+      class AppService {}
+      class ModService {}
+      class RouService {}
+      class ReqService {}
+
+      @featureModule()
+      class ImportedModule {}
+
+      const dynamicModule: DynamicModule = { module: ImportedModule, id: 'dynamic-id' };
+
+      @rootModule({
+        imports: [dynamicModule],
+        resolvedCollisionsPerApp: [[AppService, forwardRef(() => dynamicModule)]],
+        resolvedCollisionsPerMod: [[ModService, forwardRef(() => dynamicModule)]],
+        resolvedCollisionsPerRou: [[RouService, forwardRef(() => dynamicModule)]],
+        resolvedCollisionsPerReq: [[ReqService, forwardRef(() => dynamicModule)]],
+      })
+      class AppModule {}
+
+      const normalizedModuleMeta = normalizer.normalize(AppModule);
+      expect(normalizedModuleMeta.resolvedCollisionsPerApp).toEqual([[AppService, dynamicModule]]);
+      expect(normalizedModuleMeta.resolvedCollisionsPerMod).toEqual([[ModService, dynamicModule]]);
+      expect(normalizedModuleMeta.resolvedCollisionsPerRou).toEqual([[RouService, dynamicModule]]);
+      expect(normalizedModuleMeta.resolvedCollisionsPerReq).toEqual([[ReqService, dynamicModule]]);
+    });
   });
 
   describe('provider exports', () => {
@@ -419,6 +473,23 @@ describe('ModuleNormalizer', () => {
       ]);
       expect(normalizedModuleMeta.resolvedCollisionsPerMod).toEqual([[ModService, ImportedModule]]);
     });
+
+    it('resolves forwardRef for dynamic modules in imports and exports', () => {
+      @featureModule()
+      class DynamicImportedModule {}
+
+      const dynamicModule: DynamicModule = { module: DynamicImportedModule, id: 'some-id' };
+
+      @rootModule({
+        imports: [forwardRef(() => dynamicModule)],
+        exports: [forwardRef(() => dynamicModule)],
+      })
+      class AppModule {}
+
+      const normalizedModuleMeta = normalizer.normalize(AppModule);
+      expect(normalizedModuleMeta.importedDynamicModules).toEqual([dynamicModule]);
+      expect(normalizedModuleMeta.exportedDynamicModules).toEqual([dynamicModule]);
+    });
   });
 
   describe('extensions', () => {
@@ -548,10 +619,8 @@ describe('ModuleNormalizer', () => {
       return new SomeModuleMixin(Object.assign({}, data));
     }
 
-    const mixinSome: MixinDecorator<SomeMixinOptions, SomeMixinDynamicOptions, SomeMixinMeta> = Reflector.makeClassDecorator(
-      getModuleMixin,
-      'mixinSome',
-    );
+    const mixinSome: MixinDecorator<SomeMixinOptions, SomeMixinDynamicOptions, SomeMixinMeta> =
+      Reflector.makeClassDecorator(getModuleMixin, 'mixinSome');
 
     it('stores metadata returned by ModuleMixin.normalize() in normalizedModuleMeta.mixinMeta', () => {
       const moduleOptions: SomeMixinOptions = { one: 1, two: 2, flag: true };

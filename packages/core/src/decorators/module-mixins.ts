@@ -231,6 +231,6 @@ export interface DynamicModuleWrapper {
 // prettier-ignore
 export interface MixinOptions<MixinDynamicOptions extends object = object> extends Omit<FeatureModuleOptions,'imports'> {
   imports?: (
-    ((DynamicModuleWrapper | DynamicModule) & MixinDynamicOptions) | StaticModule | ForwardRefFn<StaticModule>
+    ((DynamicModuleWrapper | DynamicModule) & MixinDynamicOptions) | StaticModule | ForwardRefFn<ModRefId>
   )[];
 }

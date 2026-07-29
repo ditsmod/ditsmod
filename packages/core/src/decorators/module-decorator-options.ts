@@ -33,7 +33,7 @@ export class FeatureModuleOptions<T extends AnyObj = AnyObj> {
    * List of modules or `DynamicModule` imported by this module.
    * Also you can imports modules and set some prefix per each the module.
    */
-  declare imports?: (ModRefId | ForwardRefFn<StaticModule>)[];
+  declare imports?: (ModRefId | ForwardRefFn<ModRefId>)[];
   /**
    * List of {@link StaticModule}, {@link DynamicModule} or tokens of providers exported by this
    * module.
@@ -53,17 +53,17 @@ export class FeatureModuleOptions<T extends AnyObj = AnyObj> {
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  declare resolvedCollisionsPerMod?: [any, ModRefId | ForwardRefFn<StaticModule>][];
+  declare resolvedCollisionsPerMod?: [any, ModRefId | ForwardRefFn<ModRefId>][];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  declare resolvedCollisionsPerRou?: [any, ModRefId | ForwardRefFn<StaticModule>][];
+  declare resolvedCollisionsPerRou?: [any, ModRefId | ForwardRefFn<ModRefId>][];
   /**
    * An array of pairs, each of which is in the first place the provider's token,
    * and in the second - the module from which to import the provider with the specified token.
    */
-  declare resolvedCollisionsPerReq?: [any, ModRefId | ForwardRefFn<StaticModule>][];
+  declare resolvedCollisionsPerReq?: [any, ModRefId | ForwardRefFn<ModRefId>][];
   /**
    * Whether this module inherits module mixins / context (like REST or tRPC) from parent modules.
    * By default, it is true for local modules and false for external modules.
