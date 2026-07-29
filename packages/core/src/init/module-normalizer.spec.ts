@@ -556,7 +556,7 @@ describe('ModuleNormalizer', () => {
         Extension1,
         { token: groupToken, useToken: Extension1, multi: true },
       ]);
-      expect(normalizedModuleMeta.extensionGroupTokenMap.get(Extension2)).toBe(groupToken);
+      expect(normalizedModuleMeta.extensionGroupTokensMap.get(Extension2)).toBe(groupToken);
     });
 
     it('puts exportOnly extensions only into exported extension metadata', () => {

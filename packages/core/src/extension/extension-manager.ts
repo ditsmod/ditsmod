@@ -163,7 +163,7 @@ export class ExtensionManager {
 
   protected async initExtension<T>(ExtCls: ExtensionClass): Promise<ExtensionGroupMeta> {
     let extensions: Extension<T>[];
-    const groupToken = this.normalizedModuleMeta.extensionGroupTokenMap.get(ExtCls);
+    const groupToken = this.normalizedModuleMeta.extensionGroupTokensMap.get(ExtCls);
     if (groupToken) {
       extensions = this.injector.getOrderedMultiValues<TokenProvider>(
         groupToken,

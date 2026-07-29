@@ -260,7 +260,7 @@ export class ShallowModulesImporter {
       );
       this.importedExtensionGroupTokens.set(
         normalizedModuleMeta1.modRefId,
-        normalizedModuleMeta1.exportedExtensionGroupTokenMap,
+        normalizedModuleMeta1.exportedExtensionGroupTokensMap,
       );
       this.importedExtensionConfigs.push(...normalizedModuleMeta1.exportedExtensionConfigs);
     }

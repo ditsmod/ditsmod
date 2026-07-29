@@ -23,14 +23,14 @@ describe('NormalizedModuleMeta', () => {
       config1: { key: 'value1' },
     };
     const groupToken = new ExtensionGroupToken('group1');
-    original.extensionGroupTokenMap.set(DummyExtension, groupToken);
+    original.extensionGroupTokensMap.set(DummyExtension, groupToken);
 
     const copy = original.clone();
     expect(copy).not.toBe(original);
     expect(copy.name).toBe('TestModule');
     expect(copy.providersPerMod).toEqual([Provider1]);
     expect(copy.providersPerMod).not.toBe(original.providersPerMod);
-    expect(copy.extensionGroupTokenMap.get(DummyExtension)).toBe(groupToken);
+    expect(copy.extensionGroupTokensMap.get(DummyExtension)).toBe(groupToken);
 
     // Modify array in copy
     copy.providersPerMod.push(Provider2);

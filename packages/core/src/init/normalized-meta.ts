@@ -190,12 +190,12 @@ export class NormalizedModuleMeta<
    * The mapping between an extension specified in {@link BaseExtensionConfig.groups | ExtensionConfig.groups}
    * and the extension group token assigned to it.
    */
-  extensionGroupTokenMap = new Map<ExtensionClass, ExtensionGroupToken>();
+  extensionGroupTokensMap = new Map<ExtensionClass, ExtensionGroupToken>();
   /**
    * The mapping between an exported extension specified in {@link BaseExtensionConfig.groups | ExtensionConfig.groups}
    * and the extension group token assigned to it.
    */
-  exportedExtensionGroupTokenMap = new Map<ExtensionClass, ExtensionGroupToken>();
+  exportedExtensionGroupTokensMap = new Map<ExtensionClass, ExtensionGroupToken>();
 
   constructor() {
     super();
@@ -253,8 +253,8 @@ export class NormalizedModuleMeta<
 
     copy.moduleMixinMap = new Map(copy.moduleMixinMap);
     copy.allModuleMixin = new Map(copy.allModuleMixin);
-    copy.extensionGroupTokenMap = new Map(copy.extensionGroupTokenMap);
-    copy.exportedExtensionGroupTokenMap = new Map(copy.exportedExtensionGroupTokenMap);
+    copy.extensionGroupTokensMap = new Map(copy.extensionGroupTokensMap);
+    copy.exportedExtensionGroupTokensMap = new Map(copy.exportedExtensionGroupTokensMap);
     copy.mixinMeta = new Map();
     copy.moduleMixinMap.forEach((moduleMixin, decorator) => {
       const meta = moduleMixin.normalize(copy);
