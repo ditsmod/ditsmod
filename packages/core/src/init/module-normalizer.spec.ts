@@ -9,7 +9,7 @@ import { ModRefId, type StaticModule } from '#decorators/module-decorator-option
 import {
   DynamicModuleOptions,
   FeatureModuleOptions,
-  DynamicModuleWithInit,
+  DynamicModuleWithInitOptions,
   DynamicModule,
 } from '#decorators/module-decorator-options.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
@@ -603,7 +603,7 @@ describe('ModuleNormalizer', () => {
       @featureModule()
       class Module2 {}
 
-      const dynamicModule1: DynamicModuleWithInit & SomeInitDynamicOptions = {
+      const dynamicModule1: DynamicModuleWithInitOptions & SomeInitDynamicOptions = {
         module: Module1,
         providersPerMod: [Service1],
         providersPerApp: [Service3],
@@ -613,7 +613,7 @@ describe('ModuleNormalizer', () => {
       };
       dynamicModule1.initOpts.set(initSome, { path: 'path-1' });
 
-      const dynamicModule2: DynamicModuleWithInit & SomeInitDynamicOptions = {
+      const dynamicModule2: DynamicModuleWithInitOptions & SomeInitDynamicOptions = {
         module: Module2,
         providersPerApp: [Service2],
         num: 12,

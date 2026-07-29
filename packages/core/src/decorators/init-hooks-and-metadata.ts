@@ -172,7 +172,7 @@ import {
   InitDecorator,
   featureModule,
   InitHooks,
-  DynamicModuleWithInit,
+  DynamicModuleWithInitOptions,
 } from '@ditsmod/core';
 
 interface RootModuleOptions {
@@ -192,7 +192,7 @@ export const initSome: InitDecorator<RootModuleOptions, { path?: string }, InitM
 
 @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
 class Module1 {
-  static withOpts(): DynamicModuleWithInit<Module1> {
+  static withOpts(): DynamicModuleWithInitOptions<Module1> {
     return {
       module: this,
       initOpts: new Map(),
@@ -228,10 +228,8 @@ export interface DynamicModuleWrapper {
   module?: never;
 }
 
-export interface InitDecoratorOptions<InitDynamicOptions extends object = object> extends Omit<
-  FeatureModuleOptions,
-  'imports'
-> {
+// prettier-ignore
+export interface InitDecoratorOptions<InitDynamicOptions extends object = object> extends Omit<FeatureModuleOptions,'imports'> {
   imports?: (
     ((DynamicModuleWrapper | DynamicModule) & InitDynamicOptions) | StaticModule | ForwardRefFn<StaticModule>
   )[];

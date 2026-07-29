@@ -1,4 +1,4 @@
-import { InitDynamicOptionsMap, DynamicModuleWithInit } from '@ditsmod/core';
+import { InitDynamicOptionsMap, DynamicModuleWithInitOptions } from '@ditsmod/core';
 import { ValidationModule } from '@ditsmod/openapi-validation';
 import { BodyParserModule } from '@ditsmod/body-parser';
 import { initRest, restModule } from '@ditsmod/rest';
@@ -10,7 +10,7 @@ import { FirstController } from './first.controller.js';
   controllers: [FirstController],
 })
 export class FirstModule {
-  static withPath(path?: string): DynamicModuleWithInit<FirstModule> {
+  static withPath(path?: string): DynamicModuleWithInitOptions<FirstModule> {
     const initOpts: InitDynamicOptionsMap = new Map();
     initOpts.set(initRest, { path });
 

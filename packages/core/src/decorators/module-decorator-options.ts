@@ -115,7 +115,7 @@ export interface DynamicModule<M extends AnyObj = AnyObj> extends BaseDynamicMod
  * This interface differs from {@link DynamicModule} only in that it requires the presence of the `initOpts` property.
  * It is convenient to use in static module methods that return a dynamic module configured with init options.
  */
-export interface DynamicModuleWithInit<M extends AnyObj = AnyObj> extends DynamicModule<M> {
+export interface DynamicModuleWithInitOptions<M extends AnyObj = AnyObj> extends DynamicModule<M> {
   initOpts: InitDynamicOptionsMap;
 }
 

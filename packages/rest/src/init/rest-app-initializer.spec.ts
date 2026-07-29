@@ -11,7 +11,7 @@ import {
   rootModule,
   SystemLogMediator,
   ImportedProvider,
-  DynamicModuleWithInit,
+  DynamicModuleWithInitOptions,
   ModRefId,
   ShallowModuleImports,
 } from '@ditsmod/core';
@@ -85,7 +85,7 @@ function getImportedTokens(map: Map<any, ImportedProvider<Provider>> | undefined
     class Module5 {}
 
     const module2WithOpts: DynamicModule = Module2.withOpts();
-    const module3WithOpts: DynamicModuleWithInit = { module: Module3, initOpts: new Map() };
+    const module3WithOpts: DynamicModuleWithInitOptions = { module: Module3, initOpts: new Map() };
     module3WithOpts.initOpts.set(initRest, { path: 'one' });
     const module4WithOpts: DynamicModule = { module: Module4 };
     @rootModule({

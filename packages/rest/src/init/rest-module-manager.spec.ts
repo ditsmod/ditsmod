@@ -11,7 +11,7 @@ import {
   injectable,
   forwardRef,
   Provider,
-  DynamicModuleWithInit,
+  DynamicModuleWithInitOptions,
   ModRefId,
 } from '@ditsmod/core';
 import {
@@ -436,7 +436,7 @@ describe('ModuleManager', () => {
     @initRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {
-      static withOpts(): DynamicModuleWithInit<Module1> {
+      static withOpts(): DynamicModuleWithInitOptions<Module1> {
         return {
           module: this,
           initOpts: new Map(),

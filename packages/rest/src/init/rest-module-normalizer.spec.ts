@@ -3,7 +3,7 @@ import {
   featureModule,
   forwardRef,
   ModuleManager,
-  DynamicModuleWithInit,
+  DynamicModuleWithInitOptions,
   DynamicModule,
   ProviderBuilder,
   rootModule,
@@ -37,7 +37,7 @@ describe('rest ModuleNormalizer', () => {
 
     @featureModule({ providersPerApp: [Service0] })
     class Module1 {
-      static withOpts(): DynamicModuleWithInit<Module1> {
+      static withOpts(): DynamicModuleWithInitOptions<Module1> {
         return {
           module: this,
           initOpts: new Map(),
@@ -85,7 +85,7 @@ describe('rest ModuleNormalizer', () => {
 
     @featureModule({ providersPerApp: [Service0] })
     class Module2 {
-      static withOpts(id: string): DynamicModuleWithInit<Module2> {
+      static withOpts(id: string): DynamicModuleWithInitOptions<Module2> {
         return {
           id,
           module: this,
@@ -244,7 +244,7 @@ describe('rest ModuleNormalizer', () => {
     })
     @featureModule({ providersPerMod: [Service5] })
     class Module1 {
-      static withOpts(): DynamicModuleWithInit<Module1> {
+      static withOpts(): DynamicModuleWithInitOptions<Module1> {
         return {
           module: this,
           initOpts: new Map(),
