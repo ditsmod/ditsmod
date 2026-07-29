@@ -65,7 +65,7 @@ export {
 export {
   FeatureModuleOptions,
   DynamicModule,
-  DynamicModuleWithInitOptions,
+  DynamicModuleWithMixinOptions,
   BaseDynamicModule,
   DynamicModuleOptions,
   StaticModule,

@@ -20,7 +20,7 @@ export { RestRouteExtension } from './extensions/rest-route.extension.js';
 export { DispatcherExtension } from './extensions/dispatcher.extension.js';
 export { InterceptorExtension } from './extensions/use-interceptor.extension.js';
 export { mixinRest, restRootModule, restModule } from './decorators/rest-module-mixins.js';
-export { RestInitMeta } from './init/rest-mixin-meta.js';
+export { RestMixinMeta } from './init/rest-mixin-meta.js';
 export { route, DecoratorRouteMeta } from './decorators/route.js';
 export {
   isRoute,

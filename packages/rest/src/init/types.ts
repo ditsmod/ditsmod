@@ -10,7 +10,7 @@ import type {
 } from '@ditsmod/core';
 
 import type { ModuleScopedGuard } from '#interceptors/guard.js';
-import type { RestModRefId, RestInitMeta } from '#init/rest-mixin-meta.js';
+import type { RestModRefId, RestMixinMeta } from '#init/rest-mixin-meta.js';
 
 export class RestImportedProvider<T extends Provider = Provider> {
   modRefId: RestModRefId;
@@ -27,10 +27,10 @@ export class RestShallowModuleImports {
   prefixPerMod: string;
   guardsPerMod: ModuleScopedGuard[];
   /**
-   * Snapshot of `RestInitMeta`. If you modify any array in this object,
+   * Snapshot of `RestMixinMeta`. If you modify any array in this object,
    * the original array will remain unchanged.
    */
-  meta: RestInitMeta;
+  meta: RestMixinMeta;
   applyControllers?: boolean;
 }
 
@@ -54,7 +54,7 @@ export class RestProvidersByLevel {
 
 export class RestResolvedModuleMeta {
   normalizedModuleMeta: NormalizedModuleMeta;
-  meta: RestInitMeta;
+  meta: RestMixinMeta;
   guardsPerMod: ModuleScopedGuard[];
   prefixPerMod: string;
   applyControllers?: boolean;

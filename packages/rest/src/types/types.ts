@@ -6,7 +6,7 @@ import type { Tree } from '#services/tree.js';
 import type { ModuleScopedGuard } from '#interceptors/guard.js';
 import type { RouteHandler } from '#services/router.js';
 import type { ControllerMeta } from './controller-metadata.js';
-import type { RestInitMeta } from '#init/rest-mixin-meta.js';
+import type { RestMixinMeta } from '#init/rest-mixin-meta.js';
 
 export class RestAppProviders extends AppModuleMixins {}
 
@@ -22,7 +22,7 @@ export type RedirectStatusCodes = 300 | 301 | 302 | 303 | 307 | 308;
 export class RouteExtensionMeta {
   normalizedModuleMeta: NormalizedModuleMeta;
   prefixPerMod: string;
-  meta: RestInitMeta;
+  meta: RestMixinMeta;
   controllersMeta: ControllerMeta[];
   guardsPerMod: ModuleScopedGuard[];
 }

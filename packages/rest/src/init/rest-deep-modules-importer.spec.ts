@@ -99,18 +99,18 @@ describe('DeepModulesImporter', () => {
     expect(rootNormalizedModuleMeta?.providersPerApp.includes(Service5)).toBeTruthy();
     expect(rootNormalizedModuleMeta?.providersPerMod.includes(Service6)).toBeTruthy();
 
-    const mod1InitMeta = mod1NormalizedModuleMeta?.mixinMeta.get(mixinRest);
-    expect(mod1NormalizedModuleMeta?.providersPerApp).toBe(mod1InitMeta?.providersPerApp);
-    expect(mod1NormalizedModuleMeta?.providersPerMod).toBe(mod1InitMeta?.providersPerMod);
-    expect(mod1InitMeta?.providersPerApp).toEqual([Service1, Service3]);
-    expect(mod1InitMeta?.providersPerMod.includes(Service2)).toBeTruthy();
-    expect(mod1InitMeta?.providersPerMod.includes(Service4)).toBeTruthy();
+    const mod1MixinMeta = mod1NormalizedModuleMeta?.mixinMeta.get(mixinRest);
+    expect(mod1NormalizedModuleMeta?.providersPerApp).toBe(mod1MixinMeta?.providersPerApp);
+    expect(mod1NormalizedModuleMeta?.providersPerMod).toBe(mod1MixinMeta?.providersPerMod);
+    expect(mod1MixinMeta?.providersPerApp).toEqual([Service1, Service3]);
+    expect(mod1MixinMeta?.providersPerMod.includes(Service2)).toBeTruthy();
+    expect(mod1MixinMeta?.providersPerMod.includes(Service4)).toBeTruthy();
 
-    const rootInitMeta = rootNormalizedModuleMeta?.mixinMeta.get(mixinRest);
-    expect(rootNormalizedModuleMeta?.providersPerApp).toBe(rootInitMeta?.providersPerApp);
-    expect(rootNormalizedModuleMeta?.providersPerMod).toBe(rootInitMeta?.providersPerMod);
-    expect(rootInitMeta?.providersPerApp.includes(Service5)).toBeTruthy();
-    expect(rootInitMeta?.providersPerMod.includes(Service6)).toBeTruthy();
+    const rootMixinMeta = rootNormalizedModuleMeta?.mixinMeta.get(mixinRest);
+    expect(rootNormalizedModuleMeta?.providersPerApp).toBe(rootMixinMeta?.providersPerApp);
+    expect(rootNormalizedModuleMeta?.providersPerMod).toBe(rootMixinMeta?.providersPerMod);
+    expect(rootMixinMeta?.providersPerApp.includes(Service5)).toBeTruthy();
+    expect(rootMixinMeta?.providersPerMod.includes(Service6)).toBeTruthy();
   });
 
   it('reexport module that has mixinRest decorator', () => {

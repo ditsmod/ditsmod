@@ -7,7 +7,7 @@ import type {
   TrpcModRefId,
   TrpcShallowModuleImports,
 } from '#decorators/trpc-module-mixins.js';
-import { mixinTrpcModule, TrpcModuleMixin, TrpcInitMeta } from '#decorators/trpc-module-mixins.js';
+import { mixinTrpcModule, TrpcModuleMixin, TrpcMixinMeta } from '#decorators/trpc-module-mixins.js';
 import type { ModuleScopedGuard } from '#interceptors/trpc-guard.js';
 
 /**
@@ -23,7 +23,7 @@ export class TrpcShallowModulesImporter {
   protected moduleName: string;
   protected guardsPerMod: ModuleScopedGuard[];
   protected normalizedModuleMeta: NormalizedModuleMeta;
-  protected meta: TrpcInitMeta;
+  protected meta: TrpcMixinMeta;
 
   /**
    * AppProviders.
@@ -48,7 +48,7 @@ export class TrpcShallowModulesImporter {
     this.glProviders = appProviders;
     this.moduleName = normalizedModuleMeta.name;
     this.normalizedModuleMeta = normalizedModuleMeta;
-    this.meta = this.getInitMeta(normalizedModuleMeta);
+    this.meta = this.getMixinMeta(normalizedModuleMeta);
 
     return {
       moduleMixin: new TrpcModuleMixin({}),
@@ -68,7 +68,7 @@ export class TrpcShallowModulesImporter {
     this.moduleManager = moduleManager;
     const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
     this.normalizedModuleMeta = normalizedModuleMeta;
-    this.meta = this.getInitMeta(normalizedModuleMeta);
+    this.meta = this.getMixinMeta(normalizedModuleMeta);
     this.glProviders = appProviders;
     this.trpcGlProviders = appProviders.mixinValueMap.get(mixinTrpcModule) as TrpcAppProviders;
     this.moduleName = normalizedModuleMeta.name;
@@ -86,10 +86,10 @@ export class TrpcShallowModulesImporter {
     });
   }
 
-  protected getInitMeta(normalizedModuleMeta: NormalizedModuleMeta): TrpcInitMeta {
+  protected getMixinMeta(normalizedModuleMeta: NormalizedModuleMeta): TrpcMixinMeta {
     let meta = normalizedModuleMeta.mixinMeta.get(mixinTrpcModule);
     if (!meta) {
-      meta = getProxyForMixinMeta(normalizedModuleMeta, TrpcInitMeta);
+      meta = getProxyForMixinMeta(normalizedModuleMeta, TrpcMixinMeta);
       normalizedModuleMeta.mixinMeta.set(mixinTrpcModule, meta);
     }
     return meta;
@@ -101,7 +101,7 @@ export class TrpcShallowModulesImporter {
       if (this.unfinishedScanModules.has(modRefId)) {
         continue;
       }
-      const meta = this.getInitMeta(normalizedModuleMeta);
+      const meta = this.getMixinMeta(normalizedModuleMeta);
       const { guardsPerMod } = this.getPrefixAndGuards(modRefId, meta, isImport);
       const shallowModulesImporter = new TrpcShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
@@ -118,7 +118,7 @@ export class TrpcShallowModulesImporter {
     }
   }
 
-  protected getPrefixAndGuards(modRefId: TrpcModRefId, meta: TrpcInitMeta, isImport?: boolean) {
+  protected getPrefixAndGuards(modRefId: TrpcModRefId, meta: TrpcMixinMeta, isImport?: boolean) {
     let guardsPerMod: ModuleScopedGuard[] = [];
     const hasModuleParams = isDynamicModule(modRefId);
     if (hasModuleParams || !isImport) {

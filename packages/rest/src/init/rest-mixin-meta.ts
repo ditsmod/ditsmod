@@ -10,7 +10,7 @@ class NormalizedParams {
   guards: NormalizedGuard[] = [];
 }
 
-export class RestInitMeta extends NormalizedMixinMeta {
+export class RestMixinMeta extends NormalizedMixinMeta {
   appendsWithOpts: AppendsWithOptions[] = [];
   appendsModules: StaticModule[] = [];
   controllers: Class<Record<string | symbol, any>>[] = [];

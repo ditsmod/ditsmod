@@ -1,6 +1,6 @@
 import type { ModRefId, Provider } from '@ditsmod/core';
 import { NormalizedModuleMeta, ProviderBuilder } from '@ditsmod/core';
-import { RestInitMeta, mixinRest } from '@ditsmod/rest';
+import { RestMixinMeta, mixinRest } from '@ditsmod/rest';
 
 import { TestAppInitializer } from '#app/test-app-initializer.js';
 import type { ProvidersByLevel } from '#app/types.js';
@@ -60,7 +60,7 @@ describe('TestAppInitializer', () => {
       };
       mock.addProvidersToModule(modRefId, providersMeta1);
       const normalizedModuleMeta = new NormalizedModuleMeta();
-      normalizedModuleMeta.mixinMeta.set(mixinRest, new RestInitMeta());
+      normalizedModuleMeta.mixinMeta.set(mixinRest, new RestMixinMeta());
       normalizedModuleMeta.providersPerApp.push(Provider0);
       normalizedModuleMeta.providersPerMod.push(Provider0);
 

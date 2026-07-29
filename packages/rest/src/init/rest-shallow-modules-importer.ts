@@ -14,7 +14,7 @@ import { ProvidersCollision, LevelCollisionNotFound, AppCollisionNotFound } from
 
 import type { ModuleScopedGuard } from '#interceptors/guard.js';
 import type { RestModRefId } from '#init/rest-mixin-meta.js';
-import { RestInitMeta } from '#init/rest-mixin-meta.js';
+import { RestMixinMeta } from '#init/rest-mixin-meta.js';
 import type { Level, RestAppProviders } from '#types/types.js';
 import { mixinRest, RestModuleMixin } from '#decorators/rest-module-mixins.js';
 import type { ImportModulesShallowConfig, RestImportedProvider, RestShallowModuleImports } from './types.js';
@@ -35,7 +35,7 @@ export class RestShallowModulesImporter {
   protected prefixPerMod: string;
   protected guardsPerMod: ModuleScopedGuard[];
   protected normalizedModuleMeta: NormalizedModuleMeta;
-  protected meta: RestInitMeta;
+  protected meta: RestMixinMeta;
 
   /**
    * AppProviders.
@@ -60,7 +60,7 @@ export class RestShallowModulesImporter {
     this.appProviders = appProviders;
     this.moduleName = normalizedModuleMeta.name;
     this.normalizedModuleMeta = normalizedModuleMeta;
-    this.meta = this.getInitMeta(normalizedModuleMeta);
+    this.meta = this.getMixinMeta(normalizedModuleMeta);
 
     return {
       moduleMixin: new RestModuleMixin({}),
@@ -82,7 +82,7 @@ export class RestShallowModulesImporter {
     this.moduleManager = moduleManager;
     const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
     this.normalizedModuleMeta = normalizedModuleMeta;
-    this.meta = this.getInitMeta(normalizedModuleMeta);
+    this.meta = this.getMixinMeta(normalizedModuleMeta);
     this.appProviders = appProviders;
     this.restGlProviders = appProviders.mixinValueMap.get(mixinRest) as RestAppProviders;
     this.prefixPerMod = prefixPerMod || '';
@@ -106,10 +106,10 @@ export class RestShallowModulesImporter {
     });
   }
 
-  protected getInitMeta(normalizedModuleMeta: NormalizedModuleMeta): RestInitMeta {
+  protected getMixinMeta(normalizedModuleMeta: NormalizedModuleMeta): RestMixinMeta {
     let meta = normalizedModuleMeta.mixinMeta.get(mixinRest);
     if (!meta) {
-      meta = getProxyForMixinMeta(normalizedModuleMeta, RestInitMeta);
+      meta = getProxyForMixinMeta(normalizedModuleMeta, RestMixinMeta);
       normalizedModuleMeta.mixinMeta.set(mixinRest, meta);
     }
     return meta;
@@ -133,7 +133,7 @@ export class RestShallowModulesImporter {
       if (this.unfinishedScanModules.has(modRefId)) {
         continue;
       }
-      const meta = this.getInitMeta(normalizedModuleMeta);
+      const meta = this.getMixinMeta(normalizedModuleMeta);
       const { prefixPerMod, guardsPerMod } = this.getPrefixAndGuards(modRefId, meta, isImport);
       const shallowModulesImporter = new RestShallowModulesImporter();
       this.unfinishedScanModules.add(modRefId);
@@ -152,7 +152,7 @@ export class RestShallowModulesImporter {
     }
   }
 
-  protected getPrefixAndGuards(modRefId: RestModRefId, meta: RestInitMeta, isImport?: boolean) {
+  protected getPrefixAndGuards(modRefId: RestModRefId, meta: RestMixinMeta, isImport?: boolean) {
     let prefixPerMod: string;
     let guardsPerMod: ModuleScopedGuard[] = [];
     const { absolutePath } = meta.params;
@@ -220,10 +220,10 @@ export class RestShallowModulesImporter {
     return { module2: modRefId2, providers };
   }
 
-  protected checkImportsAndAppends(normalizedModuleMeta: NormalizedModuleMeta, meta1: RestInitMeta) {
+  protected checkImportsAndAppends(normalizedModuleMeta: NormalizedModuleMeta, meta1: RestMixinMeta) {
     meta1.appendsModules.concat(meta1.appendsWithOpts as any[]).forEach((modRefId) => {
       const appendedNormalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
-      const meta2 = this.getInitMeta(appendedNormalizedModuleMeta);
+      const meta2 = this.getMixinMeta(appendedNormalizedModuleMeta);
       if (!meta2.controllers.length) {
         throw new ModuleMustHaveControllers(normalizedModuleMeta.name, appendedNormalizedModuleMeta.name);
       }

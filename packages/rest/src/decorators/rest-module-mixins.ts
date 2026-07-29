@@ -10,22 +10,22 @@ import type {
   ImportModulesShallowConfig,
   RestShallowModuleImports,
 } from '#init/types.js';
-import type { RestModRefId, RestInitMeta } from '#init/rest-mixin-meta.js';
+import type { RestModRefId, RestMixinMeta } from '#init/rest-mixin-meta.js';
 import type { RestAppProviders } from '#types/types.js';
 import { RestModule } from '#init/rest.module.js';
 import { RestDeepModulesImporter } from '#init/rest-deep-modules-importer.js';
 
-export const mixinRest: MixinDecorator<RestMixinOptions, RestModuleOptions, RestInitMeta> =
-  Reflector.makeClassDecorator(transformInitMeta, 'mixinRest');
+export const mixinRest: MixinDecorator<RestMixinOptions, RestModuleOptions, RestMixinMeta> =
+  Reflector.makeClassDecorator(transformMixinMeta, 'mixinRest');
 export const restRootModule: MixinDecorator<
   RestMixinOptions & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<StaticModule>][] },
   RestModuleOptions,
-  RestInitMeta
+  RestMixinMeta
 > = Reflector.makeClassDecorator(transformRootMeta, 'restRootModule', mixinRest);
-export const restModule: MixinDecorator<RestMixinOptions, RestModuleOptions, RestInitMeta> =
+export const restModule: MixinDecorator<RestMixinOptions, RestModuleOptions, RestMixinMeta> =
   Reflector.makeClassDecorator(transformFeatureMeta, 'restModule', mixinRest);
 
-export function transformInitMeta(data?: RestMixinOptions): ModuleMixin<RestMixinOptions> {
+export function transformMixinMeta(data?: RestMixinOptions): ModuleMixin<RestMixinOptions> {
   const metadata = Object.assign({}, data);
   return new RestModuleMixin(metadata);
 }
@@ -44,11 +44,11 @@ export function transformFeatureMeta(data?: RestMixinOptions): ModuleMixin<RestM
 export class RestModuleMixin extends ModuleMixin<RestMixinOptions> {
   override hostModule = RestModule;
 
-  override normalize(normalizedModuleMeta: NormalizedModuleMeta): RestInitMeta {
+  override normalize(normalizedModuleMeta: NormalizedModuleMeta): RestMixinMeta {
     return new RestModuleNormalizer().normalize(normalizedModuleMeta, this.moduleOptions);
   }
 
-  override getModulesToScan(meta?: RestInitMeta): RestModRefId[] {
+  override getModulesToScan(meta?: RestMixinMeta): RestModRefId[] {
     return meta?.appendsModules.concat(meta?.appendsWithOpts as any[]) || [];
   }
 
@@ -64,7 +64,7 @@ export class RestModuleMixin extends ModuleMixin<RestMixinOptions> {
     return new RestDeepModulesImporter(config).importModulesDeep();
   }
 
-  override getProvidersToOverride(meta: RestInitMeta): Provider[][] {
+  override getProvidersToOverride(meta: RestMixinMeta): Provider[][] {
     return [meta.providersPerRou, meta.providersPerReq];
   }
 }

@@ -14,7 +14,7 @@ import { ForbiddenNormalizedExport, EmptyModuleMeta } from '@ditsmod/core/errors
 
 import type { AppendsWithOptions, RestMixinOptions } from '#init/rest-mixin-raw-meta.js';
 import type { RestModRefId } from '#init/rest-mixin-meta.js';
-import { RestInitMeta } from '#init/rest-mixin-meta.js';
+import { RestMixinMeta } from '#init/rest-mixin-meta.js';
 import { isAppendsWithOptions, isControllerDecorator } from '#types/type.guards.js';
 import type { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
 import { mixinRest } from '#decorators/rest-module-mixins.js';
@@ -25,11 +25,11 @@ import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } 
  */
 export class RestModuleNormalizer {
   protected normalizedModuleMeta: NormalizedModuleMeta;
-  protected meta: RestInitMeta;
+  protected meta: RestMixinMeta;
 
   normalize(normalizedModuleMeta: NormalizedModuleMeta, moduleOptions: RestMixinOptions) {
     this.normalizedModuleMeta = normalizedModuleMeta;
-    const meta = getProxyForMixinMeta(normalizedModuleMeta, RestInitMeta);
+    const meta = getProxyForMixinMeta(normalizedModuleMeta, RestMixinMeta);
     this.meta = meta;
     if (moduleOptions.controllers) {
       this.meta.controllers.push(...moduleOptions.controllers);

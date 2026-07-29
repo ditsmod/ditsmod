@@ -9,7 +9,7 @@ import type {
 } from '@ditsmod/core';
 import { ModuleInfo } from '@ditsmod/core';
 
-import type { DeepModulesImporterConfig, TrpcInitMeta } from '#decorators/trpc-module-mixins.js';
+import type { DeepModulesImporterConfig, TrpcMixinMeta } from '#decorators/trpc-module-mixins.js';
 import type { TrpcShallowModuleImports } from '#decorators/trpc-module-mixins.js';
 import type { ModuleScopedGuard } from '#interceptors/trpc-guard.js';
 
@@ -19,7 +19,7 @@ import type { ModuleScopedGuard } from '#interceptors/trpc-guard.js';
 
 export class TrpcResolvedModuleMeta {
   normalizedModuleMeta: NormalizedModuleMeta;
-  meta: TrpcInitMeta;
+  meta: TrpcMixinMeta;
   guardsPerMod: ModuleScopedGuard[];
 }
 

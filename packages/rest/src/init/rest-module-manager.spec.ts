@@ -11,7 +11,7 @@ import {
   injectable,
   forwardRef,
   Provider,
-  DynamicModuleWithInitOptions,
+  DynamicModuleWithMixinOptions,
   ModRefId,
 } from '@ditsmod/core';
 import {
@@ -26,7 +26,7 @@ import {
 import { controller } from '../types/controller.js';
 import { mixinRest, restRootModule } from '#decorators/rest-module-mixins.js';
 import { AppendsWithOptions } from './rest-mixin-raw-meta.js';
-import { RestInitMeta } from './rest-mixin-meta.js';
+import { RestMixinMeta } from './rest-mixin-meta.js';
 import { CanActivate, guard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
 import { RestModule } from './rest.module.js';
@@ -41,7 +41,7 @@ describe('ModuleManager', () => {
   }
 
   let mock: MockModuleManager;
-  function getInitMeta(moduleId: ModuleId) {
+  function getMixinMeta(moduleId: ModuleId) {
     const normalizedModuleMeta = mock.getNormalizedModuleMeta(moduleId);
     // console.log(normalizedModuleMeta);
     return normalizedModuleMeta?.mixinMeta.get(mixinRest);
@@ -152,16 +152,16 @@ describe('ModuleManager', () => {
     expect(rootNormalizedModuleMeta?.providersPerApp).toEqual([Service5]);
     expect(rootNormalizedModuleMeta?.providersPerMod.includes(Service6)).toBeTruthy();
 
-    const mod1InitMeta = normalizedModuleMeta1?.mixinMeta.get(mixinRest);
-    expect(mod1InitMeta?.providersPerApp).toEqual(normalizedModuleMeta1?.providersPerApp);
-    expect(mod1InitMeta?.providersPerMod).toEqual(normalizedModuleMeta1?.providersPerMod);
-    expect(mod1InitMeta?.providersPerMod.includes(Service2)).toBeTruthy();
-    expect(mod1InitMeta?.providersPerMod.includes(Service4)).toBeTruthy();
+    const mod1MixinMeta = normalizedModuleMeta1?.mixinMeta.get(mixinRest);
+    expect(mod1MixinMeta?.providersPerApp).toEqual(normalizedModuleMeta1?.providersPerApp);
+    expect(mod1MixinMeta?.providersPerMod).toEqual(normalizedModuleMeta1?.providersPerMod);
+    expect(mod1MixinMeta?.providersPerMod.includes(Service2)).toBeTruthy();
+    expect(mod1MixinMeta?.providersPerMod.includes(Service4)).toBeTruthy();
 
-    const rootInitMeta = rootNormalizedModuleMeta?.mixinMeta.get(mixinRest);
-    expect(rootInitMeta?.providersPerApp).toEqual(rootNormalizedModuleMeta?.providersPerApp);
-    expect(rootInitMeta?.providersPerMod).toEqual(rootNormalizedModuleMeta?.providersPerMod);
-    expect(rootInitMeta?.providersPerMod.includes(Service6)).toBeTruthy();
+    const rootMixinMeta = rootNormalizedModuleMeta?.mixinMeta.get(mixinRest);
+    expect(rootMixinMeta?.providersPerApp).toEqual(rootNormalizedModuleMeta?.providersPerApp);
+    expect(rootMixinMeta?.providersPerMod).toEqual(rootNormalizedModuleMeta?.providersPerMod);
+    expect(rootMixinMeta?.providersPerMod.includes(Service6)).toBeTruthy();
   });
 
   it('empty root module with rootModule decorator only', () => {
@@ -203,7 +203,7 @@ describe('ModuleManager', () => {
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(3);
-    expect(getInitMeta('root')?.providersPerReq).toEqual([Provider1]);
+    expect(getMixinMeta('root')?.providersPerReq).toEqual([Provider1]);
   });
 
   it('root module without @rootModule decorator', () => {
@@ -401,12 +401,12 @@ describe('ModuleManager', () => {
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(6);
-    expect(getInitMeta(Module1)?.controllers).toEqual([Controller1]);
+    expect(getMixinMeta(Module1)?.controllers).toEqual([Controller1]);
 
     expect(mock.map.get(Module2)?.mixinMeta.get(mixinRest)?.providersPerRou).toEqual([Provider1]);
     expect(mock.map.get(Module2)?.mixinMeta.get(mixinRest)?.exportedProvidersPerRou).toEqual([Provider1]);
 
-    expect(getInitMeta('root')?.importedStaticModules).toEqual([Module1, Module2, RestModule]);
+    expect(getMixinMeta('root')?.importedStaticModules).toEqual([Module1, Module2, RestModule]);
 
     const mixinMeta = mock.map.get(module4WithOpts)?.mixinMeta.get(mixinRest);
     expect(mixinMeta?.importedStaticModules).toEqual([RestModule]);
@@ -436,7 +436,7 @@ describe('ModuleManager', () => {
     @mixinRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {
-      static withOpts(): DynamicModuleWithInitOptions<Module1> {
+      static withOpts(): DynamicModuleWithMixinOptions<Module1> {
         return {
           module: this,
           mixinOptions: new Map(),
@@ -458,8 +458,8 @@ describe('ModuleManager', () => {
 
     mock.scanRootModule(AppModule);
     expect(mock.map.size).toBe(5);
-    expect(getInitMeta(dynamicModule)?.params.guards).toMatchObject([{ guard: Guard1 }]);
-    expect(getInitMeta(appendsWithOpts)?.params.guards).toMatchObject([{ guard: Guard2 }]);
+    expect(getMixinMeta(dynamicModule)?.params.guards).toMatchObject([{ guard: Guard1 }]);
+    expect(getMixinMeta(appendsWithOpts)?.params.guards).toMatchObject([{ guard: Guard2 }]);
   });
 
   it('root module with imported some extension', () => {
@@ -480,17 +480,17 @@ describe('ModuleManager', () => {
     })
     class Module3 {}
 
-    const expectedMeta3 = new RestInitMeta();
+    const expectedMeta3 = new RestMixinMeta();
     delete (expectedMeta3 as any).extensionConfigs;
     delete (expectedMeta3 as any).exportedExtensionConfigs;
 
-    const expectedMeta1 = new RestInitMeta();
+    const expectedMeta1 = new RestMixinMeta();
     delete (expectedMeta1 as any).extensionConfigs;
     delete (expectedMeta1 as any).exportedExtensionConfigs;
 
     mock.scanRootModule(Module3);
-    expect(getInitMeta('root')).toBeFalsy();
-    expect(getInitMeta(Module1)).toBeFalsy();
+    expect(getMixinMeta('root')).toBeFalsy();
+    expect(getMixinMeta(Module1)).toBeFalsy();
   });
 
   it('root module with exported globaly some extension', () => {
@@ -512,17 +512,17 @@ describe('ModuleManager', () => {
     })
     class Module3 {}
 
-    const expectedMeta3 = new RestInitMeta();
+    const expectedMeta3 = new RestMixinMeta();
     delete (expectedMeta3 as any).extensionConfigs;
     delete (expectedMeta3 as any).exportedExtensionConfigs;
 
-    const expectedMeta1 = new RestInitMeta();
+    const expectedMeta1 = new RestMixinMeta();
     delete (expectedMeta1 as any).extensionConfigs;
     delete (expectedMeta1 as any).exportedExtensionConfigs;
 
     mock.scanRootModule(Module3);
-    expect(getInitMeta('root')).toBeFalsy();
-    expect(getInitMeta(Module1)).toBeFalsy();
+    expect(getMixinMeta('root')).toBeFalsy();
+    expect(getMixinMeta(Module1)).toBeFalsy();
   });
 
   it('split multi providers and common providers', () => {
@@ -547,7 +547,7 @@ describe('ModuleManager', () => {
     })
     class AppModule {}
 
-    const expectedMeta1 = {} as RestInitMeta;
+    const expectedMeta1 = {} as RestMixinMeta;
     expectedMeta1.importedStaticModules = [RestModule];
     expectedMeta1.exportedProvidersPerReq = [Provider3];
     expectedMeta1.providersPerReq = providersPerReq;
@@ -559,7 +559,7 @@ describe('ModuleManager', () => {
     ];
 
     mock.scanRootModule(AppModule);
-    expect(getInitMeta('root')?.importedStaticModules).toEqual([Module1]);
-    expect(getInitMeta(Module1)).toMatchObject(expectedMeta1);
+    expect(getMixinMeta('root')?.importedStaticModules).toEqual([Module1]);
+    expect(getMixinMeta(Module1)).toMatchObject(expectedMeta1);
   });
 });

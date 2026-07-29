@@ -113,9 +113,9 @@ export interface DynamicModule<M extends AnyObj = AnyObj> extends BaseDynamicMod
 }
 /**
  * This interface differs from {@link DynamicModule} only in that it requires the presence of the `mixinOptions` property.
- * It is convenient to use in static module methods that return a dynamic module configured with init options.
+ * It is convenient to use in static module methods that return a dynamic module configured with mixin options.
  */
-export interface DynamicModuleWithInitOptions<M extends AnyObj = AnyObj> extends DynamicModule<M> {
+export interface DynamicModuleWithMixinOptions<M extends AnyObj = AnyObj> extends DynamicModule<M> {
   mixinOptions: MixinDynamicOptionsMap;
 }
 

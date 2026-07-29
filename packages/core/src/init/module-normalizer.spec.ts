@@ -9,7 +9,7 @@ import { ModRefId, type StaticModule } from '#decorators/module-decorator-option
 import {
   DynamicModuleOptions,
   FeatureModuleOptions,
-  DynamicModuleWithInitOptions,
+  DynamicModuleWithMixinOptions,
   DynamicModule,
 } from '#decorators/module-decorator-options.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
@@ -505,19 +505,19 @@ describe('ModuleNormalizer', () => {
   });
 
   describe('mixin decorators', () => {
-    interface SomeInitDynamicOptions extends DynamicModuleOptions {
+    interface SomeMixinDynamicOptions extends DynamicModuleOptions {
       path?: string;
       num?: number;
     }
 
-    interface SomeMixinOptions extends MixinOptions<SomeInitDynamicOptions> {
+    interface SomeMixinOptions extends MixinOptions<SomeMixinDynamicOptions> {
       one?: number;
       two?: number;
       flag?: boolean;
       appends?: ({ module: ModRefId } & AnyObj)[];
     }
 
-    class SomeInitMeta extends NormalizedMixinMeta {
+    class SomeMixinMeta extends NormalizedMixinMeta {
       normalizedModuleMeta?: NormalizedModuleMeta;
       mixinDecoratorOptions?: SomeMixinOptions;
       flag?: boolean;
@@ -527,12 +527,12 @@ describe('ModuleNormalizer', () => {
 
     class SomeModuleMixin extends ModuleMixin<SomeMixinOptions> {
       override normalize(normalizedModuleMeta: NormalizedModuleMeta) {
-        const meta = getProxyForMixinMeta(normalizedModuleMeta, SomeInitMeta);
+        const meta = getProxyForMixinMeta(normalizedModuleMeta, SomeMixinMeta);
         meta.normalizedModuleMeta = normalizedModuleMeta;
         meta.mixinDecoratorOptions = this.moduleOptions;
 
         if (isDynamicModule(normalizedModuleMeta.modRefId)) {
-          const params = normalizedModuleMeta.modRefId.mixinOptions?.get(initSome);
+          const params = normalizedModuleMeta.modRefId.mixinOptions?.get(mixinSome);
           meta.path = params?.path;
           meta.targetModRefId = normalizedModuleMeta.modRefId;
         } else {
@@ -548,19 +548,19 @@ describe('ModuleNormalizer', () => {
       return new SomeModuleMixin(Object.assign({}, data));
     }
 
-    const initSome: MixinDecorator<SomeMixinOptions, SomeInitDynamicOptions, SomeInitMeta> = Reflector.makeClassDecorator(
+    const mixinSome: MixinDecorator<SomeMixinOptions, SomeMixinDynamicOptions, SomeMixinMeta> = Reflector.makeClassDecorator(
       getModuleMixin,
-      'initSome',
+      'mixinSome',
     );
 
     it('stores metadata returned by ModuleMixin.normalize() in normalizedModuleMeta.mixinMeta', () => {
       const moduleOptions: SomeMixinOptions = { one: 1, two: 2, flag: true };
 
-      @initSome(moduleOptions)
+      @mixinSome(moduleOptions)
       @featureModule()
       class Module1 {}
 
-      const mixinMeta = normalizer.normalize(Module1).mixinMeta.get(initSome);
+      const mixinMeta = normalizer.normalize(Module1).mixinMeta.get(mixinSome);
       expect(mixinMeta?.normalizedModuleMeta?.modRefId).toBe(Module1);
       expect(mixinMeta?.mixinDecoratorOptions).toEqual(moduleOptions);
       expect(mixinMeta?.targetModRefId).toBe(Module1);
@@ -575,7 +575,7 @@ describe('ModuleNormalizer', () => {
         async stage1() {}
       }
 
-      @initSome({
+      @mixinSome({
         providersPerMod: [Service1],
         exports: [Service1],
         extensions: [{ extension: Extension1, export: true }],
@@ -603,7 +603,7 @@ describe('ModuleNormalizer', () => {
       @featureModule()
       class Module2 {}
 
-      const dynamicModule1: DynamicModuleWithInitOptions & SomeInitDynamicOptions = {
+      const dynamicModule1: DynamicModuleWithMixinOptions & SomeMixinDynamicOptions = {
         module: Module1,
         providersPerMod: [Service1],
         providersPerApp: [Service3],
@@ -611,23 +611,23 @@ describe('ModuleNormalizer', () => {
         num: 4,
         mixinOptions: new Map(),
       };
-      dynamicModule1.mixinOptions.set(initSome, { path: 'path-1' });
+      dynamicModule1.mixinOptions.set(mixinSome, { path: 'path-1' });
 
-      const dynamicModule2: DynamicModuleWithInitOptions & SomeInitDynamicOptions = {
+      const dynamicModule2: DynamicModuleWithMixinOptions & SomeMixinDynamicOptions = {
         module: Module2,
         providersPerApp: [Service2],
         num: 12,
         extensionsMeta: { four: 4 },
         mixinOptions: new Map(),
       };
-      dynamicModule2.mixinOptions.set(initSome, {
+      dynamicModule2.mixinOptions.set(mixinSome, {
         path: 'path-2',
         providersPerApp: [Service1],
         num: 11,
         extensionsMeta: { three: 3 },
       });
 
-      @initSome({
+      @mixinSome({
         imports: [
           { dynamicModule: dynamicModule1, providersPerMod: [Service2], extensionsMeta: { two: 2 }, num: 5 },
           dynamicModule2,
@@ -637,14 +637,14 @@ describe('ModuleNormalizer', () => {
       class AppModule {}
 
       normalizer.normalize(AppModule);
-      expect(dynamicModule1.mixinOptions.get(initSome)).toEqual<SomeInitDynamicOptions>({
+      expect(dynamicModule1.mixinOptions.get(mixinSome)).toEqual<SomeMixinDynamicOptions>({
         path: 'path-1',
         providersPerMod: [Service1, Service2],
         extensionsMeta: { one: 1, two: 2 },
         num: 5,
         providersPerApp: [Service3],
       });
-      expect(dynamicModule2.mixinOptions.get(initSome)).toEqual<SomeInitDynamicOptions>({
+      expect(dynamicModule2.mixinOptions.get(mixinSome)).toEqual<SomeMixinDynamicOptions>({
         providersPerApp: [Service1, Service2],
         num: 12,
         extensionsMeta: { three: 3, four: 4 },
@@ -669,7 +669,7 @@ describe('ModuleNormalizer', () => {
       class Module4 {}
       const dynamicModule4: DynamicModule = { module: Module4 };
 
-      @initSome({
+      @mixinSome({
         imports: [Module1, dynamicModule2, { module: Module3 }, { dynamicModule: dynamicModule4 }],
         exports: [Module1, dynamicModule2, dynamicModule4],
       })
@@ -704,7 +704,7 @@ describe('ModuleNormalizer', () => {
       class Module4 {}
       const dynamicModule4: DynamicModule = { module: forwardRef(() => Module4) };
 
-      @initSome({
+      @mixinSome({
         imports: [
           forwardRef(() => Module1),
           dynamicModule2,
@@ -737,11 +737,11 @@ describe('ModuleNormalizer', () => {
         override hostModule = HostModule;
         override hostDecoratorOptions = { flag: true };
 
-        override normalize(normalizedModuleMeta: NormalizedModuleMeta): SomeInitMeta {
+        override normalize(normalizedModuleMeta: NormalizedModuleMeta): SomeMixinMeta {
           return {
             flag: this.moduleOptions.flag,
             targetModRefId: normalizedModuleMeta.modRefId,
-          } as SomeInitMeta;
+          } as SomeMixinMeta;
         }
       }
 
@@ -763,11 +763,11 @@ describe('ModuleNormalizer', () => {
         override hostModule = HostModule;
         override hostDecoratorOptions = { flag: true };
 
-        override normalize(normalizedModuleMeta: NormalizedModuleMeta): SomeInitMeta {
+        override normalize(normalizedModuleMeta: NormalizedModuleMeta): SomeMixinMeta {
           return {
             flag: this.moduleOptions.flag,
             targetModRefId: normalizedModuleMeta.modRefId,
-          } as SomeInitMeta;
+          } as SomeMixinMeta;
         }
       }
 
@@ -810,16 +810,16 @@ describe('ModuleNormalizer', () => {
       class Module1 {}
 
       const dynamicModule: DynamicModule = { module: Module1 };
-      const allModuleMixin = new Map([[initSome, new SomeModuleMixin({})]]);
+      const allModuleMixin = new Map([[mixinSome, new SomeModuleMixin({})]]);
 
-      @initSome({ imports: [{ dynamicModule, path: 'prefix' }] })
+      @mixinSome({ imports: [{ dynamicModule, path: 'prefix' }] })
       @rootModule()
       class AppModule {}
 
       normalizer.normalize(AppModule);
 
       const normalizedModuleMeta = normalizer.normalize(dynamicModule, allModuleMixin);
-      expect(normalizedModuleMeta.mixinMeta.get(initSome)).toMatchObject({
+      expect(normalizedModuleMeta.mixinMeta.get(mixinSome)).toMatchObject({
         path: 'prefix',
         targetModRefId: dynamicModule,
       });
@@ -827,19 +827,19 @@ describe('ModuleNormalizer', () => {
   });
 
   describe('propagateParentHooks', () => {
-    class PropagateInitMeta extends NormalizedMixinMeta {
+    class PropagateMixinMeta extends NormalizedMixinMeta {
       propagated?: boolean;
     }
 
     class PropagateModuleMixin extends ModuleMixin {
       override normalize(normalizedModuleMeta: NormalizedModuleMeta) {
-        const meta = getProxyForMixinMeta(normalizedModuleMeta, PropagateInitMeta);
+        const meta = getProxyForMixinMeta(normalizedModuleMeta, PropagateMixinMeta);
         meta.propagated = true;
         return meta;
       }
     }
 
-    const initPropagate: MixinDecorator<MixinOptions, {}, PropagateInitMeta> = Reflector.makeClassDecorator(
+    const initPropagate: MixinDecorator<MixinOptions, {}, PropagateMixinMeta> = Reflector.makeClassDecorator(
       (data) => new PropagateModuleMixin(data || {}),
       'initPropagate',
     );

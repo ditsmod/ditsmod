@@ -489,12 +489,12 @@ export class AppModule {}
       this.resolveAllForwardRefs(mixinDecoratorOptions.imports).forEach((imp) => {
         if (isDynamicModule(imp)) {
           const params = { ...imp };
-          this.mergeInitDynamicOptions(decorator, params, imp);
+          this.mergeMixinDynamicOptions(decorator, params, imp);
         } else if (isDynamicModuleWrapper(imp)) {
           const params = { ...imp } as { dynamicModule?: DynamicModule };
           this.mergeObjects(params, imp.dynamicModule);
           delete params.dynamicModule;
-          this.mergeInitDynamicOptions(decorator, params, imp.dynamicModule);
+          this.mergeMixinDynamicOptions(decorator, params, imp.dynamicModule);
         } else {
           if (!this.normalizedModuleMeta.importedStaticModules.includes(imp)) {
             this.normalizedModuleMeta.importedStaticModules.push(imp);
@@ -504,7 +504,7 @@ export class AppModule {}
     }
   }
 
-  protected mergeInitDynamicOptions(decorator: AnyFn, params: AnyObj, dynamicModule: DynamicModule) {
+  protected mergeMixinDynamicOptions(decorator: AnyFn, params: AnyObj, dynamicModule: DynamicModule) {
     delete params.module;
     delete params.mixinOptions;
     dynamicModule.mixinOptions ??= new Map();

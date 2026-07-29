@@ -112,15 +112,15 @@ export class NormalizedMixinMeta<A extends AnyObj = AnyObj> {
 
 /**
  * Creates a {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy | Proxy}
- * instance to forward property value assignments from the `InitMeta` instance to the {@link NormalizedModuleMeta} instance. Here,
- * `InitMeta` refers to the extended interface of normalized data that provides module mixins. This is done to simplify
+ * instance to forward property value assignments from the `MixinMeta` instance to the {@link NormalizedModuleMeta} instance. Here,
+ * `MixinMeta` refers to the extended interface of normalized data that provides module mixins. This is done to simplify
  * synchronization between {@link NormalizedModuleMeta} and the metadata from mixin decorators.
  */
 export function getProxyForMixinMeta<T extends NormalizedMixinMeta>(
   normalizedModuleMeta: NormalizedModuleMeta,
-  InitMetaClass: Class<T>,
+  MixinMetaClass: Class<T>,
 ): T {
-  return new Proxy(new InitMetaClass(), {
+  return new Proxy(new MixinMetaClass(), {
     get(meta, prop: keyof NormalizedModuleMeta, proxy) {
       if (Reflect.has(normalizedModuleMeta, prop)) {
         return Reflect.get(normalizedModuleMeta, prop, proxy);
@@ -131,7 +131,7 @@ export function getProxyForMixinMeta<T extends NormalizedMixinMeta>(
     set(meta, prop: keyof NormalizedModuleMeta, value, proxy) {
       if (Reflect.has(normalizedModuleMeta, prop) && Reflect.has(meta, prop)) {
         // @todo Create special error
-        const msg = `${prop} is reserved for internal use by NormalizedModuleMeta. You cannot use ${InitMetaClass.name}.${prop}.`;
+        const msg = `${prop} is reserved for internal use by NormalizedModuleMeta. You cannot use ${MixinMetaClass.name}.${prop}.`;
         throw new TypeError(msg);
       } else if (Reflect.has(normalizedModuleMeta, prop)) {
         return Reflect.set(normalizedModuleMeta, prop, value, proxy);
@@ -175,7 +175,7 @@ export class NormalizedModuleMeta<
    */
   inheritsContext?: boolean;
   /**
-   * Contains module mixins and init options collected from init module decorators.
+   * Contains module mixins and mixin options collected from mixin module decorators.
    */
   moduleMixinMap = new Map<AnyFn, ModuleMixin>();
   /**

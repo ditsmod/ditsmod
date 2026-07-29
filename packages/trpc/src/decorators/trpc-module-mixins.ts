@@ -27,7 +27,7 @@ class NormalizedParams {
   guards: NormalizedGuard[] = [];
 }
 
-export class TrpcInitMeta extends NormalizedMixinMeta {
+export class TrpcMixinMeta extends NormalizedMixinMeta {
   appendsModules: StaticModule[] = [];
   controllers: Class[] = [];
   params = new NormalizedParams();
@@ -47,17 +47,17 @@ export interface TrpcMixinOptions extends MixinOptions<TrpcModuleOptions> {
   controllers?: Class[];
 }
 
-export const mixinTrpcModule: MixinDecorator<TrpcMixinOptions, TrpcModuleOptions, TrpcInitMeta> =
-  Reflector.makeClassDecorator(transformInitMeta, 'mixinTrpcModule');
+export const mixinTrpcModule: MixinDecorator<TrpcMixinOptions, TrpcModuleOptions, TrpcMixinMeta> =
+  Reflector.makeClassDecorator(transformMixinMeta, 'mixinTrpcModule');
 export const trpcRootModule: MixinDecorator<
   TrpcMixinOptions & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<StaticModule>][] },
   TrpcModuleOptions,
-  TrpcInitMeta
+  TrpcMixinMeta
 > = Reflector.makeClassDecorator(transformRootMetadata, 'trpcRootModule', mixinTrpcModule);
-export const trpcModule: MixinDecorator<TrpcMixinOptions, TrpcModuleOptions, TrpcInitMeta> =
+export const trpcModule: MixinDecorator<TrpcMixinOptions, TrpcModuleOptions, TrpcMixinMeta> =
   Reflector.makeClassDecorator(transformFeatureMetadata, 'trpcModule', mixinTrpcModule);
 
-export function transformInitMeta(data?: TrpcMixinOptions): ModuleMixin<TrpcMixinOptions> {
+export function transformMixinMeta(data?: TrpcMixinOptions): ModuleMixin<TrpcMixinOptions> {
   const metadata = Object.assign({}, data);
   return new TrpcModuleMixin(metadata);
 }
@@ -76,11 +76,11 @@ export function transformFeatureMetadata(data?: TrpcMixinOptions): ModuleMixin<T
 export class TrpcModuleMixin extends ModuleMixin<TrpcMixinOptions> {
   override hostModule = TrpcModule;
 
-  override normalize(normalizedModuleMeta: NormalizedModuleMeta): TrpcInitMeta {
+  override normalize(normalizedModuleMeta: NormalizedModuleMeta): TrpcMixinMeta {
     return new TrpcModuleNormalizer().normalize(normalizedModuleMeta, this.moduleOptions);
   }
 
-  override getModulesToScan(meta?: TrpcInitMeta): TrpcModRefId[] {
+  override getModulesToScan(meta?: TrpcMixinMeta): TrpcModRefId[] {
     return [];
   }
 
@@ -92,7 +92,7 @@ export class TrpcModuleMixin extends ModuleMixin<TrpcMixinOptions> {
     return new TrpcShallowModulesImporter().importModulesShallow(config);
   }
 
-  override getProvidersToOverride(meta: TrpcInitMeta): Provider[][] {
+  override getProvidersToOverride(meta: TrpcMixinMeta): Provider[][] {
     return [meta.providersPerRou, meta.providersPerReq];
   }
 }
@@ -126,10 +126,10 @@ export class TrpcShallowModuleImports {
   normalizedModuleMeta: NormalizedModuleMeta;
   guardsPerMod: ModuleScopedGuard[];
   /**
-   * Snapshot of `TrpcInitMeta`. If you modify any array in this object,
+   * Snapshot of `TrpcMixinMeta`. If you modify any array in this object,
    * the original array will remain unchanged.
    */
-  meta: TrpcInitMeta;
+  meta: TrpcMixinMeta;
 }
 
 export class TrpcAppProviders extends AppModuleMixins {}

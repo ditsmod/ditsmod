@@ -172,14 +172,14 @@ import {
   MixinDecorator,
   featureModule,
   ModuleMixin,
-  DynamicModuleWithInitOptions,
+  DynamicModuleWithMixinOptions,
 } from '@ditsmod/core';
 
 interface RootModuleOptions {
   one?: number;
   two?: number;
 }
-interface InitMeta {
+interface MixinMeta {
   other?: string;
 }
 
@@ -188,11 +188,11 @@ function getModuleMixin(data?: RootModuleOptions): ModuleMixin<RootModuleOptions
   return new MyModuleMixin(metadata);
 }
 // Creating an mixin decorator
-export const initSome: MixinDecorator<RootModuleOptions, { path?: string }, InitMeta> = makeClassDecorator(getModuleMixin);
+export const mixinSome: MixinDecorator<RootModuleOptions, { path?: string }, MixinMeta> = makeClassDecorator(getModuleMixin);
 
 @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
 class Module1 {
-  static withOpts(): DynamicModuleWithInitOptions<Module1> {
+  static withOpts(): DynamicModuleWithMixinOptions<Module1> {
     return {
       module: this,
       mixinOptions: new Map(),
@@ -201,10 +201,10 @@ class Module1 {
 }
 
 const dynamicModule = Module1.withOpts();
-dynamicModule.mixinOptions.set(initSome, { path: 'some-prefix' });
+dynamicModule.mixinOptions.set(mixinSome, { path: 'some-prefix' });
 
 // Using the newly created mixin decorator
-@initSome({ one: 1, two: 2 })
+@mixinSome({ one: 1, two: 2 })
 @featureModule({ imports: [dynamicModule] })
 class MyModule {
   // Your code here
@@ -213,7 +213,7 @@ class MyModule {
 class MyModuleMixin extends ModuleMixin<RootModuleOptions> {}
 ```
  */
-export interface MixinDecorator<T extends MixinOptions, ModuleParams, InitMeta> {
+export interface MixinDecorator<T extends MixinOptions, ModuleParams, MixinMeta> {
   (data?: T): any;
 }
 
@@ -229,8 +229,8 @@ export interface DynamicModuleWrapper {
 }
 
 // prettier-ignore
-export interface MixinOptions<InitDynamicOptions extends object = object> extends Omit<FeatureModuleOptions,'imports'> {
+export interface MixinOptions<MixinDynamicOptions extends object = object> extends Omit<FeatureModuleOptions,'imports'> {
   imports?: (
-    ((DynamicModuleWrapper | DynamicModule) & InitDynamicOptions) | StaticModule | ForwardRefFn<StaticModule>
+    ((DynamicModuleWrapper | DynamicModule) & MixinDynamicOptions) | StaticModule | ForwardRefFn<StaticModule>
   )[];
 }
