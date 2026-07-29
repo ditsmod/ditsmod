@@ -1,17 +1,17 @@
 import type { Extension, ExtensionClass } from '#extension/extension-types.js';
 import type { ExtensionManager } from './extension-manager.js';
 import type { AnyObj } from '#types/mix.js';
-import { KeyRegistry, type GroupToken } from '#di/key-registry.js';
+import { KeyRegistry, type ExtensionGroupToken } from '#di/key-registry.js';
 import type { Provider } from '#di/top/types-and-models.js';
 
 export class NormalizedExtensionConfig {
   providers: Provider[];
   config?: ExtensionConfig;
-  groupTokenMap?: Map<ExtensionClass, GroupToken<any>>;
+  groupTokenMap?: Map<ExtensionClass, ExtensionGroupToken<any>>;
 
   exportedProviders: Provider[];
   exportedConfig?: ExtensionConfig;
-  exportedGroupTokenMap?: Map<ExtensionClass, GroupToken<any>>;
+  exportedGroupTokenMap?: Map<ExtensionClass, ExtensionGroupToken<any>>;
 }
 
 export interface BaseExtensionConfig {
@@ -73,12 +73,12 @@ export function normalizeExtensionConfig(extensionConfig: ExtensionConfig): Norm
     };
   }
 
-  const groupTokenMap = new Map<ExtensionClass, GroupToken>();
+  const groupTokenMap = new Map<ExtensionClass, ExtensionGroupToken>();
   const providers: Provider[] = [extensionConfig.extension];
 
   // Creating a group of extensions using multi-providers
   extensionConfig.groups?.forEach((ext) => {
-    const groupToken = KeyRegistry.getGroupToken(ext);
+    const groupToken = KeyRegistry.getExtensionGroupToken(ext);
     groupTokenMap.set(ext, groupToken);
     providers.push({ token: groupToken, useToken: extensionConfig.extension, multi: true });
   });

@@ -12,12 +12,12 @@ describe('KeyRegistry', () => {
   });
 });
 
-describe('getGroupToken()', () => {
+describe('getExtensionGroupToken()', () => {
   it('creation group token with SomeExtension1 as groupDebugKey', () => {
     class SomeExtension1 {}
     class SomeExtension2 {}
-    const someGroup1 = KeyRegistry.getGroupToken(SomeExtension1);
-    const someGroup2 = KeyRegistry.getGroupToken(SomeExtension2);
+    const someGroup1 = KeyRegistry.getExtensionGroupToken(SomeExtension1);
+    const someGroup2 = KeyRegistry.getExtensionGroupToken(SomeExtension2);
     expect(someGroup1).toBeInstanceOf(InjectionToken);
     expect(someGroup2).toBeInstanceOf(InjectionToken);
     expect(someGroup1).not.toBe(SomeExtension1);
@@ -25,13 +25,13 @@ describe('getGroupToken()', () => {
     expect(someGroup1).not.toBe(someGroup2);
     expect(someGroup1.toString()).toBe('group of SomeExtension1');
 
-    const someGroup3 = KeyRegistry.getGroupToken(SomeExtension1);
+    const someGroup3 = KeyRegistry.getExtensionGroupToken(SomeExtension1);
     expect(someGroup1).toBe(someGroup3);
   });
 
   it('duplicate SomeExtension1 as groupDebugKey', () => {
     class SomeExtension1 {}
-    const someGroup = KeyRegistry.getGroupToken(SomeExtension1);
+    const someGroup = KeyRegistry.getExtensionGroupToken(SomeExtension1);
     expect(someGroup).toBeInstanceOf(InjectionToken);
     expect(someGroup).not.toBe(SomeExtension1);
     expect(someGroup.toString()).toBe('group of SomeExtension1-2');

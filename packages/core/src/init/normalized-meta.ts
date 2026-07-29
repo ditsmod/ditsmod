@@ -5,7 +5,7 @@ import type { DynamicModule } from '../decorators/module-decorator-options.js';
 import type { ExtensionConfig, BaseExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import type { MixinMetaMap, ModuleMixin, AllModuleMixins } from '#decorators/module-mixins.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
-import type { GroupToken } from '#di/key-registry.js';
+import type { ExtensionGroupToken } from '#di/key-registry.js';
 import type { MultiProvider } from '#di/utils.js';
 import { objectKeys } from '#utils/object-keys.js';
 
@@ -190,12 +190,12 @@ export class NormalizedModuleMeta<
    * The mapping between an extension specified in {@link BaseExtensionConfig.groups | ExtensionConfig.groups}
    * and the extension group token assigned to it.
    */
-  extensionGroupTokenMap = new Map<ExtensionClass, GroupToken>();
+  extensionGroupTokenMap = new Map<ExtensionClass, ExtensionGroupToken>();
   /**
    * The mapping between an exported extension specified in {@link BaseExtensionConfig.groups | ExtensionConfig.groups}
    * and the extension group token assigned to it.
    */
-  exportedExtensionGroupTokenMap = new Map<ExtensionClass, GroupToken>();
+  exportedExtensionGroupTokenMap = new Map<ExtensionClass, ExtensionGroupToken>();
 
   constructor() {
     super();

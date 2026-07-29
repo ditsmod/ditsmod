@@ -550,7 +550,7 @@ describe('ModuleNormalizer', () => {
       class Module1 {}
 
       const normalizedModuleMeta = normalizer.normalize(Module1);
-      const groupToken = KeyRegistry.getGroupToken(Extension2);
+      const groupToken = KeyRegistry.getExtensionGroupToken(Extension2);
       expect(normalizedModuleMeta.extensionProviders).toEqual([
         { token: groupToken, useToken: Extension2, multi: true },
         Extension1,

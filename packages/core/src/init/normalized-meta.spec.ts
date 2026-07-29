@@ -1,6 +1,6 @@
 import { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { injectable } from '#di/decorators.js';
-import { GroupToken } from '#di/key-registry.js';
+import { ExtensionGroupToken } from '#di/key-registry.js';
 import type { Extension } from '#extension/extension-types.js';
 
 describe('NormalizedModuleMeta', () => {
@@ -22,7 +22,7 @@ describe('NormalizedModuleMeta', () => {
       group1: [Provider1],
       config1: { key: 'value1' },
     };
-    const groupToken = new GroupToken('group1');
+    const groupToken = new ExtensionGroupToken('group1');
     original.extensionGroupTokenMap.set(DummyExtension, groupToken);
 
     const copy = original.clone();

@@ -33,7 +33,7 @@ import {
   InvalidCollisionResolution,
 } from '#errors';
 import { defaultProvidersPerMod } from './default-providers-per-mod.js';
-import type { GroupToken } from '#di/key-registry.js';
+import type { ExtensionGroupToken } from '#di/key-registry.js';
 
 /**
  * Recursively collects providers taking into account module imports/exports,
@@ -59,7 +59,7 @@ export class ShallowModulesImporter {
   protected importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
   protected importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
   protected importedExtensionProviders = new Map<ModRefId, Provider[]>();
-  protected importedExtensionGroupTokens = new Map<ModRefId, Map<ExtensionClass, GroupToken>>();
+  protected importedExtensionGroupTokens = new Map<ModRefId, Map<ExtensionClass, ExtensionGroupToken>>();
   protected importedExtensionConfigs: ExtensionConfig[] = [];
 
   /**
@@ -126,7 +126,7 @@ export class ShallowModulesImporter {
     let multiPerRou: Map<ModRefId, Provider[]>;
     let multiPerReq: Map<ModRefId, Provider[]>;
     let extensionProviders: Map<ModRefId, Provider[]>;
-    let extensionGroupTokens: Map<ModRefId, Map<ExtensionClass, GroupToken>>;
+    let extensionGroupTokens: Map<ModRefId, Map<ExtensionClass, ExtensionGroupToken>>;
     let extensionConfigs: ExtensionConfig[];
     if (normalizedModuleMeta.isExternal) {
       // External modules do not require app providers and extensions from the application.

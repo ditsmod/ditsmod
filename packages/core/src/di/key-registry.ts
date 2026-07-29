@@ -24,7 +24,7 @@ export class DualKey {
 /**
  * This class is used to automatically create an extension group.
  */
-export class GroupToken<T = any> extends InjectionToken<T> {}
+export class ExtensionGroupToken<T = any> extends InjectionToken<T> {}
 
 /**
  * This class is used to automatically create a token for `@inject(token, input)`.
@@ -34,7 +34,7 @@ export class ParamToken<T = any> extends InjectionToken<T> {}
 // @todo After the reinit application, check for memory leaks.
 export class KeyRegistry {
   static #allKeys = new Map<any, DualKey>();
-  static #groupTokens = new Map<ExtensionClass, GroupToken>();
+  static #groupTokens = new Map<ExtensionClass, ExtensionGroupToken>();
   static #groupDebugKeys = new Map<string, number>();
 
   /**
@@ -60,7 +60,7 @@ export class KeyRegistry {
    * Generates a unique token for an extension group, doing so strictly once per extension.
    * On subsequent requests for the extension, the previously generated unique token is returned.
    */
-  static getGroupToken(extension: ExtensionClass): GroupToken {
+  static getExtensionGroupToken(extension: ExtensionClass): ExtensionGroupToken {
     const groupToken = this.#groupTokens.get(extension);
     if (groupToken) {
       return groupToken;
@@ -68,12 +68,12 @@ export class KeyRegistry {
 
     const groupDebugKey = getDebugClassName(extension) || extension.toString();
     const count = this.#groupDebugKeys.get(groupDebugKey);
-    let newGroupToken: GroupToken;
+    let newGroupToken: ExtensionGroupToken;
     if (count) {
-      newGroupToken = new GroupToken(`group of ${groupDebugKey}-${count + 1}`);
+      newGroupToken = new ExtensionGroupToken(`group of ${groupDebugKey}-${count + 1}`);
       this.#groupDebugKeys.set(groupDebugKey, count + 1);
     } else {
-      newGroupToken = new GroupToken(`group of ${groupDebugKey}`);
+      newGroupToken = new ExtensionGroupToken(`group of ${groupDebugKey}`);
       this.#groupDebugKeys.set(groupDebugKey, 1);
     }
     this.#groupTokens.set(extension, newGroupToken);

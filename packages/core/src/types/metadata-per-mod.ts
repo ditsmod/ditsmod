@@ -5,7 +5,7 @@ import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import type { MixinOptions, ModuleMixin } from '#decorators/module-mixins.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
-import type { GroupToken } from '#di/key-registry.js';
+import type { ExtensionGroupToken } from '#di/key-registry.js';
 
 /**
  * Used to create a mapping between a provider and the module from which it was imported.
@@ -34,7 +34,7 @@ export class AppProviders {
   importedMultiProvidersPerRou = new Map<ModRefId, Provider[]>();
   importedMultiProvidersPerReq = new Map<ModRefId, Provider[]>();
   importedExtensionProviders = new Map<ModRefId, Provider[]>();
-  importedExtensionGroupTokens = new Map<ModRefId, Map<ExtensionClass, GroupToken>>();
+  importedExtensionGroupTokens = new Map<ModRefId, Map<ExtensionClass, ExtensionGroupToken>>();
   importedExtensionConfigs: ExtensionConfig[] = [];
   mixinValueMap = new Map<AnyFn, AppModuleMixins>();
 }

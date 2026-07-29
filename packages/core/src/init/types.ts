@@ -4,7 +4,7 @@ import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import type { ImportedProvider } from '#types/metadata-per-mod.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
-import type { GroupToken } from '#di/key-registry.js';
+import type { ExtensionGroupToken } from '#di/key-registry.js';
 
 /**
  * Metadata collected using `ShallowModulesImporter`. The target for this metadata is `DeepModulesImporter`.
@@ -56,5 +56,5 @@ export interface BaseImportRegistry {
   multiPerRou: Map<ModRefId, Provider[]>;
   multiPerReq: Map<ModRefId, Provider[]>;
   extensionProviders: Map<ModRefId, Provider[]>;
-  extensionGroupTokens: Map<ModRefId, Map<ExtensionClass, GroupToken>>;
+  extensionGroupTokens: Map<ModRefId, Map<ExtensionClass, ExtensionGroupToken>>;
 }
