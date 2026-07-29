@@ -72,7 +72,7 @@ export class ModuleNormalizer {
     this.checkAndMarkExternalModule(staticModuleOptions);
 
     // Phase 1: Normalize base decorator metadata.
-    this.normalizeDeclaredAndResolvedProviders(staticModuleOptions);
+    this.normalizeProvidersAndResolvedCollisions(staticModuleOptions);
     this.normalizeImports(staticModuleOptions);
     this.normalizeExtensions(staticModuleOptions);
 
@@ -158,18 +158,18 @@ export class ModuleNormalizer {
     }
   }
 
-  protected normalizeDeclaredAndResolvedProviders(
+  protected normalizeProvidersAndResolvedCollisions(
     staticModuleOptions: InitDecoratorOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>,
   ) {
-    this.normalizeDeclaredProviders(staticModuleOptions);
+    this.normalizeProviders(staticModuleOptions);
     this.normalizeResolvedCollisions(staticModuleOptions);
   }
 
-  protected normalizeDeclaredProviders(staticModuleOptions: Partial<ProvidersByLevel>) {
+  protected normalizeProviders(moduleOptions: Partial<ProvidersByLevel>) {
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
       const providersKey = `providersPer${level}` as const;
-      if (staticModuleOptions[providersKey]) {
-        const providersPerLevel = this.resolveAllForwardRefs(staticModuleOptions[providersKey]);
+      if (moduleOptions[providersKey]) {
+        const providersPerLevel = this.resolveAllForwardRefs(moduleOptions[providersKey]);
         this.normalizedModuleMeta[providersKey].push(...providersPerLevel);
       }
     });
@@ -258,7 +258,7 @@ export class ModuleNormalizer {
     if (dynamicModule.id) {
       this.normalizedModuleMeta.id = dynamicModule.id;
     }
-    this.normalizeDeclaredProviders(dynamicModule);
+    this.normalizeProviders(dynamicModule);
     if (dynamicModule.extensionsMeta) {
       this.normalizedModuleMeta.extensionsMeta = {
         ...this.normalizedModuleMeta.extensionsMeta,
@@ -480,7 +480,7 @@ export class AppModule {}
     this.fetchInitImports(decorator, initDecoratorOptions);
     this.fetchInitExports(initDecoratorOptions);
     this.normalizeExtensions(initDecoratorOptions);
-    this.normalizeDeclaredAndResolvedProviders(initDecoratorOptions);
+    this.normalizeProvidersAndResolvedCollisions(initDecoratorOptions);
     this.normalizeExports(initDecoratorOptions, 'Static exports');
   }
 
