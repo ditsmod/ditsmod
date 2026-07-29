@@ -323,13 +323,13 @@ export class ModuleNormalizer {
       }
       this.normalizedModuleMeta.extensionProviders.push(...extProvidersAndConfigs.providers);
       this.normalizedModuleMeta.exportedExtensionProviders.push(...extProvidersAndConfigs.exportedProviders);
-      extProvidersAndConfigs.groupTokenMap?.forEach((groupToken, ext) => {
+      extProvidersAndConfigs.groupTokensMap?.forEach((groupToken, ext) => {
         if (!this.normalizedModuleMeta.extensionGroupTokenMap.has(ext)) {
           this.normalizedModuleMeta.extensionGroupTokenMap.set(ext, groupToken);
           this.normalizedModuleMeta.extensionProviders.unshift({ token: groupToken, useToken: ext, multi: true });
         }
       });
-      extProvidersAndConfigs.exportedGroupTokenMap?.forEach((groupToken, ext) => {
+      extProvidersAndConfigs.exportedGroupTokensMap?.forEach((groupToken, ext) => {
         this.normalizedModuleMeta.exportedExtensionGroupTokenMap.set(ext, groupToken);
       });
     });

@@ -1,17 +1,54 @@
 import type { Extension, ExtensionClass } from '#extension/extension-types.js';
 import type { ExtensionManager } from './extension-manager.js';
 import type { AnyObj } from '#types/mix.js';
-import { KeyRegistry, type ExtensionGroupToken } from '#di/key-registry.js';
 import type { Provider } from '#di/top/types-and-models.js';
+import type { NormalizedModuleMeta } from '#init/normalized-meta.js';
+import type { ModuleNormalizer } from '#init/module-normalizer.js';
+import { KeyRegistry, type ExtensionGroupToken } from '#di/key-registry.js';
 
+/**
+ * A normalized representation of an extension configuration.
+ * It is generated from {@link ExtensionConfig} and contains the resolved providers and
+ * configurations ready to be consumed by the DI container and {@link ExtensionManager}.
+ */
 export class NormalizedExtensionConfig {
+  /**
+   * The array of DI providers derived from the extension configuration.
+   * This includes the extension class itself, as well as multi-providers
+   * mapping group tokens to this extension (if {@link BaseExtensionConfig.groups | groups} were specified).
+   * These providers are added to the module's internal {@link NormalizedModuleMeta.extensionProviders | extensionProviders}.
+   */
   providers: Provider[];
+  /**
+   * The original configuration object (omitted for {@link ExportOnlyExtensionConfig.exportOnly | exportOnly}
+   * or override configs). It retains metadata like {@link BaseExtensionConfig.beforeExtensions | beforeExtensions}
+   * and {@link BaseExtensionConfig.afterExtensions | afterExtensions} used during topological sorting to determine
+   * the initialization order of extensions.
+   */
   config?: ExtensionConfig;
-  groupTokenMap?: Map<ExtensionClass, ExtensionGroupToken<any>>;
-
+  /**
+   * A map associating each extension specified in the {@link BaseExtensionConfig.groups | groups}
+   * array with its corresponding {@link ExtensionGroupToken}. The {@link ModuleNormalizer} uses this to register
+   * the current extension within those groups in the local module scope.
+   */
+  groupTokensMap?: Map<ExtensionClass, ExtensionGroupToken>;
+  /**
+   * The array of DI providers intended to be exported to importing modules.
+   * Populated only if {@link ExportableExtensionConfig.export | export} or
+   * {@link ExportOnlyExtensionConfig.exportOnly | exportOnly} is set to `true` in the configuration.
+   */
   exportedProviders: Provider[];
+  /**
+   * The extension configuration to be exported. It carries the execution order dependencies
+   * ({@link BaseExtensionConfig.beforeExtensions | beforeExtensions},
+   * {@link BaseExtensionConfig.afterExtensions | afterExtensions}) to the modules that import this extension.
+   */
   exportedConfig?: ExtensionConfig;
-  exportedGroupTokenMap?: Map<ExtensionClass, ExtensionGroupToken<any>>;
+  /**
+   * The exported equivalent of {@link groupTokensMap}. It allows the exported extension to participate
+   * in extension groups within the modules that import it.
+   */
+  exportedGroupTokensMap?: Map<ExtensionClass, ExtensionGroupToken>;
 }
 
 export interface BaseExtensionConfig {
@@ -56,14 +93,24 @@ export interface OverrideExtensionConfig {
 
 export type ExtensionConfig = ExportableExtensionConfig | ExportOnlyExtensionConfig | OverrideExtensionConfig;
 
+/**
+ * Type guard to check whether the provided extension configuration is an `OverrideExtensionConfig`.
+ */
 export function isOverrideExtensionConfig(extensionConfig: AnyObj): extensionConfig is OverrideExtensionConfig {
   return (extensionConfig as OverrideExtensionConfig).overrideExtension !== undefined;
 }
 
+/**
+ * Type guard to check whether the provided extension configuration is a `BaseExtensionConfig`.
+ */
 export function isStandardExtensionConfig(extensionConfig: AnyObj): extensionConfig is BaseExtensionConfig {
   return (extensionConfig as BaseExtensionConfig).extension !== undefined;
 }
 
+/**
+ * Normalizes the extension configuration by converting it into a structured format
+ * that includes providers and group token maps for dependency injection.
+ */
 export function normalizeExtensionConfig(extensionConfig: ExtensionConfig): NormalizedExtensionConfig {
   if (isOverrideExtensionConfig(extensionConfig)) {
     const { extension, overrideExtension } = extensionConfig;
@@ -73,13 +120,13 @@ export function normalizeExtensionConfig(extensionConfig: ExtensionConfig): Norm
     };
   }
 
-  const groupTokenMap = new Map<ExtensionClass, ExtensionGroupToken>();
+  const groupTokensMap = new Map<ExtensionClass, ExtensionGroupToken>();
   const providers: Provider[] = [extensionConfig.extension];
 
   // Creating a group of extensions using multi-providers
   extensionConfig.groups?.forEach((ext) => {
     const groupToken = KeyRegistry.getExtensionGroupToken(ext);
-    groupTokenMap.set(ext, groupToken);
+    groupTokensMap.set(ext, groupToken);
     providers.push({ token: groupToken, useToken: extensionConfig.extension, multi: true });
   });
 
@@ -88,7 +135,7 @@ export function normalizeExtensionConfig(extensionConfig: ExtensionConfig): Norm
       providers: [],
       exportedProviders: providers,
       exportedConfig: extensionConfig,
-      exportedGroupTokenMap: groupTokenMap,
+      exportedGroupTokensMap: groupTokensMap,
     };
   } else if (extensionConfig.export) {
     return {
@@ -96,19 +143,22 @@ export function normalizeExtensionConfig(extensionConfig: ExtensionConfig): Norm
       exportedProviders: providers,
       config: extensionConfig,
       exportedConfig: extensionConfig,
-      groupTokenMap,
-      exportedGroupTokenMap: groupTokenMap,
+      groupTokensMap,
+      exportedGroupTokensMap: groupTokensMap,
     };
   } else {
     return {
       providers,
       exportedProviders: [],
       config: extensionConfig,
-      groupTokenMap,
+      groupTokensMap,
     };
   }
 }
 
+/**
+ * Retrieves a flat list of extension providers from the given array of extension configurations.
+ */
 export function getExtensionProviders(extensionConfig: ExtensionConfig[]) {
   const providers: Provider[] = [];
   extensionConfig.map((obj) => providers.push(...normalizeExtensionConfig(obj).providers));
