@@ -1,10 +1,10 @@
 import { featureModule, DynamicModule } from '@ditsmod/core';
-import { initRest } from '@ditsmod/rest';
+import { mixinRest } from '@ditsmod/rest';
 
 import { JwtService } from './jwt.service.js';
 import { JwtServiceOptions } from './models/jwt-service-options.js';
 
-@initRest({
+@mixinRest({
   providersPerApp: [JwtServiceOptions],
   providersPerReq: [JwtService],
   exports: [JwtService],

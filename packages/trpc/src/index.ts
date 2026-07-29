@@ -6,7 +6,7 @@ export { trpcGuard } from '#decorators/trpc-guard.js';
 export { opts } from '#decorators/opts.js';
 export { trpcController } from '#decorators/trpc-controller.js';
 export { TrpcRouteService } from '#services/route.service.js';
-export { initTrpcModule, trpcRootModule, trpcModule } from '#decorators/trpc-init-hooks-and-metadata.js';
+export { mixinTrpcModule, trpcRootModule, trpcModule } from '#decorators/trpc-module-mixins.js';
 export { TRPC_ROOT, TRPC_OPTS } from '#types/constants.js';
 export { TrpcRequestDispatcher } from '#services/request-dispatcher.js';
 export { TrpcAppInitializer } from '#init/trpc-app-initializer.js';

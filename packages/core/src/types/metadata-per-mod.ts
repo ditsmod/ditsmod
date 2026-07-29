@@ -3,7 +3,7 @@ import type { AnyObj } from './mix.js';
 import type { ModRefId } from '#decorators/module-decorator-options.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
-import type { InitDecoratorOptions, InitHooks } from '#decorators/init-hooks-and-metadata.js';
+import type { MixinOptions, ModuleMixin } from '#decorators/module-mixins.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
 import type { GroupToken } from '#di/key-registry.js';
 
@@ -19,11 +19,11 @@ export class ImportedProvider<T extends Provider = Provider> {
   declare reexporter?: ModRefId;
 }
 
-export class AppInitHooks<T extends InitDecoratorOptions = InitDecoratorOptions> {
+export class AppModuleMixins<T extends MixinOptions = MixinOptions> {
   /**
    * The presence of this property indicates whether at least one app provider is exported.
    */
-  initHooks?: InitHooks<T>;
+  moduleMixin?: ModuleMixin<T>;
 }
 
 export class AppProviders {
@@ -36,7 +36,7 @@ export class AppProviders {
   importedExtensionProviders = new Map<ModRefId, Provider[]>();
   importedExtensionGroupTokens = new Map<ModRefId, Map<ExtensionClass, GroupToken>>();
   importedExtensionConfigs: ExtensionConfig[] = [];
-  initValueMap = new Map<AnyFn, AppInitHooks>();
+  mixinValueMap = new Map<AnyFn, AppModuleMixins>();
 }
 
 export class ResolvedModuleMeta<T extends AnyObj = AnyObj> {

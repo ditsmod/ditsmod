@@ -1,7 +1,7 @@
 import type { Class, NormalizedModuleMeta } from '@ditsmod/core';
 import { Reflector } from '@ditsmod/core';
 import type { RequestContext } from '#services/request-context.js';
-import type { RestInitMeta } from '#init/rest-init-meta.js';
+import type { RestInitMeta } from '#init/rest-mixin-meta.js';
 
 export const guard = Reflector.makeClassDecorator((data?: never) => data);
 

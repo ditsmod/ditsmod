@@ -1,6 +1,6 @@
 import { featureModule } from '#decorators/feature-module.js';
-import { InitDecoratorOptions, InitHooks, InitDecorator } from '#decorators/init-hooks-and-metadata.js';
-import { NormalizedInitMeta, getProxyForInitMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
+import { MixinOptions, ModuleMixin, MixinDecorator } from '#decorators/module-mixins.js';
+import { NormalizedMixinMeta, getProxyForMixinMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { rootModule, RootModuleOptions } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
 import { Extension } from '#extension/extension-types.js';
@@ -36,8 +36,8 @@ import { DecoratorMeta } from '#di/top/decorator-and-value.js';
 
 describe('ModuleNormalizer', () => {
   class MockModuleNormalizer extends ModuleNormalizer {
-    override normalize(modRefId: ModRefId, allInitHooks = new Map()): NormalizedModuleMeta {
-      return super.normalize(modRefId, allInitHooks, { externalModuleDetectionFailed: () => {} } as any);
+    override normalize(modRefId: ModRefId, allModuleMixin = new Map()): NormalizedModuleMeta {
+      return super.normalize(modRefId, allModuleMixin, { externalModuleDetectionFailed: () => {} } as any);
     }
   }
 
@@ -49,7 +49,7 @@ describe('ModuleNormalizer', () => {
   });
 
   describe('base module metadata', () => {
-    it('normalizes an empty root module without requiring providers, exports, extensions, or init hooks', () => {
+    it('normalizes an empty root module without requiring providers, exports, extensions, or module mixins', () => {
       @rootModule()
       class AppModule {}
 
@@ -504,35 +504,35 @@ describe('ModuleNormalizer', () => {
     });
   });
 
-  describe('init decorators', () => {
+  describe('mixin decorators', () => {
     interface SomeInitDynamicOptions extends DynamicModuleOptions {
       path?: string;
       num?: number;
     }
 
-    interface SomeInitOptions extends InitDecoratorOptions<SomeInitDynamicOptions> {
+    interface SomeMixinOptions extends MixinOptions<SomeInitDynamicOptions> {
       one?: number;
       two?: number;
       flag?: boolean;
       appends?: ({ module: ModRefId } & AnyObj)[];
     }
 
-    class SomeInitMeta extends NormalizedInitMeta {
+    class SomeInitMeta extends NormalizedMixinMeta {
       normalizedModuleMeta?: NormalizedModuleMeta;
-      initDecoratorOptions?: SomeInitOptions;
+      mixinDecoratorOptions?: SomeMixinOptions;
       flag?: boolean;
       path?: string;
       targetModRefId?: ModRefId;
     }
 
-    class SomeInitHooks extends InitHooks<SomeInitOptions> {
+    class SomeModuleMixin extends ModuleMixin<SomeMixinOptions> {
       override normalize(normalizedModuleMeta: NormalizedModuleMeta) {
-        const meta = getProxyForInitMeta(normalizedModuleMeta, SomeInitMeta);
+        const meta = getProxyForMixinMeta(normalizedModuleMeta, SomeInitMeta);
         meta.normalizedModuleMeta = normalizedModuleMeta;
-        meta.initDecoratorOptions = this.moduleOptions;
+        meta.mixinDecoratorOptions = this.moduleOptions;
 
         if (isDynamicModule(normalizedModuleMeta.modRefId)) {
-          const params = normalizedModuleMeta.modRefId.initOptions?.get(initSome);
+          const params = normalizedModuleMeta.modRefId.mixinOptions?.get(initSome);
           meta.path = params?.path;
           meta.targetModRefId = normalizedModuleMeta.modRefId;
         } else {
@@ -544,30 +544,30 @@ describe('ModuleNormalizer', () => {
       }
     }
 
-    function getInitHooks(data?: SomeInitOptions): InitHooks<SomeInitOptions> {
-      return new SomeInitHooks(Object.assign({}, data));
+    function getModuleMixin(data?: SomeMixinOptions): ModuleMixin<SomeMixinOptions> {
+      return new SomeModuleMixin(Object.assign({}, data));
     }
 
-    const initSome: InitDecorator<SomeInitOptions, SomeInitDynamicOptions, SomeInitMeta> = Reflector.makeClassDecorator(
-      getInitHooks,
+    const initSome: MixinDecorator<SomeMixinOptions, SomeInitDynamicOptions, SomeInitMeta> = Reflector.makeClassDecorator(
+      getModuleMixin,
       'initSome',
     );
 
-    it('stores metadata returned by InitHooks.normalize() in normalizedModuleMeta.initMeta', () => {
-      const moduleOptions: SomeInitOptions = { one: 1, two: 2, flag: true };
+    it('stores metadata returned by ModuleMixin.normalize() in normalizedModuleMeta.mixinMeta', () => {
+      const moduleOptions: SomeMixinOptions = { one: 1, two: 2, flag: true };
 
       @initSome(moduleOptions)
       @featureModule()
       class Module1 {}
 
-      const initMeta = normalizer.normalize(Module1).initMeta.get(initSome);
-      expect(initMeta?.normalizedModuleMeta?.modRefId).toBe(Module1);
-      expect(initMeta?.initDecoratorOptions).toEqual(moduleOptions);
-      expect(initMeta?.targetModRefId).toBe(Module1);
-      expect(initMeta?.flag).toBe(true);
+      const mixinMeta = normalizer.normalize(Module1).mixinMeta.get(initSome);
+      expect(mixinMeta?.normalizedModuleMeta?.modRefId).toBe(Module1);
+      expect(mixinMeta?.mixinDecoratorOptions).toEqual(moduleOptions);
+      expect(mixinMeta?.targetModRefId).toBe(Module1);
+      expect(mixinMeta?.flag).toBe(true);
     });
 
-    it('normalizes providers, exports, extensions, and extensionsMeta declared by an init decorator', () => {
+    it('normalizes providers, exports, extensions, and extensionsMeta declared by an mixin decorator', () => {
       class Service1 {}
 
       @injectable()
@@ -592,7 +592,7 @@ describe('ModuleNormalizer', () => {
       expect(normalizedModuleMeta.extensionsMeta).toEqual({ one: 1 });
     });
 
-    it('merges wrapper init params, dynamic module params, and existing initOptions when importing modules with params', () => {
+    it('merges wrapper init params, dynamic module params, and existing mixinOptions when importing modules with params', () => {
       class Service1 {}
       class Service2 {}
       class Service3 {}
@@ -609,18 +609,18 @@ describe('ModuleNormalizer', () => {
         providersPerApp: [Service3],
         extensionsMeta: { one: 1 },
         num: 4,
-        initOptions: new Map(),
+        mixinOptions: new Map(),
       };
-      dynamicModule1.initOptions.set(initSome, { path: 'path-1' });
+      dynamicModule1.mixinOptions.set(initSome, { path: 'path-1' });
 
       const dynamicModule2: DynamicModuleWithInitOptions & SomeInitDynamicOptions = {
         module: Module2,
         providersPerApp: [Service2],
         num: 12,
         extensionsMeta: { four: 4 },
-        initOptions: new Map(),
+        mixinOptions: new Map(),
       };
-      dynamicModule2.initOptions.set(initSome, {
+      dynamicModule2.mixinOptions.set(initSome, {
         path: 'path-2',
         providersPerApp: [Service1],
         num: 11,
@@ -637,14 +637,14 @@ describe('ModuleNormalizer', () => {
       class AppModule {}
 
       normalizer.normalize(AppModule);
-      expect(dynamicModule1.initOptions.get(initSome)).toEqual<SomeInitDynamicOptions>({
+      expect(dynamicModule1.mixinOptions.get(initSome)).toEqual<SomeInitDynamicOptions>({
         path: 'path-1',
         providersPerMod: [Service1, Service2],
         extensionsMeta: { one: 1, two: 2 },
         num: 5,
         providersPerApp: [Service3],
       });
-      expect(dynamicModule2.initOptions.get(initSome)).toEqual<SomeInitDynamicOptions>({
+      expect(dynamicModule2.mixinOptions.get(initSome)).toEqual<SomeInitDynamicOptions>({
         providersPerApp: [Service1, Service2],
         num: 12,
         extensionsMeta: { three: 3, four: 4 },
@@ -652,7 +652,7 @@ describe('ModuleNormalizer', () => {
       });
     });
 
-    it('normalizes init decorator imports and exports for module classes, DynamicModule objects, and wrappers', () => {
+    it('normalizes mixin decorator imports and exports for module classes, DynamicModule objects, and wrappers', () => {
       class Service1 {}
 
       @featureModule({ providersPerApp: [Service1] })
@@ -681,13 +681,13 @@ describe('ModuleNormalizer', () => {
       expect(normalizedModuleMeta.exportedStaticModules).toEqual([Module1]);
       expect(normalizedModuleMeta.importedDynamicModules).toEqual<DynamicModule[]>([
         dynamicModule2,
-        { module: Module3, initOptions: expect.any(Map) },
+        { module: Module3, mixinOptions: expect.any(Map) },
         dynamicModule4,
       ]);
       expect(normalizedModuleMeta.exportedDynamicModules).toEqual([dynamicModule2, dynamicModule4]);
     });
 
-    it('resolves forwardRef in init decorator imports and exports', () => {
+    it('resolves forwardRef in mixin decorator imports and exports', () => {
       class Service1 {}
 
       @featureModule({ providersPerApp: [Service1] })
@@ -720,7 +720,7 @@ describe('ModuleNormalizer', () => {
       expect(normalizedModuleMeta.importedStaticModules).toEqual([Module1]);
       expect(normalizedModuleMeta.importedDynamicModules).toEqual<DynamicModule[]>([
         dynamicModule2,
-        { module: Module3, initOptions: expect.any(Map) },
+        { module: Module3, mixinOptions: expect.any(Map) },
         dynamicModule4,
       ]);
       expect(normalizedModuleMeta.exportedStaticModules).toEqual([Module1]);
@@ -729,11 +729,11 @@ describe('ModuleNormalizer', () => {
       expect(dynamicModule4.module).toBe(Module4);
     });
 
-    it('adds host decorator hooks from allInitHooks when the current module is the host module', () => {
+    it('adds host decorator hooks from allModuleMixin when the current module is the host module', () => {
       @featureModule()
       class HostModule {}
 
-      class HostInitHooks extends InitHooks<SomeInitOptions> {
+      class HostModuleMixin extends ModuleMixin<SomeMixinOptions> {
         override hostModule = HostModule;
         override hostDecoratorOptions = { flag: true };
 
@@ -745,21 +745,21 @@ describe('ModuleNormalizer', () => {
         }
       }
 
-      const hostInitSome: InitDecorator<SomeInitOptions, {}, {}> = Reflector.makeClassDecorator(
-        (data) => new HostInitHooks(data),
+      const hostInitSome: MixinDecorator<SomeMixinOptions, {}, {}> = Reflector.makeClassDecorator(
+        (data) => new HostModuleMixin(data),
       );
-      const allInitHooks = new Map([[hostInitSome, new HostInitHooks({})]]);
+      const allModuleMixin = new Map([[hostInitSome, new HostModuleMixin({})]]);
 
-      const normalizedModuleMeta = normalizer.normalize(HostModule, allInitHooks);
-      expect(normalizedModuleMeta.initHooksMap.has(hostInitSome)).toBe(true);
-      expect(normalizedModuleMeta.initMeta.get(hostInitSome)).toEqual({ flag: true, targetModRefId: HostModule });
+      const normalizedModuleMeta = normalizer.normalize(HostModule, allModuleMixin);
+      expect(normalizedModuleMeta.moduleMixinMap.has(hostInitSome)).toBe(true);
+      expect(normalizedModuleMeta.mixinMeta.get(hostInitSome)).toEqual({ flag: true, targetModRefId: HostModule });
     });
 
     it('does not add host module to importedStaticModules when the current module is the host module itself', () => {
       @featureModule()
       class HostModule {}
 
-      class HostInitHooks extends InitHooks<SomeInitOptions> {
+      class HostModuleMixin extends ModuleMixin<SomeMixinOptions> {
         override hostModule = HostModule;
         override hostDecoratorOptions = { flag: true };
 
@@ -771,26 +771,26 @@ describe('ModuleNormalizer', () => {
         }
       }
 
-      const hostInitSome: InitDecorator<SomeInitOptions, {}, {}> = Reflector.makeClassDecorator(
-        (data) => new HostInitHooks(data),
+      const hostInitSome: MixinDecorator<SomeMixinOptions, {}, {}> = Reflector.makeClassDecorator(
+        (data) => new HostModuleMixin(data),
       );
-      const allInitHooks = new Map([[hostInitSome, new HostInitHooks({})]]);
+      const allModuleMixin = new Map([[hostInitSome, new HostModuleMixin({})]]);
 
-      const normalizedModuleMeta = normalizer.normalize(HostModule, allInitHooks);
-      expect(normalizedModuleMeta.initHooksMap.has(hostInitSome)).toBe(true);
+      const normalizedModuleMeta = normalizer.normalize(HostModule, allModuleMixin);
+      expect(normalizedModuleMeta.moduleMixinMap.has(hostInitSome)).toBe(true);
       expect(normalizedModuleMeta.importedStaticModules).not.toContain(HostModule);
     });
 
-    it('imports the host module when an init decorator declares hostModule on a different module', () => {
+    it('imports the host module when an mixin decorator declares hostModule on a different module', () => {
       @featureModule()
       class HostModule {}
 
-      class HostInitHooks extends InitHooks<SomeInitOptions> {
+      class HostModuleMixin extends ModuleMixin<SomeMixinOptions> {
         override hostModule = HostModule;
       }
 
-      const hostInitSome: InitDecorator<SomeInitOptions, {}, {}> = Reflector.makeClassDecorator(
-        (data) => new HostInitHooks(data),
+      const hostInitSome: MixinDecorator<SomeMixinOptions, {}, {}> = Reflector.makeClassDecorator(
+        (data) => new HostModuleMixin(data),
       );
 
       class Service1 {}
@@ -803,14 +803,14 @@ describe('ModuleNormalizer', () => {
       expect(normalizedModuleMeta.importedStaticModules).toContain(HostModule);
     });
 
-    it('adds init hooks from allInitHooks for an imported dynamic module whose class does not have that init decorator', () => {
+    it('adds module mixins from allModuleMixin for an imported dynamic module whose class does not have that mixin decorator', () => {
       class Service1 {}
 
       @featureModule({ providersPerApp: [Service1] })
       class Module1 {}
 
       const dynamicModule: DynamicModule = { module: Module1 };
-      const allInitHooks = new Map([[initSome, new SomeInitHooks({})]]);
+      const allModuleMixin = new Map([[initSome, new SomeModuleMixin({})]]);
 
       @initSome({ imports: [{ dynamicModule, path: 'prefix' }] })
       @rootModule()
@@ -818,8 +818,8 @@ describe('ModuleNormalizer', () => {
 
       normalizer.normalize(AppModule);
 
-      const normalizedModuleMeta = normalizer.normalize(dynamicModule, allInitHooks);
-      expect(normalizedModuleMeta.initMeta.get(initSome)).toMatchObject({
+      const normalizedModuleMeta = normalizer.normalize(dynamicModule, allModuleMixin);
+      expect(normalizedModuleMeta.mixinMeta.get(initSome)).toMatchObject({
         path: 'prefix',
         targetModRefId: dynamicModule,
       });
@@ -827,75 +827,75 @@ describe('ModuleNormalizer', () => {
   });
 
   describe('propagateParentHooks', () => {
-    class PropagateInitMeta extends NormalizedInitMeta {
+    class PropagateInitMeta extends NormalizedMixinMeta {
       propagated?: boolean;
     }
 
-    class PropagateInitHooks extends InitHooks {
+    class PropagateModuleMixin extends ModuleMixin {
       override normalize(normalizedModuleMeta: NormalizedModuleMeta) {
-        const meta = getProxyForInitMeta(normalizedModuleMeta, PropagateInitMeta);
+        const meta = getProxyForMixinMeta(normalizedModuleMeta, PropagateInitMeta);
         meta.propagated = true;
         return meta;
       }
     }
 
-    const initPropagate: InitDecorator<InitDecoratorOptions, {}, PropagateInitMeta> = Reflector.makeClassDecorator(
-      (data) => new PropagateInitHooks(data || {}),
+    const initPropagate: MixinDecorator<MixinOptions, {}, PropagateInitMeta> = Reflector.makeClassDecorator(
+      (data) => new PropagateModuleMixin(data || {}),
       'initPropagate',
     );
 
-    it('propagates init hooks to a module without init decorators when inheritsContext defaults to true', () => {
+    it('propagates module mixins to a module without mixin decorators when inheritsContext defaults to true', () => {
       @featureModule({ providersPerApp: [{ token: 'tok', useValue: 1 }] })
       class Module1 {}
 
       const normalizedModuleMeta = normalizer.normalize(Module1);
-      expect(normalizedModuleMeta.initHooksMap.size).toBe(0);
+      expect(normalizedModuleMeta.moduleMixinMap.size).toBe(0);
 
-      const allInitHooks = new Map([[initPropagate, new PropagateInitHooks({})]]);
-      normalizer.propagateParentHooks(normalizedModuleMeta, allInitHooks);
+      const allModuleMixin = new Map([[initPropagate, new PropagateModuleMixin({})]]);
+      normalizer.propagateParentHooks(normalizedModuleMeta, allModuleMixin);
 
-      expect(normalizedModuleMeta.initHooksMap.has(initPropagate)).toBe(true);
-      expect(normalizedModuleMeta.initMeta.get(initPropagate)?.propagated).toBe(true);
+      expect(normalizedModuleMeta.moduleMixinMap.has(initPropagate)).toBe(true);
+      expect(normalizedModuleMeta.mixinMeta.get(initPropagate)?.propagated).toBe(true);
     });
 
-    it('does not propagate init hooks when inheritsContext is false', () => {
+    it('does not propagate module mixins when inheritsContext is false', () => {
       @featureModule({ inheritsContext: false, providersPerApp: [{ token: 'tok', useValue: 1 }] })
       class Module1 {}
 
       const normalizedModuleMeta = normalizer.normalize(Module1);
 
-      const allInitHooks = new Map([[initPropagate, new PropagateInitHooks({})]]);
-      normalizer.propagateParentHooks(normalizedModuleMeta, allInitHooks);
+      const allModuleMixin = new Map([[initPropagate, new PropagateModuleMixin({})]]);
+      normalizer.propagateParentHooks(normalizedModuleMeta, allModuleMixin);
 
-      expect(normalizedModuleMeta.initHooksMap.has(initPropagate)).toBe(false);
+      expect(normalizedModuleMeta.moduleMixinMap.has(initPropagate)).toBe(false);
     });
 
-    it('does not propagate init hooks when isExternal is true and inheritsContext is not set', () => {
+    it('does not propagate module mixins when isExternal is true and inheritsContext is not set', () => {
       @featureModule({ providersPerApp: [{ token: 'tok', useValue: 1 }] })
       class Module1 {}
 
       const normalizedModuleMeta = normalizer.normalize(Module1);
       normalizedModuleMeta.isExternal = true;
 
-      const allInitHooks = new Map([[initPropagate, new PropagateInitHooks({})]]);
-      normalizer.propagateParentHooks(normalizedModuleMeta, allInitHooks);
+      const allModuleMixin = new Map([[initPropagate, new PropagateModuleMixin({})]]);
+      normalizer.propagateParentHooks(normalizedModuleMeta, allModuleMixin);
 
-      expect(normalizedModuleMeta.initHooksMap.has(initPropagate)).toBe(false);
+      expect(normalizedModuleMeta.moduleMixinMap.has(initPropagate)).toBe(false);
     });
 
-    it('does not propagate init hooks when the module already has its own init decorators', () => {
+    it('does not propagate module mixins when the module already has its own mixin decorators', () => {
       @initPropagate({})
       @featureModule({ providersPerApp: [{ token: 'tok', useValue: 1 }] })
       class Module1 {}
 
       const normalizedModuleMeta = normalizer.normalize(Module1);
-      const originalSize = normalizedModuleMeta.initHooksMap.size;
+      const originalSize = normalizedModuleMeta.moduleMixinMap.size;
       expect(originalSize).toBeGreaterThan(0);
 
-      const allInitHooks = new Map([[initPropagate, new PropagateInitHooks({})]]);
-      normalizer.propagateParentHooks(normalizedModuleMeta, allInitHooks);
+      const allModuleMixin = new Map([[initPropagate, new PropagateModuleMixin({})]]);
+      normalizer.propagateParentHooks(normalizedModuleMeta, allModuleMixin);
 
-      expect(normalizedModuleMeta.initHooksMap.size).toBe(originalSize);
+      expect(normalizedModuleMeta.moduleMixinMap.size).toBe(originalSize);
     });
   });
 
@@ -978,8 +978,8 @@ describe('ModuleNormalizer', () => {
     class ExternalModuleNormalizer extends ModuleNormalizer {
       customMeta = new Map<StaticModule, DecoratorMeta[]>();
 
-      override normalize(modRefId: any, allInitHooks = new Map()): NormalizedModuleMeta {
-        return super.normalize(modRefId, allInitHooks, { externalModuleDetectionFailed: () => {} } as any);
+      override normalize(modRefId: any, allModuleMixin = new Map()): NormalizedModuleMeta {
+        return super.normalize(modRefId, allModuleMixin, { externalModuleDetectionFailed: () => {} } as any);
       }
 
       protected override getDecoratorMeta(modRefId: any) {

@@ -9,19 +9,19 @@ export { BaseApplication } from '#init/base-application.js';
 export { StandaloneApplication } from '#init/standalone-application.js';
 export { BaseAppOptions } from '#init/base-app-options.js';
 export { DeepModulesImporter } from '#init/deep-modules-importer.js';
-export { AppProviders, AppInitHooks } from '#types/metadata-per-mod.js';
+export { AppProviders, AppModuleMixins } from '#types/metadata-per-mod.js';
 export { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 export { defaultProvidersPerApp } from '#init/default-providers-per-app.js';
 export { OnModuleInit, BeforeShutdown, OnShutdown, SHUTDOWN_SIGNALS } from '#init/hooks.js';
 export { featureModule } from '#decorators/feature-module.js';
 export {
-  InitHooks,
-  InitDecorator,
-  InitMetaMap,
-  InitDynamicOptionsMap,
-  AllInitHooks,
-  InitDecoratorOptions,
-} from '#decorators/init-hooks-and-metadata.js';
+  ModuleMixin,
+  MixinDecorator,
+  MixinMetaMap,
+  MixinDynamicOptionsMap,
+  AllModuleMixins,
+  MixinOptions,
+} from '#decorators/module-mixins.js';
 export { rootModule, RootModuleOptions } from '#decorators/root-module.js';
 export { defaultExtensionProviders } from '#extension/default-extensions-providers.js';
 export {
@@ -38,7 +38,7 @@ export { normalizeExtensionConfig } from './extension/extension-providers-and-co
 export { isExtensionProvider, isExtensionConfig } from '#extension/type-guards.js';
 export { ModuleInfo } from '#types/module-extract.js';
 export { ExtensionStatistics } from '#extension/counter.js';
-export { NormalizedModuleMeta, NormalizedInitMeta, getProxyForInitMeta } from '#init/normalized-meta.js';
+export { NormalizedModuleMeta, NormalizedMixinMeta, getProxyForMixinMeta } from '#init/normalized-meta.js';
 export { ProvidersByLevel } from '#types/providers-metadata.js';
 export { ConsoleLogger } from '#logger/console-logger.js';
 export { ExtensionContext } from '#extension/extensions-context.js';
@@ -89,7 +89,7 @@ export { getDebugClassName, clearDebugClassNames } from '#utils/get-debug-class-
 export { getProviderTarget, getProvidersTargets, getToken, getTokens } from '#utils/get-tokens.js';
 export {
   isDynamicModule,
-  isModuleWithInitHooks,
+  isModuleWithModuleMixin,
   isFeatureModule,
   isModuleDecorator,
   isRootModule,

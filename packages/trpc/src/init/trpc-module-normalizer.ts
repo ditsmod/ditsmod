@@ -1,9 +1,9 @@
 import type { Class, NormalizedModuleMeta } from '@ditsmod/core';
-import { isFeatureModule, Reflector, getDuplicates, getProxyForInitMeta } from '@ditsmod/core';
+import { isFeatureModule, Reflector, getDuplicates, getProxyForMixinMeta } from '@ditsmod/core';
 import { EmptyModuleMeta } from '@ditsmod/core/errors';
 
-import type { TrpcInitDecoratorOptions } from '#decorators/trpc-init-hooks-and-metadata.js';
-import { TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
+import type { TrpcMixinOptions } from '#decorators/trpc-module-mixins.js';
+import { TrpcInitMeta } from '#decorators/trpc-module-mixins.js';
 import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } from '../error/trpc-errors.js';
 import type { NormalizedGuard } from '#interceptors/trpc-guard.js';
 import { GuardItem } from '#interceptors/trpc-guard.js';
@@ -16,9 +16,9 @@ export class TrpcModuleNormalizer {
   protected normalizedModuleMeta: NormalizedModuleMeta;
   protected meta: TrpcInitMeta;
 
-  normalize(normalizedModuleMeta: NormalizedModuleMeta, moduleOptions: TrpcInitDecoratorOptions) {
+  normalize(normalizedModuleMeta: NormalizedModuleMeta, moduleOptions: TrpcMixinOptions) {
     this.normalizedModuleMeta = normalizedModuleMeta;
-    const meta = getProxyForInitMeta(normalizedModuleMeta, TrpcInitMeta);
+    const meta = getProxyForMixinMeta(normalizedModuleMeta, TrpcInitMeta);
     this.meta = meta;
     if (moduleOptions.controllers) {
       this.meta.controllers.push(...moduleOptions.controllers);

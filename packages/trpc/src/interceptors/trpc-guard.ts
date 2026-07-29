@@ -1,5 +1,5 @@
 import type { Class, NormalizedModuleMeta } from '@ditsmod/core';
-import type { TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
+import type { TrpcInitMeta } from '#decorators/trpc-module-mixins.js';
 import type { TrpcOpts } from '#types/types.js';
 
 export interface TrpcCanActivate {

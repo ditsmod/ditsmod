@@ -8,32 +8,32 @@ import type { DynamicModule, FeatureModuleOptions } from '#decorators/module-dec
 import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import type { featureModule } from './feature-module.js';
 import type { rootModule } from './root-module.js';
-import { AppInitHooks, type AppProviders } from '#types/metadata-per-mod.js';
-import { type NormalizedModuleMeta, getProxyForInitMeta, NormalizedInitMeta } from '#init/normalized-meta.js';
+import { AppModuleMixins, type AppProviders } from '#types/metadata-per-mod.js';
+import { type NormalizedModuleMeta, getProxyForMixinMeta, NormalizedMixinMeta } from '#init/normalized-meta.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 
-export type AllInitHooks = Map<AnyFn, Omit<InitHooks, 'moduleOptions'>>;
+export type AllModuleMixins = Map<AnyFn, Omit<ModuleMixin, 'moduleOptions'>>;
 
 /**
- * Init hooks and metadata attached by init decorators,
+ * Module mixins and metadata attached by mixin decorators,
  * apart from the base decorators - {@link featureModule} or {@link rootModule}.
  */
-export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
+export class ModuleMixin<T1 extends MixinOptions = MixinOptions> {
   /**
-   * If you want your init decorator to also play the role of a base module, substitute the appropriate role.
+   * If you want your mixin decorator to also play the role of a base module, substitute the appropriate role.
    */
   declare moduleRole?: 'root' | 'feature';
   /**
-   * The host module where the current init decorator is declared. If you add this module,
-   * it will be imported into the module where the corresponding init decorator is used.
+   * The host module where the current mixin decorator is declared. If you add this module,
+   * it will be imported into the module where the corresponding mixin decorator is used.
    */
   declare hostModule?: StaticModule;
 
   /**
    * Options intended for the host module.
    *
-   * Sometimes, the host module (where the init hook class is declared) needs to be decorated
-   * with its own init decorator. If you do this and also set {@link hostModule}, it creates
+   * Sometimes, the host module (where the module mixin class is declared) needs to be decorated
+   * with its own mixin decorator. If you do this and also set {@link hostModule}, it creates
    * a circular dependency.
    *
    * To prevent this, do not decorate the host module with its own decorator. Instead,
@@ -57,13 +57,13 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
   }
 
   /**
-   * Normalizes the metadata from the current decorator. It is then inserted into {@link NormalizedModuleMeta.initMeta | normalizedModuleMeta.initMeta}.
+   * Normalizes the metadata from the current decorator. It is then inserted into {@link NormalizedModuleMeta.mixinMeta | normalizedModuleMeta.mixinMeta}.
    *
    * @param normalizedModuleMeta Normalized metadata that is passed
    * to the {@link featureModule} or {@link rootModule} decorator.
    */
   normalize(normalizedModuleMeta: NormalizedModuleMeta) {
-    return getProxyForInitMeta(normalizedModuleMeta, NormalizedInitMeta);
+    return getProxyForMixinMeta(normalizedModuleMeta, NormalizedMixinMeta);
   }
 
   /**
@@ -71,7 +71,7 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
    *
    * @param meta Metadata returned by the {@link normalize | this.normalize()} method.
    */
-  getModulesToScan(meta?: NormalizedInitMeta): ModRefId[] {
+  getModulesToScan(meta?: NormalizedMixinMeta): ModRefId[] {
     return [];
   }
 
@@ -84,7 +84,7 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
     appProviders: AppProviders;
     normalizedModuleMeta: NormalizedModuleMeta;
   }) {
-    return new AppInitHooks();
+    return new AppModuleMixins();
   }
 
   /**
@@ -117,15 +117,15 @@ export class InitHooks<T1 extends InitDecoratorOptions = InitDecoratorOptions> {
   /**
    * This method must return a mutable array of {@link Provider} arrays, which can be overridden during testing.
    */
-  getProvidersToOverride(meta: NormalizedInitMeta): Provider[][] {
+  getProvidersToOverride(meta: NormalizedMixinMeta): Provider[][] {
     return [];
   }
 }
 
-export interface InitMetaMap {
-  set<T extends NormalizedInitMeta>(decorator: InitDecorator<any, any, T>, meta: T): this;
-  get<T extends NormalizedInitMeta>(decorator: InitDecorator<any, any, T>): T | undefined;
-  forEach<T extends NormalizedInitMeta>(
+export interface MixinMetaMap {
+  set<T extends NormalizedMixinMeta>(decorator: MixinDecorator<any, any, T>, meta: T): this;
+  get<T extends NormalizedMixinMeta>(decorator: MixinDecorator<any, any, T>): T | undefined;
+  forEach<T extends NormalizedMixinMeta>(
     callbackfn: (meta: T, decorator: AnyFn, map: Map<AnyFn, T>) => void,
     thisArg?: any,
   ): void;
@@ -133,7 +133,7 @@ export interface InitMetaMap {
    * Returns an iterable of keys in the map
    */
   keys(): MapIterator<AnyFn>;
-  values<T extends NormalizedInitMeta>(): MapIterator<T>;
+  values<T extends NormalizedMixinMeta>(): MapIterator<T>;
   readonly size: number;
   /**
    * @returns boolean indicating whether an element with the specified key exists or not.
@@ -142,9 +142,9 @@ export interface InitMetaMap {
   [Symbol.iterator](): any;
 }
 
-export interface InitDynamicOptionsMap {
-  set<T extends AnyObj>(decorator: InitDecorator<any, T, any>, params: T): this;
-  get<T extends AnyObj>(decorator: InitDecorator<any, T, any>): T | undefined;
+export interface MixinDynamicOptionsMap {
+  set<T extends AnyObj>(decorator: MixinDecorator<any, T, any>, params: T): this;
+  get<T extends AnyObj>(decorator: MixinDecorator<any, T, any>): T | undefined;
   forEach<T extends AnyObj>(callbackfn: (params: T, decorator: AnyFn, map: Map<AnyFn, T>) => void, thisArg?: any): void;
   /**
    * Returns an iterable of keys in the map
@@ -155,23 +155,23 @@ export interface InitDynamicOptionsMap {
   /**
    * @returns boolean indicating whether an element with the specified key exists or not.
    */
-  has(key: InitDecorator<any, any, any>): boolean;
+  has(key: MixinDecorator<any, any, any>): boolean;
 }
 
 /**
- * Use this interface to create decorators with init hooks.
+ * Use this interface to create decorators with module mixins.
  *
- * ### Complete example with init hooks
+ * ### Complete example with module mixins
  *
  * In this example, `ReturnsType` is the type that will be returned by
- * {@link InitHooks.normalize} or {@link NormalizedModuleMeta.initMeta | normalizedModuleMeta.initMeta.get(addSome)}.
+ * {@link ModuleMixin.normalize} or {@link NormalizedModuleMeta.mixinMeta | normalizedModuleMeta.mixinMeta.get(addSome)}.
  *
 ```ts
 import {
   makeClassDecorator,
-  InitDecorator,
+  MixinDecorator,
   featureModule,
-  InitHooks,
+  ModuleMixin,
   DynamicModuleWithInitOptions,
 } from '@ditsmod/core';
 
@@ -183,37 +183,37 @@ interface InitMeta {
   other?: string;
 }
 
-function getInitHooks(data?: RootModuleOptions): InitHooks<RootModuleOptions> {
+function getModuleMixin(data?: RootModuleOptions): ModuleMixin<RootModuleOptions> {
   const metadata = Object.assign({}, data);
-  return new MyInitHooks(metadata);
+  return new MyModuleMixin(metadata);
 }
-// Creating an init decorator
-export const initSome: InitDecorator<RootModuleOptions, { path?: string }, InitMeta> = makeClassDecorator(getInitHooks);
+// Creating an mixin decorator
+export const initSome: MixinDecorator<RootModuleOptions, { path?: string }, InitMeta> = makeClassDecorator(getModuleMixin);
 
 @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
 class Module1 {
   static withOpts(): DynamicModuleWithInitOptions<Module1> {
     return {
       module: this,
-      initOptions: new Map(),
+      mixinOptions: new Map(),
     };
   }
 }
 
 const dynamicModule = Module1.withOpts();
-dynamicModule.initOptions.set(initSome, { path: 'some-prefix' });
+dynamicModule.mixinOptions.set(initSome, { path: 'some-prefix' });
 
-// Using the newly created init decorator
+// Using the newly created mixin decorator
 @initSome({ one: 1, two: 2 })
 @featureModule({ imports: [dynamicModule] })
 class MyModule {
   // Your code here
 }
 
-class MyInitHooks extends InitHooks<RootModuleOptions> {}
+class MyModuleMixin extends ModuleMixin<RootModuleOptions> {}
 ```
  */
-export interface InitDecorator<T extends InitDecoratorOptions, ModuleParams, InitMeta> {
+export interface MixinDecorator<T extends MixinOptions, ModuleParams, InitMeta> {
   (data?: T): any;
 }
 
@@ -229,7 +229,7 @@ export interface DynamicModuleWrapper {
 }
 
 // prettier-ignore
-export interface InitDecoratorOptions<InitDynamicOptions extends object = object> extends Omit<FeatureModuleOptions,'imports'> {
+export interface MixinOptions<InitDynamicOptions extends object = object> extends Omit<FeatureModuleOptions,'imports'> {
   imports?: (
     ((DynamicModuleWrapper | DynamicModule) & InitDynamicOptions) | StaticModule | ForwardRefFn<StaticModule>
   )[];

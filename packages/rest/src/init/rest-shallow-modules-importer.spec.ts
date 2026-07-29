@@ -18,8 +18,8 @@ import {
 } from '@ditsmod/core';
 
 import { controller } from '#types/controller.js';
-import { AppendsWithOptions } from './rest-init-raw-meta.js';
-import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { AppendsWithOptions } from './rest-mixin-raw-meta.js';
+import { mixinRest } from '#decorators/rest-module-mixins.js';
 import { RestShallowModulesImporter } from './rest-shallow-modules-importer.js';
 import { Level, RestAppProviders } from '#types/types.js';
 import { getImportedProviders } from '../utils/get-imports.js';
@@ -75,7 +75,7 @@ describe('shallow importing modules', () => {
     class Provider2 {}
 
     const dynamicModule0: DynamicModule = { module: forwardRef(() => Module3) };
-    @initRest()
+    @mixinRest()
     @featureModule({
       imports: [dynamicModule0],
       exports: [dynamicModule0],
@@ -83,7 +83,7 @@ describe('shallow importing modules', () => {
     class Module1 {}
     const dynamicModule1: DynamicModule = { module: Module1 };
 
-    @initRest({
+    @mixinRest({
       providersPerReq: [Provider1],
       exports: [Provider1],
     })
@@ -91,7 +91,7 @@ describe('shallow importing modules', () => {
     class Module2 {}
     const dynamicModule2: DynamicModule = { module: Module2 };
 
-    @initRest({
+    @mixinRest({
       providersPerReq: [Provider2],
       exports: [Provider2],
     })
@@ -105,8 +105,8 @@ describe('shallow importing modules', () => {
     class AppModule {}
 
     const normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
-    const initHooks = normalizedModuleMeta.allInitHooks.get(initRest)!;
-    const val = initHooks.exportAppProviders({
+    const moduleMixin = normalizedModuleMeta.allModuleMixin.get(mixinRest)!;
+    const val = moduleMixin.exportAppProviders({
       moduleManager,
       appProviders: new AppProviders(),
       normalizedModuleMeta,
@@ -124,15 +124,15 @@ describe('shallow importing modules', () => {
     })
     class Module0 {}
 
-    @initRest({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
+    @mixinRest({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
     @featureModule()
     class Module1 {}
 
-    @initRest({ providersPerReq: [Provider1], exports: [Provider1] })
+    @mixinRest({ providersPerReq: [Provider1], exports: [Provider1] })
     @featureModule()
     class Module2 {}
 
-    @initRest({
+    @mixinRest({
       resolvedCollisionsPerReq: [[Provider1, Module0]],
     })
     @rootModule({ imports: [Module0, Module1, Module2] })
@@ -146,15 +146,15 @@ describe('shallow importing modules', () => {
     class Provider1 {}
     class Provider2 {}
 
-    @initRest({ providersPerReq: [Provider1], exports: [Provider1] })
+    @mixinRest({ providersPerReq: [Provider1], exports: [Provider1] })
     @featureModule()
     class Module1 {}
 
-    @initRest({ providersPerReq: [Provider2], exports: [Provider2] })
+    @mixinRest({ providersPerReq: [Provider2], exports: [Provider2] })
     @featureModule()
     class Module2 {}
 
-    @initRest({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
+    @mixinRest({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
     @rootModule({ imports: [Module1, Module2] })
     class AppModule {}
 
@@ -166,11 +166,11 @@ describe('shallow importing modules', () => {
     class Provider1 {}
     class Provider2 {}
 
-    @initRest({ providersPerReq: [Provider1], exports: [Provider1] })
+    @mixinRest({ providersPerReq: [Provider1], exports: [Provider1] })
     @featureModule()
     class Module1 {}
 
-    @initRest({
+    @mixinRest({
       providersPerReq: [{ token: Provider1, useValue: 'some value' }, Provider2],
       exports: [Provider1, Provider2],
     })
@@ -192,17 +192,17 @@ describe('shallow importing modules', () => {
   it('should work with resolved collision', () => {
     class Provider1 {}
 
-    @initRest({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
+    @mixinRest({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
     @featureModule()
     class Module1 {}
 
-    @initRest({ providersPerReq: [Provider1], exports: [Provider1] })
+    @mixinRest({ providersPerReq: [Provider1], exports: [Provider1] })
     @featureModule()
     class Module2 {}
 
     const modRefId1: DynamicModule = { module: Module1 };
     const modRefId2: DynamicModule = { module: Module2 };
-    @initRest({
+    @mixinRest({
       resolvedCollisionsPerReq: [[Provider1, modRefId1]],
     })
     @rootModule({ imports: [modRefId1, modRefId2] })
@@ -211,20 +211,20 @@ describe('shallow importing modules', () => {
     expect(() => importModulesShallow(AppModule)).not.toThrow();
   });
 
-  it('should work with resolved collision in initRest and import a module in rootModule', () => {
+  it('should work with resolved collision in mixinRest and import a module in rootModule', () => {
     class Provider1 {}
 
-    @initRest({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
+    @mixinRest({ providersPerReq: [{ token: Provider1, useValue: 'some value' }], exports: [Provider1] })
     @featureModule()
     class Module1 {}
 
-    @initRest({ providersPerReq: [Provider1], exports: [Provider1] })
+    @mixinRest({ providersPerReq: [Provider1], exports: [Provider1] })
     @featureModule()
     class Module2 {}
 
     const modRefId1: DynamicModule = { module: Module1 };
     const modRefId2: DynamicModule = { module: Module2 };
-    @initRest({ resolvedCollisionsPerReq: [[Provider1, modRefId1]] })
+    @mixinRest({ resolvedCollisionsPerReq: [[Provider1, modRefId1]] })
     @rootModule({ imports: [modRefId1, modRefId2] })
     class AppModule {}
 
@@ -235,15 +235,15 @@ describe('shallow importing modules', () => {
     @controller()
     class Controller1 {}
 
-    @initRest({ controllers: [Controller1] })
+    @mixinRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @initRest({ controllers: [Controller1] })
+    @mixinRest({ controllers: [Controller1] })
     @featureModule()
     class Module2 {}
 
-    @initRest({
+    @mixinRest({
       appends: [Module1, { path: 'some-prefix', module: Module2 }],
       controllers: [Controller1],
     })
@@ -257,17 +257,17 @@ describe('shallow importing modules', () => {
     @controller()
     class Controller1 {}
 
-    @initRest({ controllers: [Controller1] })
+    @mixinRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @initRest({ controllers: [Controller1] })
+    @mixinRest({ controllers: [Controller1] })
     @featureModule()
     class Module2 {}
 
     const mod1: AppendsWithOptions = { path: 'prefix1', module: Module1 };
     const mod2: AppendsWithOptions = { path: 'prefix2', module: Module2 };
-    @initRest({
+    @mixinRest({
       appends: [mod1, mod2],
       controllers: [Controller1],
     })
@@ -298,11 +298,11 @@ describe('shallow importing modules', () => {
     @controller()
     class Controller1 {}
 
-    @initRest({ controllers: [Controller1] })
+    @mixinRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @initRest({
+    @mixinRest({
       appends: [Module1],
       controllers: [Controller1],
     })
@@ -325,7 +325,7 @@ describe('shallow importing modules', () => {
     })
     class Module1 {}
 
-    @initRest({
+    @mixinRest({
       appends: [Module1],
       controllers: [Controller1],
     })
@@ -346,7 +346,7 @@ describe('shallow importing modules', () => {
     })
     class Module1 {}
 
-    @initRest({
+    @mixinRest({
       appends: [{ path: '', module: Module1 }],
     })
     @rootModule()
@@ -362,14 +362,14 @@ describe('shallow importing modules', () => {
     @controller()
     class Controller1 {}
 
-    @initRest({ controllers: [Controller1] })
+    @mixinRest({ controllers: [Controller1] })
     @featureModule({
       providersPerMod: [Provider1, Provider2],
       exports: [Provider1, Provider2],
     })
     class Module1 {}
 
-    @initRest({
+    @mixinRest({
       appends: [Module1],
       controllers: [Controller1],
     })
@@ -383,15 +383,15 @@ describe('shallow importing modules', () => {
     @controller()
     class Controller1 {}
 
-    @initRest({ controllers: [Controller1] })
+    @mixinRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @initRest({ controllers: [Controller1] })
+    @mixinRest({ controllers: [Controller1] })
     @featureModule()
     class Module2 {}
 
-    @initRest({
+    @mixinRest({
       appends: [Module1, { path: 'some-prefix', module: Module2 }],
       controllers: [Controller1],
     })
@@ -405,17 +405,17 @@ describe('shallow importing modules', () => {
     @controller()
     class Controller1 {}
 
-    @initRest({ controllers: [Controller1] })
+    @mixinRest({ controllers: [Controller1] })
     @featureModule()
     class Module1 {}
 
-    @initRest({ controllers: [Controller1] })
+    @mixinRest({ controllers: [Controller1] })
     @featureModule()
     class Module2 {}
 
     const mod1: AppendsWithOptions = { path: 'prefix1', module: Module1 };
     const mod2: AppendsWithOptions = { path: 'prefix2', module: Module2 };
-    @initRest({
+    @mixinRest({
       appends: [mod1, mod2],
       controllers: [Controller1],
     })

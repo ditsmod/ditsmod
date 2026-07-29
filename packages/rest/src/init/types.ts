@@ -10,7 +10,7 @@ import type {
 } from '@ditsmod/core';
 
 import type { ModuleScopedGuard } from '#interceptors/guard.js';
-import type { RestModRefId, RestInitMeta } from '#init/rest-init-meta.js';
+import type { RestModRefId, RestInitMeta } from '#init/rest-mixin-meta.js';
 
 export class RestImportedProvider<T extends Provider = Provider> {
   modRefId: RestModRefId;

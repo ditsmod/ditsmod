@@ -1,5 +1,5 @@
 import type { AnyFn, AnyObj, NormalizedModuleMeta, ModRefId, Override, Provider } from '@ditsmod/core';
-import { BaseAppOptions, AppInitHooks, InjectionToken, createInjectionSymbol } from '@ditsmod/core';
+import { BaseAppOptions, AppModuleMixins, InjectionToken, createInjectionSymbol } from '@ditsmod/core';
 import type { AnyRouter } from '@trpc/server';
 import { initTRPC } from '@trpc/server';
 import type { CreateHTTPHandlerOptions } from '@trpc/server/adapters/standalone';
@@ -13,7 +13,7 @@ import type { Http2ServerRequest, Http2ServerResponse } from 'http2';
 
 import type { HttpModule } from '#types/http-module.js';
 import type { ServerOptions } from '#types/server-options.js';
-import type { TrpcInitMeta, TrpcModRefId } from '#decorators/trpc-init-hooks-and-metadata.js';
+import type { TrpcInitMeta, TrpcModRefId } from '#decorators/trpc-module-mixins.js';
 import type { ModuleScopedGuard } from '#interceptors/trpc-guard.js';
 import type { ControllerMeta } from './controller-metadata.js';
 import type { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
@@ -67,7 +67,7 @@ type GetRouterConfig<T> = {
   [K in keyof T]: T[K] extends AnyFn<any, infer R> ? CtrlOrModuleFn<R> : GetRouterConfig<T[K]>;
 };
 type CtrlOrModuleFn<F> = F extends AnyFn ? F : GetRouterConfig<F>;
-export class TrpcAppProviders extends AppInitHooks {
+export class TrpcAppProviders extends AppModuleMixins {
   importedProvidersPerMod = new Map<any, TrpcImportedProvider>();
   importedProvidersPerRou = new Map<any, TrpcImportedProvider>();
   importedProvidersPerReq = new Map<any, TrpcImportedProvider>();

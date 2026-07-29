@@ -11,11 +11,11 @@ import {
 } from '@ditsmod/core';
 
 import { RestModuleNormalizer } from './rest-module-normalizer.js';
-import { initRest, restRootModule } from '#decorators/rest-init-hooks-and-metadata.js';
+import { mixinRest, restRootModule } from '#decorators/rest-module-mixins.js';
 import { controller } from '#types/controller.js';
 import { CanActivate, NormalizedGuard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
-import { AppendsWithOptions } from './rest-init-raw-meta.js';
+import { AppendsWithOptions } from './rest-mixin-raw-meta.js';
 import { RestModule } from './rest.module.js';
 import { NormalizationFailure, ReexportFailure } from '@ditsmod/core/errors';
 
@@ -32,7 +32,7 @@ describe('rest ModuleNormalizer', () => {
     mock = new MockModuleNormalizer();
   });
 
-  it('module and append - both with params and without init decorator', () => {
+  it('module and append - both with params and without mixin decorator', () => {
     class Service0 {}
 
     @featureModule({ providersPerApp: [Service0] })
@@ -40,7 +40,7 @@ describe('rest ModuleNormalizer', () => {
       static withOpts(): DynamicModuleWithInitOptions<Module1> {
         return {
           module: this,
-          initOptions: new Map(),
+          mixinOptions: new Map(),
         };
       }
     }
@@ -49,12 +49,12 @@ describe('rest ModuleNormalizer', () => {
     class Module2 {}
 
     const dynamicModule = Module1.withOpts();
-    dynamicModule.initOptions.set(initRest, { path: 'test1' });
+    dynamicModule.mixinOptions.set(mixinRest, { path: 'test1' });
     const appendWithOpts: AppendsWithOptions = { module: Module2, path: 'test2' };
 
-    // Although in `AppModule` `appendWithOpts` and `dynamicModule` are used in the context of the `initRest` decorator, `Module1` and `Module2`
-    // themselves do not have this decorator, so it's important that `Module1` and `Module2` are processed using the init hooks taken from `AppModule`.
-    @initRest({
+    // Although in `AppModule` `appendWithOpts` and `dynamicModule` are used in the context of the `mixinRest` decorator, `Module1` and `Module2`
+    // themselves do not have this decorator, so it's important that `Module1` and `Module2` are processed using the module mixins taken from `AppModule`.
+    @mixinRest({
       appends: [appendWithOpts],
     })
     @rootModule({
@@ -62,14 +62,14 @@ describe('rest ModuleNormalizer', () => {
     })
     class AppModule {}
 
-    const meta1 = moduleManager.scanRootModule(AppModule).initMeta.get(initRest)!;
-    expect(dynamicModule.initOptions?.get(initRest)).toEqual({ path: 'test1' });
+    const meta1 = moduleManager.scanRootModule(AppModule).mixinMeta.get(mixinRest)!;
+    expect(dynamicModule.mixinOptions?.get(mixinRest)).toEqual({ path: 'test1' });
     expect(meta1.appendsWithOpts).toEqual([appendWithOpts]);
 
-    const meta2 = moduleManager.getNormalizedModuleMeta(dynamicModule, true).initMeta.get(initRest)!;
+    const meta2 = moduleManager.getNormalizedModuleMeta(dynamicModule, true).mixinMeta.get(mixinRest)!;
     expect(meta2.params.path).toEqual('test1');
 
-    const meta3 = moduleManager.getNormalizedModuleMeta(appendWithOpts, true).initMeta.get(initRest)!;
+    const meta3 = moduleManager.getNormalizedModuleMeta(appendWithOpts, true).mixinMeta.get(mixinRest)!;
     expect(meta3.params.path).toEqual('test2');
   });
 
@@ -89,7 +89,7 @@ describe('rest ModuleNormalizer', () => {
         return {
           id,
           module: this,
-          initOptions: new Map(),
+          mixinOptions: new Map(),
         };
       }
     }
@@ -108,12 +108,12 @@ describe('rest ModuleNormalizer', () => {
 
     const module2WithOpts = forwardRef(() => {
       const module2WithOpts = Module2.withOpts('test-id');
-      module2WithOpts.initOptions.set(initRest, { path: 'test1' });
+      module2WithOpts.mixinOptions.set(mixinRest, { path: 'test1' });
       return module2WithOpts;
     });
     const module4WithOpts: DynamicModule = { module: forwardRef(() => Module4) };
     const appendWithOpts: AppendsWithOptions = { module: forwardRef(() => Module6), path: 'test2' };
-    @initRest({
+    @mixinRest({
       appends: [forwardRef(() => Module5), appendWithOpts],
       providersPerRou: [
         forwardRef(() => Service1),
@@ -139,7 +139,7 @@ describe('rest ModuleNormalizer', () => {
 
     const normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
 
-    const meta1 = moduleManager.getNormalizedModuleMeta(AppModule, true).initMeta.get(initRest)!;
+    const meta1 = moduleManager.getNormalizedModuleMeta(AppModule, true).mixinMeta.get(mixinRest)!;
     expect(meta1.providersPerRou).toEqual([Service1, { token: Service3, useClass: Service3, multi: true }]);
     expect(meta1.providersPerReq).toEqual([Service2, { token: Service4, useToken: Service4, multi: true }]);
     expect(meta1.exportedProvidersPerRou).toEqual([Service1]);
@@ -151,15 +151,15 @@ describe('rest ModuleNormalizer', () => {
     expect(meta1.appendsModules).toEqual([Module5]);
     expect(meta1.appendsWithOpts).toEqual([appendWithOpts]);
 
-    const meta2 = moduleManager.getNormalizedModuleMeta('test-id', true).initMeta.get(initRest)!;
+    const meta2 = moduleManager.getNormalizedModuleMeta('test-id', true).mixinMeta.get(mixinRest)!;
     expect(meta2.params.path).toEqual('test1');
 
-    const meta3 = moduleManager.getNormalizedModuleMeta(appendWithOpts, true).initMeta.get(initRest)!;
+    const meta3 = moduleManager.getNormalizedModuleMeta(appendWithOpts, true).mixinMeta.get(mixinRest)!;
     expect(meta3.params.path).toEqual('test2');
 
     expect(normalizedModuleMeta.importedStaticModules).toEqual([Module1, RestModule]);
     expect(normalizedModuleMeta.importedDynamicModules).toEqual([
-      { id: 'test-id', module: Module2, initOptions: expect.any(Map) },
+      { id: 'test-id', module: Module2, mixinOptions: expect.any(Map) },
     ]);
   });
 
@@ -177,7 +177,7 @@ describe('rest ModuleNormalizer', () => {
       }
     }
 
-    @initRest({
+    @mixinRest({
       providersPerRou: new ProviderBuilder().passThrough(Service1),
       providersPerReq: [Service2],
       exports: [Service1, Service2],
@@ -191,20 +191,20 @@ describe('rest ModuleNormalizer', () => {
       module: Module1,
     };
 
-    @initRest({
+    @mixinRest({
       appends: [appendsWithOpts],
     })
     @rootModule()
     class AppModule {}
 
     const normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
-    const meta1 = moduleManager.getNormalizedModuleMeta(AppModule, true).initMeta.get(initRest)!;
-    const modRefIds = normalizedModuleMeta.allInitHooks.get(initRest)?.getModulesToScan(meta1);
+    const meta1 = moduleManager.getNormalizedModuleMeta(AppModule, true).mixinMeta.get(mixinRest)!;
+    const modRefIds = normalizedModuleMeta.allModuleMixin.get(mixinRest)?.getModulesToScan(meta1);
     expect(modRefIds).toEqual([appendsWithOpts]);
     expect(normalizedModuleMeta.importedStaticModules).toEqual([RestModule]);
     expect(normalizedModuleMeta.importedDynamicModules).toEqual([]);
 
-    const meta2 = moduleManager.getNormalizedModuleMeta(appendsWithOpts, true).initMeta.get(initRest)!;
+    const meta2 = moduleManager.getNormalizedModuleMeta(appendsWithOpts, true).mixinMeta.get(mixinRest)!;
     expect(meta2.params.path).toBe('one');
     expect(meta2.params.guards).toEqual<NormalizedGuard[]>([
       { guard: Guard1 },
@@ -236,7 +236,7 @@ describe('rest ModuleNormalizer', () => {
       }
     }
 
-    @initRest({
+    @mixinRest({
       providersPerApp: [Service7],
       providersPerRou: new ProviderBuilder().passThrough(Service1),
       providersPerReq: [Service3],
@@ -247,13 +247,13 @@ describe('rest ModuleNormalizer', () => {
       static withOpts(): DynamicModuleWithInitOptions<Module1> {
         return {
           module: this,
-          initOptions: new Map(),
+          mixinOptions: new Map(),
         };
       }
     }
 
     const dynamicModule = Module1.withOpts();
-    dynamicModule.initOptions.set(initRest, {
+    dynamicModule.mixinOptions.set(mixinRest, {
       path: 'one',
       guards: [Guard1, [Guard2, { property1: 'some-value' }]],
       providersPerApp: [Service8],
@@ -265,18 +265,18 @@ describe('rest ModuleNormalizer', () => {
       exports: [Service2, Service4, Service5, Service6],
     });
 
-    @initRest()
+    @mixinRest()
     @rootModule({ imports: [dynamicModule] })
     class AppModule {}
 
     const normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
-    const meta1 = moduleManager.getNormalizedModuleMeta(AppModule, true).initMeta.get(initRest)!;
-    const modRefIds = normalizedModuleMeta.allInitHooks.get(initRest)?.getModulesToScan(meta1);
+    const meta1 = moduleManager.getNormalizedModuleMeta(AppModule, true).mixinMeta.get(mixinRest)!;
+    const modRefIds = normalizedModuleMeta.allModuleMixin.get(mixinRest)?.getModulesToScan(meta1);
     expect(modRefIds).toEqual([]);
     expect(normalizedModuleMeta.importedStaticModules).toEqual([RestModule]);
     expect(normalizedModuleMeta.importedDynamicModules).toEqual([dynamicModule]);
 
-    const meta2 = moduleManager.getNormalizedModuleMeta(dynamicModule, true).initMeta.get(initRest)!;
+    const meta2 = moduleManager.getNormalizedModuleMeta(dynamicModule, true).mixinMeta.get(mixinRest)!;
     expect(meta2.params.path).toBe('one');
     expect(meta2.params.guards).toEqual<NormalizedGuard[]>([
       { guard: Guard1 },
@@ -300,7 +300,7 @@ describe('rest ModuleNormalizer', () => {
     @controller()
     class Controller1 {}
 
-    @initRest({
+    @mixinRest({
       controllers: [Controller1],
       providersPerRou: [Service1, { token: Service2, useClass: Service2, multi: true }],
       resolvedCollisionsPerRou: [[Service1, Module1]],
@@ -311,7 +311,7 @@ describe('rest ModuleNormalizer', () => {
     class AppModule {}
 
     const normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
-    const meta = normalizedModuleMeta.initMeta.get(initRest)!;
+    const meta = normalizedModuleMeta.mixinMeta.get(mixinRest)!;
     expect(meta.controllers).toEqual([Controller1]);
     expect(meta.providersPerRou).toEqual([Service1, { token: Service2, useClass: Service2, multi: true }]);
     expect(meta.exportedProvidersPerRou).toEqual([Service1]);

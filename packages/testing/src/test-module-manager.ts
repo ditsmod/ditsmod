@@ -1,4 +1,4 @@
-import type { ModRefId, NormalizedModuleMeta, AllInitHooks } from '@ditsmod/core';
+import type { ModRefId, NormalizedModuleMeta, AllModuleMixins } from '@ditsmod/core';
 import { getModule, ModuleManager } from '@ditsmod/core';
 
 export class TestModuleManager extends ModuleManager {
@@ -11,8 +11,8 @@ export class TestModuleManager extends ModuleManager {
     });
   }
 
-  protected override normalizeMeta(modRefId: ModRefId, allInitHooks: AllInitHooks): NormalizedModuleMeta {
-    const normalizedModuleMeta = super.normalizeMeta(modRefId, allInitHooks);
+  protected override normalizeMeta(modRefId: ModRefId, allModuleMixin: AllModuleMixins): NormalizedModuleMeta {
+    const normalizedModuleMeta = super.normalizeMeta(modRefId, allModuleMixin);
     const mod = getModule(modRefId);
     if (this.externalModules.has(mod)) {
       normalizedModuleMeta.isExternal = true;

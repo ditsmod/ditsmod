@@ -3,13 +3,13 @@ import type { ModRefId, StaticModule } from '#decorators/module-decorator-option
 import type { AnyFn, Class, Provider } from '#di/top/types-and-models.js';
 import type { DynamicModule } from '../decorators/module-decorator-options.js';
 import type { ExtensionConfig, BaseExtensionConfig } from '#extension/extension-providers-and-configs.js';
-import type { InitMetaMap, InitHooks, AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
+import type { MixinMetaMap, ModuleMixin, AllModuleMixins } from '#decorators/module-mixins.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
 import type { GroupToken } from '#di/key-registry.js';
 import type { MultiProvider } from '#di/utils.js';
 import { objectKeys } from '#utils/object-keys.js';
 
-export class NormalizedInitMeta<A extends AnyObj = AnyObj> {
+export class NormalizedMixinMeta<A extends AnyObj = AnyObj> {
   /**
    * The module ID.
    */
@@ -113,10 +113,10 @@ export class NormalizedInitMeta<A extends AnyObj = AnyObj> {
 /**
  * Creates a {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy | Proxy}
  * instance to forward property value assignments from the `InitMeta` instance to the {@link NormalizedModuleMeta} instance. Here,
- * `InitMeta` refers to the extended interface of normalized data that provides init hooks. This is done to simplify
- * synchronization between {@link NormalizedModuleMeta} and the metadata from init decorators.
+ * `InitMeta` refers to the extended interface of normalized data that provides module mixins. This is done to simplify
+ * synchronization between {@link NormalizedModuleMeta} and the metadata from mixin decorators.
  */
-export function getProxyForInitMeta<T extends NormalizedInitMeta>(
+export function getProxyForMixinMeta<T extends NormalizedMixinMeta>(
   normalizedModuleMeta: NormalizedModuleMeta,
   InitMetaClass: Class<T>,
 ): T {
@@ -148,7 +148,7 @@ export function getProxyForInitMeta<T extends NormalizedInitMeta>(
 export class NormalizedModuleMeta<
   TypeOfModule extends AnyObj = AnyObj,
   ExtensionMeta extends AnyObj = AnyObj,
-> extends NormalizedInitMeta<ExtensionMeta> {
+> extends NormalizedMixinMeta<ExtensionMeta> {
   /**
    * Metadata returned by the decorator transformer for the module.
    */
@@ -171,21 +171,21 @@ export class NormalizedModuleMeta<
    */
   isExternal?: boolean;
   /**
-   * Indicates whether this module inherits context/init hooks from parent modules.
+   * Indicates whether this module inherits context/module mixins from parent modules.
    */
   inheritsContext?: boolean;
   /**
-   * Contains init hooks and init options collected from init module decorators.
+   * Contains module mixins and init options collected from init module decorators.
    */
-  initHooksMap = new Map<AnyFn, InitHooks>();
+  moduleMixinMap = new Map<AnyFn, ModuleMixin>();
   /**
-   * Contains normalized metadata collected from module init decorators.
+   * Contains normalized metadata collected from module mixin decorators.
    */
-  initMeta: InitMetaMap = new Map();
+  mixinMeta: MixinMetaMap = new Map();
   /**
-   * List of unique init hooks found in the current module and all imported modules.
+   * List of unique module mixins found in the current module and all imported modules.
    */
-  allInitHooks: AllInitHooks = new Map();
+  allModuleMixin: AllModuleMixins = new Map();
   /**
    * The mapping between an extension specified in {@link BaseExtensionConfig.groups | ExtensionConfig.groups}
    * and the extension group token assigned to it.
@@ -251,22 +251,22 @@ export class NormalizedModuleMeta<
       copy.extensionsMeta = extensionsMeta;
     }
 
-    copy.initHooksMap = new Map(copy.initHooksMap);
-    copy.allInitHooks = new Map(copy.allInitHooks);
+    copy.moduleMixinMap = new Map(copy.moduleMixinMap);
+    copy.allModuleMixin = new Map(copy.allModuleMixin);
     copy.extensionGroupTokenMap = new Map(copy.extensionGroupTokenMap);
     copy.exportedExtensionGroupTokenMap = new Map(copy.exportedExtensionGroupTokenMap);
-    copy.initMeta = new Map();
-    copy.initHooksMap.forEach((initHooks, decorator) => {
-      const meta = initHooks.normalize(copy);
+    copy.mixinMeta = new Map();
+    copy.moduleMixinMap.forEach((moduleMixin, decorator) => {
+      const meta = moduleMixin.normalize(copy);
       if (meta) {
-        copy.initMeta.set(decorator, meta);
+        copy.mixinMeta.set(decorator, meta);
       }
     });
-    copy.allInitHooks.forEach((initHooks, decorator) => {
-      if (!copy.initHooksMap.has(decorator)) {
-        const meta = initHooks.clone().normalize(copy);
+    copy.allModuleMixin.forEach((moduleMixin, decorator) => {
+      if (!copy.moduleMixinMap.has(decorator)) {
+        const meta = moduleMixin.clone().normalize(copy);
         if (meta) {
-          copy.initMeta.set(decorator, meta);
+          copy.mixinMeta.set(decorator, meta);
         }
       }
     });

@@ -1,12 +1,12 @@
 import { featureModule, DynamicModule, optional } from '@ditsmod/core';
-import { initRest, DispatcherExtension, RestRouteExtension } from '@ditsmod/rest';
+import { mixinRest, DispatcherExtension, RestRouteExtension } from '@ditsmod/rest';
 
 import { SessionCookie } from './session-cookie.js';
 import { SessionLogMediator } from './session-log-mediator.js';
 import { SessionCookieOptions } from './types.js';
 import { SessionCookieExtension } from './session-cookie.extension.js';
 
-@initRest({
+@mixinRest({
   providersPerMod: [SessionLogMediator],
   providersPerReq: [SessionCookie],
   extensions: [

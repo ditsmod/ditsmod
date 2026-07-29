@@ -1,7 +1,7 @@
-import { InitDynamicOptionsMap, DynamicModuleWithInitOptions } from '@ditsmod/core';
+import { MixinDynamicOptionsMap, DynamicModuleWithInitOptions } from '@ditsmod/core';
 import { ValidationModule } from '@ditsmod/openapi-validation';
 import { BodyParserModule } from '@ditsmod/body-parser';
-import { initRest, restModule } from '@ditsmod/rest';
+import { mixinRest, restModule } from '@ditsmod/rest';
 
 import { FirstController } from './first.controller.js';
 
@@ -11,12 +11,12 @@ import { FirstController } from './first.controller.js';
 })
 export class FirstModule {
   static withPath(path?: string): DynamicModuleWithInitOptions<FirstModule> {
-    const initOptions: InitDynamicOptionsMap = new Map();
-    initOptions.set(initRest, { path });
+    const mixinOptions: MixinDynamicOptionsMap = new Map();
+    mixinOptions.set(mixinRest, { path });
 
     return {
       module: this,
-      initOptions,
+      mixinOptions,
     };
   }
 }

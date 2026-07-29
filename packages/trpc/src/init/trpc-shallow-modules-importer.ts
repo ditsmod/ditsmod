@@ -1,13 +1,13 @@
 import type { ModRefId, ModuleManager, NormalizedModuleMeta, AppProviders } from '@ditsmod/core';
-import { isDynamicModule, getProxyForInitMeta } from '@ditsmod/core';
+import { isDynamicModule, getProxyForMixinMeta } from '@ditsmod/core';
 
 import type {
   ImportModulesShallowConfig,
   TrpcAppProviders,
   TrpcModRefId,
   TrpcShallowModuleImports,
-} from '#decorators/trpc-init-hooks-and-metadata.js';
-import { initTrpcModule, TrpcInitHooks, TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
+} from '#decorators/trpc-module-mixins.js';
+import { mixinTrpcModule, TrpcModuleMixin, TrpcInitMeta } from '#decorators/trpc-module-mixins.js';
 import type { ModuleScopedGuard } from '#interceptors/trpc-guard.js';
 
 /**
@@ -51,7 +51,7 @@ export class TrpcShallowModulesImporter {
     this.meta = this.getInitMeta(normalizedModuleMeta);
 
     return {
-      initHooks: new TrpcInitHooks({}),
+      moduleMixin: new TrpcModuleMixin({}),
     };
   }
 
@@ -70,7 +70,7 @@ export class TrpcShallowModulesImporter {
     this.normalizedModuleMeta = normalizedModuleMeta;
     this.meta = this.getInitMeta(normalizedModuleMeta);
     this.glProviders = appProviders;
-    this.trpcGlProviders = appProviders.initValueMap.get(initTrpcModule) as TrpcAppProviders;
+    this.trpcGlProviders = appProviders.mixinValueMap.get(mixinTrpcModule) as TrpcAppProviders;
     this.moduleName = normalizedModuleMeta.name;
     this.guardsPerMod = guardsPerMod || [];
     this.unfinishedScanModules = unfinishedScanModules;
@@ -87,10 +87,10 @@ export class TrpcShallowModulesImporter {
   }
 
   protected getInitMeta(normalizedModuleMeta: NormalizedModuleMeta): TrpcInitMeta {
-    let meta = normalizedModuleMeta.initMeta.get(initTrpcModule);
+    let meta = normalizedModuleMeta.mixinMeta.get(mixinTrpcModule);
     if (!meta) {
-      meta = getProxyForInitMeta(normalizedModuleMeta, TrpcInitMeta);
-      normalizedModuleMeta.initMeta.set(initTrpcModule, meta);
+      meta = getProxyForMixinMeta(normalizedModuleMeta, TrpcInitMeta);
+      normalizedModuleMeta.mixinMeta.set(mixinTrpcModule, meta);
     }
     return meta;
   }

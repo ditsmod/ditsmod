@@ -21,7 +21,7 @@ import { RequestScopedHttpBackend } from './request-scoped-http-backend.js';
 import { HttpBackend, HttpFrontend, HttpHandler, HttpInterceptor } from './tokens-and-types.js';
 import { HTTP_INTERCEPTORS } from '../top/constants.js';
 import { defaultProvidersPerReq } from '#providers/default-providers-per-req.js';
-import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { mixinRest } from '#decorators/rest-module-mixins.js';
 import { RestShallowModulesImporter } from '#init/rest-shallow-modules-importer.js';
 import { RequestContext } from '#services/request-context.js';
 
@@ -219,11 +219,11 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('case 2', () => {
-    @initRest({ providersPerReq: [{ token: Provider1, useClass: Provider1 }] })
+    @mixinRest({ providersPerReq: [{ token: Provider1, useClass: Provider1 }] })
     @featureModule({ exports: [Provider1] })
     class Module0 {}
 
-    @initRest({ providersPerReq: [] })
+    @mixinRest({ providersPerReq: [] })
     @rootModule({
       imports: [Module0],
       providersPerMod: [Provider1],
@@ -238,11 +238,11 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('resolved case 2', () => {
-    @initRest({ providersPerReq: [{ token: Provider1, useClass: Provider1 }], exports: [Provider1] })
+    @mixinRest({ providersPerReq: [{ token: Provider1, useClass: Provider1 }], exports: [Provider1] })
     @featureModule()
     class Module1 {}
 
-    @initRest({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
+    @mixinRest({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
     @rootModule({ imports: [Module1], providersPerMod: [Provider1] })
     class AppModule {}
 
@@ -256,7 +256,7 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('double resolve', () => {
-    @initRest({ providersPerReq: [Provider1] })
+    @mixinRest({ providersPerReq: [Provider1] })
     @featureModule({ exports: [Provider1] })
     class Module1 {}
 
@@ -266,7 +266,7 @@ describe('mix per app, per mod or per req', () => {
     })
     class Module2 {}
 
-    @initRest({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
+    @mixinRest({ resolvedCollisionsPerReq: [[Provider1, Module1]] })
     @rootModule({
       imports: [Module1, Module2],
       providersPerApp: [Provider1],
@@ -283,11 +283,11 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('point to current module to increase scope and to resolve case 2', () => {
-    @initRest({ providersPerReq: [{ token: Provider1, useClass: Provider1 }] })
+    @mixinRest({ providersPerReq: [{ token: Provider1, useClass: Provider1 }] })
     @featureModule({ exports: [Provider1] })
     class Module1 {}
 
-    @initRest({ resolvedCollisionsPerReq: [[Provider1, AppModule]] })
+    @mixinRest({ resolvedCollisionsPerReq: [[Provider1, AppModule]] })
     @rootModule({ imports: [Module1], providersPerMod: [Provider1] })
     class AppModule {}
 
@@ -299,11 +299,11 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('wrong point to current module', () => {
-    @initRest({ providersPerReq: [{ token: Provider2, useClass: Provider1 }] })
+    @mixinRest({ providersPerReq: [{ token: Provider2, useClass: Provider1 }] })
     @featureModule({ exports: [Provider2] })
     class Module1 {}
 
-    @initRest({ resolvedCollisionsPerReq: [[Provider1, AppModule]] })
+    @mixinRest({ resolvedCollisionsPerReq: [[Provider1, AppModule]] })
     @rootModule({ imports: [Module1], providersPerMod: [Provider1] })
     class AppModule {}
 
@@ -321,7 +321,7 @@ describe('mix per app, per mod or per req', () => {
     })
     class Module0 {}
 
-    @initRest({ resolvedCollisionsPerReq: [[HttpBackend, AppModule]] })
+    @mixinRest({ resolvedCollisionsPerReq: [[HttpBackend, AppModule]] })
     @rootModule({ imports: [Module0] })
     class AppModule {}
 
@@ -333,11 +333,11 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('resolve 2 case 3', () => {
-    @initRest({ providersPerReq: [{ token: RequestContext, useClass: RequestContext }] })
+    @mixinRest({ providersPerReq: [{ token: RequestContext, useClass: RequestContext }] })
     @featureModule({ exports: [RequestContext] })
     class Module1 {}
 
-    @initRest({ resolvedCollisionsPerReq: [[RequestContext, Module1]] })
+    @mixinRest({ resolvedCollisionsPerReq: [[RequestContext, Module1]] })
     @rootModule({ imports: [Module1] })
     class AppModule {}
 
@@ -376,7 +376,7 @@ describe('mix per app, per mod or per req', () => {
     })
     class Module0 {}
 
-    @initRest({ resolvedCollisionsPerReq: [[HttpBackend, AppModule]] })
+    @mixinRest({ resolvedCollisionsPerReq: [[HttpBackend, AppModule]] })
     @rootModule({ imports: [Module0] })
     class AppModule {}
 
@@ -388,11 +388,11 @@ describe('mix per app, per mod or per req', () => {
   });
 
   it('resolved case 4', () => {
-    @initRest({ providersPerReq: [{ token: HttpBackend, useValue: '' }] })
+    @mixinRest({ providersPerReq: [{ token: HttpBackend, useValue: '' }] })
     @featureModule({ exports: [HttpBackend] })
     class Module1 {}
 
-    @initRest({ resolvedCollisionsPerReq: [[HttpBackend, Module1]] })
+    @mixinRest({ resolvedCollisionsPerReq: [[HttpBackend, Module1]] })
     @rootModule({ imports: [Module1] })
     class AppModule {}
 

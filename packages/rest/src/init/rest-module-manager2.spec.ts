@@ -11,8 +11,8 @@ import {
 import { CanActivate, guard } from '../interceptors/guard.js';
 import { controller } from '../types/controller.js';
 import { RequestContext } from '../services/request-context.js';
-import { AppendsWithOptions, type RestModuleOptions } from './rest-init-raw-meta.js';
-import { initRest, restRootModule } from '#decorators/rest-init-hooks-and-metadata.js';
+import { AppendsWithOptions, type RestModuleOptions } from './rest-mixin-raw-meta.js';
+import { mixinRest, restRootModule } from '#decorators/rest-module-mixins.js';
 
 let mock: MockModuleManager;
 
@@ -48,11 +48,11 @@ it('imports and appends with gruards for some modules', () => {
   @controller()
   class Controller2 {}
 
-  @initRest({ controllers: [Controller1] })
+  @mixinRest({ controllers: [Controller1] })
   @featureModule()
   class Module1 {}
 
-  @initRest({ controllers: [Controller2] })
+  @mixinRest({ controllers: [Controller2] })
   @featureModule()
   class Module2 {}
 
@@ -74,9 +74,9 @@ it('imports and appends with gruards for some modules', () => {
   class AppModule {}
 
   mock.scanRootModule(AppModule);
-  const initMeta1 = mock.getNormalizedModuleMeta(dynamicModule)?.initMeta.get(initRest)?.params;
-  const initMeta2 = mock.getNormalizedModuleMeta(appendsWithOpts)?.initMeta.get(initRest)?.params;
+  const mixinMeta1 = mock.getNormalizedModuleMeta(dynamicModule)?.mixinMeta.get(mixinRest)?.params;
+  const mixinMeta2 = mock.getNormalizedModuleMeta(appendsWithOpts)?.mixinMeta.get(mixinRest)?.params;
   expect(mock.map.size).toBe(5);
-  expect(initMeta1).toMatchObject({ guards: [{ guard: Guard1 }], path: 'module1' });
-  expect(initMeta2).toMatchObject({ guards: [{ guard: Guard2 }], path: 'module2' });
+  expect(mixinMeta1).toMatchObject({ guards: [{ guard: Guard1 }], path: 'module1' });
+  expect(mixinMeta2).toMatchObject({ guards: [{ guard: Guard2 }], path: 'module2' });
 });

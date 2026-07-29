@@ -78,7 +78,7 @@ export class ShallowModulesImporter {
     this.normalizedModuleMeta = normalizedModuleMeta;
     this.importProvidersAndExtensions(normalizedModuleMeta);
     // this.checkAllCollisionsWithLevelsMix();
-    const initValueMap = new Map<AnyFn, AnyObj>();
+    const mixinValueMap = new Map<AnyFn, AnyObj>();
     const appProviders: AppProviders = {
       importedProvidersPerMod: this.importedProvidersPerMod,
       importedProvidersPerRou: this.importedProvidersPerRou,
@@ -89,12 +89,12 @@ export class ShallowModulesImporter {
       importedExtensionProviders: this.importedExtensionProviders,
       importedExtensionGroupTokens: this.importedExtensionGroupTokens,
       importedExtensionConfigs: this.importedExtensionConfigs,
-      initValueMap,
+      mixinValueMap,
     };
 
-    normalizedModuleMeta.allInitHooks.forEach((initHooks, decorator) => {
-      const val = initHooks.exportAppProviders({ moduleManager, appProviders, normalizedModuleMeta });
-      initValueMap.set(decorator, val);
+    normalizedModuleMeta.allModuleMixin.forEach((moduleMixin, decorator) => {
+      const val = moduleMixin.exportAppProviders({ moduleManager, appProviders, normalizedModuleMeta });
+      mixinValueMap.set(decorator, val);
     });
 
     return appProviders;
@@ -140,9 +140,9 @@ export class ShallowModulesImporter {
       extensionGroupTokens = new Map([...this.importedExtensionGroupTokens]);
       extensionConfigs = [...this.importedExtensionConfigs];
     } else {
-      this.appProviders.initValueMap.forEach(({ initHooks }, decorator) => {
-        if (initHooks && !normalizedModuleMeta.allInitHooks.has(decorator)) {
-          normalizedModuleMeta.allInitHooks.set(decorator, initHooks);
+      this.appProviders.mixinValueMap.forEach(({ moduleMixin }, decorator) => {
+        if (moduleMixin && !normalizedModuleMeta.allModuleMixin.has(decorator)) {
+          normalizedModuleMeta.allModuleMixin.set(decorator, moduleMixin);
         }
       });
       perMod = new Map([...this.appProviders.importedProvidersPerMod, ...this.importedProvidersPerMod]);
@@ -184,9 +184,9 @@ export class ShallowModulesImporter {
   protected importAndScanModules() {
     this.importModules();
 
-    this.normalizedModuleMeta.allInitHooks.forEach((initHooks, decorator) => {
-      const meta = this.normalizedModuleMeta.initMeta.get(decorator);
-      for (const modRefId of initHooks.getModulesToScan(meta)) {
+    this.normalizedModuleMeta.allModuleMixin.forEach((moduleMixin, decorator) => {
+      const meta = this.normalizedModuleMeta.mixinMeta.get(decorator);
+      for (const modRefId of moduleMixin.getModulesToScan(meta)) {
         if (this.unfinishedScanModules.has(modRefId)) {
           continue;
         }

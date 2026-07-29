@@ -16,7 +16,7 @@ sidebar_position: 0
 
 [1]: /basic-components/application/
 [2]: /deep-dive/module-manager/
-[3]: /deep-dive/init-decorators/
+[3]: /deep-dive/module-mixins/
 [4]: /deep-dive/app-initializer/
 [5]: /basic-components/modules/
 [6]: /deep-dive/extension-manager/

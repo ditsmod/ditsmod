@@ -7,7 +7,7 @@ title: "@ditsmod/rest"
 
 As the name suggests, the `@ditsmod/rest` module provides support for [REST][0]. It includes:
 
-- [init decorators][4] for the root module and the feature module - `restRootModule`, `restModule`;
+- [mixin decorators][4] for the root module and the feature module - `restRootModule`, `restModule`;
 - extensions that provide REST route creation - `RestRouteExtension`, `DispatcherExtension`;
 - a router of the following type:
 
@@ -83,4 +83,4 @@ This module also exports `DispatcherExtension`. This extension uses the metadata
 [1]: https://github.com/ditsmod/ditsmod/tree/main/examples/01-hello-world
 [2]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/types/types.ts#L22-L28
 [3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L46
-[4]: /deep-dive/init-decorators/
+[4]: /deep-dive/module-mixins/

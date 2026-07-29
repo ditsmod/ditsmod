@@ -1,9 +1,9 @@
 import type {
   ModRefId,
   NormalizedModuleMeta,
-  InitDecorator,
+  MixinDecorator,
   Provider,
-  InitDecoratorOptions,
+  MixinOptions,
   DynamicModuleOptions,
   StaticModule,
   Class,
@@ -14,7 +14,7 @@ import type {
   SystemLogMediator,
   ForwardRefFn,
 } from '@ditsmod/core';
-import { Reflector, InitHooks, NormalizedInitMeta, AppInitHooks } from '@ditsmod/core';
+import { Reflector, ModuleMixin, NormalizedMixinMeta, AppModuleMixins } from '@ditsmod/core';
 
 import { TrpcModule } from '../trpc.module.js';
 import { TrpcModuleNormalizer } from '#init/trpc-module-normalizer.js';
@@ -27,7 +27,7 @@ class NormalizedParams {
   guards: NormalizedGuard[] = [];
 }
 
-export class TrpcInitMeta extends NormalizedInitMeta {
+export class TrpcInitMeta extends NormalizedMixinMeta {
   appendsModules: StaticModule[] = [];
   controllers: Class[] = [];
   params = new NormalizedParams();
@@ -38,42 +38,42 @@ export interface TrpcModuleOptions extends DynamicModuleOptions {
 }
 
 /**
- * Metadata for the `initTrpcModule` decorator, which adds TRPC metadata to a `featureModule` or `rootModule`.
+ * Metadata for the `mixinTrpcModule` decorator, which adds TRPC metadata to a `featureModule` or `rootModule`.
  */
-export interface TrpcInitDecoratorOptions extends InitDecoratorOptions<TrpcModuleOptions> {
+export interface TrpcMixinOptions extends MixinOptions<TrpcModuleOptions> {
   /**
    * The application controllers.
    */
   controllers?: Class[];
 }
 
-export const initTrpcModule: InitDecorator<TrpcInitDecoratorOptions, TrpcModuleOptions, TrpcInitMeta> =
-  Reflector.makeClassDecorator(transformInitMeta, 'initTrpcModule');
-export const trpcRootModule: InitDecorator<
-  TrpcInitDecoratorOptions & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<StaticModule>][] },
+export const mixinTrpcModule: MixinDecorator<TrpcMixinOptions, TrpcModuleOptions, TrpcInitMeta> =
+  Reflector.makeClassDecorator(transformInitMeta, 'mixinTrpcModule');
+export const trpcRootModule: MixinDecorator<
+  TrpcMixinOptions & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<StaticModule>][] },
   TrpcModuleOptions,
   TrpcInitMeta
-> = Reflector.makeClassDecorator(transformRootMetadata, 'trpcRootModule', initTrpcModule);
-export const trpcModule: InitDecorator<TrpcInitDecoratorOptions, TrpcModuleOptions, TrpcInitMeta> =
-  Reflector.makeClassDecorator(transformFeatureMetadata, 'trpcModule', initTrpcModule);
+> = Reflector.makeClassDecorator(transformRootMetadata, 'trpcRootModule', mixinTrpcModule);
+export const trpcModule: MixinDecorator<TrpcMixinOptions, TrpcModuleOptions, TrpcInitMeta> =
+  Reflector.makeClassDecorator(transformFeatureMetadata, 'trpcModule', mixinTrpcModule);
 
-export function transformInitMeta(data?: TrpcInitDecoratorOptions): InitHooks<TrpcInitDecoratorOptions> {
+export function transformInitMeta(data?: TrpcMixinOptions): ModuleMixin<TrpcMixinOptions> {
   const metadata = Object.assign({}, data);
-  return new TrpcInitHooks(metadata);
+  return new TrpcModuleMixin(metadata);
 }
-export function transformRootMetadata(data?: TrpcInitDecoratorOptions): InitHooks<TrpcInitDecoratorOptions> {
+export function transformRootMetadata(data?: TrpcMixinOptions): ModuleMixin<TrpcMixinOptions> {
   const metadata = Object.assign({}, data);
-  const initHooks = new TrpcInitHooks(metadata);
-  initHooks.moduleRole = 'root';
-  return initHooks;
+  const moduleMixin = new TrpcModuleMixin(metadata);
+  moduleMixin.moduleRole = 'root';
+  return moduleMixin;
 }
-export function transformFeatureMetadata(data?: TrpcInitDecoratorOptions): InitHooks<TrpcInitDecoratorOptions> {
+export function transformFeatureMetadata(data?: TrpcMixinOptions): ModuleMixin<TrpcMixinOptions> {
   const metadata = transformRootMetadata(data);
   metadata.moduleRole = 'feature';
   return metadata;
 }
 
-export class TrpcInitHooks extends InitHooks<TrpcInitDecoratorOptions> {
+export class TrpcModuleMixin extends ModuleMixin<TrpcMixinOptions> {
   override hostModule = TrpcModule;
 
   override normalize(normalizedModuleMeta: NormalizedModuleMeta): TrpcInitMeta {
@@ -132,4 +132,4 @@ export class TrpcShallowModuleImports {
   meta: TrpcInitMeta;
 }
 
-export class TrpcAppProviders extends AppInitHooks {}
+export class TrpcAppProviders extends AppModuleMixins {}

@@ -1,6 +1,6 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
-import { featureModule, InitDynamicOptionsMap, DynamicModule, ProviderBuilder } from '@ditsmod/core';
-import { RestModule, DispatcherExtension, RestRouteExtension, initRest } from '@ditsmod/rest';
+import { featureModule, MixinDynamicOptionsMap, DynamicModule, ProviderBuilder } from '@ditsmod/core';
+import { RestModule, DispatcherExtension, RestRouteExtension, mixinRest } from '@ditsmod/rest';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension.js';
 import { OpenapiRouteExtension } from './extensions/openapi-routes.extension.js';
@@ -9,7 +9,7 @@ import { SwaggerOAuthOptions } from './swagger-ui/o-auth-options.js';
 import { OasExtensionConfig } from './types/oas-extension-options.js';
 import { OpenapiLogMediator } from '#services/openapi-log-mediator.js';
 
-@initRest({
+@mixinRest({
   providersPerMod: [OpenapiLogMediator],
   extensions: [
     { extension: OpenapiRouteExtension, groups: [RestRouteExtension], export: true },
@@ -38,15 +38,15 @@ export class OpenapiModule {
       swaggerOAuthOptions,
     };
 
-    const initOptions: InitDynamicOptionsMap = new Map();
+    const mixinOptions: MixinDynamicOptionsMap = new Map();
     if (absolutePath !== undefined) {
-      initOptions.set(initRest, { absolutePath });
+      mixinOptions.set(mixinRest, { absolutePath });
     }
 
     return {
       module: this,
       providersPerApp: new ProviderBuilder().useValue<OasExtensionConfig>(OasExtensionConfig, oasExtensionConfig),
-      initOptions,
+      mixinOptions,
     };
   }
 }

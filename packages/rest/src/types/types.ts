@@ -1,14 +1,14 @@
 import type { HttpMethod, NormalizedModuleMeta } from '@ditsmod/core';
-import { ModuleInfo, AppInitHooks, Provider } from '@ditsmod/core';
+import { ModuleInfo, AppModuleMixins, Provider } from '@ditsmod/core';
 
 import { RestImportedProvider } from '#init/types.js';
 import type { Tree } from '#services/tree.js';
 import type { ModuleScopedGuard } from '#interceptors/guard.js';
 import type { RouteHandler } from '#services/router.js';
 import type { ControllerMeta } from './controller-metadata.js';
-import type { RestInitMeta } from '#init/rest-init-meta.js';
+import type { RestInitMeta } from '#init/rest-mixin-meta.js';
 
-export class RestAppProviders extends AppInitHooks {}
+export class RestAppProviders extends AppModuleMixins {}
 
 /**
  * See also https://en.wikipedia.org/wiki/URL_redirection#HTTP_status_codes_3xx

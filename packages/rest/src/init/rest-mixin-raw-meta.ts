@@ -3,16 +3,16 @@ import type {
   StaticModule,
   Class,
   AnyFn,
-  InitDecoratorOptions,
+  MixinOptions,
   DynamicModuleOptions,
   ForwardRefFn,
 } from '@ditsmod/core';
 import type { GuardItem } from '#interceptors/guard.js';
 
 /**
- * Metadata for the `initRest` decorator, which adds REST metadata to a `featureModule` or `rootModule`.
+ * Metadata for the `mixinRest` decorator, which adds REST metadata to a `featureModule` or `rootModule`.
  */
-export interface RestInitDecoratorOptions extends InitDecoratorOptions<RestModuleOptions> {
+export interface RestMixinOptions extends MixinOptions<RestModuleOptions> {
   /**
    * List of modules that contain controllers. Providers from these modules
    * are not imported into the current module. If the current module has a prefix path,
@@ -59,7 +59,7 @@ export interface BaseAppendsWithOptions<T extends AnyObj = AnyObj> {
   id?: string;
   module: StaticModule<T> | ForwardRefFn<StaticModule<T>>;
   guards?: GuardItem[];
-  initOptions?: Map<AnyFn, any>;
+  mixinOptions?: Map<AnyFn, any>;
 }
 
 export interface PathAppendsWithOptions<T extends AnyObj = AnyObj> extends BaseAppendsWithOptions<T> {

@@ -9,8 +9,8 @@ import type {
 } from '@ditsmod/core';
 import { ModuleInfo } from '@ditsmod/core';
 
-import type { DeepModulesImporterConfig, TrpcInitMeta } from '#decorators/trpc-init-hooks-and-metadata.js';
-import type { TrpcShallowModuleImports } from '#decorators/trpc-init-hooks-and-metadata.js';
+import type { DeepModulesImporterConfig, TrpcInitMeta } from '#decorators/trpc-module-mixins.js';
+import type { TrpcShallowModuleImports } from '#decorators/trpc-module-mixins.js';
 import type { ModuleScopedGuard } from '#interceptors/trpc-guard.js';
 
 /**

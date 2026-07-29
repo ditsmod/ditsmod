@@ -2,7 +2,7 @@ import type { ProvidersByLevel } from '#types/providers-metadata.js';
 import type { AnyObj } from '#types/mix.js';
 import type { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
-import type { InitDynamicOptionsMap } from '#decorators/init-hooks-and-metadata.js';
+import type { MixinDynamicOptionsMap } from '#decorators/module-mixins.js';
 import type { rootModule } from '#decorators/root-module.js';
 import type { featureModule } from '#decorators/feature-module.js';
 import type { ProviderBuilder } from '#utils/providers.js';
@@ -65,7 +65,7 @@ export class FeatureModuleOptions<T extends AnyObj = AnyObj> {
    */
   declare resolvedCollisionsPerReq?: [any, ModRefId | ForwardRefFn<StaticModule>][];
   /**
-   * Whether this module inherits init hooks / context (like REST or tRPC) from parent modules.
+   * Whether this module inherits module mixins / context (like REST or tRPC) from parent modules.
    * By default, it is true for local modules and false for external modules.
    */
   declare inheritsContext?: boolean;
@@ -107,16 +107,16 @@ export interface DynamicModuleOptions<E extends AnyObj = AnyObj> extends Partial
  */
 export interface DynamicModule<M extends AnyObj = AnyObj> extends BaseDynamicModule<M>, DynamicModuleOptions {
   /**
-   * If the current module has this property populated, this means it was used in the context of init decorators.
+   * If the current module has this property populated, this means it was used in the context of mixin decorators.
    */
-  initOptions?: InitDynamicOptionsMap;
+  mixinOptions?: MixinDynamicOptionsMap;
 }
 /**
- * This interface differs from {@link DynamicModule} only in that it requires the presence of the `initOptions` property.
+ * This interface differs from {@link DynamicModule} only in that it requires the presence of the `mixinOptions` property.
  * It is convenient to use in static module methods that return a dynamic module configured with init options.
  */
 export interface DynamicModuleWithInitOptions<M extends AnyObj = AnyObj> extends DynamicModule<M> {
-  initOptions: InitDynamicOptionsMap;
+  mixinOptions: MixinDynamicOptionsMap;
 }
 
 /**

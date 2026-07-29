@@ -28,6 +28,7 @@
     "lint": "eslint",
     "cycle": "cycle-detector packages/*/src/index.ts",
     "docs": "yarn --cwd website start --port 3001",
+    "docs-build": "yarn --cwd website build",
     "docs-en": "yarn docs --locale en",
     "docs-tree": "tree -I '_category_.json' website/i18n/en/docusaurus-plugin-content-docs/current",
     "docs-deploy": "cd website && ./deploy.sh",

@@ -7,17 +7,17 @@ import {
   isDynamicModule,
   isClassProvider,
   isTokenProvider,
-  getProxyForInitMeta,
+  getProxyForMixinMeta,
   isRootModule,
 } from '@ditsmod/core';
 import { ForbiddenNormalizedExport, EmptyModuleMeta } from '@ditsmod/core/errors';
 
-import type { AppendsWithOptions, RestInitDecoratorOptions } from '#init/rest-init-raw-meta.js';
-import type { RestModRefId } from '#init/rest-init-meta.js';
-import { RestInitMeta } from '#init/rest-init-meta.js';
+import type { AppendsWithOptions, RestMixinOptions } from '#init/rest-mixin-raw-meta.js';
+import type { RestModRefId } from '#init/rest-mixin-meta.js';
+import { RestInitMeta } from '#init/rest-mixin-meta.js';
 import { isAppendsWithOptions, isControllerDecorator } from '#types/type.guards.js';
 import type { GuardItem, NormalizedGuard } from '#interceptors/guard.js';
-import { initRest } from '#decorators/rest-init-hooks-and-metadata.js';
+import { mixinRest } from '#decorators/rest-module-mixins.js';
 import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } from '#errors';
 
 /**
@@ -27,9 +27,9 @@ export class RestModuleNormalizer {
   protected normalizedModuleMeta: NormalizedModuleMeta;
   protected meta: RestInitMeta;
 
-  normalize(normalizedModuleMeta: NormalizedModuleMeta, moduleOptions: RestInitDecoratorOptions) {
+  normalize(normalizedModuleMeta: NormalizedModuleMeta, moduleOptions: RestMixinOptions) {
     this.normalizedModuleMeta = normalizedModuleMeta;
-    const meta = getProxyForInitMeta(normalizedModuleMeta, RestInitMeta);
+    const meta = getProxyForMixinMeta(normalizedModuleMeta, RestInitMeta);
     this.meta = meta;
     if (moduleOptions.controllers) {
       this.meta.controllers.push(...moduleOptions.controllers);
@@ -53,7 +53,7 @@ export class RestModuleNormalizer {
     } else if (!isDynamicModule(modRefId)) {
       return;
     }
-    const params = modRefId.initOptions?.get(initRest);
+    const params = modRefId.mixinOptions?.get(mixinRest);
 
     if (params) {
       if (params.absolutePath !== undefined) {
@@ -66,7 +66,7 @@ export class RestModuleNormalizer {
     }
   }
 
-  protected appendModules(moduleOptions: RestInitDecoratorOptions) {
+  protected appendModules(moduleOptions: RestMixinOptions) {
     moduleOptions.appends?.forEach((ap, i) => {
       ap = this.resolveForwardRef([ap])[0];
       if (isNormalizedProvider(ap)) {
@@ -75,10 +75,10 @@ export class RestModuleNormalizer {
       if (isAppendsWithOptions(ap)) {
         const params = { ...ap } as Partial<AppendsWithOptions>;
         delete params.module;
-        if (ap.initOptions) {
-          ap.initOptions.set(initRest, params);
+        if (ap.mixinOptions) {
+          ap.mixinOptions.set(mixinRest, params);
         } else {
-          ap.initOptions = new Map([[initRest, params]]);
+          ap.mixinOptions = new Map([[mixinRest, params]]);
         }
         this.meta.appendsWithOpts.push(ap);
       } else {

@@ -1,5 +1,5 @@
 import { rootModule, ProviderBuilder, ctx, LoggerConfig } from '@ditsmod/core';
-import { QUERY_PARAMS, PATH_PARAMS, controller, route, RestModule, RequestContext, initRest } from '@ditsmod/rest';
+import { QUERY_PARAMS, PATH_PARAMS, controller, route, RestModule, RequestContext, mixinRest } from '@ditsmod/rest';
 
 import { Interceptor1 } from './interceptor1.js';
 
@@ -39,7 +39,7 @@ export class RouteScopedController {
   }
 }
 
-@initRest({ controllers: [RequestScopedController, RouteScopedController] })
+@mixinRest({ controllers: [RequestScopedController, RouteScopedController] })
 @rootModule({
   imports: [RestModule],
   providersPerApp: new ProviderBuilder().useValue(LoggerConfig, { level: 'info' }),

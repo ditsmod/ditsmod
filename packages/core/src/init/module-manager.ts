@@ -4,12 +4,12 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj } from '#types/mix.js';
 import { StaticModule, ModRefId } from '#decorators/module-decorator-options.js';
 import { DynamicModule } from '#decorators/module-decorator-options.js';
-import { NormalizedInitMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
+import { NormalizedMixinMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { ModuleGraphState } from '#init/module-graph-state.js';
 import { isDynamicModule, isRootModule } from '#decorators/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
-import { AllInitHooks } from '#decorators/init-hooks-and-metadata.js';
+import { AllModuleMixins } from '#decorators/module-mixins.js';
 import {
   ImportAdditionFailure,
   ImportRemovalFailure,
@@ -54,7 +54,7 @@ export class ModuleManager {
     'importedDynamicModules',
     'exportedStaticModules',
     'exportedDynamicModules',
-  ] satisfies (keyof NormalizedInitMeta)[];
+  ] satisfies (keyof NormalizedMixinMeta)[];
 
   get providersPerApp(): Provider[] {
     return this.state.providersPerApp;
@@ -96,20 +96,20 @@ export class ModuleManager {
   /**
    * Recursively normalizes and registers metadata for a specified static or dynamic module reference.
    *
-   * Traverses module dependencies (`imports`, `exports`, and modules discovered via specialized init hooks such as `appends`
+   * Traverses module dependencies (`imports`, `exports`, and modules discovered via specialized module mixins such as `appends`
    * or `controllers`), builds the module dependency graph (`this.state.childrenMap`), accumulates global providers into `providersPerApp`,
    * and executes initialization hooks across the hierarchy.
    */
-  scanModule(modRefId: ModRefId | ForwardRefFn<StaticModule>, allInitHooks?: AllInitHooks, saveToSnapshot?: boolean) {
+  scanModule(modRefId: ModRefId | ForwardRefFn<StaticModule>, allModuleMixin?: AllModuleMixins, saveToSnapshot?: boolean) {
     const isRootScan = this.unfinishedScanModules.size == 0;
-    allInitHooks ??= new Map();
+    allModuleMixin ??= new Map();
     modRefId = resolveForwardRef(modRefId);
-    const normalizedModuleMeta = this.normalizeMeta(modRefId, allInitHooks);
+    const normalizedModuleMeta = this.normalizeMeta(modRefId, allModuleMixin);
     const importsOrExports: (DynamicModule | StaticModule)[] = [];
-    normalizedModuleMeta.initHooksMap.forEach((initHooks, decorator) => {
-      const meta = normalizedModuleMeta.initMeta.get(decorator);
+    normalizedModuleMeta.moduleMixinMap.forEach((moduleMixin, decorator) => {
+      const meta = normalizedModuleMeta.mixinMeta.get(decorator);
       if (meta) {
-        importsOrExports.push(...initHooks.getModulesToScan(meta));
+        importsOrExports.push(...moduleMixin.getModulesToScan(meta));
       }
     });
 
@@ -127,12 +127,12 @@ export class ModuleManager {
         continue;
       }
       this.unfinishedScanModules.add(input);
-      this.scanModule(input, normalizedModuleMeta.allInitHooks, saveToSnapshot);
+      this.scanModule(input, normalizedModuleMeta.allModuleMixin, saveToSnapshot);
       this.unfinishedScanModules.delete(input);
       this.scannedModules.add(input);
     }
 
-    this.callInitHooksAfterScan(normalizedModuleMeta);
+    this.callModuleMixinAfterScan(normalizedModuleMeta);
 
     if (normalizedModuleMeta.id) {
       this.mapId.set(normalizedModuleMeta.id, modRefId);
@@ -145,7 +145,7 @@ export class ModuleManager {
     } else {
       this.map.set(modRefId, normalizedModuleMeta);
     }
-    normalizedModuleMeta.allInitHooks.forEach((initHooks, decorator) => allInitHooks.set(decorator, initHooks));
+    normalizedModuleMeta.allModuleMixin.forEach((moduleMixin, decorator) => allModuleMixin.set(decorator, moduleMixin));
 
     if (isRootScan) {
       const rootModule = this.mapId.get('root') || resolveForwardRef(modRefId);
@@ -425,18 +425,18 @@ export class ModuleManager {
   }
 
   /**
-   * The current module may sometimes lack explicit init decorators that are present in imported modules
+   * The current module may sometimes lack explicit mixin decorators that are present in imported modules
    * (for example, importing an architectural feature module without decorating the importer).
-   * In such cases, after scanning all imported modules, the collected init hooks from them are also
-   * executed for the current module. The result of executing these init hooks is objects with initialized
+   * In such cases, after scanning all imported modules, the collected module mixins from them are also
+   * executed for the current module. The result of executing these module mixins is objects with initialized
    * properties, into which relevant metadata (such as controllers or appended routes) can later be imported.
    */
-  protected callInitHooksAfterScan(normalizedModuleMeta: NormalizedModuleMeta) {
-    normalizedModuleMeta.allInitHooks.forEach((initHooks, decorator) => {
-      if (!normalizedModuleMeta.initHooksMap.has(decorator)) {
-        const meta = initHooks.clone().normalize(normalizedModuleMeta);
+  protected callModuleMixinAfterScan(normalizedModuleMeta: NormalizedModuleMeta) {
+    normalizedModuleMeta.allModuleMixin.forEach((moduleMixin, decorator) => {
+      if (!normalizedModuleMeta.moduleMixinMap.has(decorator)) {
+        const meta = moduleMixin.clone().normalize(normalizedModuleMeta);
         if (meta) {
-          normalizedModuleMeta.initMeta.set(decorator, meta);
+          normalizedModuleMeta.mixinMeta.set(decorator, meta);
         }
       }
     });
@@ -507,9 +507,9 @@ export class ModuleManager {
    * Delegates module decorator reflection and metadata normalization to {@link ModuleNormalizer}.
    * On failure, enriches the error message with the full dependency scan trajectory (e.g., `ModuleA -> ModuleB`).
    */
-  protected normalizeMeta(modRefId: ModRefId, allInitHooks: AllInitHooks): NormalizedModuleMeta {
+  protected normalizeMeta(modRefId: ModRefId, allModuleMixin: AllModuleMixins): NormalizedModuleMeta {
     try {
-      return this.moduleNormalizer.normalize(modRefId, allInitHooks, this.systemLogMediator);
+      return this.moduleNormalizer.normalize(modRefId, allModuleMixin, this.systemLogMediator);
     } catch (err: any) {
       const moduleName = getDebugClassName(modRefId);
       let path = [...this.unfinishedScanModules].map((id) => getDebugClassName(id)).join(' -> ');
@@ -534,13 +534,13 @@ export class ModuleManager {
   }
 
   /**
-   * Recursively traverses the module dependency graph (`this.state.childrenMap`) from `startModule`, propagating parent init hooks
-   * down to child modules that have no init hooks of their own. This ensures consistent contextual decorator evaluation
+   * Recursively traverses the module dependency graph (`this.state.childrenMap`) from `startModule`, propagating parent module mixins
+   * down to child modules that have no module mixins of their own. This ensures consistent contextual decorator evaluation
    * across architectural hierarchies (e.g., REST or tRPC routes).
    */
   protected propagateContextHooks(
     startModule: ModRefId,
-    inheritedHooks: AllInitHooks = new Map(),
+    inheritedHooks: AllModuleMixins = new Map(),
     visited = new Set<ModRefId>(),
   ) {
     if (visited.has(startModule)) {
@@ -553,12 +553,12 @@ export class ModuleManager {
       return;
     }
 
-    const activeHooks: AllInitHooks = new Map(inheritedHooks);
-    startMeta.initHooksMap.forEach((initHooks, decorator) => {
-      activeHooks.set(decorator, initHooks);
+    const activeHooks: AllModuleMixins = new Map(inheritedHooks);
+    startMeta.moduleMixinMap.forEach((moduleMixin, decorator) => {
+      activeHooks.set(decorator, moduleMixin);
     });
 
-    if (startMeta.initHooksMap.size === 0 && activeHooks.size > 0) {
+    if (startMeta.moduleMixinMap.size === 0 && activeHooks.size > 0) {
       try {
         this.moduleNormalizer.propagateParentHooks(startMeta, activeHooks);
       } catch (err: any) {

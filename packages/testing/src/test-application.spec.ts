@@ -1,5 +1,5 @@
 import { StaticModule, rootModule } from '@ditsmod/core';
-import { AppOptions, initRest, Router } from '@ditsmod/rest';
+import { AppOptions, mixinRest, Router } from '@ditsmod/rest';
 import { Server } from 'node:http';
 
 import { TestRestApplication } from './test-application.js';
@@ -15,7 +15,7 @@ describe('TestRestApplication', () => {
   const path = 'some-prefix';
   class Service1 {}
 
-  @initRest({ providersPerApp: [Service1, { token: Router, useValue: {} }] })
+  @mixinRest({ providersPerApp: [Service1, { token: Router, useValue: {} }] })
   @rootModule()
   class RootModule1 {}
 

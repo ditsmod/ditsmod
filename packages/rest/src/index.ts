@@ -9,9 +9,9 @@ export {
   PathAppendsWithOptions,
   AbsolutePathAppendsWithOptions,
   BaseAppendsWithOptions,
-  RestInitDecoratorOptions,
+  RestMixinOptions,
   RestModuleOptions,
-} from './init/rest-init-raw-meta.js';
+} from './init/rest-mixin-raw-meta.js';
 export { RouteParam, RouteExtensionMeta, RedirectStatusCodes } from './types/types.js';
 export { RestShallowModuleImports, RestResolvedModuleMeta } from '#init/types.js';
 export { RestModule } from './init/rest.module.js';
@@ -19,8 +19,8 @@ export { RequestContext } from './services/request-context.js';
 export { RestRouteExtension } from './extensions/rest-route.extension.js';
 export { DispatcherExtension } from './extensions/dispatcher.extension.js';
 export { InterceptorExtension } from './extensions/use-interceptor.extension.js';
-export { initRest, restRootModule, restModule } from './decorators/rest-init-hooks-and-metadata.js';
-export { RestInitMeta } from './init/rest-init-meta.js';
+export { mixinRest, restRootModule, restModule } from './decorators/rest-module-mixins.js';
+export { RestInitMeta } from './init/rest-mixin-meta.js';
 export { route, DecoratorRouteMeta } from './decorators/route.js';
 export {
   isRoute,

@@ -1,8 +1,8 @@
 import type { AnyObj, StaticModule, Class, ModRefId } from '@ditsmod/core';
-import { Provider, MultiProvider, NormalizedInitMeta } from '@ditsmod/core';
+import { Provider, MultiProvider, NormalizedMixinMeta } from '@ditsmod/core';
 
 import type { NormalizedGuard } from '#interceptors/guard.js';
-import type { AppendsWithOptions } from '#init/rest-init-raw-meta.js';
+import type { AppendsWithOptions } from '#init/rest-mixin-raw-meta.js';
 
 class NormalizedParams {
   declare path?: string;
@@ -10,7 +10,7 @@ class NormalizedParams {
   guards: NormalizedGuard[] = [];
 }
 
-export class RestInitMeta extends NormalizedInitMeta {
+export class RestInitMeta extends NormalizedMixinMeta {
   appendsWithOpts: AppendsWithOptions[] = [];
   appendsModules: StaticModule[] = [];
   controllers: Class<Record<string | symbol, any>>[] = [];

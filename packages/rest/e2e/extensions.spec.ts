@@ -10,7 +10,7 @@ import {
 } from '@ditsmod/core';
 
 import { Router } from '#services/router.js';
-import { restModule, restRootModule } from '#decorators/rest-init-hooks-and-metadata.js';
+import { restModule, restRootModule } from '#decorators/rest-module-mixins.js';
 
 describe('extensions e2e', () => {
   @injectable()
