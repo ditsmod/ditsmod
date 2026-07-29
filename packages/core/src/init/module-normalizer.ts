@@ -302,16 +302,16 @@ export class ModuleNormalizer {
   protected normalizeExtensions(staticModuleOptions: PickProps<FeatureModuleOptions, 'extensions' | 'extensionsMeta'>) {
     if (staticModuleOptions.extensionsMeta) {
       this.normalizedModuleMeta.extensionsMeta = {
-        ...staticModuleOptions.extensionsMeta,
         ...this.normalizedModuleMeta.extensionsMeta,
+        ...staticModuleOptions.extensionsMeta,
       };
     }
 
-    staticModuleOptions.extensions?.forEach((extensionOrConfig) => {
-      if (!isExtensionConfig(extensionOrConfig)) {
-        extensionOrConfig = { extension: extensionOrConfig } as BaseExtensionConfig;
+    staticModuleOptions.extensions?.forEach((extensionClassOrConfig) => {
+      if (!isExtensionConfig(extensionClassOrConfig)) {
+        extensionClassOrConfig = { extension: extensionClassOrConfig } as BaseExtensionConfig;
       }
-      const extProvidersAndConfigs = normalizeExtensionConfig(extensionOrConfig);
+      const extProvidersAndConfigs = normalizeExtensionConfig(extensionClassOrConfig);
       extProvidersAndConfigs.providers.forEach((p) =>
         this.checkStageMethodsForExtension(this.normalizedModuleMeta.name, p),
       );
