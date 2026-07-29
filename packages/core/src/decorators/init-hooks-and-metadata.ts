@@ -195,13 +195,13 @@ class Module1 {
   static withOpts(): DynamicModuleWithInitOptions<Module1> {
     return {
       module: this,
-      initOpts: new Map(),
+      initOptions: new Map(),
     };
   }
 }
 
 const dynamicModule = Module1.withOpts();
-dynamicModule.initOpts.set(initSome, { path: 'some-prefix' });
+dynamicModule.initOptions.set(initSome, { path: 'some-prefix' });
 
 // Using the newly created init decorator
 @initSome({ one: 1, two: 2 })

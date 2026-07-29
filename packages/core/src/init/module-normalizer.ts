@@ -447,7 +447,7 @@ export class AppModule {}
    * this method adds hooks so that the import of dynamic `Module1` can be properly handled.
    */
   protected addInitHooksForImportedDynamicModule(allInitHooks: AllInitHooks) {
-    (this.normalizedModuleMeta.modRefId as DynamicModule).initOpts?.forEach((params, decorator) => {
+    (this.normalizedModuleMeta.modRefId as DynamicModule).initOptions?.forEach((params, decorator) => {
       if (!this.normalizedModuleMeta.initHooksMap.has(decorator)) {
         const newInitHooks = allInitHooks.get(decorator)!.clone();
         this.registerAndCallInitHook(decorator, newInitHooks);
@@ -506,13 +506,13 @@ export class AppModule {}
 
   protected mergeInitDynamicOptions(decorator: AnyFn, params: AnyObj, dynamicModule: DynamicModule) {
     delete params.module;
-    delete params.initOpts;
-    dynamicModule.initOpts ??= new Map();
-    if (dynamicModule.initOpts.has(decorator)) {
-      const existingParams = dynamicModule.initOpts.get(decorator)!;
-      dynamicModule.initOpts.set(decorator, this.mergeObjects(params, existingParams));
+    delete params.initOptions;
+    dynamicModule.initOptions ??= new Map();
+    if (dynamicModule.initOptions.has(decorator)) {
+      const existingParams = dynamicModule.initOptions.get(decorator)!;
+      dynamicModule.initOptions.set(decorator, this.mergeObjects(params, existingParams));
     } else {
-      dynamicModule.initOpts.set(decorator, params);
+      dynamicModule.initOptions.set(decorator, params);
     }
     if (!this.normalizedModuleMeta.importedDynamicModules.includes(dynamicModule)) {
       this.normalizedModuleMeta.importedDynamicModules.push(dynamicModule);
@@ -521,7 +521,7 @@ export class AppModule {}
 
   protected mergeObjects(dstn: AnyObj, src: AnyObj) {
     objectKeys(src).forEach((prop) => {
-      if (prop == 'initOpts' || prop == 'module') {
+      if (prop == 'initOptions' || prop == 'module') {
         // ignore
       } else if (Array.isArray(src[prop])) {
         if (src[prop].length) {

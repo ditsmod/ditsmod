@@ -532,7 +532,7 @@ describe('ModuleNormalizer', () => {
         meta.initDecoratorOptions = this.moduleOptions;
 
         if (isDynamicModule(normalizedModuleMeta.modRefId)) {
-          const params = normalizedModuleMeta.modRefId.initOpts?.get(initSome);
+          const params = normalizedModuleMeta.modRefId.initOptions?.get(initSome);
           meta.path = params?.path;
           meta.targetModRefId = normalizedModuleMeta.modRefId;
         } else {
@@ -592,7 +592,7 @@ describe('ModuleNormalizer', () => {
       expect(normalizedModuleMeta.extensionsMeta).toEqual({ one: 1 });
     });
 
-    it('merges wrapper init params, dynamic module params, and existing initOpts when importing modules with params', () => {
+    it('merges wrapper init params, dynamic module params, and existing initOptions when importing modules with params', () => {
       class Service1 {}
       class Service2 {}
       class Service3 {}
@@ -609,18 +609,18 @@ describe('ModuleNormalizer', () => {
         providersPerApp: [Service3],
         extensionsMeta: { one: 1 },
         num: 4,
-        initOpts: new Map(),
+        initOptions: new Map(),
       };
-      dynamicModule1.initOpts.set(initSome, { path: 'path-1' });
+      dynamicModule1.initOptions.set(initSome, { path: 'path-1' });
 
       const dynamicModule2: DynamicModuleWithInitOptions & SomeInitDynamicOptions = {
         module: Module2,
         providersPerApp: [Service2],
         num: 12,
         extensionsMeta: { four: 4 },
-        initOpts: new Map(),
+        initOptions: new Map(),
       };
-      dynamicModule2.initOpts.set(initSome, {
+      dynamicModule2.initOptions.set(initSome, {
         path: 'path-2',
         providersPerApp: [Service1],
         num: 11,
@@ -637,14 +637,14 @@ describe('ModuleNormalizer', () => {
       class AppModule {}
 
       normalizer.normalize(AppModule);
-      expect(dynamicModule1.initOpts.get(initSome)).toEqual<SomeInitDynamicOptions>({
+      expect(dynamicModule1.initOptions.get(initSome)).toEqual<SomeInitDynamicOptions>({
         path: 'path-1',
         providersPerMod: [Service1, Service2],
         extensionsMeta: { one: 1, two: 2 },
         num: 5,
         providersPerApp: [Service3],
       });
-      expect(dynamicModule2.initOpts.get(initSome)).toEqual<SomeInitDynamicOptions>({
+      expect(dynamicModule2.initOptions.get(initSome)).toEqual<SomeInitDynamicOptions>({
         providersPerApp: [Service1, Service2],
         num: 12,
         extensionsMeta: { three: 3, four: 4 },
@@ -681,7 +681,7 @@ describe('ModuleNormalizer', () => {
       expect(normalizedModuleMeta.exportedStaticModules).toEqual([Module1]);
       expect(normalizedModuleMeta.importedDynamicModules).toEqual<DynamicModule[]>([
         dynamicModule2,
-        { module: Module3, initOpts: expect.any(Map) },
+        { module: Module3, initOptions: expect.any(Map) },
         dynamicModule4,
       ]);
       expect(normalizedModuleMeta.exportedDynamicModules).toEqual([dynamicModule2, dynamicModule4]);
@@ -720,7 +720,7 @@ describe('ModuleNormalizer', () => {
       expect(normalizedModuleMeta.importedStaticModules).toEqual([Module1]);
       expect(normalizedModuleMeta.importedDynamicModules).toEqual<DynamicModule[]>([
         dynamicModule2,
-        { module: Module3, initOpts: expect.any(Map) },
+        { module: Module3, initOptions: expect.any(Map) },
         dynamicModule4,
       ]);
       expect(normalizedModuleMeta.exportedStaticModules).toEqual([Module1]);

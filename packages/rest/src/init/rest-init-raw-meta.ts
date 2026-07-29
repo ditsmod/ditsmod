@@ -59,7 +59,7 @@ export interface BaseAppendsWithOptions<T extends AnyObj = AnyObj> {
   id?: string;
   module: StaticModule<T> | ForwardRefFn<StaticModule<T>>;
   guards?: GuardItem[];
-  initOpts?: Map<AnyFn, any>;
+  initOptions?: Map<AnyFn, any>;
 }
 
 export interface PathAppendsWithOptions<T extends AnyObj = AnyObj> extends BaseAppendsWithOptions<T> {

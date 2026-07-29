@@ -11,12 +11,12 @@ import { FirstController } from './first.controller.js';
 })
 export class FirstModule {
   static withPath(path?: string): DynamicModuleWithInitOptions<FirstModule> {
-    const initOpts: InitDynamicOptionsMap = new Map();
-    initOpts.set(initRest, { path });
+    const initOptions: InitDynamicOptionsMap = new Map();
+    initOptions.set(initRest, { path });
 
     return {
       module: this,
-      initOpts,
+      initOptions,
     };
   }
 }

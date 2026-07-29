@@ -109,14 +109,14 @@ export interface DynamicModule<M extends AnyObj = AnyObj> extends BaseDynamicMod
   /**
    * If the current module has this property populated, this means it was used in the context of init decorators.
    */
-  initOpts?: InitDynamicOptionsMap;
+  initOptions?: InitDynamicOptionsMap;
 }
 /**
- * This interface differs from {@link DynamicModule} only in that it requires the presence of the `initOpts` property.
+ * This interface differs from {@link DynamicModule} only in that it requires the presence of the `initOptions` property.
  * It is convenient to use in static module methods that return a dynamic module configured with init options.
  */
 export interface DynamicModuleWithInitOptions<M extends AnyObj = AnyObj> extends DynamicModule<M> {
-  initOpts: InitDynamicOptionsMap;
+  initOptions: InitDynamicOptionsMap;
 }
 
 /**
