@@ -125,12 +125,7 @@ describe('rest ModuleNormalizer', () => {
       ],
       resolvedCollisionsPerRou: [[forwardRef(() => Service1), forwardRef(() => Module3)]],
       resolvedCollisionsPerReq: [[forwardRef(() => Service2), module4WithOpts]],
-      exports: [
-        forwardRef(() => Service1),
-        forwardRef(() => Service2),
-        forwardRef(() => Service3),
-        forwardRef(() => Service4),
-      ],
+      exports: [forwardRef(() => Service1), forwardRef(() => Service2), forwardRef(() => Service3), forwardRef(() => Service4)],
     })
     @rootModule({
       imports: [forwardRef(() => Module1), module2WithOpts],
@@ -158,9 +153,7 @@ describe('rest ModuleNormalizer', () => {
     expect(meta3.params.path).toEqual('test2');
 
     expect(normalizedModuleMeta.importedStaticModules).toEqual([Module1, RestModule]);
-    expect(normalizedModuleMeta.importedDynamicModules).toEqual([
-      { id: 'test-id', module: Module2, mixinOptions: expect.any(Map) },
-    ]);
+    expect(normalizedModuleMeta.importedDynamicModules).toEqual([{ id: 'test-id', module: Module2, mixinOptions: expect.any(Map) }]);
   });
 
   it('merge static metadata with append params', () => {

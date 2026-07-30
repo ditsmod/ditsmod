@@ -15,12 +15,10 @@ export class HeadRouteNotSupported extends CustomError {
   constructor(path: string) {
     let msg1 = `RequestDispatcher does not support routes with the HEAD method (see ${path}) `;
     msg1 += 'because they are automatically bound to GET in the current implementation.';
-    super(
-      {
-        msg1,
-        level: 'fatal',
-      },
-    );
+    super({
+      msg1,
+      level: 'fatal',
+    });
   }
 }
 /**

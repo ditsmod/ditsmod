@@ -190,9 +190,7 @@ describe('mix per app, per mod or per req', () => {
 
     moduleManager.scanRootModule(AppModule);
     const msg = 'AppModule failed: exports from Module0 causes collision with Provider0.';
-    expect(() =>
-      mock.importModulesShallow([Provider0], new AppProviders(), '', AppModule, moduleManager, new Set()),
-    ).toThrow(msg);
+    expect(() => mock.importModulesShallow([Provider0], new AppProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
   });
 
   it('resolved case 1', () => {
@@ -210,8 +208,7 @@ describe('mix per app, per mod or per req', () => {
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
-    const callback = () =>
-      mock.importModulesShallow([Provider1], new AppProviders(), '', AppModule, moduleManager, new Set());
+    const callback = () => mock.importModulesShallow([Provider1], new AppProviders(), '', AppModule, moduleManager, new Set());
     expect(callback).not.toThrow();
     expect([...mock.importedProvidersPerMod]).toEqual([
       [Provider1, { modRefId: Module1, providers: [{ token: Provider1, useValue: 'fake' }] }],
@@ -232,9 +229,7 @@ describe('mix per app, per mod or per req', () => {
 
     moduleManager.scanRootModule(AppModule);
     const msg = 'AppModule failed: exports from Module0 causes collision with Provider1.';
-    expect(() => mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set())).toThrow(
-      msg,
-    );
+    expect(() => mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
   });
 
   it('resolved case 2', () => {
@@ -247,9 +242,7 @@ describe('mix per app, per mod or per req', () => {
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
-    expect(() =>
-      mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set()),
-    ).not.toThrow();
+    expect(() => mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
     expect([...mock.importedProvidersPerReq]).toEqual([
       [Provider1, { modRefId: Module1, providers: [{ token: Provider1, useClass: Provider1 }] }],
     ]);
@@ -292,9 +285,7 @@ describe('mix per app, per mod or per req', () => {
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
-    expect(() =>
-      mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set()),
-    ).not.toThrow();
+    expect(() => mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
     expect([...mock.importedProvidersPerReq]).toEqual([]);
   });
 
@@ -309,9 +300,7 @@ describe('mix per app, per mod or per req', () => {
 
     moduleManager.scanRootModule(AppModule);
     const msg = 'AppModule failed: Provider1 mapped with AppModule, but providersPerReq does not imports Provider1';
-    expect(() => mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set())).toThrow(
-      msg,
-    );
+    expect(() => mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
   });
 
   xit('resolve case 3', () => {
@@ -326,9 +315,7 @@ describe('mix per app, per mod or per req', () => {
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
-    expect(() =>
-      mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set()),
-    ).not.toThrow();
+    expect(() => mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
     expect([...mock.importedProvidersPerReq]).toEqual([]);
   });
 
@@ -342,9 +329,7 @@ describe('mix per app, per mod or per req', () => {
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
-    expect(() =>
-      mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set()),
-    ).not.toThrow();
+    expect(() => mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
     expect([...mock.importedProvidersPerReq]).toEqual([
       [RequestContext, { modRefId: Module1, providers: [{ token: RequestContext, useClass: RequestContext }] }],
     ]);
@@ -364,9 +349,7 @@ describe('mix per app, per mod or per req', () => {
 
     moduleManager.scanRootModule(AppModule);
     const msg = 'AppModule failed: exports from Module0 causes collision with HttpBackend.';
-    expect(() => mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set())).toThrow(
-      msg,
-    );
+    expect(() => mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set())).toThrow(msg);
   });
 
   xit('resolve case 4', () => {
@@ -381,9 +364,7 @@ describe('mix per app, per mod or per req', () => {
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
-    expect(() =>
-      mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set()),
-    ).not.toThrow();
+    expect(() => mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
     expect([...mock.importedProvidersPerReq]).toEqual([]);
   });
 
@@ -397,9 +378,7 @@ describe('mix per app, per mod or per req', () => {
     class AppModule {}
 
     moduleManager.scanRootModule(AppModule);
-    expect(() =>
-      mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set()),
-    ).not.toThrow();
+    expect(() => mock.importModulesShallow([], new AppProviders(), '', AppModule, moduleManager, new Set())).not.toThrow();
     expect([...mock.importedProvidersPerReq]).toEqual([
       [HttpBackend, { modRefId: Module1, providers: [{ token: HttpBackend, useValue: '' }] }],
     ]);

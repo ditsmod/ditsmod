@@ -19,13 +19,10 @@ export function isInterceptor(cls?: Class): cls is Class<HttpInterceptor> {
   return typeof (cls?.prototype as HttpInterceptor | undefined)?.intercept == 'function';
 }
 
-export function isAppendsWithOptions(
-  modRefId?: ModRefId | RestModuleOptions | AppendsWithOptions,
-): modRefId is AppendsWithOptions {
+export function isAppendsWithOptions(modRefId?: ModRefId | RestModuleOptions | AppendsWithOptions): modRefId is AppendsWithOptions {
   return (
     (modRefId as AppendsWithOptions)?.module !== undefined &&
-    ((modRefId as AppendsWithOptions)?.path !== undefined ||
-      (modRefId as AppendsWithOptions)?.absolutePath !== undefined)
+    ((modRefId as AppendsWithOptions)?.path !== undefined || (modRefId as AppendsWithOptions)?.absolutePath !== undefined)
   );
 }
 

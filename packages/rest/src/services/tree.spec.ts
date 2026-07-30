@@ -32,19 +32,7 @@ const noop = () => {};
 describe('Tree', () => {
   describe('addRoute() and search()', () => {
     const tree = new TestTree({} as any);
-    const paths = [
-      '/hi',
-      '/contact',
-      '/co',
-      '/c',
-      '/a',
-      '/ab',
-      '/doc/',
-      '/doc/node_faq.html',
-      '/doc/node1.html',
-      '/α',
-      '/β',
-    ];
+    const paths = ['/hi', '/contact', '/co', '/c', '/a', '/ab', '/doc/', '/doc/node_faq.html', '/doc/node1.html', '/α', '/β'];
 
     paths.forEach((route) => {
       tree.addRoute(route, noop);

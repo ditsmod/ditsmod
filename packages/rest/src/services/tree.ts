@@ -369,11 +369,7 @@ export class Tree {
 
     // Build new index char string
     if (newPos != pos) {
-      this.indices =
-        this.indices.slice(0, newPos) +
-        this.indices[pos] +
-        this.indices.slice(newPos, pos) +
-        this.indices.slice(pos + 1);
+      this.indices = this.indices.slice(0, newPos) + this.indices[pos] + this.indices.slice(newPos, pos) + this.indices.slice(pos + 1);
     }
 
     return newPos;

@@ -67,9 +67,7 @@ export class RestApplication extends BaseApplication {
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       return serverModule.createSecureServer(this.appOptions.serverOptions || {}, requestListener);
     } else {
-      const serverModule = (this.appOptions.httpModule || (await import('http'))) as
-        | HttpServerModule
-        | HttpsServerModule;
+      const serverModule = (this.appOptions.httpModule || (await import('http'))) as HttpServerModule | HttpsServerModule;
       const serverOptions = this.appOptions.serverOptions as http.ServerOptions | https.ServerOptions;
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       return serverModule.createServer(serverOptions, requestListener);

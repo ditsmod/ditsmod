@@ -15,15 +15,20 @@ import type { RestAppProviders } from '#types/types.js';
 import { RestModule } from '#init/rest.module.js';
 import { RestDeepModulesImporter } from '#init/rest-deep-modules-importer.js';
 
-export const mixinRest: MixinDecorator<RestMixinOptions, RestModuleOptions, RestMixinMeta> =
-  Reflector.makeClassDecorator(transformMixinMeta, 'mixinRest');
+export const mixinRest: MixinDecorator<RestMixinOptions, RestModuleOptions, RestMixinMeta> = Reflector.makeClassDecorator(
+  transformMixinMeta,
+  'mixinRest',
+);
 export const restRootModule: MixinDecorator<
   RestMixinOptions & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<StaticModule>][] },
   RestModuleOptions,
   RestMixinMeta
 > = Reflector.makeClassDecorator(transformRootMeta, 'restRootModule', mixinRest);
-export const restModule: MixinDecorator<RestMixinOptions, RestModuleOptions, RestMixinMeta> =
-  Reflector.makeClassDecorator(transformFeatureMeta, 'restModule', mixinRest);
+export const restModule: MixinDecorator<RestMixinOptions, RestModuleOptions, RestMixinMeta> = Reflector.makeClassDecorator(
+  transformFeatureMeta,
+  'restModule',
+  mixinRest,
+);
 
 export function transformMixinMeta(data?: RestMixinOptions): ModuleMixin<RestMixinOptions> {
   const metadata = Object.assign({}, data);

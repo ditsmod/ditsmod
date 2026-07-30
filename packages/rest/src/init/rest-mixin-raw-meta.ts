@@ -1,12 +1,4 @@
-import type {
-  AnyObj,
-  StaticModule,
-  Class,
-  AnyFn,
-  MixinOptions,
-  DynamicModuleOptions,
-  ForwardRefFn,
-} from '@ditsmod/core';
+import type { AnyObj, StaticModule, Class, AnyFn, MixinOptions, DynamicModuleOptions, ForwardRefFn } from '@ditsmod/core';
 import type { GuardItem } from '#interceptors/guard.js';
 
 /**
@@ -48,9 +40,7 @@ export interface AbsolutePathRestModuleOptions extends BaseRestModuleOptions {
 /**
  * Used for module metadata, for `appends` array.
  */
-export type AppendsWithOptions<T extends AnyObj = AnyObj> =
-  | PathAppendsWithOptions<T>
-  | AbsolutePathAppendsWithOptions<T>;
+export type AppendsWithOptions<T extends AnyObj = AnyObj> = PathAppendsWithOptions<T> | AbsolutePathAppendsWithOptions<T>;
 
 export interface BaseAppendsWithOptions<T extends AnyObj = AnyObj> {
   /**

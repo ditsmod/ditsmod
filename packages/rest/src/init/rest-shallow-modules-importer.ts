@@ -193,13 +193,7 @@ export class RestShallowModulesImporter {
     if (collisions.length) {
       const moduleName1 = getDebugClassName(importedProvider.modRefId) || 'unknown-1';
       const moduleName2 = getDebugClassName(modRefId) || 'unknown-2';
-      throw new ProvidersCollision(
-        this.moduleName,
-        [token],
-        [moduleName1, moduleName2],
-        level,
-        this.normalizedModuleMeta.isExternal,
-      );
+      throw new ProvidersCollision(this.moduleName, [token], [moduleName1, moduleName2], level, this.normalizedModuleMeta.isExternal);
     }
   }
 

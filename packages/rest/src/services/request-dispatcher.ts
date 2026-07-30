@@ -22,7 +22,7 @@ export class RequestDispatcher {
     }
     const { handle, params } = this.router.find(method, pathname);
     if (!handle) {
-      this.sendNotFound(rawRes);  // use real res for error paths
+      this.sendNotFound(rawRes); // use real res for error paths
       return;
     }
     await handle(rawReq, rawRes, params, search).catch((err) => {

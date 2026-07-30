@@ -100,11 +100,7 @@ describe('RestApplication', () => {
 
     it('should replace systemLogMediator during call bootstrapApplication()', async () => {
       const moduleManager = mock.scanRootModule(AppModule);
-      const appInitializer = new BaseAppInitializer(
-        new AppOptions(),
-        moduleManager,
-        new SystemLogMediator({ moduleName: '' }),
-      );
+      const appInitializer = new BaseAppInitializer(new AppOptions(), moduleManager, new SystemLogMediator({ moduleName: '' }));
       const { log } = mock;
       await mock.bootstrapApplication(appInitializer);
       expect(mock.log !== log).toBe(true);

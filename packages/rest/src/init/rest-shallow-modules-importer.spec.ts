@@ -33,10 +33,7 @@ class MockShallowModulesImporter extends RestShallowModulesImporter {
   override normalizedModuleMeta = new NormalizedModuleMeta();
   // override guardsPerMod: ModuleScopedGuard[] = [];
 
-  protected override getResolvedCollisionsPerLevel(
-    level: Level,
-    token1: any,
-  ): { module2: ModRefId<AnyObj>; providers: Provider[] } {
+  protected override getResolvedCollisionsPerLevel(level: Level, token1: any): { module2: ModRefId<AnyObj>; providers: Provider[] } {
     return super.getResolvedCollisionsPerLevel(level, token1);
   }
 }
@@ -182,8 +179,7 @@ describe('shallow importing modules', () => {
     })
     class AppModule {}
 
-    let msg =
-      'Importing providers to AppModule failed: exports from Module1, Module2 causes collision with Provider1. ';
+    let msg = 'Importing providers to AppModule failed: exports from Module1, Module2 causes collision with Provider1. ';
     msg += 'You should add Provider1 to resolvedCollisionsPerReq in this module. ';
     msg += 'For example: resolvedCollisionsPerReq: [ [Provider1, Module1] ].';
     expect(() => importModulesShallow(AppModule)).toThrow(msg);

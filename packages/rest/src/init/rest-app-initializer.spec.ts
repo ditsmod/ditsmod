@@ -196,10 +196,7 @@ function getImportedTokens(map: Map<any, ImportedProvider<Provider>> | undefined
       moduleManager.scanRootModule(AppModule);
       const shallowModuleImportsBase = mock.collectProvidersShallow(moduleManager);
       const root1 = shallowModuleImportsBase.get(AppModule);
-      expect(root1?.normalizedModuleMeta.providersPerApp.slice(0, 2)).toEqual([
-        Logger,
-        { token: Router, useValue: 'fake' },
-      ]);
+      expect(root1?.normalizedModuleMeta.providersPerApp.slice(0, 2)).toEqual([Logger, { token: Router, useValue: 'fake' }]);
       const moduleInfo: ModuleInfo = { path: '', moduleName: 'AppModule', isExternal: false };
       const providerPerMod: Provider = {
         token: ModuleInfo,
@@ -209,13 +206,7 @@ function getImportedTokens(map: Map<any, ImportedProvider<Provider>> | undefined
       expect(root1?.normalizedModuleMeta.providersPerReq).toEqual([]);
       checkAppProviders(root1);
       expect(getImportedTokens(root1?.baseImportRegistry.perMod)).toEqual([Provider0, Provider3, Provider4, Provider1]);
-      expect(getImportedTokens(root1?.baseImportRegistry.perReq)).toEqual([
-        Provider5,
-        Provider6,
-        Provider7,
-        Provider8,
-        Provider9,
-      ]);
+      expect(getImportedTokens(root1?.baseImportRegistry.perReq)).toEqual([Provider5, Provider6, Provider7, Provider8, Provider9]);
     });
   });
   it('should works without providersPerApp', () => {

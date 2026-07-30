@@ -52,12 +52,7 @@ export class DefaultRouter implements Router {
   }
 }
 
-export type RouteHandler = (
-  rawReq: RawRequest,
-  rawRes: RawResponse,
-  params: PathParam[] | null,
-  queryString: string,
-) => Promise<void>;
+export type RouteHandler = (rawReq: RawRequest, rawRes: RawResponse, params: PathParam[] | null, queryString: string) => Promise<void>;
 
 export class RouteMatch {
   handle: RouteHandler | null;

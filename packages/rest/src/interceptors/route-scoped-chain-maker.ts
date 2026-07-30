@@ -1,12 +1,6 @@
 import { inject, injectable, optional } from '@ditsmod/core';
 
-import {
-  HttpBackend,
-  HttpHandler,
-  HttpInterceptor,
-  HttpInterceptorHandler,
-  RouteScopedHttpBackend,
-} from './tokens-and-types.js';
+import { HttpBackend, HttpHandler, HttpInterceptor, HttpInterceptorHandler, RouteScopedHttpBackend } from './tokens-and-types.js';
 import { HTTP_INTERCEPTORS } from '../top/constants.js';
 import type { RouteContext } from '#services/route-context.js';
 

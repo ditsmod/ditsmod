@@ -87,9 +87,7 @@ export class RestModuleNormalizer {
     });
   }
 
-  protected resolveForwardRef<T extends RestModRefId | Provider | ForwardRefFn<StaticModule | Provider>>(
-    arr: T[] | ProviderBuilder,
-  ) {
+  protected resolveForwardRef<T extends RestModRefId | Provider | ForwardRefFn<StaticModule | Provider>>(arr: T[] | ProviderBuilder) {
     return [...arr].map((item) => {
       item = resolveForwardRef(item);
       if (isNormalizedProvider(item)) {

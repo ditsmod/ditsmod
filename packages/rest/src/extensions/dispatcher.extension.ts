@@ -126,11 +126,7 @@ export class DispatcherExtension implements Extension<void> {
     return preparedRouteMeta;
   }
 
-  protected getHandlerPerMod(
-    routeExtensionMeta: RouteExtensionMeta,
-    injectorPerMod: Injector,
-    controllerMeta: ControllerMeta,
-  ) {
+  protected getHandlerPerMod(routeExtensionMeta: RouteExtensionMeta, injectorPerMod: Injector, controllerMeta: ControllerMeta) {
     const { providersPerRou, routeMeta: baseRouteMeta, httpMethods, fullPath } = controllerMeta;
 
     const routeMeta = baseRouteMeta as RequireProps<typeof baseRouteMeta, 'routeHandler'>;
@@ -204,11 +200,7 @@ export class DispatcherExtension implements Extension<void> {
     }) as RouteHandler;
   }
 
-  protected getHandlerPerReq(
-    routeExtensionMeta: RouteExtensionMeta,
-    injectorPerMod: Injector,
-    controllerMeta: ControllerMeta,
-  ) {
+  protected getHandlerPerReq(routeExtensionMeta: RouteExtensionMeta, injectorPerMod: Injector, controllerMeta: ControllerMeta) {
     const { providersPerRou, providersPerReq, routeMeta, httpMethods: httpMethod, fullPath } = controllerMeta;
     const mergedPerRou = [...routeExtensionMeta.meta.providersPerRou, ...providersPerRou];
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'Rou');
@@ -236,9 +228,7 @@ export class DispatcherExtension implements Extension<void> {
     routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
     this.checkDeps(injPerReq, routeMeta, controllerName, httpMethod, fullPath);
     const resolvedChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === ChainMaker)!;
-    const resolvedErrHandler = resolvedPerReq
-      .concat(resolvedPerRou)
-      .find((rp) => rp.dualKey.token === HttpErrorHandler)!;
+    const resolvedErrHandler = resolvedPerReq.concat(resolvedPerRou).find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
 
     return (async (rawReq, rawRes, pathParams, queryString) => {
@@ -267,9 +257,7 @@ export class DispatcherExtension implements Extension<void> {
       const resolvedPerMod = Injector.resolve(g.normalizedModuleMeta.providersPerMod);
       const resolvedPerRou = Injector.resolve(g.meta.providersPerRou);
       const resolvedPerReq = Injector.resolve(g.meta.providersPerReq);
-      const resolvedProviders = perReq
-        ? resolvedPerReq.concat(resolvedPerRou, resolvedPerMod)
-        : resolvedPerRou.concat(resolvedPerMod);
+      const resolvedProviders = perReq ? resolvedPerReq.concat(resolvedPerRou, resolvedPerMod) : resolvedPerRou.concat(resolvedPerMod);
 
       const guard = resolvedProviders.find((rp) => rp.dualKey.token === g.guard);
 
@@ -279,15 +267,7 @@ export class DispatcherExtension implements Extension<void> {
           levels.push('providersPerReq');
         }
         const levelNames = levels.join(' and ');
-        throw new GuardNotFound(
-          g.normalizedModuleMeta.name,
-          controllerName,
-          g.guard.name,
-          httpMethod,
-          path,
-          levelNames,
-          perReq,
-        );
+        throw new GuardNotFound(g.normalizedModuleMeta.name, controllerName, g.guard.name, httpMethod, path, levelNames, perReq);
       }
 
       const injectorPerMod = this.moduleManager.getInjectorPerMod(g.normalizedModuleMeta.modRefId, true);
@@ -351,10 +331,7 @@ export class DispatcherExtension implements Extension<void> {
     }
   }
 
-  protected setRoutes(
-    extensionGroupMeta: ExtensionGroupMeta<RouteExtensionMeta>,
-    preparedRouteMeta: PreparedRouteMeta[],
-  ) {
+  protected setRoutes(extensionGroupMeta: ExtensionGroupMeta<RouteExtensionMeta>, preparedRouteMeta: PreparedRouteMeta[]) {
     const router = this.injectorPerMod.get(Router);
     if (!extensionGroupMeta.delay) {
       const appHasRoutes = this.checkPresenceOfRoutesInApplication(extensionGroupMeta.groupDataPerApp);

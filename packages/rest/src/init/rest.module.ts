@@ -26,12 +26,7 @@ import { defaultProvidersPerApp } from '#providers/default-providers-per-app.js'
   ],
   providersPerRou: [...defaultProvidersPerRou],
   providersPerReq: [...defaultProvidersPerReq, RequestContext, { token: Context, useToken: RequestContext }],
-  exports: [
-    ContextModule,
-    RequestContext,
-    Context,
-    ...getTokens(defaultProvidersPerRou.concat(defaultProvidersPerReq)),
-  ],
+  exports: [ContextModule, RequestContext, Context, ...getTokens(defaultProvidersPerRou.concat(defaultProvidersPerReq))],
   extensions: [
     { extension: RestRouteExtension, beforeExtensions: [DispatcherExtension], exportOnly: true },
     { extension: DispatcherExtension, afterExtensions: [RestRouteExtension], exportOnly: true },
