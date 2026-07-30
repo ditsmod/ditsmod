@@ -37,10 +37,7 @@ export function startCommand(program: Command): void {
     .option('-d, --debug [hostport]', 'Run in debug mode (with --inspect flag)')
     .option('--env-file <paths...>', 'Path(s) to env file(s) to load into environment')
     .option('--entry-file <file>', 'Compiled entry file to run (relative to project root)')
-    .option(
-      '--watch-assets <globs...>',
-      'Non-TypeScript asset globs to watch and copy to dist/ (e.g., "src/**/*.json")',
-    )
+    .option('--watch-assets <globs...>', 'Non-TypeScript asset globs to watch and copy to dist/ (e.g., "src/**/*.json")')
     .option('--preserve-watch-output', 'Do not clear the screen between compilations', false)
     .option('--verbose', 'Show verbose TypeScript project references progress', false)
     .option('--restart-delay <ms>', 'Delay in ms before restarting after successful compilation', '300')

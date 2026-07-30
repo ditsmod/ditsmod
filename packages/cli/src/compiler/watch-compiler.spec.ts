@@ -156,10 +156,7 @@ describe('WatchCompiler', () => {
         }),
       );
 
-      fs.writeFileSync(
-        path.join(appDir, 'src', 'index.ts'),
-        'import { val } from "../../lib/dist/index.js"; console.log(val);\n',
-      );
+      fs.writeFileSync(path.join(appDir, 'src', 'index.ts'), 'import { val } from "../../lib/dist/index.js"; console.log(val);\n');
       const appTsconfig = path.join(appDir, 'tsconfig.json');
       fs.writeFileSync(
         appTsconfig,

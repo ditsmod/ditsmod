@@ -3,13 +3,7 @@ import { jest } from '@jest/globals';
 import path from 'node:path';
 import fs from 'node:fs';
 import os from 'node:os';
-import {
-  startCommand,
-  runStart,
-  resolveEntryFile,
-  resolveProjectConfig,
-  type StartCommandOptions,
-} from './start.command.js';
+import { startCommand, runStart, resolveEntryFile, resolveProjectConfig, type StartCommandOptions } from './start.command.js';
 import { ProcessManager } from '../runner/process-manager.js';
 
 describe('startCommand options & parsing', () => {

@@ -98,9 +98,7 @@ describe('runNew logic', () => {
   });
 
   it('should throw on unknown template', async () => {
-    await expect(runNew('my-app', makeOpts({ template: 'unknown-template' }))).rejects.toThrow(
-      'Unknown template "unknown-template"',
-    );
+    await expect(runNew('my-app', makeOpts({ template: 'unknown-template' }))).rejects.toThrow('Unknown template "unknown-template"');
   });
 
   it('should throw when target directory exists and is not empty', async () => {

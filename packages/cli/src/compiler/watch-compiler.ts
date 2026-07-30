@@ -57,11 +57,7 @@ export class WatchCompiler extends EventEmitter {
   start(): void {
     const { tsconfig, preserveWatchOutput = false, verbose = false } = this.options;
 
-    const configPath = ts.findConfigFile(
-      path.dirname(path.resolve(tsconfig)),
-      ts.sys.fileExists,
-      path.basename(tsconfig),
-    );
+    const configPath = ts.findConfigFile(path.dirname(path.resolve(tsconfig)), ts.sys.fileExists, path.basename(tsconfig));
 
     if (!configPath) {
       throw new Error(`Cannot find TypeScript config file: "${tsconfig}"`);
@@ -101,9 +97,7 @@ export class WatchCompiler extends EventEmitter {
         const code = watchStatusDiagnostic.code;
         if (watchCompletionCodes.has(code)) {
           const hasErrors = currentDiagnostics.some((d) => d.category === ts.DiagnosticCategory.Error);
-          const computedErrorCount = currentDiagnostics.filter(
-            (d) => d.category === ts.DiagnosticCategory.Error,
-          ).length;
+          const computedErrorCount = currentDiagnostics.filter((d) => d.category === ts.DiagnosticCategory.Error).length;
           const diagnostics = [...currentDiagnostics];
           currentDiagnostics = [];
           const duration = Date.now() - startTime;
