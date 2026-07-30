@@ -70,8 +70,7 @@ function transformMixinOptions(data?: ExtMixinDecorOpts): ModuleMixin<ExtMixinDe
 }
 
 // Створення mixin-декоратора
-const mixinSome: MixinDecorator<ExtMixinDecorOpts, MixinOpts, MixinMeta> =
-  Reflector.makeClassDecorator(transformMixinOptions);
+const mixinSome: MixinDecorator<ExtMixinDecorOpts, MixinOpts, MixinMeta> = Reflector.makeClassDecorator(transformMixinOptions);
 
 // Використання mixin-декоратора
 @mixinSome({ one: 1, two: 2 })
@@ -101,7 +100,7 @@ export class SomeModule {}
 
 - `moduleRole?: 'root' | 'feature'`: Визначає, чи поводиться декоратор як заміна для `@rootModule` чи `@featureModule`.
 - `hostModule?: ModuleType`: Клас модуля для автоматичного імпорту. Коли декоратор застосовується до будь-якого класу, вказаний `hostModule` автоматично додається до його масиву `imports` (якщо він там ще не присутній).
-- `hostDecoratorOptions?: T`: Опції, які передаються декоратору хост-модуля. Це дозволяє прикріпити метадані до класу хост-модуля без його безпосереднього декорування, вирішуючи можливі циклічні залежності.
+- `hostMixinOptions?: T`: Опції, які передаються як параметри міксіна для хост-модуля. Це дозволяє прикріпити метадані до класу хост-модуля без його безпосереднього декорування, що запобігає можливим циклічним залежностям.
 - `normalize(normalizedModuleMeta)`: Валідує та нормалізує опції декоратора, повертаючи структурований об'єкт метаданих, який зберігається у `normalizedModuleMeta.mixinMeta`.
 - `getModulesToScan(meta)`: Повертає масив класів/посилань на модулі, які також потрібно відсканувати (наприклад, додані (appended) модулі в REST).
 - `exportAppProviders(config)`: Викликається під час завантаження для збору та експорту провайдерів рівня застосунку.

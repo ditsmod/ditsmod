@@ -70,8 +70,7 @@ function transformMixinOptions(data?: ExtMixinDecorOpts): ModuleMixin<ExtMixinDe
 }
 
 // Creating the mixin decorator
-const mixinSome: MixinDecorator<ExtMixinDecorOpts, MixinOpts, MixinMeta> =
-  Reflector.makeClassDecorator(transformMixinOptions);
+const mixinSome: MixinDecorator<ExtMixinDecorOpts, MixinOpts, MixinMeta> = Reflector.makeClassDecorator(transformMixinOptions);
 
 // Using mixin decorator
 @mixinSome({ one: 1, two: 2 })
@@ -101,7 +100,7 @@ The `ModuleMixin` base class provides several lifecycle properties and methods y
 
 - `moduleRole?: 'root' | 'feature'`: Determines whether the decorator behaves as a substitute for `@rootModule` or `@featureModule`.
 - `hostModule?: ModuleType`: The class of the module to automatically import. When the decorator is applied to any class, the specified `hostModule` is automatically added to its `imports` array (if not already present).
-- `hostDecoratorOptions?: T`: Options to pass to the decorator of the host module. This allows attaching metadata to the host module class without directly decorating it, resolving potential circular dependencies.
+- `hostMixinOptions?: T`: Options to pass as mixin parameters for the host module. This allows attaching metadata to the host module class without directly decorating it with a mixin decorator, resolving potential circular dependencies.
 - `normalize(normalizedModuleMeta)`: Validates and normalizes decorator options, returning a structured metadata object that gets saved in `normalizedModuleMeta.mixinMeta`.
 - `getModulesToScan(meta)`: Returns an array of module classes/references that should also be scanned (e.g., appended modules in REST).
 - `exportAppProviders(config)`: Invoked at bootstrap to collect and export application-level providers.

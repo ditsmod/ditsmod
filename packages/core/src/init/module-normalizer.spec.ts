@@ -806,7 +806,7 @@ describe('ModuleNormalizer', () => {
 
       class HostModuleMixin extends ModuleMixin<SomeMixinOptions> {
         override hostModule = HostModule;
-        override hostDecoratorOptions = { flag: true };
+        override hostMixinOptions = { flag: true };
 
         override normalize(normalizedModuleMeta: NormalizedModuleMeta): SomeMixinMeta {
           return {
@@ -830,7 +830,7 @@ describe('ModuleNormalizer', () => {
 
       class HostModuleMixin extends ModuleMixin<SomeMixinOptions> {
         override hostModule = HostModule;
-        override hostDecoratorOptions = { flag: true };
+        override hostMixinOptions = { flag: true };
 
         override normalize(normalizedModuleMeta: NormalizedModuleMeta): SomeMixinMeta {
           return {

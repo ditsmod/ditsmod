@@ -86,8 +86,8 @@ export class ModuleNormalizer {
 
     this.checkReexportModules();
 
-    // Phase 2: Execute module mixins for the current module's mixin decorators.
-    this.addModuleMixinForHostDecorator(allModuleMixin);
+    // Phase 2: Process mixin decorators applied directly to the current module.
+    this.addModuleMixinForHostMixin(allModuleMixin);
     this.callModuleMixinFromCurrentModule();
 
     // Phase 3: Handle module mixins for imported dynamic modules lacking their own mixin decorators.
@@ -368,13 +368,13 @@ export class ModuleNormalizer {
   }
 
   /**
-   * If {@link ModuleMixin} has {@link ModuleMixin.hostDecoratorOptions | hostDecoratorOptions}, this method
-   * inserts an module mixin that can add `hostDecoratorOptions` to the host module.
+   * If {@link ModuleMixin} has {@link ModuleMixin.hostMixinOptions | hostMixinOptions}, this method
+   * inserts an module mixin that can add `hostMixinOptions` to the host module.
    */
-  protected addModuleMixinForHostDecorator(allModuleMixin: AllModuleMixins) {
+  protected addModuleMixinForHostMixin(allModuleMixin: AllModuleMixins) {
     allModuleMixin.forEach((moduleMixin, decorator) => {
-      if (moduleMixin.hostModule === this.normalizedModuleMeta.modRefId && moduleMixin.hostDecoratorOptions) {
-        const newModuleMixin = moduleMixin.clone(moduleMixin.hostDecoratorOptions);
+      if (moduleMixin.hostModule === this.normalizedModuleMeta.modRefId && moduleMixin.hostMixinOptions) {
+        const newModuleMixin = moduleMixin.clone(moduleMixin.hostMixinOptions);
         this.normalizedModuleMeta.moduleMixinMap.set(decorator, newModuleMixin);
       }
     });

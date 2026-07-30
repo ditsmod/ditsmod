@@ -848,22 +848,22 @@ describe('ModuleManager', () => {
 
     class ModuleMixin1 extends ModuleMixin<any> {
       override hostModule = HostModule1;
-      override hostDecoratorOptions = { one: 1 };
+      override hostMixinOptions = { one: 1 };
     }
 
     class ModuleMixin2 extends ModuleMixin<any> {
       override hostModule = HostModule2;
-      override hostDecoratorOptions = { two: 2 };
+      override hostMixinOptions = { two: 2 };
     }
 
     class ModuleMixin3 extends ModuleMixin<any> {
       override hostModule = HostModule3;
-      override hostDecoratorOptions = { three: 3 };
+      override hostMixinOptions = { three: 3 };
     }
 
     class ModuleMixin4 extends ModuleMixin<any> {
       override hostModule = HostModule4;
-      override hostDecoratorOptions = { four: 4 };
+      override hostMixinOptions = { four: 4 };
     }
 
     it('should propagate allModuleMixin so that they only contain module mixins imported into the current module', () => {

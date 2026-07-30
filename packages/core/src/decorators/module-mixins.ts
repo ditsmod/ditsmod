@@ -15,8 +15,8 @@ import type { ForwardRefFn } from '#di/forward-ref.js';
 export type AllModuleMixins = Map<AnyFn, Omit<ModuleMixin, 'moduleOptions'>>;
 
 /**
- * Module mixins and metadata attached by mixin decorators,
- * apart from the base decorators - {@link featureModule} or {@link rootModule}.
+ * A base class for creating module mixins. These mixins carry metadata attached by mixin decorators,
+ * which supplement the base decorators like {@link featureModule} or {@link rootModule}.
  */
 export class ModuleMixin<T1 extends MixinOptions = MixinOptions> {
   /**
@@ -32,18 +32,15 @@ export class ModuleMixin<T1 extends MixinOptions = MixinOptions> {
   /**
    * Options intended for the host module.
    *
-   * Sometimes, the host module (where the module mixin class is declared) needs to be decorated
-   * with its own mixin decorator. If you do this and also set {@link hostModule}, it creates
-   * a circular dependency.
-   *
-   * To prevent this, do not decorate the host module with its own decorator. Instead,
-   * pass its metadata to this property:
+   * If you decorate the host module with its own mixin decorator and set {@link hostModule},
+   * it creates a circular dependency. To avoid this, do not decorate the host module directly.
+   * Instead, pass its mixin options here:
    *
    * ```ts
-   * override hostDecoratorOptions: YourMetadataType = { one: 1, two: 2 };
+   * override hostMixinOptions: YourMetadataType = { one: 1, two: 2 };
    * ```
    */
-  declare hostDecoratorOptions?: T1;
+  declare hostMixinOptions?: T1;
 
   constructor(public moduleOptions: T1) {
     this.moduleOptions ??= {} as T1;
@@ -125,7 +122,10 @@ export class ModuleMixin<T1 extends MixinOptions = MixinOptions> {
 export interface MixinMetaMap {
   set<T extends BaseNormalizedModuleMeta>(decorator: MixinDecorator<any, any, T>, meta: T): this;
   get<T extends BaseNormalizedModuleMeta>(decorator: MixinDecorator<any, any, T>): T | undefined;
-  forEach<T extends BaseNormalizedModuleMeta>(callbackfn: (meta: T, decorator: AnyFn, map: Map<AnyFn, T>) => void, thisArg?: any): void;
+  forEach<T extends BaseNormalizedModuleMeta>(
+    callbackfn: (meta: T, decorator: AnyFn, map: Map<AnyFn, T>) => void,
+    thisArg?: any,
+  ): void;
   /**
    * Returns an iterable of keys in the map
    */
