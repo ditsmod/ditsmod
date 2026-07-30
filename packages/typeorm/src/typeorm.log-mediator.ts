@@ -38,10 +38,7 @@ export class TypeormLogMediator extends LogMediator {
   unableToConnectToDatabase(self: object, dataSourceName: string, attempt: number, verboseMessage: string = '') {
     const className = self.constructor.name;
     const dsInfo = dataSourceName === 'default' ? '' : ` (${dataSourceName})`;
-    this.setLog(
-      'error',
-      `${className}: Unable to connect to the database${dsInfo}.${verboseMessage} Retrying (${attempt})...`,
-    );
+    this.setLog('error', `${className}: Unable to connect to the database${dsInfo}.${verboseMessage} Retrying (${attempt})...`);
   }
 
   /**

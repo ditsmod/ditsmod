@@ -21,9 +21,7 @@ const repositoryTokens = new Map<string, InjectionToken<Repository<any>>>();
  * For the default data source, the `DataSource` class itself is used as the token.
  * For named data sources, a cached `InjectionToken` is returned.
  */
-export function getDataSourceToken(
-  dataSourceName: string = DEFAULT_DATA_SOURCE_NAME,
-): typeof DataSource | InjectionToken<DataSource> {
+export function getDataSourceToken(dataSourceName: string = DEFAULT_DATA_SOURCE_NAME): typeof DataSource | InjectionToken<DataSource> {
   if (dataSourceName === DEFAULT_DATA_SOURCE_NAME) {
     return DataSource;
   }

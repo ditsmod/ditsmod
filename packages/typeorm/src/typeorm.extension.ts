@@ -159,10 +159,7 @@ export class TypeormExtension implements Extension<void> {
       return;
     }
 
-    const allNames = [
-      ...syncOptions.map((opt) => opt.name || DEFAULT_DATA_SOURCE_NAME),
-      ...asyncDescriptors.map((d) => d.name),
-    ];
+    const allNames = [...syncOptions.map((opt) => opt.name || DEFAULT_DATA_SOURCE_NAME), ...asyncDescriptors.map((d) => d.name)];
 
     for (const name of allNames) {
       const dsToken = getDataSourceToken(name);

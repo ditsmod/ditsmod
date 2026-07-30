@@ -18,13 +18,7 @@ describe('retry', () => {
     } as any;
     dsMock.initialize.mockResolvedValue(dsMock);
 
-    const result = await initializeWithRetry(
-      dsMock,
-      { retryAttempts: 3, retryDelay: 10 },
-      logMediatorMock,
-      sender,
-      'default',
-    );
+    const result = await initializeWithRetry(dsMock, { retryAttempts: 3, retryDelay: 10 }, logMediatorMock, sender, 'default');
 
     expect(result).toBe(dsMock);
     expect(dsMock.initialize).toHaveBeenCalledTimes(1);
@@ -41,13 +35,7 @@ describe('retry', () => {
       .mockRejectedValueOnce(new Error('Connection refused'))
       .mockResolvedValue(dsMock);
 
-    const result = await initializeWithRetry(
-      dsMock,
-      { retryAttempts: 3, retryDelay: 1 },
-      logMediatorMock,
-      sender,
-      'analytics',
-    );
+    const result = await initializeWithRetry(dsMock, { retryAttempts: 3, retryDelay: 1 }, logMediatorMock, sender, 'analytics');
 
     expect(result).toBe(dsMock);
     expect(dsMock.initialize).toHaveBeenCalledTimes(3);
@@ -62,9 +50,9 @@ describe('retry', () => {
       initialize: jest.fn<any>().mockRejectedValue(error),
     } as any;
 
-    await expect(
-      initializeWithRetry(dsMock, { retryAttempts: 2, retryDelay: 1 }, logMediatorMock, sender, 'default'),
-    ).rejects.toThrow('Database down');
+    await expect(initializeWithRetry(dsMock, { retryAttempts: 2, retryDelay: 1 }, logMediatorMock, sender, 'default')).rejects.toThrow(
+      'Database down',
+    );
 
     expect(dsMock.initialize).toHaveBeenCalledTimes(3);
     expect(logMediatorMock.unableToConnectToDatabase).toHaveBeenCalledTimes(2);
@@ -76,13 +64,9 @@ describe('retry', () => {
       initialize: jest.fn<any>().mockRejectedValue(originalError),
     } as any;
 
-    const thrown = await initializeWithRetry(
-      dsMock,
-      { retryAttempts: 1, retryDelay: 1 },
-      logMediatorMock,
-      sender,
-      'default',
-    ).catch((e) => e);
+    const thrown = await initializeWithRetry(dsMock, { retryAttempts: 1, retryDelay: 1 }, logMediatorMock, sender, 'default').catch(
+      (e) => e,
+    );
 
     expect(thrown).toBe(originalError);
   });
@@ -113,13 +97,7 @@ describe('retry', () => {
 
     const toRetry = jest.fn<(err: any) => boolean>().mockReturnValue(true);
 
-    const result = await initializeWithRetry(
-      dsMock,
-      { retryAttempts: 2, retryDelay: 1, toRetry },
-      logMediatorMock,
-      sender,
-      'default',
-    );
+    const result = await initializeWithRetry(dsMock, { retryAttempts: 2, retryDelay: 1, toRetry }, logMediatorMock, sender, 'default');
 
     expect(result).toBe(dsMock);
     expect(toRetry).toHaveBeenCalledWith(error);
@@ -133,9 +111,9 @@ describe('retry', () => {
       initialize: jest.fn<any>().mockRejectedValue(error),
     } as any;
 
-    await expect(
-      initializeWithRetry(dsMock, { retryAttempts: 0, retryDelay: 1 }, logMediatorMock, sender, 'default'),
-    ).rejects.toThrow('Immediate failure');
+    await expect(initializeWithRetry(dsMock, { retryAttempts: 0, retryDelay: 1 }, logMediatorMock, sender, 'default')).rejects.toThrow(
+      'Immediate failure',
+    );
 
     expect(dsMock.initialize).toHaveBeenCalledTimes(1);
     expect(logMediatorMock.unableToConnectToDatabase).not.toHaveBeenCalled();
@@ -148,19 +126,8 @@ describe('retry', () => {
     } as any;
     dsMock.initialize.mockRejectedValueOnce(error).mockResolvedValue(dsMock);
 
-    await initializeWithRetry(
-      dsMock,
-      { retryAttempts: 1, retryDelay: 1, verboseRetryLog: true },
-      logMediatorMock,
-      sender,
-      'default',
-    );
+    await initializeWithRetry(dsMock, { retryAttempts: 1, retryDelay: 1, verboseRetryLog: true }, logMediatorMock, sender, 'default');
 
-    expect(logMediatorMock.unableToConnectToDatabase).toHaveBeenCalledWith(
-      sender,
-      'default',
-      1,
-      ' Message: Socket timeout.',
-    );
+    expect(logMediatorMock.unableToConnectToDatabase).toHaveBeenCalledWith(sender, 'default', 1, ' Message: Socket timeout.');
   });
 });

@@ -6,12 +6,7 @@ import { TypeormExtension } from './typeorm.extension.js';
 import { EntitiesMetadataStorage } from './entities-metadata-storage.js';
 import { createRepositoryProviders } from './typeorm.providers.js';
 import { getDataSourceToken, getEntityManagerToken } from './typeorm.utils.js';
-import type {
-  EntityClassOrSchema,
-  TypeormAsyncOptionsDescriptor,
-  TypeormModuleAsyncOptions,
-  TypeormModuleOptions,
-} from './types.js';
+import type { EntityClassOrSchema, TypeormAsyncOptionsDescriptor, TypeormModuleAsyncOptions, TypeormModuleOptions } from './types.js';
 import { DataSourceManager } from './data-source-manager.js';
 import { TypeormLogMediator } from './typeorm.log-mediator.js';
 
@@ -135,9 +130,7 @@ export class TypeormModule {
     } else if (asyncOptions.useFactory) {
       descriptor = { name, useFactory: asyncOptions.useFactory, deps: asyncOptions.deps || [] };
     } else {
-      throw new Error(
-        'TypeormModule.forRootAsync() requires either "configurationClass" or "useFactory" to be provided.',
-      );
+      throw new Error('TypeormModule.forRootAsync() requires either "configurationClass" or "useFactory" to be provided.');
     }
 
     providersPerApp.push({

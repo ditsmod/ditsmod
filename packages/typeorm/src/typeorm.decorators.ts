@@ -23,8 +23,7 @@ export const injectRepository = (entity: EntityClassOrSchema, dataSourceName?: s
  * constructor(@injectDataSource('analytics') private analyticsDs: DataSource) {}
  * ```
  */
-export const injectDataSource = (dataSourceName?: string): ReturnType<typeof inject> =>
-  inject(getDataSourceToken(dataSourceName));
+export const injectDataSource = (dataSourceName?: string): ReturnType<typeof inject> => inject(getDataSourceToken(dataSourceName));
 
 /**
  * Parameter decorator that injects the `EntityManager` (default or named).
