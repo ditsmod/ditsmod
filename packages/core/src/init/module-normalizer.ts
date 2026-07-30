@@ -353,6 +353,10 @@ export class ModuleNormalizer {
   }
 
   protected checkReexportModules() {
+    if (isRootModule(this.normalizedModuleMeta)) {
+      // Allow exporting from the root module without importing.
+      return;
+    }
     const imports = [...this.normalizedModuleMeta.importedStaticModules, ...this.normalizedModuleMeta.importedDynamicModules];
     const exports = [...this.normalizedModuleMeta.exportedStaticModules, ...this.normalizedModuleMeta.exportedDynamicModules];
 

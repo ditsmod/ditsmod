@@ -297,6 +297,19 @@ describe('ModuleNormalizer', () => {
       expect(() => normalizer.normalize(Module1)).toThrow(new ReexportFailure('Module1', 'ImportedModule'));
     });
 
+    it('does not throw ReexportFailure when a root module exports a module without importing it', () => {
+      @featureModule()
+      class ExportedModule {}
+
+      @rootModule({
+        exports: [ExportedModule],
+      })
+      class AppModule {}
+
+      const normalizedModuleMeta = normalizer.normalize(AppModule);
+      expect(normalizedModuleMeta.exportedStaticModules).toEqual([ExportedModule]);
+    });
+
     it('throws ReexportFailure when importing a DynamicModule but exporting only its module class', () => {
       class Service1 {}
 
