@@ -15,8 +15,8 @@ import type { ForwardRefFn } from '#di/forward-ref.js';
 export type AllModuleMixins = Map<AnyFn, Omit<ModuleMixin, 'moduleOptions'>>;
 
 /**
- * A base class for creating module mixins. These mixins carry metadata attached by mixin decorators,
- * which supplement the base decorators like {@link featureModule} or {@link rootModule}.
+ * A base class for creating module mixins. They carry metadata attached by corresponding decorators
+ * to supplement base decorators like {@link featureModule} or {@link rootModule}.
  */
 export class ModuleMixin<T1 extends MixinOptions = MixinOptions> {
   /**
@@ -24,8 +24,8 @@ export class ModuleMixin<T1 extends MixinOptions = MixinOptions> {
    */
   declare moduleRole?: 'root' | 'feature';
   /**
-   * The host module where the current mixin decorator is declared. If you add this module,
-   * it will be imported into the module where the corresponding mixin decorator is used.
+   * The host module that provides the core functionality for this mixin.
+   * If specified, it will be automatically imported wherever this mixin decorator is applied.
    */
   declare hostModule?: StaticModule;
 
@@ -156,9 +156,9 @@ export interface MixinDynamicOptionsMap {
 }
 
 /**
- * Use this interface to create decorators with module mixins.
+ * Use this interface to create module mixin decorators.
  *
- * ### Complete example with module mixins
+ * ### Complete example
  *
  * In this example, `ReturnsType` is the type that will be returned by
  * {@link ModuleMixin.normalize} or {@link NormalizedModuleMeta.mixinMeta | normalizedModuleMeta.mixinMeta.get(addSome)}.
@@ -184,7 +184,7 @@ function getModuleMixin(data?: RootModuleOptions): ModuleMixin<RootModuleOptions
   const metadata = Object.assign({}, data);
   return new MyModuleMixin(metadata);
 }
-// Creating an mixin decorator
+// Creating a mixin decorator
 export const mixinSome: MixinDecorator<RootModuleOptions, { path?: string }, MixinMeta> = makeClassDecorator(getModuleMixin);
 
 @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })

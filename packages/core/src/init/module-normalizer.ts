@@ -368,8 +368,8 @@ export class ModuleNormalizer {
   }
 
   /**
-   * If {@link ModuleMixin} has {@link ModuleMixin.hostMixinOptions | hostMixinOptions}, this method
-   * inserts an module mixin that can add `hostMixinOptions` to the host module.
+   * If the current {@link ModuleMixin} has {@link ModuleMixin.hostMixinOptions | hostMixinOptions},
+   * this method clones it and assigns those options to the host module to avoid circular dependencies.
    */
   protected addModuleMixinForHostMixin(allModuleMixin: AllModuleMixins) {
     allModuleMixin.forEach((moduleMixin, decorator) => {
@@ -396,8 +396,8 @@ export class ModuleNormalizer {
   }
 
   /**
-   * Registers an module mixin into `allModuleMixin`, ensures the host module is imported,
-   * calls the module mixin, and backfills `moduleMixinMap` (needed for `quickCheckMeta`
+   * Registers a module mixin into `allModuleMixin`, ensures the host module is imported,
+   * normalizes the mixin, and backfills `moduleMixinMap` (needed for `quickCheckMeta`
    * and `callModuleMixinAfterScan`).
    */
   protected registerAndCallModuleMixin(decorator: AnyFn, moduleMixin: ModuleMixin): void {
@@ -417,11 +417,11 @@ export class ModuleNormalizer {
   }
 
   /**
-   * If the current module was used as dynamic module in the context of mixin decorators, but
-   * the class of the current module is not annotated with those decorators, then retrieve
-   * the corresponding module mixins (for reading dynamic options) from the `allModuleMixin`.
-   * 
-   * ### Example
+   * If the current module was imported as a dynamic module within a mixin decorator, but
+   * does not have this decorator applied to its own class, this method retrieves the default 
+   * instances of the corresponding module mixins (for reading dynamic options) from `allModuleMixin`.
+   *
+   * For example, you have a library with a `@mixinRest` decorator:
    * 
 ```ts
 import { featureModule, rootModule } from '@ditsmod/core';
@@ -437,7 +437,7 @@ export class AppModule {}
    * 
    * As you can see, `Module1` is imported in the context of the `mixinRest` decorator,
    * but `Module1` itself does not have an annotation with `mixinRest`. For such cases,
-   * this method adds hooks so that the import of dynamic `Module1` can be properly handled.
+   * this method adds the corresponding module mixin so that the import of the dynamic `Module1` can be properly handled.
    */
   protected addModuleMixinForImportedDynamicModule(allModuleMixin: AllModuleMixins) {
     (this.normalizedModuleMeta.modRefId as DynamicModule).mixinOptions?.forEach((params, decorator) => {
