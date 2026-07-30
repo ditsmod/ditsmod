@@ -11,14 +11,7 @@ import {
   PROVIDERS_PER_APP,
 } from '@ditsmod/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
-import {
-  RequestContext,
-  ControllerMeta,
-  HTTP_INTERCEPTORS,
-  RouteExtensionMeta,
-  RouteMeta,
-  RestRouteExtension,
-} from '@ditsmod/rest';
+import { RequestContext, ControllerMeta, HTTP_INTERCEPTORS, RouteExtensionMeta, RouteMeta, RestRouteExtension } from '@ditsmod/rest';
 
 import { CorsInterceptor } from './cors.interceptor.js';
 import { ALLOW_METHODS } from './constans.js';
@@ -48,11 +41,7 @@ export class CorsExtension implements Extension<void | false> {
         const { controllersMeta } = routeExtensionMeta;
         const { providersPerMod } = routeExtensionMeta.normalizedModuleMeta;
         const injector = Injector.resolveAndCreate([...this.providersPerApp, ...providersPerMod]);
-        const routesWithOptions = this.getRoutesWithOptions(
-          providersPerMod,
-          extensionGroupMetaPerApp.groupData,
-          controllersMeta,
-        );
+        const routesWithOptions = this.getRoutesWithOptions(providersPerMod, extensionGroupMetaPerApp.groupData, controllersMeta);
         controllersMeta.push(...routesWithOptions);
 
         controllersMeta.forEach(({ providersPerReq, providersPerRou, scope }) => {
