@@ -101,9 +101,6 @@ yarn test
 # Run all tests including examples
 yarn test-all
 
-# Run authjs-specific integration tests
-yarn test-authjs
-
 # Run example e2e tests
 yarn test-examples
 ```
