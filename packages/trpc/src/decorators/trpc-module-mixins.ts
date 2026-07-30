@@ -3,7 +3,7 @@ import type {
   NormalizedModuleMeta,
   MixinDecorator,
   Provider,
-  MixinOptions,
+  StaticMixinOptions,
   DynamicModuleOptions,
   StaticModule,
   Class,
@@ -40,7 +40,7 @@ export interface TrpcModuleOptions extends DynamicModuleOptions {
 /**
  * Metadata for the `mixinTrpcModule` decorator, which adds TRPC metadata to a `featureModule` or `rootModule`.
  */
-export interface TrpcMixinOptions extends MixinOptions<TrpcModuleOptions> {
+export interface TrpcMixinOptions extends StaticMixinOptions<TrpcModuleOptions> {
   /**
    * The application controllers.
    */

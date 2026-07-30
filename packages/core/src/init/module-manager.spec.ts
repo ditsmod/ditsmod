@@ -6,7 +6,7 @@ import { rootModule } from '#decorators/root-module.js';
 import { Extension } from '#extension/extension-types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleId, ModuleManager } from './module-manager.js';
-import { AllModuleMixins, MixinOptions, MixinDecorator, ModuleMixin } from '#decorators/module-mixins.js';
+import { AllModuleMixins, StaticMixinOptions, MixinDecorator, ModuleMixin } from '#decorators/module-mixins.js';
 import { BaseNormalizedModuleMeta, NormalizedModuleMeta, getProxyForMixinMeta } from '#init/normalized-meta.js';
 import { ModuleGraphState } from '#init/module-graph-state.js';
 import { ModRefId } from '#decorators/module-decorator-options.js';
@@ -630,7 +630,7 @@ describe('ModuleManager', () => {
 
   describe('copyNormalizedModuleMeta()', () => {
     it('should copy NormalizedModuleMeta correctly, preserving prototype and recreating mixinMeta proxies wrapping the copy', () => {
-      interface RootMixinOptions extends MixinOptions<{ path?: string }> {
+      interface RootMixinOptions extends StaticMixinOptions<{ path?: string }> {
         one?: string;
       }
       class MixinMeta extends BaseNormalizedModuleMeta {
@@ -920,7 +920,7 @@ describe('ModuleManager', () => {
     });
 
     it('should handle Module1 not having an annotation with mixinSome, but imported in AppModule with this decorator', () => {
-      interface RootModuleOptions extends MixinOptions<{ path?: string }> {
+      interface RootModuleOptions extends StaticMixinOptions<{ path?: string }> {
         one?: string;
         two?: string;
       }
@@ -960,7 +960,7 @@ describe('ModuleManager', () => {
     });
 
     it('should handle static Module1 not having an annotation with mixinSome, but imported in AppModule with this decorator', () => {
-      interface RootModuleOptions extends MixinOptions<{ path?: string }> {
+      interface RootModuleOptions extends StaticMixinOptions<{ path?: string }> {
         one?: string;
         two?: string;
       }
@@ -996,7 +996,7 @@ describe('ModuleManager', () => {
     });
 
     it('should not propagate context hooks when inheritsContext is false for static Module1', () => {
-      interface RootModuleOptions extends MixinOptions<{ path?: string }> {
+      interface RootModuleOptions extends StaticMixinOptions<{ path?: string }> {
         one?: string;
       }
       interface MixinMeta extends BaseNormalizedModuleMeta {
@@ -1034,13 +1034,13 @@ describe('ModuleManager', () => {
     });
 
     it('should retrieve mixinOptions for three different modules with params', () => {
-      interface DecoratorOptions1 extends MixinOptions<{ one?: string }> {
+      interface DecoratorOptions1 extends StaticMixinOptions<{ one?: string }> {
         one?: string;
       }
       interface MixinMeta1 {
         paramsForMixinMeta1?: any;
       }
-      interface DecoratorOptions2 extends MixinOptions<{ three?: string }> {
+      interface DecoratorOptions2 extends StaticMixinOptions<{ three?: string }> {
         three?: string;
       }
       interface MixinMeta2 {

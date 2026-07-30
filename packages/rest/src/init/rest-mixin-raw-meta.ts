@@ -1,10 +1,10 @@
-import type { AnyObj, StaticModule, Class, AnyFn, MixinOptions, DynamicModuleOptions, ForwardRefFn } from '@ditsmod/core';
+import type { AnyObj, StaticModule, Class, AnyFn, StaticMixinOptions, DynamicModuleOptions, ForwardRefFn } from '@ditsmod/core';
 import type { GuardItem } from '#interceptors/guard.js';
 
 /**
  * Metadata for the `mixinRest` decorator, which adds REST metadata to a `featureModule` or `rootModule`.
  */
-export interface RestMixinOptions extends MixinOptions<RestModuleOptions> {
+export interface RestMixinOptions extends StaticMixinOptions<RestModuleOptions> {
   /**
    * List of modules that contain controllers. Providers from these modules
    * are not imported into the current module. If the current module has a prefix path,

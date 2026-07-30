@@ -7,7 +7,7 @@ import type { AnyFn, Provider, Class } from '#di/top/types-and-models.js';
 import type { DynamicModule, FeatureModuleOptions } from '#decorators/module-decorator-options.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
-import type { AllModuleMixins, MixinOptions, ModuleMixin } from '#decorators/module-mixins.js';
+import type { AllModuleMixins, StaticMixinOptions, ModuleMixin } from '#decorators/module-mixins.js';
 import type { ProviderBuilder } from '#utils/providers.js';
 import { normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -157,7 +157,7 @@ export class ModuleNormalizer {
   }
 
   protected normalizeProvidersAndResolvedCollisions(
-    staticModuleOptions: MixinOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>,
+    staticModuleOptions: StaticMixinOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>,
   ) {
     this.normalizeProviders(staticModuleOptions);
     this.normalizeResolvedCollisions(staticModuleOptions);
@@ -173,7 +173,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeResolvedCollisions(staticModuleOptions: MixinOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>) {
+  protected normalizeResolvedCollisions(staticModuleOptions: StaticMixinOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>) {
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
       const resolvedCollisionKey = `resolvedCollisionsPer${level}` as const;
       if (staticModuleOptions[resolvedCollisionKey]) {
@@ -275,7 +275,7 @@ export class ModuleNormalizer {
   }
 
   protected throwIfResolvingNormalizedProvider(
-    staticModuleOptions: MixinOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>,
+    staticModuleOptions: StaticMixinOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>,
   ) {
     const resolvedCollisionsPerLevel: [any, ModRefId | ForwardRefFn<StaticModule | DynamicModule>][] = [];
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
@@ -461,7 +461,7 @@ export class AppModule {}
     }) as Exclude<T, ForwardRefFn>[];
   }
 
-  protected fetchMixinOptions(decorator: AnyFn, mixinOptions: MixinOptions) {
+  protected fetchMixinOptions(decorator: AnyFn, mixinOptions: StaticMixinOptions) {
     this.fetchMixinImports(decorator, mixinOptions);
     this.fetchMixinExports(mixinOptions);
     this.normalizeExtensions(mixinOptions);
@@ -469,7 +469,7 @@ export class AppModule {}
     this.normalizeExports(mixinOptions, 'Static exports');
   }
 
-  protected fetchMixinImports(decorator: AnyFn, mixinOptions: MixinOptions) {
+  protected fetchMixinImports(decorator: AnyFn, mixinOptions: StaticMixinOptions) {
     if (mixinOptions.imports) {
       this.resolveAllForwardRefs(mixinOptions.imports).forEach((imp) => {
         if (isDynamicModule(imp)) {
@@ -523,7 +523,7 @@ export class AppModule {}
     return dstn;
   }
 
-  protected fetchMixinExports(mixinOptions: MixinOptions) {
+  protected fetchMixinExports(mixinOptions: StaticMixinOptions) {
     if (mixinOptions.exports) {
       this.resolveAllForwardRefs(mixinOptions.exports).forEach((exp) => {
         if (isDynamicModule(exp)) {

@@ -2,7 +2,7 @@ import type { ModuleManager } from '#init/module-manager.js';
 import type { ShallowModuleImports } from '#init/types.js';
 import type { SystemLogMediator } from '#logger/system-log-mediator.js';
 import type { AnyObj } from '#types/mix.js';
-import type { ModRefId, StaticModule } from './module-decorator-options.js';
+import type { DynamicModuleOptions, ModRefId, StaticModule } from './module-decorator-options.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { DynamicModule, FeatureModuleOptions } from '#decorators/module-decorator-options.js';
 import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
@@ -18,7 +18,7 @@ export type AllModuleMixins = Map<AnyFn, Omit<ModuleMixin, 'moduleOptions'>>;
  * A base class for creating module mixins. They carry metadata attached by corresponding decorators
  * to supplement base decorators like {@link featureModule} or {@link rootModule}.
  */
-export class ModuleMixin<T1 extends MixinOptions = MixinOptions> {
+export class ModuleMixin<T1 extends StaticMixinOptions = StaticMixinOptions> {
   /**
    * If you want your mixin decorator to also play the role of a base module, substitute the appropriate role.
    */
@@ -210,7 +210,7 @@ class MyModule {
 class MyModuleMixin extends ModuleMixin<RootModuleOptions> {}
 ```
  */
-export interface MixinDecorator<T extends MixinOptions, ModuleParams, MixinMeta> {
+export interface MixinDecorator<T extends StaticMixinOptions, DynamicModuleOptions, MixinMeta> {
   (data?: T): any;
 }
 
@@ -226,8 +226,8 @@ export interface DynamicModuleWrapper {
 }
 
 // prettier-ignore
-export interface MixinOptions<MixinDynamicOptions extends object = object> extends Omit<FeatureModuleOptions,'imports'> {
+export interface StaticMixinOptions<T extends DynamicModuleOptions = DynamicModuleOptions> extends Omit<FeatureModuleOptions,'imports'> {
   imports?: (
-    ((DynamicModuleWrapper | DynamicModule) & MixinDynamicOptions) | StaticModule | ForwardRefFn<ModRefId>
+    ((DynamicModuleWrapper | DynamicModule) & T) | StaticModule | ForwardRefFn<ModRefId>
   )[];
 }

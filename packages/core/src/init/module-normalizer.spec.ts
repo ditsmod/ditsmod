@@ -1,5 +1,5 @@
 import { featureModule } from '#decorators/feature-module.js';
-import { MixinOptions, ModuleMixin, MixinDecorator } from '#decorators/module-mixins.js';
+import { StaticMixinOptions, ModuleMixin, MixinDecorator } from '#decorators/module-mixins.js';
 import { BaseNormalizedModuleMeta, getProxyForMixinMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { rootModule, RootModuleOptions } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
@@ -589,7 +589,7 @@ describe('ModuleNormalizer', () => {
       num?: number;
     }
 
-    interface SomeMixinOptions extends MixinOptions<SomeMixinDynamicOptions> {
+    interface SomeMixinOptions extends StaticMixinOptions<SomeMixinDynamicOptions> {
       one?: number;
       two?: number;
       flag?: boolean;
@@ -881,7 +881,7 @@ describe('ModuleNormalizer', () => {
       }
     }
 
-    const initPropagate: MixinDecorator<MixinOptions, {}, PropagateMixinMeta> = Reflector.makeClassDecorator(
+    const initPropagate: MixinDecorator<StaticMixinOptions, {}, PropagateMixinMeta> = Reflector.makeClassDecorator(
       (data) => new PropagateModuleMixin(data || {}),
       'initPropagate',
     );

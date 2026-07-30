@@ -20,7 +20,7 @@ export {
   MixinMetaMap,
   MixinDynamicOptionsMap,
   AllModuleMixins,
-  MixinOptions,
+  StaticMixinOptions,
 } from '#decorators/module-mixins.js';
 export { rootModule, RootModuleOptions } from '#decorators/root-module.js';
 export { defaultExtensionProviders } from '#extension/default-extensions-providers.js';
