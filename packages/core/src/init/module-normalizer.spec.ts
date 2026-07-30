@@ -1,6 +1,6 @@
 import { featureModule } from '#decorators/feature-module.js';
 import { MixinOptions, ModuleMixin, MixinDecorator } from '#decorators/module-mixins.js';
-import { NormalizedMixinMeta, getProxyForMixinMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
+import { BaseNormalizedModuleMeta, getProxyForMixinMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { rootModule, RootModuleOptions } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
 import { Extension } from '#extension/extension-types.js';
@@ -583,7 +583,7 @@ describe('ModuleNormalizer', () => {
       appends?: ({ module: ModRefId } & AnyObj)[];
     }
 
-    class SomeMixinMeta extends NormalizedMixinMeta {
+    class SomeMixinMeta extends BaseNormalizedModuleMeta {
       normalizedModuleMeta?: NormalizedModuleMeta;
       mixinDecoratorOptions?: SomeMixinOptions;
       flag?: boolean;
@@ -879,7 +879,7 @@ describe('ModuleNormalizer', () => {
   });
 
   describe('propagateParentHooks', () => {
-    class PropagateMixinMeta extends NormalizedMixinMeta {
+    class PropagateMixinMeta extends BaseNormalizedModuleMeta {
       propagated?: boolean;
     }
 

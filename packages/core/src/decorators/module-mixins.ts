@@ -9,7 +9,7 @@ import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import type { featureModule } from './feature-module.js';
 import type { rootModule } from './root-module.js';
 import { AppModuleMixins, type AppProviders } from '#types/metadata-per-mod.js';
-import { type NormalizedModuleMeta, getProxyForMixinMeta, NormalizedMixinMeta } from '#init/normalized-meta.js';
+import { type NormalizedModuleMeta, getProxyForMixinMeta, BaseNormalizedModuleMeta } from '#init/normalized-meta.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 
 export type AllModuleMixins = Map<AnyFn, Omit<ModuleMixin, 'moduleOptions'>>;
@@ -63,7 +63,7 @@ export class ModuleMixin<T1 extends MixinOptions = MixinOptions> {
    * to the {@link featureModule} or {@link rootModule} decorator.
    */
   normalize(normalizedModuleMeta: NormalizedModuleMeta) {
-    return getProxyForMixinMeta(normalizedModuleMeta, NormalizedMixinMeta);
+    return getProxyForMixinMeta(normalizedModuleMeta, BaseNormalizedModuleMeta);
   }
 
   /**
@@ -71,7 +71,7 @@ export class ModuleMixin<T1 extends MixinOptions = MixinOptions> {
    *
    * @param meta Metadata returned by the {@link normalize | this.normalize()} method.
    */
-  getModulesToScan(meta?: NormalizedMixinMeta): ModRefId[] {
+  getModulesToScan(meta?: BaseNormalizedModuleMeta): ModRefId[] {
     return [];
   }
 
@@ -117,20 +117,20 @@ export class ModuleMixin<T1 extends MixinOptions = MixinOptions> {
   /**
    * This method must return a mutable array of {@link Provider} arrays, which can be overridden during testing.
    */
-  getProvidersToOverride(meta: NormalizedMixinMeta): Provider[][] {
+  getProvidersToOverride(meta: BaseNormalizedModuleMeta): Provider[][] {
     return [];
   }
 }
 
 export interface MixinMetaMap {
-  set<T extends NormalizedMixinMeta>(decorator: MixinDecorator<any, any, T>, meta: T): this;
-  get<T extends NormalizedMixinMeta>(decorator: MixinDecorator<any, any, T>): T | undefined;
-  forEach<T extends NormalizedMixinMeta>(callbackfn: (meta: T, decorator: AnyFn, map: Map<AnyFn, T>) => void, thisArg?: any): void;
+  set<T extends BaseNormalizedModuleMeta>(decorator: MixinDecorator<any, any, T>, meta: T): this;
+  get<T extends BaseNormalizedModuleMeta>(decorator: MixinDecorator<any, any, T>): T | undefined;
+  forEach<T extends BaseNormalizedModuleMeta>(callbackfn: (meta: T, decorator: AnyFn, map: Map<AnyFn, T>) => void, thisArg?: any): void;
   /**
    * Returns an iterable of keys in the map
    */
   keys(): MapIterator<AnyFn>;
-  values<T extends NormalizedMixinMeta>(): MapIterator<T>;
+  values<T extends BaseNormalizedModuleMeta>(): MapIterator<T>;
   readonly size: number;
   /**
    * @returns boolean indicating whether an element with the specified key exists or not.

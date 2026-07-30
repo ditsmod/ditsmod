@@ -38,7 +38,7 @@ export { normalizeExtensionConfig } from './extension/extension-providers-and-co
 export { isExtensionProvider, isExtensionConfig } from '#extension/type-guards.js';
 export { ModuleInfo } from '#types/module-extract.js';
 export { ExtensionStatistics } from '#extension/counter.js';
-export { NormalizedModuleMeta, NormalizedMixinMeta, getProxyForMixinMeta } from '#init/normalized-meta.js';
+export { NormalizedModuleMeta, BaseNormalizedModuleMeta, getProxyForMixinMeta } from '#init/normalized-meta.js';
 export { ProvidersByLevel } from '#types/providers-metadata.js';
 export { ConsoleLogger } from '#logger/console-logger.js';
 export { ExtensionContext } from '#extension/extensions-context.js';

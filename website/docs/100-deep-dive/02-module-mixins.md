@@ -23,7 +23,7 @@ import {
   Reflector,
   MixinOptions,
   DynamicModuleOptions,
-  NormalizedMixinMeta,
+  BaseNormalizedModuleMeta,
   NormalizedModuleMeta,
   RootDecoratorOptions,
 } from '@ditsmod/core';
@@ -55,7 +55,7 @@ interface MixinOpts extends DynamicModuleOptions {
 /**
  * Module mixins трансформують об'єкт ExtMixinDecorOpts на об'єкт цього типу.
  */
-interface MixinMeta extends NormalizedMixinMeta {
+interface MixinMeta extends BaseNormalizedModuleMeta {
   normalizedModuleMeta: NormalizedModuleMeta;
   mixinDecoratorOptions: RootDecoratorOptions;
 }

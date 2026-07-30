@@ -9,7 +9,7 @@ import type { ExtensionGroupToken } from '#di/key-registry.js';
 import type { MultiProvider } from '#di/utils.js';
 import { objectKeys } from '#utils/object-keys.js';
 
-export class NormalizedMixinMeta<A extends AnyObj = AnyObj> {
+export class BaseNormalizedModuleMeta<A extends AnyObj = AnyObj> {
   /**
    * The module ID.
    */
@@ -116,7 +116,7 @@ export class NormalizedMixinMeta<A extends AnyObj = AnyObj> {
  * `MixinMeta` refers to the extended interface of normalized data that provides module mixins. This is done to simplify
  * synchronization between {@link NormalizedModuleMeta} and the metadata from mixin decorators.
  */
-export function getProxyForMixinMeta<T extends NormalizedMixinMeta>(
+export function getProxyForMixinMeta<T extends BaseNormalizedModuleMeta>(
   normalizedModuleMeta: NormalizedModuleMeta,
   MixinMetaClass: Class<T>,
 ): T {
@@ -148,7 +148,7 @@ export function getProxyForMixinMeta<T extends NormalizedMixinMeta>(
 export class NormalizedModuleMeta<
   TypeOfModule extends AnyObj = AnyObj,
   ExtensionMeta extends AnyObj = AnyObj,
-> extends NormalizedMixinMeta<ExtensionMeta> {
+> extends BaseNormalizedModuleMeta<ExtensionMeta> {
   /**
    * Metadata returned by the decorator transformer for the module.
    */

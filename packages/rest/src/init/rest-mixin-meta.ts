@@ -1,5 +1,5 @@
 import type { AnyObj, StaticModule, Class, ModRefId } from '@ditsmod/core';
-import { Provider, MultiProvider, NormalizedMixinMeta } from '@ditsmod/core';
+import { Provider, MultiProvider, BaseNormalizedModuleMeta } from '@ditsmod/core';
 
 import type { NormalizedGuard } from '#interceptors/guard.js';
 import type { AppendsWithOptions } from '#init/rest-mixin-raw-meta.js';
@@ -10,7 +10,7 @@ class NormalizedParams {
   guards: NormalizedGuard[] = [];
 }
 
-export class RestMixinMeta extends NormalizedMixinMeta {
+export class RestMixinMeta extends BaseNormalizedModuleMeta {
   appendsWithOpts: AppendsWithOptions[] = [];
   appendsModules: StaticModule[] = [];
   controllers: Class<Record<string | symbol, any>>[] = [];

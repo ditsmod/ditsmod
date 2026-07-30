@@ -14,7 +14,7 @@ import type {
   SystemLogMediator,
   ForwardRefFn,
 } from '@ditsmod/core';
-import { Reflector, ModuleMixin, NormalizedMixinMeta, AppModuleMixins } from '@ditsmod/core';
+import { Reflector, ModuleMixin, BaseNormalizedModuleMeta, AppModuleMixins } from '@ditsmod/core';
 
 import { TrpcModule } from '../trpc.module.js';
 import { TrpcModuleNormalizer } from '#init/trpc-module-normalizer.js';
@@ -27,7 +27,7 @@ class NormalizedParams {
   guards: NormalizedGuard[] = [];
 }
 
-export class TrpcMixinMeta extends NormalizedMixinMeta {
+export class TrpcMixinMeta extends BaseNormalizedModuleMeta {
   appendsModules: StaticModule[] = [];
   controllers: Class[] = [];
   params = new NormalizedParams();

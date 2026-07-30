@@ -4,7 +4,7 @@ import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj } from '#types/mix.js';
 import { StaticModule, ModRefId } from '#decorators/module-decorator-options.js';
 import { DynamicModule } from '#decorators/module-decorator-options.js';
-import { NormalizedMixinMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
+import { BaseNormalizedModuleMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { ModuleGraphState } from '#init/module-graph-state.js';
 import { isDynamicModule, isRootModule } from '#decorators/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
@@ -54,7 +54,7 @@ export class ModuleManager {
     'importedDynamicModules',
     'exportedStaticModules',
     'exportedDynamicModules',
-  ] satisfies (keyof NormalizedMixinMeta)[];
+  ] satisfies (keyof BaseNormalizedModuleMeta)[];
 
   get providersPerApp(): Provider[] {
     return this.state.providersPerApp;

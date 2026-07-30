@@ -7,7 +7,7 @@ import { Extension } from '#extension/extension-types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleId, ModuleManager } from './module-manager.js';
 import { AllModuleMixins, MixinOptions, MixinDecorator, ModuleMixin } from '#decorators/module-mixins.js';
-import { NormalizedMixinMeta, NormalizedModuleMeta, getProxyForMixinMeta } from '#init/normalized-meta.js';
+import { BaseNormalizedModuleMeta, NormalizedModuleMeta, getProxyForMixinMeta } from '#init/normalized-meta.js';
 import { ModuleGraphState } from '#init/module-graph-state.js';
 import { ModRefId } from '#decorators/module-decorator-options.js';
 import { DynamicModule } from '#decorators/module-decorator-options.js';
@@ -633,7 +633,7 @@ describe('ModuleManager', () => {
       interface RootMixinOptions extends MixinOptions<{ path?: string }> {
         one?: string;
       }
-      class MixinMeta extends NormalizedMixinMeta {
+      class MixinMeta extends BaseNormalizedModuleMeta {
         path?: string;
       }
       class ModuleMixin1 extends ModuleMixin<RootMixinOptions> {
@@ -924,7 +924,7 @@ describe('ModuleManager', () => {
         one?: string;
         two?: string;
       }
-      interface MixinMeta extends NormalizedMixinMeta {
+      interface MixinMeta extends BaseNormalizedModuleMeta {
         path?: string;
       }
       const mixinSome: MixinDecorator<RootModuleOptions, { path?: string }, MixinMeta> = Reflector.makeClassDecorator(
@@ -964,7 +964,7 @@ describe('ModuleManager', () => {
         one?: string;
         two?: string;
       }
-      interface MixinMeta extends NormalizedMixinMeta {
+      interface MixinMeta extends BaseNormalizedModuleMeta {
         path?: string;
       }
 
@@ -999,7 +999,7 @@ describe('ModuleManager', () => {
       interface RootModuleOptions extends MixinOptions<{ path?: string }> {
         one?: string;
       }
-      interface MixinMeta extends NormalizedMixinMeta {
+      interface MixinMeta extends BaseNormalizedModuleMeta {
         path?: string;
       }
 
