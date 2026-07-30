@@ -1,13 +1,4 @@
-import {
-  FactoryProvider,
-  injectable,
-  Extension,
-  HttpMethod,
-  Provider,
-  Reflector,
-  Class,
-  ResolvedModuleMeta,
-} from '@ditsmod/core';
+import { FactoryProvider, injectable, Extension, HttpMethod, Provider, Reflector, Class, ResolvedModuleMeta } from '@ditsmod/core';
 import {
   AppOptions,
   ControllerMeta,
@@ -36,10 +27,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
     super(appOptions, resolvedModuleMeta);
   }
 
-  protected override getControllersMetadata(
-    prefixPerApp: string,
-    restResolvedModuleMeta: RestResolvedModuleMeta,
-  ) {
+  protected override getControllersMetadata(prefixPerApp: string, restResolvedModuleMeta: RestResolvedModuleMeta) {
     const { normalizedModuleMeta, prefixPerMod, applyControllers, meta } = restResolvedModuleMeta;
 
     const oasOptions = normalizedModuleMeta.extensionsMeta.oasOptions as OasOptions;
@@ -149,12 +137,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
     };
   }
 
-  protected bindParams(
-    httpMethod: HttpMethod,
-    path: string,
-    paramsNonPath: XParameterObject[],
-    param: XParameterObject,
-  ) {
+  protected bindParams(httpMethod: HttpMethod, path: string, paramsNonPath: XParameterObject[], param: XParameterObject) {
     const boundToLastParam: boolean = param[BOUND_TO_PATH_PARAM];
     const boundToMethod = param[BOUND_TO_HTTP_METHOD];
     if (boundToLastParam !== undefined && boundToMethod) {
@@ -176,9 +159,7 @@ export class OpenapiRouteExtension extends RestRouteExtension implements Extensi
 
   protected boundToPathOk(path: string, boundToLastParam: boolean) {
     const prefixLastPart = path?.split('/').slice(-1)[0];
-    return (
-      (prefixLastPart?.charAt(0) == ':' && boundToLastParam) || (prefixLastPart?.charAt(0) != ':' && !boundToLastParam)
-    );
+    return (prefixLastPart?.charAt(0) == ':' && boundToLastParam) || (prefixLastPart?.charAt(0) != ':' && !boundToLastParam);
   }
 
   /**

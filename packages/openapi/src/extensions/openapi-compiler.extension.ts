@@ -153,12 +153,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
     operationObject.responses = { ...(operationObject.responses || {}), ...responses };
   }
 
-  protected applyNonOasRoute(
-    path: string,
-    paths: XPathsObject,
-    httpMethod: HttpMethod,
-    normalizedGuards: NormalizedGuard[],
-  ) {
+  protected applyNonOasRoute(path: string, paths: XPathsObject, httpMethod: HttpMethod, normalizedGuards: NormalizedGuard[]) {
     httpMethod = httpMethod.toLowerCase() as HttpMethod;
     const parameters: XParameterObject[] = [];
     path = `/${path}`.replace(/:([^/]+)/g, (_, name) => {

@@ -86,9 +86,5 @@ interface OasRouteOptions {
     guards: GuardItem[],
     interceptorsOrOperationObj?: XOperationObject | Class<HttpInterceptor>[],
   ): any;
-  (
-    httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]],
-    path?: string,
-    guardsOrOperationObj?: XOperationObject | GuardItem[],
-  ): any;
+  (httpMethod: HttpMethod | [HttpMethod, ...HttpMethod[]], path?: string, guardsOrOperationObj?: XOperationObject | GuardItem[]): any;
 }

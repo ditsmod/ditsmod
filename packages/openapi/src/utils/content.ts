@@ -1,12 +1,6 @@
 import type { AnyObj } from '@ditsmod/core';
 import { Reflector, Class } from '@ditsmod/core';
-import type {
-  SchemaObject,
-  SchemaObjectType,
-  XEncodingObject,
-  XMediaTypeObject,
-  XSchemaObject,
-} from '@ts-stack/openapi-spec';
+import type { SchemaObject, SchemaObjectType, XEncodingObject, XMediaTypeObject, XSchemaObject } from '@ts-stack/openapi-spec';
 
 import { REQUIRED } from '#constants';
 import type { AnyEnum, CustomType } from '#decorators/property.js';
@@ -67,13 +61,7 @@ export class Content {
       const propertyMeta = modelMeta[property].decorators.find(isProperty);
       if (propertyMeta && (!propertyMeta.value.schema?.type || propertyMeta.value.schema.type == 'array')) {
         const propertyType = modelMeta[property].type;
-        this.checkTypeDefinitionConflict(
-          model.name,
-          property,
-          propertyType,
-          schema.type,
-          propertyMeta.value.customType,
-        );
+        this.checkTypeDefinitionConflict(model.name, property, propertyType, schema.type, propertyMeta.value.customType);
         if (!schema.properties) {
           schema.properties = {};
         }
@@ -232,9 +220,7 @@ export class Content {
       schema = this.getSchema(customItem);
     }
     if (whatIs == 'object') {
-      const items = Array.isArray(propertySchema.items)
-        ? propertySchema.items
-        : (propertySchema.items?.items! as SchemaObject[]);
+      const items = Array.isArray(propertySchema.items) ? propertySchema.items : (propertySchema.items?.items! as SchemaObject[]);
 
       if (description) {
         items.push({
