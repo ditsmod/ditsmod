@@ -243,12 +243,12 @@ export class UnknownExport extends CustomError {
   }
 }
 /**
- * `Exporting "${tokenName}" from "${moduleName}" failed: all extensions must have stage1(), stage2() or stage3() method.`
+ * `Exporting "${tokenName}" from "${moduleName}" failed: all extensions must have stage1() or stage2(), or stage3() method.`
  */
 export class InvalidExtension extends CustomError {
   constructor(moduleName: string, tokenName: string) {
     super({
-      msg1: `Exporting "${tokenName}" from "${moduleName}" failed: all extensions must have stage1(), stage2() or stage3() method.`,
+      msg1: `Exporting "${tokenName}" from "${moduleName}" failed: all extensions must have stage1() or stage2(), or stage3() method.`,
       level: 'fatal',
     });
   }

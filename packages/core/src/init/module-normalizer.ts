@@ -6,7 +6,7 @@ import type { ModRefId, StaticModule } from '#decorators/module-decorator-option
 import type { AnyFn, Provider, Class } from '#di/top/types-and-models.js';
 import type { DynamicModule, FeatureModuleOptions } from '#decorators/module-decorator-options.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
-import type { Extension } from '#extension/extension-types.js';
+import type { ExtensionClass } from '#extension/extension-types.js';
 import type { AllModuleMixins, MixinOptions, ModuleMixin } from '#decorators/module-mixins.js';
 import type { ProviderBuilder } from '#utils/providers.js';
 import { isProvider } from '#utils/type-guards.js';
@@ -175,9 +175,7 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeResolvedCollisions(
-    staticModuleOptions: MixinOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>,
-  ) {
+  protected normalizeResolvedCollisions(staticModuleOptions: MixinOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>) {
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
       const resolvedCollisionKey = `resolvedCollisionsPer${level}` as const;
       if (staticModuleOptions[resolvedCollisionKey]) {
@@ -311,61 +309,55 @@ export class ModuleNormalizer {
       if (!isExtensionConfig(extensionClassOrConfig)) {
         extensionClassOrConfig = { extension: extensionClassOrConfig } as BaseExtensionConfig;
       }
-      const extProvidersAndConfigs = normalizeExtensionConfig(extensionClassOrConfig);
-      extProvidersAndConfigs.providers.forEach((p) =>
-        this.checkStageMethodsForExtension(this.normalizedModuleMeta.name, p),
-      );
-      if (extProvidersAndConfigs.config) {
-        this.normalizedModuleMeta.extensionConfigs.push(extProvidersAndConfigs.config);
+      const normalizedExtensionConfig = normalizeExtensionConfig(extensionClassOrConfig);
+      normalizedExtensionConfig.providers.forEach((p) => this.checkStageMethodsForExtension(p));
+      if (normalizedExtensionConfig.config) {
+        this.normalizedModuleMeta.extensionConfigs.push(normalizedExtensionConfig.config);
       }
-      if (extProvidersAndConfigs.exportedConfig) {
-        this.normalizedModuleMeta.exportedExtensionConfigs.push(extProvidersAndConfigs.exportedConfig);
+      if (normalizedExtensionConfig.exportedConfig) {
+        this.normalizedModuleMeta.exportedExtensionConfigs.push(normalizedExtensionConfig.exportedConfig);
       }
-      this.normalizedModuleMeta.extensionProviders.push(...extProvidersAndConfigs.providers);
-      this.normalizedModuleMeta.exportedExtensionProviders.push(...extProvidersAndConfigs.exportedProviders);
-      extProvidersAndConfigs.groupTokensMap?.forEach((groupToken, ext) => {
-        if (!this.normalizedModuleMeta.extensionGroupTokensMap.has(ext)) {
-          this.normalizedModuleMeta.extensionGroupTokensMap.set(ext, groupToken);
-          this.normalizedModuleMeta.extensionProviders.unshift({ token: groupToken, useToken: ext, multi: true });
+      this.normalizedModuleMeta.extensionProviders.push(...normalizedExtensionConfig.providers);
+      this.normalizedModuleMeta.exportedExtensionProviders.push(...normalizedExtensionConfig.exportedProviders);
+      normalizedExtensionConfig.groupTokensMap?.forEach((groupToken, ExtensionCls) => {
+        if (!this.normalizedModuleMeta.extensionGroupTokensMap.has(ExtensionCls)) {
+          this.normalizedModuleMeta.extensionGroupTokensMap.set(ExtensionCls, groupToken);
+          this.normalizedModuleMeta.extensionProviders.unshift({ token: groupToken, useToken: ExtensionCls, multi: true });
         }
       });
-      extProvidersAndConfigs.exportedGroupTokensMap?.forEach((groupToken, ext) => {
-        this.normalizedModuleMeta.exportedExtensionGroupTokensMap.set(ext, groupToken);
+      normalizedExtensionConfig.exportedGroupTokensMap?.forEach((groupToken, ExtensionCls) => {
+        if (!this.normalizedModuleMeta.exportedExtensionGroupTokensMap.has(ExtensionCls)) {
+          this.normalizedModuleMeta.exportedExtensionGroupTokensMap.set(ExtensionCls, groupToken);
+        }
       });
     });
   }
 
-  protected checkStageMethodsForExtension(moduleName: string, extensionsProvider: Provider) {
+  protected checkStageMethodsForExtension(extensionsProvider: Provider) {
     const np = normalizeProviders([extensionsProvider])[0];
-    let extensionClass: Class<Extension> | undefined;
+    let ExtensionCls: ExtensionClass | undefined;
     if (isClassProvider(np)) {
-      extensionClass = resolveForwardRef(np.useClass);
+      ExtensionCls = resolveForwardRef(np.useClass);
     } else if (isTokenProvider(np) && np.useToken instanceof Function) {
-      extensionClass = np.useToken;
+      ExtensionCls = resolveForwardRef(np.useToken);
     } else if (isValueProvider(np) && np.useValue.constructor instanceof Function) {
-      extensionClass = np.useValue.constructor;
+      ExtensionCls = np.useValue.constructor;
     }
 
     if (
-      !extensionClass ||
-      (typeof extensionClass.prototype?.stage1 != 'function' &&
-        typeof extensionClass.prototype?.stage2 != 'function' &&
-        typeof extensionClass.prototype?.stage3 != 'function')
+      !ExtensionCls ||
+      (typeof ExtensionCls.prototype?.stage1 != 'function' &&
+        typeof ExtensionCls.prototype?.stage2 != 'function' &&
+        typeof ExtensionCls.prototype?.stage3 != 'function')
     ) {
       const token = getToken(extensionsProvider);
-      throw new InvalidExtension(moduleName, token.name || token);
+      throw new InvalidExtension(this.normalizedModuleMeta.name, token.name || token);
     }
   }
 
   protected checkReexportModules() {
-    const imports = [
-      ...this.normalizedModuleMeta.importedStaticModules,
-      ...this.normalizedModuleMeta.importedDynamicModules,
-    ];
-    const exports = [
-      ...this.normalizedModuleMeta.exportedStaticModules,
-      ...this.normalizedModuleMeta.exportedDynamicModules,
-    ];
+    const imports = [...this.normalizedModuleMeta.importedStaticModules, ...this.normalizedModuleMeta.importedDynamicModules];
+    const exports = [...this.normalizedModuleMeta.exportedStaticModules, ...this.normalizedModuleMeta.exportedDynamicModules];
 
     exports.forEach((modRefId) => {
       if (!imports.includes(modRefId)) {
