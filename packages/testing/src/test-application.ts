@@ -1,12 +1,4 @@
-import type {
-  StaticModule,
-  ProviderBuilder,
-  ExtensionClass,
-  Class,
-  UnionToIntersection,
-  ModRefId,
-  Provider,
-} from '@ditsmod/core';
+import type { StaticModule, ProviderBuilder, ExtensionClass, Class, UnionToIntersection, ModRefId, Provider } from '@ditsmod/core';
 import { SystemLogMediator } from '@ditsmod/core';
 import type { AppOptions } from '@ditsmod/rest';
 import { RestApplication } from '@ditsmod/rest';

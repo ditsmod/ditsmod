@@ -1,9 +1,17 @@
-import type { Provider, ProviderBuilder, ExtensionGroupMeta, PartialExtensionGroupMeta, Extension, Class, ForwardRefFn } from '@ditsmod/core';
+import type {
+  Provider,
+  ProviderBuilder,
+  ExtensionGroupMeta,
+  PartialExtensionGroupMeta,
+  Extension,
+  Class,
+  ForwardRefFn,
+} from '@ditsmod/core';
 import { TestRestApplication } from './test-application.js';
 
 export type Level = 'App' | 'Mod' | 'Rou' | 'Req';
 
-export class ProvidersByLevel <T = ProviderBuilder | (Provider | ForwardRefFn<Provider>)[]> {
+export class ProvidersByLevel<T = ProviderBuilder | (Provider | ForwardRefFn<Provider>)[]> {
   providersPerApp = [] as T;
   providersPerMod = [] as T;
   providersPerRou = [] as T;
