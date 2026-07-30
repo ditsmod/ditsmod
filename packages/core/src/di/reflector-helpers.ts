@@ -3,10 +3,7 @@ import type { DecoratorMeta } from './top/decorator-and-value.js';
 import type { AbstractClass, Class, ClassMeta } from './top/types-and-models.js';
 import { WeakMap26 } from './shim/weak-map-26.js';
 
-export const methodParamsMap = new WeakMap26<
-  Class | AbstractClass,
-  Map<string | symbol, (DecoratorMeta<any>[] | null)[]>
->();
+export const methodParamsMap = new WeakMap26<Class | AbstractClass, Map<string | symbol, (DecoratorMeta<any>[] | null)[]>>();
 export function getMethodParamMeta(
   Cls: Class | AbstractClass,
   propertyKey: string | symbol,
@@ -32,10 +29,7 @@ export const propMetaMap = new WeakMap26<Class | AbstractClass, Record<string | 
 export const methodWithOptsMap = new WeakMap26<Class | AbstractClass, Set<string | symbol>>();
 export const constructorParamsMap = new WeakMap26<Class | AbstractClass, (DecoratorMeta<any>[] | null)[]>();
 
-export type ClassMetaChain<DecorValue = any, Proto extends AnyObj = AnyObj> = Map<
-  Class,
-  ClassMeta<DecorValue, Proto> | undefined
->;
+export type ClassMetaChain<DecorValue = any, Proto extends AnyObj = AnyObj> = Map<Class, ClassMeta<DecorValue, Proto> | undefined>;
 export type KeyOfClass<Proto extends AnyObj> = keyof Proto | 'constructor' | symbol | (string & {});
 /**
  * Attention: These regex has to hold even if the code is minified!

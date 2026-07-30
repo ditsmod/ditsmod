@@ -80,9 +80,7 @@ export function newArray<T>(size: number, value?: T): T[] {
   return list;
 }
 
-export function isDecoratorMeta(
-  decoratorMeta?: DecoratorMeta | Class | InjectionToken,
-): decoratorMeta is DecoratorMeta {
+export function isDecoratorMeta(decoratorMeta?: DecoratorMeta | Class | InjectionToken): decoratorMeta is DecoratorMeta {
   return (decoratorMeta as DecoratorMeta)?.decorator !== undefined && Boolean(decoratorMeta?.hasOwnProperty('value'));
 }
 
@@ -143,7 +141,5 @@ export function isMultiProvider(provider?: Provider): provider is MultiProvider 
  * ```
  */
 export function isNormalizedProvider(provider?: Provider | ModRefId): provider is NormalizedProvider {
-  return (
-    isValueProvider(provider) || isClassProvider(provider) || isTokenProvider(provider) || isFactoryProvider(provider)
-  );
+  return isValueProvider(provider) || isClassProvider(provider) || isTokenProvider(provider) || isFactoryProvider(provider);
 }

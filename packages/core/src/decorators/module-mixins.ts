@@ -125,10 +125,7 @@ export class ModuleMixin<T1 extends MixinOptions = MixinOptions> {
 export interface MixinMetaMap {
   set<T extends NormalizedMixinMeta>(decorator: MixinDecorator<any, any, T>, meta: T): this;
   get<T extends NormalizedMixinMeta>(decorator: MixinDecorator<any, any, T>): T | undefined;
-  forEach<T extends NormalizedMixinMeta>(
-    callbackfn: (meta: T, decorator: AnyFn, map: Map<AnyFn, T>) => void,
-    thisArg?: any,
-  ): void;
+  forEach<T extends NormalizedMixinMeta>(callbackfn: (meta: T, decorator: AnyFn, map: Map<AnyFn, T>) => void, thisArg?: any): void;
   /**
    * Returns an iterable of keys in the map
    */

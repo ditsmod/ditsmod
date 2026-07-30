@@ -11,12 +11,7 @@ import { StaticModule, ModRefId } from '#decorators/module-decorator-options.js'
 import { getImportedProviders, getImportedTokens } from '#utils/get-imports.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
-import {
-  LevelMultiProviderCollision,
-  UnknownExport,
-  NormalizationFailure,
-  ProvidersCollision,
-} from '#error/core-errors.js';
+import { LevelMultiProviderCollision, UnknownExport, NormalizationFailure, ProvidersCollision } from '#error/core-errors.js';
 import { ShallowModuleImports } from './types.js';
 import { injectable } from '#di/decorators.js';
 import type { FactoryProvider, Provider } from '#di/top/types-and-models.js';
@@ -384,13 +379,7 @@ describe('ShallowModulesImporter', () => {
       expect(tokensPerMod).toEqual([Provider0]);
 
       const mod2 = mock.shallowModuleImportsMap.get(Module2);
-      expect(mod2?.normalizedModuleMeta.providersPerMod).toEqual([
-        Provider4,
-        Provider5,
-        Provider6,
-        Provider7,
-        Provider8,
-      ]);
+      expect(mod2?.normalizedModuleMeta.providersPerMod).toEqual([Provider4, Provider5, Provider6, Provider7, Provider8]);
 
       const tokensPerMod2 = getImportedTokens(mod2?.baseImportRegistry.perMod);
       expect(tokensPerMod2).toEqual([Provider0, Provider1, Provider2, Provider3]);
@@ -456,10 +445,7 @@ describe('ShallowModulesImporter', () => {
       class Module1 {}
 
       @featureModule({
-        providersPerMod: [
-          Provider1,
-          { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
-        ],
+        providersPerMod: [Provider1, { token: Provider2, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }],
         exports: [Provider1, Provider2],
       })
       class Module2 {}

@@ -355,9 +355,7 @@ expect(injector.get(Car) instanceof Car).toBe(true);
     if (cache) {
       return cache;
     }
-    const { paramsMeta, hasParentParams, recipe } = ParentParams.getParamsMetaAndRecipe([
-      ...classPropMeta.paramChain!.values(),
-    ]);
+    const { paramsMeta, hasParentParams, recipe } = ParentParams.getParamsMetaAndRecipe([...classPropMeta.paramChain!.values()]);
     if (paramsMeta.includes(null)) {
       throw new NoAnnotation(Cls, paramsMeta, propertyKey, hasParentParams, recipe);
     }
@@ -569,12 +567,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
   get<T>(token: InjectionToken<T>, defaultValue?: T, input?: any, visibility?: Visibility): T;
   get<T extends AnyFn>(token: T, defaultValue?: T, input?: any, visibility?: Visibility): ReturnType<T>;
   get(token: NonNullable<unknown>, defaultValue?: any, input?: any, visibility?: Visibility): any;
-  get(
-    token: NonNullable<unknown>,
-    defaultValue: any = NoDefaultValue,
-    input?: any,
-    visibility: Visibility = null,
-  ): any {
+  get(token: NonNullable<unknown>, defaultValue: any = NoDefaultValue, input?: any, visibility: Visibility = null): any {
     return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), visibility, defaultValue, input);
   }
 
@@ -590,12 +583,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    *
    * [1]: https://ditsmod.github.io/en/basic-components/dependency-injection/#inject-and-input
    */
-  getAny<T = any>(
-    token: NonNullable<unknown>,
-    defaultValue: any = NoDefaultValue,
-    input?: any,
-    visibility: Visibility = null,
-  ): T {
+  getAny<T = any>(token: NonNullable<unknown>, defaultValue: any = NoDefaultValue, input?: any, visibility: Visibility = null): T {
     return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), visibility, defaultValue, input);
   }
 
@@ -739,12 +727,7 @@ expect(car).not.toBe(injector.instantiateResolved(carProvider));
     }
   }
 
-  protected instantiate(
-    token: any,
-    pathTracer: PathTracer,
-    resolvedFactory: ResolvedFactory,
-    inputCtx?: NonNullable<unknown>,
-  ): any {
+  protected instantiate(token: any, pathTracer: PathTracer, resolvedFactory: ResolvedFactory, inputCtx?: NonNullable<unknown>): any {
     const deps = resolvedFactory.dependencies.map((dep) => {
       if (dep.dualKey.token === input) return inputCtx;
       const result = this.selectInjectorAndGet(

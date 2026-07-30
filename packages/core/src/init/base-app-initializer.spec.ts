@@ -12,12 +12,7 @@ import { Provider } from '#di/top/types-and-models.js';
 import { Extension, ExtensionCounters } from '#extension/extension-types.js';
 import { ProviderBuilder } from '#utils/providers.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
-import {
-  AppMultiProviderCollision,
-  ModuleNotImported,
-  ProvidersCollision,
-  AppProviderMissingToken,
-} from '#error/core-errors.js';
+import { AppMultiProviderCollision, ModuleNotImported, ProvidersCollision, AppProviderMissingToken } from '#error/core-errors.js';
 import { injectable } from '#di/decorators.js';
 
 describe('BaseAppInitializer', () => {

@@ -52,12 +52,7 @@ class Class1 extends Class0 {
 
 @classDecoratorFactory()
 class Class2 extends Class1 {
-  constructor(
-    param1: Class2Param1,
-    @inject(ParentParams) parentParams: any[],
-    param2: Class2Param2,
-    parentParams2: ParentParams,
-  ) {
+  constructor(param1: Class2Param1, @inject(ParentParams) parentParams: any[], param2: Class2Param2, parentParams2: ParentParams) {
     // @ts-expect-error auto-injected
     super(...parentParams);
   }
@@ -95,12 +90,7 @@ describe('classMeta.constructor.params', () => {
     expect(map?.get(Class3)).toEqual<ParameterMeta[]>([[ParentParams], [Class3Param1], [Class3Param2]]);
 
     expect(map?.has(Class2)).toBe(true);
-    expect(map?.get(Class2)).toEqual<ParameterMeta[]>([
-      [Class2Param1],
-      [Array, expect.any(Object)],
-      [Class2Param2],
-      [ParentParams],
-    ]);
+    expect(map?.get(Class2)).toEqual<ParameterMeta[]>([[Class2Param1], [Array, expect.any(Object)], [Class2Param2], [ParentParams]]);
 
     expect(map?.has(Class1)).toBe(true);
     expect(map?.get(Class1)).toEqual<ParameterMeta[]>([[Class1Param1], [Class1Param2], [ParentParams]]);
@@ -120,9 +110,7 @@ describe('ParentParams', () => {
   describe('getParamsMetaAndRecipe()', () => {
     it('returns a one-dimensional array of params, without ParentParams', () => {
       const classMeta = Reflector.collectMeta(Class3);
-      const { paramsMeta, recipe } = ParentParams.getParamsMetaAndRecipe([
-        ...classMeta!.constructor.paramChain!.values(),
-      ]);
+      const { paramsMeta, recipe } = ParentParams.getParamsMetaAndRecipe([...classMeta!.constructor.paramChain!.values()]);
       expect(paramsMeta).toEqual<ParameterMeta[]>([
         [Class2Param1],
         [Class1Param1],

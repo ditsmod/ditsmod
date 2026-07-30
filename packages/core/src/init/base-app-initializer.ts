@@ -244,10 +244,7 @@ export class BaseAppInitializer {
     return mergedShallowModuleImportsMap;
   }
 
-  protected async handleExtensions(
-    resolvedModuleMetaMap: Map<ModRefId, ResolvedModuleMeta>,
-    extensionCounters: ExtensionCounters,
-  ) {
+  protected async handleExtensions(resolvedModuleMetaMap: Map<ModRefId, ResolvedModuleMeta>, extensionCounters: ExtensionCounters) {
     const extensionContext = new ExtensionContext();
 
     for (const [, resolvedModuleMeta] of resolvedModuleMetaMap) {
@@ -274,10 +271,7 @@ export class BaseAppInitializer {
     await this.perAppHandling(resolvedModuleMetaMap, extensionContext);
   }
 
-  protected async perAppHandling(
-    resolvedModuleMetaMap: Map<ModRefId, ResolvedModuleMeta>,
-    extensionContext: ExtensionContext,
-  ) {
+  protected async perAppHandling(resolvedModuleMetaMap: Map<ModRefId, ResolvedModuleMeta>, extensionContext: ExtensionContext) {
     for (const [ExtCls, extensionsMap] of extensionContext.extensionPendingMap) {
       for (const extension of extensionsMap.values()) {
         try {
@@ -292,9 +286,7 @@ export class BaseAppInitializer {
     for (const [modRefId, { normalizedModuleMeta }] of resolvedModuleMetaMap) {
       try {
         this.overrideMetaAfterStage1(normalizedModuleMeta.modRefId, normalizedModuleMeta);
-        normalizedModuleMeta.mixinMeta.forEach((meta) =>
-          this.overrideMetaAfterStage1(normalizedModuleMeta.modRefId, meta),
-        );
+        normalizedModuleMeta.mixinMeta.forEach((meta) => this.overrideMetaAfterStage1(normalizedModuleMeta.modRefId, meta));
       } catch (err: any) {
         const debugModuleName = getDebugClassName(modRefId) || 'unknown';
         throw new MetaOverrideFailure(debugModuleName, err);
@@ -387,10 +379,7 @@ export class BaseAppInitializer {
    *
    * See `TestAppInitializer` in `@ditsmod/testing` for more info.
    */
-  protected overrideMetaBeforeExtensionHanling(
-    normalizedModuleMeta: NormalizedModuleMeta,
-    orderedExtensions: ExtensionClass[],
-  ) {
+  protected overrideMetaBeforeExtensionHanling(normalizedModuleMeta: NormalizedModuleMeta, orderedExtensions: ExtensionClass[]) {
     return { normalizedModuleMeta, orderedExtensions };
   }
 

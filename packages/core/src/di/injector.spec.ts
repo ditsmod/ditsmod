@@ -590,9 +590,7 @@ describe('injector', () => {
         return one;
       }
     }
-    const providers: Provider[] = [
-      { token: 'someToken', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
-    ];
+    const providers: Provider[] = [{ token: 'someToken', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }];
     expect(() => createInjector(providers)).toThrow(new NoAnnotation(ClassWithFactory, [[]], 'method1'));
   });
 
@@ -603,9 +601,7 @@ describe('injector', () => {
       }
     }
 
-    const providers: Provider[] = [
-      { token: 'someToken', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
-    ];
+    const providers: Provider[] = [{ token: 'someToken', useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }];
     const err = new NoAnnotation(ClassWithFactory, [[], []], 'method1');
     expect(() => createInjector(providers)).toThrow(err);
   });
@@ -777,10 +773,7 @@ describe('injector', () => {
         }
       }
 
-      const injector = Injector.resolveAndCreate([
-        { useFactory: [TargetClass, TargetClass.prototype.method1] },
-        Dependecy1,
-      ]);
+      const injector = Injector.resolveAndCreate([{ useFactory: [TargetClass, TargetClass.prototype.method1] }, Dependecy1]);
 
       const targetClass = injector.get(TargetClass.prototype.method1);
       expect(targetClass.dependecy1).toBeInstanceOf(Dependecy1);
@@ -888,10 +881,7 @@ describe('injector', () => {
         return new SportsCar(engine);
       }
     }
-    const injector = createInjector([
-      Engine,
-      { token: Car, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
-    ]);
+    const injector = createInjector([Engine, { token: Car, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }]);
 
     const car: SportsCar = injector.get(Car);
     expect(car).toBeInstanceOf(SportsCar);
@@ -906,10 +896,7 @@ describe('injector', () => {
         return new SportsCar(engine);
       }
     }
-    const injector = createInjector([
-      Engine,
-      { token: Car, useFactory: [ClassWithFactory, ClassWithFactory.prototype[method]] },
-    ]);
+    const injector = createInjector([Engine, { token: Car, useFactory: [ClassWithFactory, ClassWithFactory.prototype[method]] }]);
 
     const car: SportsCar = injector.get(Car);
     expect(car).toBeInstanceOf(SportsCar);
@@ -953,9 +940,7 @@ describe('injector', () => {
 
   it('should show the full path when no provider', () => {
     const injector = createInjector([CarWithDashboard, Engine, Dashboard]);
-    expect(() => injector.get(CarWithDashboard)).toThrow(
-      new NoProvider([DashboardSoftware, Dashboard, CarWithDashboard]),
-    );
+    expect(() => injector.get(CarWithDashboard)).toThrow(new NoProvider([DashboardSoftware, Dashboard, CarWithDashboard]));
   });
 
   it('should show the full path when error happens in a constructor', () => {
@@ -974,10 +959,7 @@ describe('injector', () => {
         return isBroken ? new BrokenEngine() : new Engine();
       }
     }
-    const injector = createInjector([
-      Car,
-      { token: Engine, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
-    ]);
+    const injector = createInjector([Car, { token: Engine, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }]);
 
     const err = new InstantiationError(new Error('Broken Engine'), [Engine, Car]);
     expect(() => injector.get(Car)).toThrow(err);
@@ -1099,9 +1081,7 @@ describe('depedency resolution', () => {
         }
       }
       const parent = Injector.resolveAndCreate([Engine]);
-      const child = parent.resolveAndCreateChild([
-        { token: Car, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] },
-      ]);
+      const child = parent.resolveAndCreateChild([{ token: Car, useFactory: [ClassWithFactory, ClassWithFactory.prototype.method1] }]);
 
       expect(() => child.get(Car)).toThrow(new NoProvider([Engine, Car]));
     });

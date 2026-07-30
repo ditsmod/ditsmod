@@ -29,10 +29,7 @@ export class ConsoleLogger implements Logger {
         args = args.length == 1 ? args[0] : args;
         console.log(level, args);
       } else if (!this.allLevels.includes(this.level)) {
-        console.log(
-          '[ConsoleLogger]',
-          `unexpected level "${this.level}" (available levels: ${this.allLevels.join(', ')})`,
-        );
+        console.log('[ConsoleLogger]', `unexpected level "${this.level}" (available levels: ${this.allLevels.join(', ')})`);
       }
     };
 

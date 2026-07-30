@@ -16,11 +16,7 @@ describe('DeepModulesImporter', () => {
   @injectable()
   class DeepModulesImporterMock extends DeepModulesImporter {
     override dependencyChain: [ModRefId, Provider][] = [];
-    override resolveImportedProviders(
-      targetProviders: NormalizedModuleMeta,
-      baseImportRegistry: BaseImportRegistry,
-      levels: Level[],
-    ) {
+    override resolveImportedProviders(targetProviders: NormalizedModuleMeta, baseImportRegistry: BaseImportRegistry, levels: Level[]) {
       return super.resolveImportedProviders(targetProviders, baseImportRegistry, levels);
     }
     override addToUnfinishedSearchDependencies(module: ModRefId, provider: Provider) {

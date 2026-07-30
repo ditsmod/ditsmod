@@ -646,8 +646,9 @@ describe('ModuleManager', () => {
           return meta;
         }
       }
-      const mixinSome: MixinDecorator<RootMixinOptions, { path?: string }, MixinMeta> =
-        Reflector.makeClassDecorator((d) => new ModuleMixin1(d));
+      const mixinSome: MixinDecorator<RootMixinOptions, { path?: string }, MixinMeta> = Reflector.makeClassDecorator(
+        (d) => new ModuleMixin1(d),
+      );
 
       @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
       class Module1 {}

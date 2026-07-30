@@ -167,9 +167,7 @@ describe('DepsChecker', () => {
         }
       }
 
-      const injector = Injector.resolveAndCreate([
-        { token: Dependecy2, useFactory: [Dependecy2, Dependecy2.prototype.method1] },
-      ]);
+      const injector = Injector.resolveAndCreate([{ token: Dependecy2, useFactory: [Dependecy2, Dependecy2.prototype.method1] }]);
       expect(() => DepsChecker.check(injector, Dependecy2)).toThrow(new NoProvider([Dependecy1, Dependecy2]));
       expect(spy).toHaveBeenCalledTimes(0);
     });
@@ -251,9 +249,7 @@ describe('DepsChecker', () => {
       }
 
       const parent = Injector.resolveAndCreate([Dependecy1]);
-      const child = parent.resolveAndCreateChild([
-        { token: Dependecy2, useFactory: [Dependecy2, Dependecy2.prototype.method1] },
-      ]);
+      const child = parent.resolveAndCreateChild([{ token: Dependecy2, useFactory: [Dependecy2, Dependecy2.prototype.method1] }]);
       expect(() => DepsChecker.check(child, Dependecy2)).not.toThrow();
       expect(spy).toHaveBeenCalledTimes(0);
     });

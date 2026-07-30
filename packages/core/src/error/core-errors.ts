@@ -42,13 +42,7 @@ export class ForbiddenSavingSnapshot extends CustomError {
  * You should add ${tokenNames} to ${resolvedCollisionsPer} in this module.${example}`
  */
 export class ProvidersCollision extends CustomError {
-  constructor(
-    moduleName: string,
-    duplicates: any[],
-    fromModuleNames: string[] = [],
-    level?: string,
-    isExternal?: boolean,
-  ) {
+  constructor(moduleName: string, duplicates: any[], fromModuleNames: string[] = [], level?: string, isExternal?: boolean) {
     const tokens = duplicates.map((p) => p.name || p);
     const tokenNames = tokens.join(', ');
     let fromModules = 'from several modules ';

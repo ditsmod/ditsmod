@@ -96,11 +96,7 @@ export class ExtensionManager {
     return extensionGroupMeta;
   }
 
-  protected updatePerAppState(
-    ExtCls: ExtensionClass,
-    extensionGroupMeta: ExtensionGroupMeta,
-    pendingExtension?: Extension,
-  ) {
+  protected updatePerAppState(ExtCls: ExtensionClass, extensionGroupMeta: ExtensionGroupMeta, pendingExtension?: Extension) {
     const perApp = Boolean(pendingExtension);
     extensionGroupMeta = this.prepareAppExtensionGroupMeta(extensionGroupMeta, perApp);
     if (perApp) {
@@ -113,10 +109,7 @@ export class ExtensionManager {
     return extensionGroupMeta;
   }
 
-  protected prepareAppExtensionGroupMeta(
-    extensionGroupMeta: PartialExtensionGroupMeta,
-    perApp?: boolean,
-  ): ExtensionGroupMeta {
+  protected prepareAppExtensionGroupMeta(extensionGroupMeta: PartialExtensionGroupMeta, perApp?: boolean): ExtensionGroupMeta {
     if (perApp && !extensionGroupMeta.delay) {
       const copyextensionGroupMeta = { ...extensionGroupMeta };
       delete (copyextensionGroupMeta as PartialExtensionGroupMeta).groupData;
@@ -134,8 +127,7 @@ export class ExtensionManager {
    */
   protected addExtensionToPendingList(ExtCls: ExtensionClass, pendingExtension: Extension) {
     const ExtensionClass = pendingExtension.constructor as Class<Extension>;
-    const extensionsMap =
-      this.extensionContext.extensionPendingMap.get(ExtCls) || new Map<Class<Extension>, Extension>();
+    const extensionsMap = this.extensionContext.extensionPendingMap.get(ExtCls) || new Map<Class<Extension>, Extension>();
 
     if (!extensionsMap.has(ExtensionClass)) {
       extensionsMap.set(ExtensionClass, pendingExtension);

@@ -12,10 +12,7 @@ describe('Context', () => {
         return { param1, param2 };
       }
     }
-    const injector = Injector.resolveAndCreate(
-      [...contextProviders, { useFactory: [Service1, Service1.prototype.method1] }],
-      'App',
-    );
+    const injector = Injector.resolveAndCreate([...contextProviders, { useFactory: [Service1, Service1.prototype.method1] }], 'App');
     const context = injector.get(Context) as Context;
     context.set('token1', 'value1');
     context.set('token2', 'value2');

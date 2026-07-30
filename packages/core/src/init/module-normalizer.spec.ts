@@ -445,12 +445,7 @@ describe('ModuleNormalizer', () => {
           { token: forwardRef(() => ModMultiService), useToken: forwardRef(() => ModMultiService), multi: true },
         ],
         resolvedCollisionsPerMod: [[forwardRef(() => ModService), forwardRef(() => ImportedModule)]],
-        exports: [
-          forwardRef(() => ModService),
-          forwardRef(() => ModMultiService),
-          forwardRef(() => ImportedModule),
-          dynamicModule,
-        ],
+        exports: [forwardRef(() => ModService), forwardRef(() => ModMultiService), forwardRef(() => ImportedModule), dynamicModule],
       })
       class AppModule {}
 
@@ -619,8 +614,10 @@ describe('ModuleNormalizer', () => {
       return new SomeModuleMixin(Object.assign({}, data));
     }
 
-    const mixinSome: MixinDecorator<SomeMixinOptions, SomeMixinDynamicOptions, SomeMixinMeta> =
-      Reflector.makeClassDecorator(getModuleMixin, 'mixinSome');
+    const mixinSome: MixinDecorator<SomeMixinOptions, SomeMixinDynamicOptions, SomeMixinMeta> = Reflector.makeClassDecorator(
+      getModuleMixin,
+      'mixinSome',
+    );
 
     it('stores metadata returned by ModuleMixin.normalize() in normalizedModuleMeta.mixinMeta', () => {
       const moduleOptions: SomeMixinOptions = { one: 1, two: 2, flag: true };
@@ -697,10 +694,7 @@ describe('ModuleNormalizer', () => {
       });
 
       @mixinSome({
-        imports: [
-          { dynamicModule: dynamicModule1, providersPerMod: [Service2], extensionsMeta: { two: 2 }, num: 5 },
-          dynamicModule2,
-        ],
+        imports: [{ dynamicModule: dynamicModule1, providersPerMod: [Service2], extensionsMeta: { two: 2 }, num: 5 }, dynamicModule2],
       })
       @rootModule()
       class AppModule {}
@@ -774,12 +768,7 @@ describe('ModuleNormalizer', () => {
       const dynamicModule4: DynamicModule = { module: forwardRef(() => Module4) };
 
       @mixinSome({
-        imports: [
-          forwardRef(() => Module1),
-          dynamicModule2,
-          { module: forwardRef(() => Module3) },
-          { dynamicModule: dynamicModule4 },
-        ],
+        imports: [forwardRef(() => Module1), dynamicModule2, { module: forwardRef(() => Module3) }, { dynamicModule: dynamicModule4 }],
         exports: [forwardRef(() => Module1), dynamicModule2, dynamicModule4],
       })
       @rootModule()
@@ -814,9 +803,7 @@ describe('ModuleNormalizer', () => {
         }
       }
 
-      const hostInitSome: MixinDecorator<SomeMixinOptions, {}, {}> = Reflector.makeClassDecorator(
-        (data) => new HostModuleMixin(data),
-      );
+      const hostInitSome: MixinDecorator<SomeMixinOptions, {}, {}> = Reflector.makeClassDecorator((data) => new HostModuleMixin(data));
       const allModuleMixin = new Map([[hostInitSome, new HostModuleMixin({})]]);
 
       const normalizedModuleMeta = normalizer.normalize(HostModule, allModuleMixin);
@@ -840,9 +827,7 @@ describe('ModuleNormalizer', () => {
         }
       }
 
-      const hostInitSome: MixinDecorator<SomeMixinOptions, {}, {}> = Reflector.makeClassDecorator(
-        (data) => new HostModuleMixin(data),
-      );
+      const hostInitSome: MixinDecorator<SomeMixinOptions, {}, {}> = Reflector.makeClassDecorator((data) => new HostModuleMixin(data));
       const allModuleMixin = new Map([[hostInitSome, new HostModuleMixin({})]]);
 
       const normalizedModuleMeta = normalizer.normalize(HostModule, allModuleMixin);
@@ -858,9 +843,7 @@ describe('ModuleNormalizer', () => {
         override hostModule = HostModule;
       }
 
-      const hostInitSome: MixinDecorator<SomeMixinOptions, {}, {}> = Reflector.makeClassDecorator(
-        (data) => new HostModuleMixin(data),
-      );
+      const hostInitSome: MixinDecorator<SomeMixinOptions, {}, {}> = Reflector.makeClassDecorator((data) => new HostModuleMixin(data));
 
       class Service1 {}
 
@@ -1069,12 +1052,7 @@ describe('ModuleNormalizer', () => {
       const externalModuleOptions = Object.assign(new FeatureModuleOptions(), {
         providersPerApp: [{ token: 'external-token', useValue: 1 }],
       });
-      const externalDec = new DecoratorMeta(
-        dummyDecorator,
-        externalModuleOptions,
-        undefined,
-        '/node_modules/external-mod',
-      );
+      const externalDec = new DecoratorMeta(dummyDecorator, externalModuleOptions, undefined, '/node_modules/external-mod');
       externalModuleNormalizer.customMeta.set(ExternalModule, [externalDec]);
 
       const internalModuleOptions = Object.assign(new FeatureModuleOptions(), {

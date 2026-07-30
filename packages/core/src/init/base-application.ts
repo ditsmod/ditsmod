@@ -161,11 +161,7 @@ export abstract class BaseApplication {
    * (`beforeShutdown` or `onShutdown`) on all gathered active instances
    * using Promise.allSettled(), logging any errors that occur.
    */
-  protected async runShutdownHooks(
-    instances: any[],
-    hookName: 'beforeShutdown' | 'onShutdown',
-    signal?: string,
-  ): Promise<void> {
+  protected async runShutdownHooks(instances: any[], hookName: 'beforeShutdown' | 'onShutdown', signal?: string): Promise<void> {
     const hooks = instances
       .filter((instance) => instance && typeof instance[hookName] == 'function')
       .map(async (instance) => instance[hookName](signal));

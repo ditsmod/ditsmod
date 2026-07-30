@@ -94,11 +94,7 @@ describe('pickPropertiesAsGetters', () => {
   it('signature4: result = pickPropertiesAsGetters(targetObj, { excludeProperties:..., includeProperties:... }, sourceObj)', () => {
     const targetObj: any = { one: null, two: null };
     const sourceObj = { one: 1, two: 2 };
-    const result = pickPropertiesAsGetters(
-      targetObj,
-      { excludeProperties: ['one'], includeProperties: ['one', 'two'] },
-      sourceObj,
-    );
+    const result = pickPropertiesAsGetters(targetObj, { excludeProperties: ['one'], includeProperties: ['one', 'two'] }, sourceObj);
     expect(targetObj).toBe(result);
     expect(sourceObj).toEqual({ one: 1, two: 2 });
     expect(targetObj.one).toBe(null);

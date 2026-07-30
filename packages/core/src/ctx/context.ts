@@ -101,11 +101,7 @@ export class Context {
   /**
    * Returns all key-value pairs found up the injector hierarchy.
    */
-  collectValues(
-    injector: Injector | undefined,
-    mergedCtx = new Map(),
-    stepsUp: number = -1,
-  ): Map<string, Map<any, any>> {
+  collectValues(injector: Injector | undefined, mergedCtx = new Map(), stepsUp: number = -1): Map<string, Map<any, any>> {
     ++stepsUp;
     mergedCtx.set(injector?.level || `steps up: ${stepsUp}`, { ...this.#ctx });
     if (injector?.parent) {

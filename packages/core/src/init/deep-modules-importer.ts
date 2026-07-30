@@ -126,10 +126,7 @@ export class DeepModulesImporter {
     });
   }
 
-  protected resolveProvidersForExtensions(
-    targetProviders: NormalizedModuleMeta,
-    baseImportRegistry: BaseImportRegistry,
-  ) {
+  protected resolveProvidersForExtensions(targetProviders: NormalizedModuleMeta, baseImportRegistry: BaseImportRegistry) {
     const currentExtensionsProviders: any[] = [];
     baseImportRegistry.extensionProviders.forEach((p) => currentExtensionsProviders.push(...p));
     this.extensionsTokens = getTokens([...defaultExtensionProviders, ...currentExtensionsProviders, input]);
@@ -291,10 +288,7 @@ export class DeepModulesImporter {
     }
 
     if (!found && dep.required) {
-      this.throwError(shallowModuleImports.normalizedModuleMeta, provider, path, dep.token, [
-        ...childLevels,
-        ...levels,
-      ]);
+      this.throwError(shallowModuleImports.normalizedModuleMeta, provider, path, dep.token, [...childLevels, ...levels]);
     }
   }
 
@@ -387,13 +381,7 @@ export class DeepModulesImporter {
     return false;
   }
 
-  throwError(
-    normalizedModuleMeta: NormalizedModuleMeta,
-    provider: Provider,
-    path: any[],
-    token: any,
-    levels: string[],
-  ) {
+  throwError(normalizedModuleMeta: NormalizedModuleMeta, provider: Provider, path: any[], token: any, levels: string[]) {
     path = [provider, ...path, token];
     const strPath = getTokens(path)
       .map((t) => stringify(t.name || t))

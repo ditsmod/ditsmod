@@ -151,13 +151,7 @@ expect(() => Injector.resolveAndCreate([A,B])).toThrow();
 ```
    */
 export class NoAnnotation extends CustomError {
-  constructor(
-    Cls: Class,
-    params: any[],
-    propertyKey?: string | symbol,
-    hasParentParams?: boolean,
-    recipe?: ParentRecipe[],
-  ) {
+  constructor(Cls: Class, params: any[], propertyKey?: string | symbol, hasParentParams?: boolean, recipe?: ParentRecipe[]) {
     let msg1: string;
     params = hasParentParams ? ParentParams.getArgs(recipe!, params) : params;
     const signature = getSignature(params);

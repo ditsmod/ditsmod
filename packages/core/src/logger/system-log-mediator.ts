@@ -96,9 +96,7 @@ export class SystemLogMediator extends LogMediator {
    */
   shutdownStart(self: object, signal?: string) {
     const className = self.constructor.name;
-    const msg = signal
-      ? `${className}: received ${signal}, starting graceful shutdown.`
-      : `${className}: starting graceful shutdown.`;
+    const msg = signal ? `${className}: received ${signal}, starting graceful shutdown.` : `${className}: starting graceful shutdown.`;
     this.setLog('info', msg);
   }
 

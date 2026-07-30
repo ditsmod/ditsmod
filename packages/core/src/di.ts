@@ -4,16 +4,7 @@ import 'reflect-metadata/lite';
 
 export { Reflector } from '#di/reflector.js';
 export { ParentParams } from '#di/parent-params.js';
-export {
-  factoryMethod,
-  fromSelf,
-  inject,
-  injectable,
-  input,
-  optional,
-  skipSelf,
-  InjectTransformResult,
-} from '#di/decorators.js';
+export { factoryMethod, fromSelf, inject, injectable, input, optional, skipSelf, InjectTransformResult } from '#di/decorators.js';
 export { ForwardRefFn, forwardRef, resolveForwardRef } from '#di/forward-ref.js';
 export { InjectionToken } from '#di/top/injection-token.js';
 export { Injector } from '#di/injector.js';

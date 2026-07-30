@@ -4,13 +4,7 @@ import { Reflector } from './reflector.js';
 import { DEPS_KEY } from './top/constants.js';
 import { DecoratorMeta } from './top/decorator-and-value.js';
 import type { DepsMeta } from './top/resolved-provider.js';
-import {
-  MergedClassPropMeta,
-  UnknownType,
-  type AbstractClass,
-  type AnyFn,
-  type Class,
-} from './top/types-and-models.js';
+import { MergedClassPropMeta, UnknownType, type AbstractClass, type AnyFn, type Class } from './top/types-and-models.js';
 
 describe('Reflector', () => {
   describe('class decorators', () => {
@@ -222,17 +216,9 @@ describe('Reflector', () => {
       class Service2 {}
 
       class Service {
-        constructor(
-          param1: any,
-          @paramDecorator({ val: 10 }) param2: string[],
-          @paramDecorator({ val: 11 }) param3: Service1,
-        ) {}
+        constructor(param1: any, @paramDecorator({ val: 10 }) param2: string[], @paramDecorator({ val: 11 }) param3: Service1) {}
 
-        method(
-          @paramDecorator({ val: 20 }) param1: Service2,
-          param2: number,
-          @paramDecorator({ val: 30 }) param3: string,
-        ) {}
+        method(@paramDecorator({ val: 20 }) param1: Service2, param2: number, @paramDecorator({ val: 30 }) param3: string) {}
       }
 
       const metadata = Reflector.collectMeta(Service);
@@ -264,10 +250,7 @@ describe('Reflector', () => {
       class ChildParam4 {}
 
       class Parent {
-        constructor(
-          @paramDecorator('parent-param1') param1: ParentParam1,
-          @paramDecorator('parent-param2') param2: ParentParam2,
-        ) {}
+        constructor(@paramDecorator('parent-param1') param1: ParentParam1, @paramDecorator('parent-param2') param2: ParentParam2) {}
 
         method1(@paramDecorator('parent-param1') param1: ParentParam2) {}
         method2(@paramDecorator('parent-param2') param1: ParentParam3) {}
@@ -363,11 +346,7 @@ describe('Reflector', () => {
       @classDecorator({ val: 111 })
       class Controller {
         @propDecorator({ val: 2 })
-        method(
-          @paramDecorator({ val: 20 }) param1: Service,
-          param2: number,
-          @paramDecorator({ val: 30 }) param3: string,
-        ) {}
+        method(@paramDecorator({ val: 20 }) param1: Service, param2: number, @paramDecorator({ val: 30 }) param3: string) {}
 
         methodWithoutDecorators(param1: Service, param2: any) {}
       }

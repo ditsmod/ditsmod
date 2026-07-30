@@ -15,9 +15,7 @@ export function isRootModule(
   normalizedModuleMeta?: NormalizedModuleMeta,
 ): normalizedModuleMeta is NormalizedModuleMeta<RootModuleOptions>;
 export function isRootModule(moduleOptions?: AnyObj): moduleOptions is RootModuleOptions;
-export function isRootModule(
-  arg?: DecoratorMeta | RootModuleOptions | NormalizedModuleMeta,
-): arg is DecoratorMeta<RootModuleOptions> {
+export function isRootModule(arg?: DecoratorMeta | RootModuleOptions | NormalizedModuleMeta): arg is DecoratorMeta<RootModuleOptions> {
   if (arg instanceof DecoratorMeta) {
     if (arg.value instanceof ModuleMixin) {
       return arg.value.moduleRole === 'root';
@@ -58,21 +56,15 @@ export function isFeatureModule(
   return arg instanceof FeatureModuleOptions;
 }
 
-export function isModuleDecorator(
-  arg?: DecoratorMeta,
-): arg is DecoratorMeta<RootModuleOptions | FeatureModuleOptions>;
-export function isModuleDecorator(
-  arg?: RootModuleOptions,
-): arg is RootModuleOptions | FeatureModuleOptions;
+export function isModuleDecorator(arg?: DecoratorMeta): arg is DecoratorMeta<RootModuleOptions | FeatureModuleOptions>;
+export function isModuleDecorator(arg?: RootModuleOptions): arg is RootModuleOptions | FeatureModuleOptions;
 export function isModuleDecorator(arg?: any) {
   return isRootModule(arg) || isFeatureModule(arg);
 }
 
 export function isModuleWithModuleMixin(metadata?: ModuleMixin<AnyObj>): metadata is ModuleMixin<AnyObj>;
 export function isModuleWithModuleMixin(arg?: DecoratorMeta): arg is Required<DecoratorMeta<ModuleMixin<AnyObj>>>;
-export function isModuleWithModuleMixin(
-  arg?: DecoratorMeta | ModuleMixin<AnyObj>,
-): arg is DecoratorMeta<ModuleMixin<AnyObj>> {
+export function isModuleWithModuleMixin(arg?: DecoratorMeta | ModuleMixin<AnyObj>): arg is DecoratorMeta<ModuleMixin<AnyObj>> {
   if (arg instanceof DecoratorMeta) {
     return (arg as DecoratorMeta<ModuleMixin<AnyObj>>).value instanceof ModuleMixin;
   } else {
@@ -84,9 +76,7 @@ export function isModuleWithModuleMixin(
  * If this guard returns `true`, then the `DecoratorMeta`
  * instance passed to it has the `declaredInDir` property set.
  */
-export function hasDeclaredInDir(
-  decoratorMeta?: DecoratorMeta,
-): decoratorMeta is RequireProps<DecoratorMeta, 'declaredInDir'> {
+export function hasDeclaredInDir(decoratorMeta?: DecoratorMeta): decoratorMeta is RequireProps<DecoratorMeta, 'declaredInDir'> {
   return Boolean(decoratorMeta?.declaredInDir) && decoratorMeta?.declaredInDir != '.';
 }
 

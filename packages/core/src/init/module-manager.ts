@@ -256,9 +256,7 @@ export class ModuleManager {
       const modIdStr = format(targetModuleId).slice(0, 50);
       throw new ImportRemovalFailure(inputNormalizedModuleMeta.name, modIdStr);
     }
-    const prop = isDynamicModule(inputNormalizedModuleMeta.modRefId)
-      ? 'importedDynamicModules'
-      : 'importedStaticModules';
+    const prop = isDynamicModule(inputNormalizedModuleMeta.modRefId) ? 'importedDynamicModules' : 'importedStaticModules';
     const index = targetMeta[prop].findIndex((imp: ModRefId) => imp === inputNormalizedModuleMeta.modRefId);
     if (index == -1) {
       const modIdStr = format(inputModuleId).slice(0, 50);
@@ -460,11 +458,7 @@ export class ModuleManager {
    * @param inputModuleId The target module reference or ID to find.
    * @param targetModuleId Module within which to search for `inputModuleId`.
    */
-  protected includesInSomeModule(
-    inputModuleId: ModuleId,
-    targetModuleId: ModuleId,
-    visited = new Set<ModuleId>(),
-  ): boolean {
+  protected includesInSomeModule(inputModuleId: ModuleId, targetModuleId: ModuleId, visited = new Set<ModuleId>()): boolean {
     if (visited.has(targetModuleId)) {
       return false;
     }
@@ -538,11 +532,7 @@ export class ModuleManager {
    * down to child modules that have no module mixins of their own. This ensures consistent contextual decorator evaluation
    * across architectural hierarchies (e.g., REST or tRPC routes).
    */
-  protected propagateContextHooks(
-    startModule: ModRefId,
-    inheritedHooks: AllModuleMixins = new Map(),
-    visited = new Set<ModRefId>(),
-  ) {
+  protected propagateContextHooks(startModule: ModRefId, inheritedHooks: AllModuleMixins = new Map(), visited = new Set<ModRefId>()) {
     if (visited.has(startModule)) {
       return;
     }

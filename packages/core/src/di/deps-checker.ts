@@ -27,26 +27,13 @@ export class DepsChecker {
    *
    * If there are problems with dependencies, throws the corresponding error.
    */
-  static check(
-    injector: Injector,
-    token: NonNullable<unknown>,
-    visibility: Visibility = null,
-    ignoreDeps?: any[],
-  ): any {
+  static check(injector: Injector, token: NonNullable<unknown>, visibility: Visibility = null, ignoreDeps?: any[]): any {
     const dualKey = KeyRegistry.get(token);
     const pathTracer = new PathTracer();
     return this.selectInjectorAndCheckDeps({ injector, dualKey, pathTracer, visibility, ignoreDeps });
   }
 
-  private static selectInjectorAndCheckDeps({
-    injector,
-    dualKey,
-    pathTracer,
-    visibility,
-    ignoreDeps,
-    isOptional,
-    input,
-  }: Config2) {
+  private static selectInjectorAndCheckDeps({ injector, dualKey, pathTracer, visibility, ignoreDeps, isOptional, input }: Config2) {
     if (dualKey.token === Injector) {
       return;
     }

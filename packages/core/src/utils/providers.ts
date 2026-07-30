@@ -6,8 +6,7 @@ import { Reflector } from '#di/reflector.js';
 import type { InjectionToken } from '#di/top/injection-token.js';
 import type { InjectionSymbol } from '#di/top/get-symbol.js';
 
-type ProviderToken<T> =
-  InjectionToken<T> | Class<T> | InjectionSymbol<T> | string | symbol | number | NonNullable<unknown>;
+type ProviderToken<T> = InjectionToken<T> | Class<T> | InjectionSymbol<T> | string | symbol | number | NonNullable<unknown>;
 /**
  * This class has utilites to adding providers to DI in more type safe way.
  * 
@@ -62,12 +61,7 @@ export class ProviderBuilder {
 
   useFactory(token: NonNullable<unknown>, useFactory: AnyFn, deps?: any[], multi?: boolean): this;
   useFactory(token: NonNullable<unknown>, useFactory: UseFactoryTuple, multi?: boolean): this;
-  useFactory(
-    token: NonNullable<unknown>,
-    useFactory: UseFactoryTuple | AnyFn,
-    depsOrMulti?: any[] | boolean,
-    multi?: boolean,
-  ) {
+  useFactory(token: NonNullable<unknown>, useFactory: UseFactoryTuple | AnyFn, depsOrMulti?: any[] | boolean, multi?: boolean) {
     if (!this.true) {
       return this.self;
     }

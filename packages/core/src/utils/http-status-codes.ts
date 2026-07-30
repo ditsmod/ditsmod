@@ -226,8 +226,7 @@ export const HTTP_STATUS_INFO: StatusCodeInfo = {
   401: {
     statusCode: 401,
     text: 'Unauthorized',
-    description:
-      '"The request has not been applied because it lacks valid authentication credentials for the target resource."',
+    description: '"The request has not been applied because it lacks valid authentication credentials for the target resource."',
     spec_title: 'RFC7235#6.3.1',
     spec_href: ref + '7235#section-3.1',
   },
@@ -256,8 +255,7 @@ export const HTTP_STATUS_INFO: StatusCodeInfo = {
   405: {
     statusCode: 405,
     text: 'Method Not Allowed',
-    description:
-      '"The method specified in the request-line is known by the origin server but not supported by the target resource."',
+    description: '"The method specified in the request-line is known by the origin server but not supported by the target resource."',
     spec_title: 'RFC7231#6.5.5',
     spec_href: ref + '7231#section-6.5.5',
   },
@@ -279,8 +277,7 @@ export const HTTP_STATUS_INFO: StatusCodeInfo = {
   408: {
     statusCode: 408,
     text: 'Request Timeout',
-    description:
-      '"The server did not receive a complete request message within the time that it was prepared to wait."',
+    description: '"The server did not receive a complete request message within the time that it was prepared to wait."',
     spec_title: 'RFC7231#6.5.7',
     spec_href: ref + '7231#section-6.5.7',
   },
@@ -309,8 +306,7 @@ export const HTTP_STATUS_INFO: StatusCodeInfo = {
   412: {
     statusCode: 412,
     text: 'Precondition Failed',
-    description:
-      '"One or more preconditions given in the request header fields evaluated to false when tested on the server."',
+    description: '"One or more preconditions given in the request header fields evaluated to false when tested on the server."',
     spec_title: 'RFC7232#4.2',
     spec_href: ref + '7232#section-4.2',
   },
@@ -461,8 +457,7 @@ export const HTTP_STATUS_INFO: StatusCodeInfo = {
   505: {
     statusCode: 505,
     text: 'HTTP Version Not Supported',
-    description:
-      '"The server does not support, or refuses to support, the protocol version that was used in the request message."',
+    description: '"The server does not support, or refuses to support, the protocol version that was used in the request message."',
     spec_title: 'RFC7231#6.6.6',
     spec_href: ref + '7231#section-6.6.6',
   },

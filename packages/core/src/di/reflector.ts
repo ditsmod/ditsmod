@@ -123,9 +123,7 @@ export class Reflector {
       ): void {
         // This function can be called for a class constructor and methods.
         const Cls = isType(classOrInstance) ? classOrInstance : (classOrInstance.constructor as Class);
-        const parameters = propertyKey
-          ? getMethodParamMeta(Cls, propertyKey, [])
-          : constructorParamsMap.getOrInsert(Cls, []);
+        const parameters = propertyKey ? getMethodParamMeta(Cls, propertyKey, []) : constructorParamsMap.getOrInsert(Cls, []);
         const methodNames = methodWithOptsMap.getOrInsert(Cls, new Set());
         // TypeScript emits parameter metadata only for decorated declarations, so keep
         // an explicit registry of constructors and methods that have parameter decorators.
@@ -444,11 +442,7 @@ export class Reflector {
     // Setting metadata for a constructor is different from setting metadata for
     // other class properties. A constructor has a different metadata key,
     // a different strategy for getting parameters (taking inheritance into account), etc.
-    classMeta.constructor = new ClassPropMeta(
-      Function,
-      classMetaMap.get(Cls),
-      this.collectParamMeta(Cls, 'constructor', Function),
-    );
+    classMeta.constructor = new ClassPropMeta(Function, classMetaMap.get(Cls), this.collectParamMeta(Cls, 'constructor', Function));
 
     // Get a list of unique class properties that have metadata.
     const ownPropsMeta = propMetaMap.get(Cls);
@@ -491,9 +485,7 @@ export class Reflector {
     if (isConstructor && isDelegateCtor(Cls.toString())) {
       return this.collectParamMeta(this.getParentClass(Cls)!, propertyKey, propertyType);
     } else {
-      const paramDecoratorMeta = isConstructor
-        ? constructorParamsMap.get(Cls)
-        : getMethodParamMeta(Cls, propertyKey as string);
+      const paramDecoratorMeta = isConstructor ? constructorParamsMap.get(Cls) : getMethodParamMeta(Cls, propertyKey as string);
       const args = (isConstructor ? [Cls] : [Cls.prototype, propertyKey]) as [Class];
       const paramTypes = Reflect.getOwnMetadata('design:paramtypes', ...args) as Class[];
 

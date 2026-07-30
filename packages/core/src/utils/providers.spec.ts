@@ -46,10 +46,7 @@ describe('ProviderBuilder', () => {
     it('works with nested loops', () => {
       const for1 = jest.fn();
       const for2 = jest.fn();
-      const providers = new ProviderBuilder()
-        .useValue('token1', 'value1')
-        .useValue('token2', 'value2')
-        .useValue('token3', 'value3');
+      const providers = new ProviderBuilder().useValue('token1', 'value1').useValue('token2', 'value2').useValue('token3', 'value3');
 
       for (const v of providers) {
         for1(v);
