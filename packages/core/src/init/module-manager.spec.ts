@@ -1093,6 +1093,47 @@ describe('ModuleManager', () => {
       expect(getParams(dynamicModule2)).toEqual([{ three: 'mixinSome2-2' }]);
       expect(getParams(dynamicModule3)).toEqual([{ three: 'mixinSome2-3' }, { one: 'mixinSome1-3' }]);
     });
+
+    it('should successfully apply hostMixinOptions to a host module even if it is imported before the mixin module', () => {
+      @featureModule()
+      class HostModuleLocal {}
+
+      class LocalMixinMeta extends BaseNormalizedModuleMeta {
+        customProp?: string;
+      }
+
+      class ModuleMixinLocal extends ModuleMixin<any> {
+        override hostModule = HostModuleLocal;
+        override hostMixinOptions = { customProp: 'works' };
+
+        override normalize(normalizedModuleMeta: NormalizedModuleMeta): any {
+          return getProxyForMixinMeta(normalizedModuleMeta, LocalMixinMeta);
+        }
+      }
+
+      const mixinSomeLocal: MixinDecorator<any, any, any> = Reflector.makeClassDecorator(
+        (d) => new ModuleMixinLocal(d),
+      );
+
+      @mixinSomeLocal()
+      @featureModule()
+      class MixinModuleLocal {}
+
+      // Notice the order: HostModuleLocal is imported FIRST.
+      // In the old single-pass system, HostModuleLocal would be scanned when allModuleMixin is empty,
+      // so it wouldn't receive its hostMixinOptions.
+      @rootModule({
+        imports: [HostModuleLocal, MixinModuleLocal],
+      })
+      class AppModuleLocal {}
+
+      mock.scanRootModule(AppModuleLocal);
+
+      const hostMeta = mock.getNormalizedModuleMeta(HostModuleLocal);
+      expect(hostMeta?.moduleMixinMap.has(mixinSomeLocal)).toBe(true);
+      const hostMixinInst = hostMeta?.moduleMixinMap.get(mixinSomeLocal);
+      expect(hostMixinInst?.moduleOptions).toEqual({ customProp: 'works' });
+    });
   });
 
   describe('refactored cloning, rollback, and providersPerApp cleanup', () => {

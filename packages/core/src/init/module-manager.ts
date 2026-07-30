@@ -9,7 +9,7 @@ import { ModuleGraphState } from '#init/module-graph-state.js';
 import { isDynamicModule, isRootModule } from '#decorators/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
-import { AllModuleMixins } from '#decorators/module-mixins.js';
+import { AllModuleMixins, ModuleMixin } from '#decorators/module-mixins.js';
 import {
   ImportAdditionFailure,
   ImportRemovalFailure,
@@ -21,7 +21,7 @@ import {
 } from '#errors';
 import { getModule } from '#utils/get-module.js';
 import { injectable } from '#di/decorators.js';
-import type { Provider } from '#di/top/types-and-models.js';
+import type { Provider, AnyFn } from '#di/top/types-and-models.js';
 import type { Injector } from '#di/injector.js';
 import { Reflector } from '#di/reflector.js';
 import { resolveForwardRef, type ForwardRefFn } from '#di/forward-ref.js';
@@ -148,6 +148,7 @@ export class ModuleManager {
     normalizedModuleMeta.allModuleMixin.forEach((moduleMixin, decorator) => allModuleMixin.set(decorator, moduleMixin));
 
     if (isRootScan) {
+      this.applyHostMixinOptions();
       const rootModule = this.mapId.get('root') || resolveForwardRef(modRefId);
       this.propagateContextHooks(rootModule);
       this.checkEmptyMetaForAllModules();
@@ -583,5 +584,80 @@ export class ModuleManager {
         throw new NormalizationFailure(meta.name, err);
       }
     });
+  }
+
+  /**
+   * Identifies module mixins containing `hostMixinOptions` and applies them to their respective host modules.
+   * Runs recursively to scan any newly added dependencies triggered by these options.
+   */
+  protected applyHostMixinOptions() {
+    let hasNewModules = true;
+    while (hasNewModules) {
+      hasNewModules = false;
+      const modulesToScan = new Set<ModRefId>();
+
+      this.map.forEach((meta) => {
+        meta.moduleMixinMap.forEach((moduleMixin, decorator) => {
+          if (moduleMixin.hostModule && moduleMixin.hostMixinOptions) {
+            const hostMeta = this.map.get(moduleMixin.hostModule);
+            if (hostMeta && !hostMeta.moduleMixinMap.has(decorator)) {
+              hasNewModules = this.applyHostMixinAndGatherDependencies(hostMeta, decorator, moduleMixin, modulesToScan);
+            }
+          }
+        });
+      });
+
+      this.scanNewlyAddedModules(modulesToScan);
+    }
+  }
+
+  protected applyHostMixinAndGatherDependencies(
+    hostMeta: NormalizedModuleMeta,
+    decorator: AnyFn,
+    moduleMixin: ModuleMixin,
+    modulesToScan: Set<ModRefId>,
+  ): boolean {
+    const newModuleMixin = moduleMixin.clone(moduleMixin.hostMixinOptions);
+    hostMeta.moduleMixinMap.set(decorator, newModuleMixin);
+    try {
+      this.moduleNormalizer.applyHostMixinOptions(hostMeta, decorator, newModuleMixin);
+    } catch (err: any) {
+      throw new NormalizationFailure(hostMeta.name, err);
+    }
+
+    const importsOrExports: (DynamicModule | StaticModule)[] = [];
+    hostMeta.moduleMixinMap.forEach((mixin, dec) => {
+      const mixinMeta = hostMeta.mixinMeta.get(dec);
+      if (mixinMeta) {
+        importsOrExports.push(...mixin.getModulesToScan(mixinMeta));
+      }
+    });
+
+    const inputs = this.propsWithModules
+      .map((p) => hostMeta[p])
+      .reduce<ModRefId[]>((prev, curr) => prev.concat(curr), importsOrExports);
+
+    const children = this.state.childrenMap.get(hostMeta.modRefId);
+    if (children) {
+      inputs.forEach((input) => {
+        children.add(input);
+        if (!this.scannedModules.has(input)) {
+          modulesToScan.add(input);
+        }
+      });
+    }
+
+    return true; // Indicates a change occurred
+  }
+
+  protected scanNewlyAddedModules(modulesToScan: Set<ModRefId>) {
+    for (const input of modulesToScan) {
+      if (!this.scannedModules.has(input)) {
+        this.unfinishedScanModules.add(input);
+        this.scanModule(input);
+        this.unfinishedScanModules.delete(input);
+        this.scannedModules.add(input);
+      }
+    }
   }
 }

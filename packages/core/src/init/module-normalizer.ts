@@ -87,7 +87,6 @@ export class ModuleNormalizer {
     this.checkReexportModules();
 
     // Phase 2: Process mixin decorators applied directly to the current module.
-    this.addModuleMixinForHostMixin(allModuleMixin);
     this.callModuleMixinFromCurrentModule();
 
     // Phase 3: Handle module mixins for imported dynamic modules lacking their own mixin decorators.
@@ -367,17 +366,10 @@ export class ModuleNormalizer {
     });
   }
 
-  /**
-   * If the current {@link ModuleMixin} has {@link ModuleMixin.hostMixinOptions | hostMixinOptions},
-   * this method clones it and assigns those options to the host module to avoid circular dependencies.
-   */
-  protected addModuleMixinForHostMixin(allModuleMixin: AllModuleMixins) {
-    allModuleMixin.forEach((moduleMixin, decorator) => {
-      if (moduleMixin.hostModule === this.normalizedModuleMeta.modRefId && moduleMixin.hostMixinOptions) {
-        const newModuleMixin = moduleMixin.clone(moduleMixin.hostMixinOptions);
-        this.normalizedModuleMeta.moduleMixinMap.set(decorator, newModuleMixin);
-      }
-    });
+  applyHostMixinOptions(normalizedModuleMeta: NormalizedModuleMeta, decorator: AnyFn, moduleMixin: ModuleMixin) {
+    this.normalizedModuleMeta = normalizedModuleMeta;
+    this.fetchMixinOptions(decorator, moduleMixin.moduleOptions);
+    this.callModuleMixin(decorator, moduleMixin);
   }
 
   /**
@@ -469,17 +461,17 @@ export class AppModule {}
     }) as Exclude<T, ForwardRefFn>[];
   }
 
-  protected fetchMixinOptions(decorator: AnyFn, mixinDecoratorOptions: MixinOptions) {
-    this.fetchMixinImports(decorator, mixinDecoratorOptions);
-    this.fetchMixinExports(mixinDecoratorOptions);
-    this.normalizeExtensions(mixinDecoratorOptions);
-    this.normalizeProvidersAndResolvedCollisions(mixinDecoratorOptions);
-    this.normalizeExports(mixinDecoratorOptions, 'Static exports');
+  protected fetchMixinOptions(decorator: AnyFn, mixinOptions: MixinOptions) {
+    this.fetchMixinImports(decorator, mixinOptions);
+    this.fetchMixinExports(mixinOptions);
+    this.normalizeExtensions(mixinOptions);
+    this.normalizeProvidersAndResolvedCollisions(mixinOptions);
+    this.normalizeExports(mixinOptions, 'Static exports');
   }
 
-  protected fetchMixinImports(decorator: AnyFn, mixinDecoratorOptions: MixinOptions) {
-    if (mixinDecoratorOptions.imports) {
-      this.resolveAllForwardRefs(mixinDecoratorOptions.imports).forEach((imp) => {
+  protected fetchMixinImports(decorator: AnyFn, mixinOptions: MixinOptions) {
+    if (mixinOptions.imports) {
+      this.resolveAllForwardRefs(mixinOptions.imports).forEach((imp) => {
         if (isDynamicModule(imp)) {
           const params = { ...imp };
           this.mergeMixinDynamicOptions(decorator, params, imp);
@@ -531,9 +523,9 @@ export class AppModule {}
     return dstn;
   }
 
-  protected fetchMixinExports(mixinDecoratorOptions: MixinOptions) {
-    if (mixinDecoratorOptions.exports) {
-      this.resolveAllForwardRefs(mixinDecoratorOptions.exports).forEach((exp) => {
+  protected fetchMixinExports(mixinOptions: MixinOptions) {
+    if (mixinOptions.exports) {
+      this.resolveAllForwardRefs(mixinOptions.exports).forEach((exp) => {
         if (isDynamicModule(exp)) {
           if (!this.normalizedModuleMeta.exportedDynamicModules.includes(exp)) {
             this.normalizedModuleMeta.exportedDynamicModules.push(exp);

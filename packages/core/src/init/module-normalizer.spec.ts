@@ -598,7 +598,7 @@ describe('ModuleNormalizer', () => {
 
     class SomeMixinMeta extends BaseNormalizedModuleMeta {
       normalizedModuleMeta?: NormalizedModuleMeta;
-      mixinDecoratorOptions?: SomeMixinOptions;
+      mixinOptions?: SomeMixinOptions;
       flag?: boolean;
       path?: string;
       targetModRefId?: ModRefId;
@@ -608,7 +608,7 @@ describe('ModuleNormalizer', () => {
       override normalize(normalizedModuleMeta: NormalizedModuleMeta) {
         const meta = getProxyForMixinMeta(normalizedModuleMeta, SomeMixinMeta);
         meta.normalizedModuleMeta = normalizedModuleMeta;
-        meta.mixinDecoratorOptions = this.moduleOptions;
+        meta.mixinOptions = this.moduleOptions;
 
         if (isDynamicModule(normalizedModuleMeta.modRefId)) {
           const params = normalizedModuleMeta.modRefId.mixinOptions?.get(mixinSome);
@@ -641,7 +641,7 @@ describe('ModuleNormalizer', () => {
 
       const mixinMeta = normalizer.normalize(Module1).mixinMeta.get(mixinSome);
       expect(mixinMeta?.normalizedModuleMeta?.modRefId).toBe(Module1);
-      expect(mixinMeta?.mixinDecoratorOptions).toEqual(moduleOptions);
+      expect(mixinMeta?.mixinOptions).toEqual(moduleOptions);
       expect(mixinMeta?.targetModRefId).toBe(Module1);
       expect(mixinMeta?.flag).toBe(true);
     });
@@ -800,7 +800,7 @@ describe('ModuleNormalizer', () => {
       expect(dynamicModule4.module).toBe(Module4);
     });
 
-    it('adds host decorator hooks from allModuleMixin when the current module is the host module', () => {
+    it('applies hostMixinOptions via applyHostMixinOptions method', () => {
       @featureModule()
       class HostModule {}
 
@@ -817,35 +817,12 @@ describe('ModuleNormalizer', () => {
       }
 
       const hostInitSome: MixinDecorator<SomeMixinOptions, {}, {}> = Reflector.makeClassDecorator((data) => new HostModuleMixin(data));
-      const allModuleMixin = new Map([[hostInitSome, new HostModuleMixin({})]]);
+      const moduleMixin = new HostModuleMixin({}).clone({ flag: true });
 
-      const normalizedModuleMeta = normalizer.normalize(HostModule, allModuleMixin);
-      expect(normalizedModuleMeta.moduleMixinMap.has(hostInitSome)).toBe(true);
+      const normalizedModuleMeta = normalizer.normalize(HostModule, new Map());
+      normalizer.applyHostMixinOptions(normalizedModuleMeta, hostInitSome, moduleMixin as any);
+      
       expect(normalizedModuleMeta.mixinMeta.get(hostInitSome)).toEqual({ flag: true, targetModRefId: HostModule });
-    });
-
-    it('does not add host module to importedStaticModules when the current module is the host module itself', () => {
-      @featureModule()
-      class HostModule {}
-
-      class HostModuleMixin extends ModuleMixin<SomeMixinOptions> {
-        override hostModule = HostModule;
-        override hostMixinOptions = { flag: true };
-
-        override normalize(normalizedModuleMeta: NormalizedModuleMeta): SomeMixinMeta {
-          return {
-            flag: this.moduleOptions.flag,
-            targetModRefId: normalizedModuleMeta.modRefId,
-          } as SomeMixinMeta;
-        }
-      }
-
-      const hostInitSome: MixinDecorator<SomeMixinOptions, {}, {}> = Reflector.makeClassDecorator((data) => new HostModuleMixin(data));
-      const allModuleMixin = new Map([[hostInitSome, new HostModuleMixin({})]]);
-
-      const normalizedModuleMeta = normalizer.normalize(HostModule, allModuleMixin);
-      expect(normalizedModuleMeta.moduleMixinMap.has(hostInitSome)).toBe(true);
-      expect(normalizedModuleMeta.importedStaticModules).not.toContain(HostModule);
     });
 
     it('imports the host module when an mixin decorator declares hostModule on a different module', () => {
