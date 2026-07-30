@@ -6,8 +6,25 @@ import { ModuleMixin } from '#decorators/module-mixins.js';
 import { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { RootModuleOptions } from './root-module.js';
 
-export function isDynamicModuleWrapper(arg?: AnyObj): arg is { dynamicModule: DynamicModule } {
-  return isDynamicModule((arg as { dynamicModule: DynamicModule } | undefined)?.dynamicModule);
+function checkModuleRole(arg: any, expectedRole: 'root' | 'feature', ExpectedClass: any): boolean {
+  if (arg instanceof DecoratorMeta) {
+    if (arg.value instanceof ModuleMixin) {
+      return arg.value.moduleRole === expectedRole;
+    }
+    return arg.value instanceof ExpectedClass;
+  } else if (arg instanceof NormalizedModuleMeta) {
+    if (arg.staticModuleOptions instanceof ModuleMixin) {
+      return arg.staticModuleOptions.moduleRole === expectedRole;
+    }
+    return arg.staticModuleOptions instanceof ExpectedClass;
+  } else if (arg instanceof ModuleMixin) {
+    return arg.moduleRole === expectedRole;
+  }
+  return arg instanceof ExpectedClass;
+}
+
+export function isDynamicModuleWrapper(arg?: any): arg is { dynamicModule: DynamicModule } {
+  return isDynamicModule(arg?.dynamicModule);
 }
 
 export function isRootModule(decorAndVal?: DecoratorMeta): decorAndVal is DecoratorMeta<RootModuleOptions>;
@@ -15,21 +32,8 @@ export function isRootModule(
   normalizedModuleMeta?: NormalizedModuleMeta,
 ): normalizedModuleMeta is NormalizedModuleMeta<RootModuleOptions>;
 export function isRootModule(moduleOptions?: AnyObj): moduleOptions is RootModuleOptions;
-export function isRootModule(arg?: DecoratorMeta | RootModuleOptions | NormalizedModuleMeta): arg is DecoratorMeta<RootModuleOptions> {
-  if (arg instanceof DecoratorMeta) {
-    if (arg.value instanceof ModuleMixin) {
-      return arg.value.moduleRole === 'root';
-    }
-    return arg.value instanceof RootModuleOptions;
-  } else if (arg instanceof NormalizedModuleMeta) {
-    if (arg.staticModuleOptions instanceof ModuleMixin) {
-      return arg.staticModuleOptions.moduleRole === 'root';
-    }
-    return arg.staticModuleOptions instanceof RootModuleOptions;
-  } else if (arg instanceof ModuleMixin) {
-    return arg.moduleRole === 'root';
-  }
-  return arg instanceof RootModuleOptions;
+export function isRootModule(arg?: any): boolean {
+  return checkModuleRole(arg, 'root', RootModuleOptions);
 }
 
 export function isFeatureModule(arg?: DecoratorMeta): arg is DecoratorMeta<FeatureModuleOptions>;
@@ -37,23 +41,8 @@ export function isFeatureModule(
   normalizedModuleMeta?: NormalizedModuleMeta,
 ): normalizedModuleMeta is NormalizedModuleMeta<FeatureModuleOptions>;
 export function isFeatureModule(arg?: AnyObj): arg is FeatureModuleOptions;
-export function isFeatureModule(
-  arg?: DecoratorMeta | FeatureModuleOptions | NormalizedModuleMeta,
-): arg is DecoratorMeta<FeatureModuleOptions> {
-  if (arg instanceof DecoratorMeta) {
-    if (arg.value instanceof ModuleMixin) {
-      return arg.value.moduleRole === 'feature';
-    }
-    return arg.value instanceof FeatureModuleOptions;
-  } else if (arg instanceof NormalizedModuleMeta) {
-    if (arg.staticModuleOptions instanceof ModuleMixin) {
-      return arg.staticModuleOptions.moduleRole === 'feature';
-    }
-    return arg.staticModuleOptions instanceof FeatureModuleOptions;
-  } else if (arg instanceof ModuleMixin) {
-    return arg.moduleRole === 'feature';
-  }
-  return arg instanceof FeatureModuleOptions;
+export function isFeatureModule(arg?: any): boolean {
+  return checkModuleRole(arg, 'feature', FeatureModuleOptions);
 }
 
 export function isModuleDecorator(arg?: DecoratorMeta): arg is DecoratorMeta<RootModuleOptions | FeatureModuleOptions>;
@@ -64,9 +53,9 @@ export function isModuleDecorator(arg?: any) {
 
 export function isModuleWithModuleMixin(metadata?: ModuleMixin<AnyObj>): metadata is ModuleMixin<AnyObj>;
 export function isModuleWithModuleMixin(arg?: DecoratorMeta): arg is Required<DecoratorMeta<ModuleMixin<AnyObj>>>;
-export function isModuleWithModuleMixin(arg?: DecoratorMeta | ModuleMixin<AnyObj>): arg is DecoratorMeta<ModuleMixin<AnyObj>> {
+export function isModuleWithModuleMixin(arg?: any): boolean {
   if (arg instanceof DecoratorMeta) {
-    return (arg as DecoratorMeta<ModuleMixin<AnyObj>>).value instanceof ModuleMixin;
+    return arg.value instanceof ModuleMixin;
   } else {
     return arg instanceof ModuleMixin;
   }
@@ -80,6 +69,6 @@ export function hasDeclaredInDir(decoratorMeta?: DecoratorMeta): decoratorMeta i
   return Boolean(decoratorMeta?.declaredInDir) && decoratorMeta?.declaredInDir != '.';
 }
 
-export function isDynamicModule(modRefId?: AnyObj): modRefId is DynamicModule {
-  return (modRefId as DynamicModule)?.module !== undefined;
+export function isDynamicModule(modRefId?: any): modRefId is DynamicModule {
+  return modRefId?.module !== undefined;
 }

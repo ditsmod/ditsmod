@@ -1,7 +1,9 @@
 import { Provider } from '#di/top/types-and-models.js';
 import { Extension } from '#extension/extension-types.js';
 import { featureModule } from '#decorators/feature-module.js';
-import { isProvider } from '#utils/type-guards.js';
+import { isProvider, isChainError, isCustomError } from '#utils/type-guards.js';
+import { ChainError } from '@ts-stack/chain-error';
+import { CustomError } from '#error/custom-error.js';
 import { forwardRef, isForwardRef } from '#di/forward-ref.js';
 import { rootModule } from '#decorators/root-module.js';
 import { Reflector } from '#di/reflector.js';
@@ -9,13 +11,15 @@ import { isInjectionToken, isMultiProvider, isNormalizedProvider, type MultiProv
 import { InjectionToken } from '#di/top/injection-token.js';
 
 describe('type guards', () => {
-  it('isForwardRef()', () => {
-    const fn = forwardRef(() => class {});
-    expect(isForwardRef(fn)).toBe(true);
+  describe('isForwardRef()', () => {
+    it('should recognize forwardRef', () => {
+      const fn = forwardRef(() => class {});
+      expect(isForwardRef(fn)).toBe(true);
+    });
   });
 
   describe('isProvider()', () => {
-    it('should filtered all types of providers', () => {
+    it('should recognize all types of providers', () => {
       @featureModule({})
       class Module1 {}
       @rootModule({})
@@ -26,7 +30,26 @@ describe('type guards', () => {
       expect(isProvider({ token: '' })).toBe(true);
       expect(isProvider(Module1)).toBe(false);
       expect(isProvider(Module2)).toBe(false);
+      expect(isProvider({ module: class {} })).toBe(false);
       expect(isProvider(5 as any)).toBe(false);
+    });
+  });
+
+  describe('isChainError()', () => {
+    it('should recognize ChainError', () => {
+      const err1 = new ChainError('message');
+      const err2 = new Error('message');
+      expect(isChainError(err1)).toBe(true);
+      expect(isChainError(err2)).toBe(false);
+    });
+  });
+
+  describe('isCustomError()', () => {
+    it('should recognize CustomError', () => {
+      const err1 = new CustomError({ msg1: 'message' });
+      const err2 = new Error('message');
+      expect(isCustomError(err1)).toBe(true);
+      expect(isCustomError(err2)).toBe(false);
     });
   });
 
@@ -52,41 +75,43 @@ describe('type guards', () => {
       expect(providers.every(isNormalizedProvider)).toBe(false);
     });
   });
-  describe('isInjectionToken()', () => {
-    const token1 = new InjectionToken('token1');
-    const token2 = {};
-    class token3 implements Extension {
-      async stage1() {}
-    }
 
+  describe('isInjectionToken()', () => {
     it('should recognize the InjectionToken', () => {
+      const token1 = new InjectionToken('token1');
+      const token2 = {};
+      class Token3 implements Extension {
+        async stage1() {}
+      }
+
       expect(isInjectionToken(token1)).toBe(true);
       expect(isInjectionToken(token2)).toBe(false);
-      expect(isInjectionToken(token3)).toBe(false);
+      expect(isInjectionToken(Token3)).toBe(false);
     });
   });
 
   describe('isMultiProvider()', () => {
-    it('true ValueProvider with "useValue"', () => {
+    it('should recognize ValueProvider with "useValue"', () => {
       const provider: MultiProvider = { token: 'token', useValue: 'fake', multi: true };
       expect(isMultiProvider(provider)).toBe(true);
     });
-    it('true ValueProvider without "useValue"', () => {
+
+    it('should recognize ValueProvider without "useValue"', () => {
       const provider: MultiProvider = { token: 'token', multi: true };
       expect(isMultiProvider(provider)).toBe(true);
     });
 
-    it('true ClassProvider', () => {
+    it('should recognize ClassProvider', () => {
       const provider: MultiProvider = { token: 'token', useClass: class {}, multi: true };
       expect(isMultiProvider(provider)).toBe(true);
     });
 
-    it('true TokenProvider', () => {
+    it('should recognize TokenProvider', () => {
       const provider: MultiProvider = { token: 'token', useToken: class {}, multi: true };
       expect(isMultiProvider(provider)).toBe(true);
     });
 
-    it('true FactoryProvider', () => {
+    it('should recognize FactoryProvider', () => {
       const factory = Reflector.makePropDecorator();
       class ClassWithDecorators {
         @factory()
@@ -102,22 +127,22 @@ describe('type guards', () => {
       expect(isMultiProvider(provider)).toBe(true);
     });
 
-    it('false ValueProvider', () => {
+    it('should fail ValueProvider', () => {
       const provider: Provider = { token: 'token', useValue: 'fake' };
       expect(isMultiProvider(provider)).toBe(false);
     });
 
-    it('false ClassProvider', () => {
+    it('should fail ClassProvider', () => {
       const provider: Provider = { token: 'token', useClass: class {} };
       expect(isMultiProvider(provider)).toBe(false);
     });
 
-    it('false TokenProvider', () => {
+    it('should fail TokenProvider', () => {
       const provider: Provider = { token: 'token', useToken: class {} };
       expect(isMultiProvider(provider)).toBe(false);
     });
 
-    it('false FactoryProvider', () => {
+    it('should fail FactoryProvider', () => {
       const factory = Reflector.makePropDecorator();
       class ClassWithDecorators {
         @factory()
