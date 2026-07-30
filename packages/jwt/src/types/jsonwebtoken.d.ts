@@ -33,11 +33,7 @@ declare module 'jsonwebtoken' {
    *
    * [1]: https://nodejs.org/api/crypto.html#signsignprivatekey-outputencoding
    */
-  export function sign(
-    payload: string | Buffer | object,
-    secretOrPrivateKey: SecretOrPrivateKey,
-    options?: SignOptions,
-  ): string;
+  export function sign(payload: string | Buffer | object, secretOrPrivateKey: SecretOrPrivateKey, options?: SignOptions): string;
   /**
    * If a callback is supplied, the callback is called with the err or the JWT.
    *
@@ -84,11 +80,7 @@ declare module 'jsonwebtoken' {
    *
    * [1]: https://github.com/auth0/node-jsonwebtoken/issues/208#issuecomment-231861138
    */
-  export function verify(
-    token: string,
-    secretOrPublicKey: SecretOrPublicKey,
-    options: VerifyOptions,
-  ): VerifyPayload | string;
+  export function verify(token: string, secretOrPublicKey: SecretOrPublicKey, options: VerifyOptions): VerifyPayload | string;
   /**
    * (Synchronous) If a callback is not supplied, function acts synchronously. Returns the payload
    * decoded if the signature is valid and optional expiration, audience, or issuer are valid. If
@@ -371,19 +363,7 @@ declare module 'jsonwebtoken' {
    * [1]: https://github.com/auth0/node-jsonwebtoken#algorithms-supported
    */
   export type Algorithm =
-    | 'HS256'
-    | 'HS384'
-    | 'HS512'
-    | 'RS256'
-    | 'RS384'
-    | 'RS512'
-    | 'ES256'
-    | 'ES384'
-    | 'ES512'
-    | 'PS256'
-    | 'PS384'
-    | 'PS512'
-    | 'none';
+    'HS256' | 'HS384' | 'HS512' | 'RS256' | 'RS384' | 'RS512' | 'ES256' | 'ES384' | 'ES512' | 'PS256' | 'PS384' | 'PS512' | 'none';
 
   /**
    * Thrown error if the token is expired.
