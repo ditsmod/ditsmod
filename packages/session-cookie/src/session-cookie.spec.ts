@@ -63,10 +63,7 @@ describe('@ditsmod/session-cookie', () => {
     session.id = 'foobar';
     rawRes.writeHead(200);
     expect(setHeader).toHaveBeenCalledTimes(1);
-    expect(setHeader).toHaveBeenCalledWith(
-      'Set-Cookie',
-      expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]),
-    );
+    expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
     expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
   });
 
@@ -76,10 +73,7 @@ describe('@ditsmod/session-cookie', () => {
     session.id = 'foobar';
     rawRes.writeHead(200);
     expect(setHeader).toHaveBeenCalledTimes(1);
-    expect(setHeader).toHaveBeenCalledWith(
-      'Set-Cookie',
-      expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]),
-    );
+    expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
     expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
   });
 
@@ -89,10 +83,7 @@ describe('@ditsmod/session-cookie', () => {
     session.setMaxAge(maxAge);
     rawRes.writeHead(200);
     expect(setHeader).toHaveBeenCalledTimes(1);
-    expect(setHeader).toHaveBeenCalledWith(
-      'Set-Cookie',
-      expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]),
-    );
+    expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/session=foobar; path=\/;/)]));
     expect(setHeader).toHaveBeenCalledWith('Set-Cookie', expect.arrayContaining([expect.stringMatching(/httponly/)]));
   });
 });
