@@ -1,14 +1,4 @@
-import {
-  AnyFn,
-  AnyObj,
-  NormalizedModuleMeta,
-  getModule,
-  inject,
-  injectable,
-  ModRefId,
-  ModuleManager,
-  Context,
-} from '@ditsmod/core';
+import { AnyFn, AnyObj, NormalizedModuleMeta, getModule, inject, injectable, ModRefId, ModuleManager, Context } from '@ditsmod/core';
 
 import { TRPC_ROOT } from '#types/constants.js';
 import { TrpcRouterOpts, TrpcRootObject, ModuleWithTrpcRoutes, RouterOptions, TrpcRootModule } from '#types/types.js';
@@ -53,14 +43,12 @@ export class TrpcInternalService {
   protected getModuleTrpcConfigs(modRefId: ModRefId<ModuleWithTrpcRoutes>) {
     const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId, true);
     const importedModulesWithTrpcRoutes = new Map<AnyFn, ModRefId<ModuleWithTrpcRoutes>>();
-    (normalizedModuleMeta.importedStaticModules as ModRefId[])
-      .concat(normalizedModuleMeta.importedDynamicModules)
-      .forEach((imp) => {
-        if (isModuleWithTrpcRoutes(imp)) {
-          // Method as key in the map
-          importedModulesWithTrpcRoutes.set(getModule(imp).prototype.getRouterConfig, imp);
-        }
-      });
+    (normalizedModuleMeta.importedStaticModules as ModRefId[]).concat(normalizedModuleMeta.importedDynamicModules).forEach((imp) => {
+      if (isModuleWithTrpcRoutes(imp)) {
+        // Method as key in the map
+        importedModulesWithTrpcRoutes.set(getModule(imp).prototype.getRouterConfig, imp);
+      }
+    });
 
     const config = this.trpcService.getModuleConfig(modRefId);
     return this.transformToTrpcConfig(modRefId, config, importedModulesWithTrpcRoutes);

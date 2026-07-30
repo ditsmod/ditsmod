@@ -185,11 +185,7 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
     }) as AnyMiddlewareFunction;
   }
 
-  protected setHandlerPerReq(
-    routeExtensionMeta: RouteExtensionMeta,
-    injectorPerMod: Injector,
-    controllerMeta: ControllerMeta,
-  ) {
+  protected setHandlerPerReq(routeExtensionMeta: RouteExtensionMeta, injectorPerMod: Injector, controllerMeta: ControllerMeta) {
     const { providersPerRou, providersPerReq, routeMeta } = controllerMeta;
     const mergedPerRou: Provider[] = [...routeExtensionMeta.meta.providersPerRou, ...providersPerRou];
     const injectorPerRou = injectorPerMod.resolveAndCreateChild(mergedPerRou, 'Rou');
@@ -211,9 +207,7 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
     // routeMeta.resolvedHandler = this.getResolvedHandler(routeMeta, resolvedPerReq);
     this.checkDeps(injPerReq, routeMeta, controllerName);
     const resolvedTrpcChainMaker = resolvedPerReq.find((rp) => rp.dualKey.token === TrpcChainMaker)!;
-    const resolvedErrHandler = resolvedPerReq
-      .concat(resolvedPerRou)
-      .find((rp) => rp.dualKey.token === HttpErrorHandler)!;
+    const resolvedErrHandler = resolvedPerReq.concat(resolvedPerRou).find((rp) => rp.dualKey.token === HttpErrorHandler)!;
     const RegistryPerReq = Injector.prepareRegistry(resolvedPerReq);
 
     const handlerPerReq = async (opts: TrpcOpts<any, any>) => {
@@ -262,9 +256,7 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
     const { Controller, methodName } = routeMeta;
     const factoryProvider: ClassFactoryProvider = { useFactory: [Controller, Controller.prototype[methodName]] };
     const resolvedHandler = Injector.resolve([factoryProvider])[0];
-    return resolvedProviders
-      .concat([resolvedHandler])
-      .find((rp) => rp.dualKey.token === Controller.prototype[methodName]);
+    return resolvedProviders.concat([resolvedHandler]).find((rp) => rp.dualKey.token === Controller.prototype[methodName]);
   }
 
   protected getResolvedGuardsPerMod(guards: ModuleScopedGuard[], controllerName: string, perReq?: boolean) {
@@ -272,9 +264,7 @@ export class TrpcRequestDispatcherExtension implements Extension<void> {
       const resolvedPerMod = Injector.resolve(g.normalizedModuleMeta.providersPerMod);
       const resolvedPerRou = Injector.resolve(g.meta.providersPerRou);
       const resolvedPerReq = Injector.resolve(g.meta.providersPerReq);
-      const resolvedProviders = perReq
-        ? resolvedPerReq.concat(resolvedPerRou, resolvedPerMod)
-        : resolvedPerRou.concat(resolvedPerMod);
+      const resolvedProviders = perReq ? resolvedPerReq.concat(resolvedPerRou, resolvedPerMod) : resolvedPerRou.concat(resolvedPerMod);
 
       const guard = resolvedProviders.find((rp) => rp.dualKey.token === g.guard);
 

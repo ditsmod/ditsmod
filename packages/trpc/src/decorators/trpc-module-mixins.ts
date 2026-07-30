@@ -47,15 +47,20 @@ export interface TrpcMixinOptions extends MixinOptions<TrpcModuleOptions> {
   controllers?: Class[];
 }
 
-export const mixinTrpcModule: MixinDecorator<TrpcMixinOptions, TrpcModuleOptions, TrpcMixinMeta> =
-  Reflector.makeClassDecorator(transformMixinMeta, 'mixinTrpcModule');
+export const mixinTrpcModule: MixinDecorator<TrpcMixinOptions, TrpcModuleOptions, TrpcMixinMeta> = Reflector.makeClassDecorator(
+  transformMixinMeta,
+  'mixinTrpcModule',
+);
 export const trpcRootModule: MixinDecorator<
   TrpcMixinOptions & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<StaticModule>][] },
   TrpcModuleOptions,
   TrpcMixinMeta
 > = Reflector.makeClassDecorator(transformRootMetadata, 'trpcRootModule', mixinTrpcModule);
-export const trpcModule: MixinDecorator<TrpcMixinOptions, TrpcModuleOptions, TrpcMixinMeta> =
-  Reflector.makeClassDecorator(transformFeatureMetadata, 'trpcModule', mixinTrpcModule);
+export const trpcModule: MixinDecorator<TrpcMixinOptions, TrpcModuleOptions, TrpcMixinMeta> = Reflector.makeClassDecorator(
+  transformFeatureMetadata,
+  'trpcModule',
+  mixinTrpcModule,
+);
 
 export function transformMixinMeta(data?: TrpcMixinOptions): ModuleMixin<TrpcMixinOptions> {
   const metadata = Object.assign({}, data);

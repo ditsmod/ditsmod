@@ -3,11 +3,7 @@ import { BaseAppOptions, AppModuleMixins, InjectionToken, createInjectionSymbol 
 import type { AnyRouter } from '@trpc/server';
 import { initTRPC } from '@trpc/server';
 import type { CreateHTTPHandlerOptions } from '@trpc/server/adapters/standalone';
-import type {
-  NodeHTTPCreateContextFnOptions,
-  NodeHTTPRequest,
-  NodeHTTPResponse,
-} from '@trpc/server/adapters/node-http';
+import type { NodeHTTPCreateContextFnOptions, NodeHTTPRequest, NodeHTTPResponse } from '@trpc/server/adapters/node-http';
 import type * as http from 'node:http';
 import type { Http2ServerRequest, Http2ServerResponse } from 'http2';
 
@@ -35,9 +31,7 @@ export type TrpcCreateCtxOpts = NodeHTTPCreateContextFnOptions<NodeHTTPRequest, 
 export type RawRequest = http.IncomingMessage | Http2ServerRequest;
 export type RawResponse = http.ServerResponse | Http2ServerResponse;
 export type RequestListener = (request: RawRequest, response: RawResponse) => void | Promise<void>;
-export type TrpcRootObject<T extends AnyObj> = ReturnType<
-  ReturnType<typeof initTRPC.context<TrpcOpts['ctx'] & T>>['create']
->;
+export type TrpcRootObject<T extends AnyObj> = ReturnType<ReturnType<typeof initTRPC.context<TrpcOpts['ctx'] & T>>['create']>;
 export type SetAppRouterOptions = Override<TrpcRouterOpts, { router?: never; createContext?: never }>;
 export type RouterOptions = Parameters<typeof t.router>[0];
 export interface TrpcRootModule {
