@@ -9,7 +9,6 @@ import type { ForwardRefFn } from '#di/forward-ref.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
 import type { AllModuleMixins, MixinOptions, ModuleMixin } from '#decorators/module-mixins.js';
 import type { ProviderBuilder } from '#utils/providers.js';
-import { isProvider } from '#utils/type-guards.js';
 import { normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
 import { NormalizedModuleMeta } from '#init/normalized-meta.js';
@@ -191,18 +190,19 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeExports(staticModuleOptions: { exports?: any[] }, action: 'Static exports' | 'Dynamic exports') {
-    if (!staticModuleOptions.exports) {
+  protected normalizeExports(moduleOptions: { exports?: any[] }, action: 'Static exports' | 'Dynamic exports') {
+    if (!moduleOptions.exports) {
       return;
     }
-    const declaredTokens = getTokens(
-      this.normalizedModuleMeta.providersPerMod.concat(
+    const tokensAtAllLevels = getTokens(
+      this.normalizedModuleMeta.providersPerApp.concat(
+        this.normalizedModuleMeta.providersPerMod,
         this.normalizedModuleMeta.providersPerRou,
         this.normalizedModuleMeta.providersPerReq,
       ),
     );
 
-    this.resolveAllForwardRefs(staticModuleOptions.exports).forEach((exp, i) => {
+    this.resolveAllForwardRefs(moduleOptions.exports).forEach((exp, i) => {
       if (exp === undefined) {
         throw new UndefinedSymbol(action, this.normalizedModuleMeta.name, i);
       }
@@ -210,15 +210,12 @@ export class ModuleNormalizer {
         throw new ForbiddenNormalizedExport(this.normalizedModuleMeta.name, exp.token.name || exp.token);
       }
       if (isDynamicModule(exp)) {
-        // @todo Review this condition later
         if (!this.normalizedModuleMeta.exportedDynamicModules.includes(exp)) {
           this.normalizedModuleMeta.exportedDynamicModules.push(exp);
         }
-      } else if (isProvider(exp) || declaredTokens.includes(exp)) {
-        // Provider or token of provider
+      } else if (tokensAtAllLevels.includes(exp)) {
         this.exportProviders(exp);
-      } else if (this.getDecoratorMeta(exp)) {
-        // @todo Review this condition later
+      } else if (this.getDecoratorMeta(exp)?.some(isModuleDecorator)) {
         if (!this.normalizedModuleMeta.exportedStaticModules.includes(exp)) {
           this.normalizedModuleMeta.exportedStaticModules.push(exp);
         }
