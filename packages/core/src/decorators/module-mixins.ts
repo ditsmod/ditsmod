@@ -2,7 +2,7 @@ import type { ModuleManager } from '#init/module-manager.js';
 import type { ShallowModuleImports } from '#init/types.js';
 import type { SystemLogMediator } from '#logger/system-log-mediator.js';
 import type { AnyObj } from '#types/mix.js';
-import type { ModRefId, StaticModule } from './module-decorator-options.js';
+import type { DynamicModuleOptions, ModRefId, StaticModule } from './module-decorator-options.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { DynamicModule, FeatureModuleOptions } from '#decorators/module-decorator-options.js';
 import { AppModuleMixins, type AppProviders } from '#types/metadata-per-mod.js';
@@ -227,6 +227,7 @@ export interface DynamicModuleWrapper {
  * In essence, it differs from the base {@link FeatureModuleOptions} only by its imports,
  * where an extended type of dynamic modules can be passed.
  */
-export interface StaticMixinOptions<T extends object = object> extends Omit<FeatureModuleOptions, 'imports'> {
+// prettier-ignore
+export interface StaticMixinOptions<T extends DynamicModuleOptions = DynamicModuleOptions> extends Omit<FeatureModuleOptions, 'imports'> {
   imports?: (((DynamicModuleWrapper | DynamicModule) & T) | StaticModule | ForwardRefFn<ModRefId>)[];
 }

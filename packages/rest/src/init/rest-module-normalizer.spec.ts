@@ -10,7 +10,6 @@ import {
   SystemLogMediator,
 } from '@ditsmod/core';
 
-import { RestModuleNormalizer } from './rest-module-normalizer.js';
 import { mixinRest, restRootModule } from '#decorators/rest-module-mixins.js';
 import { controller } from '#types/controller.js';
 import { CanActivate, NormalizedGuard } from '#interceptors/guard.js';
@@ -20,16 +19,12 @@ import { RestModule } from './rest.module.js';
 import { NormalizationFailure, ReexportFailure } from '@ditsmod/core/errors';
 
 describe('rest ModuleNormalizer', () => {
-  class MockModuleNormalizer extends RestModuleNormalizer {}
-
-  let mock: MockModuleNormalizer;
   let moduleManager: ModuleManager;
 
   beforeEach(() => {
     clearDebugClassNames();
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     moduleManager = new ModuleManager(systemLogMediator);
-    mock = new MockModuleNormalizer();
   });
 
   it('module and append - both with params and without mixin decorator', () => {

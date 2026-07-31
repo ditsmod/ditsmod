@@ -9,7 +9,7 @@ import { ModuleId, ModuleManager } from './module-manager.js';
 import { AllModuleMixins, StaticMixinOptions, MixinDecorator, ModuleMixin } from '#decorators/module-mixins.js';
 import { BaseNormalizedModuleMeta, NormalizedModuleMeta, getProxyForMixinMeta } from '#init/normalized-meta.js';
 import { ModuleGraphState } from '#init/module-graph-state.js';
-import { ModRefId } from '#decorators/module-decorator-options.js';
+import { DynamicModuleOptions, ModRefId } from '#decorators/module-decorator-options.js';
 import { DynamicModule } from '#decorators/module-decorator-options.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { isDynamicModule } from '#decorators/type-guards.js';
@@ -630,7 +630,10 @@ describe('ModuleManager', () => {
 
   describe('copyNormalizedModuleMeta()', () => {
     it('should copy NormalizedModuleMeta correctly, preserving prototype and recreating mixinMeta proxies wrapping the copy', () => {
-      interface RootMixinOptions extends StaticMixinOptions<{ path?: string }> {
+      interface MyDynamicOptions extends DynamicModuleOptions {
+        path?: string;
+      }
+      interface RootMixinOptions extends StaticMixinOptions<MyDynamicOptions> {
         one?: string;
       }
       class MixinMeta extends BaseNormalizedModuleMeta {
@@ -920,47 +923,49 @@ describe('ModuleManager', () => {
     });
 
     it('should handle Module1 not having an annotation with mixinSome, but imported in AppModule with this decorator', () => {
-      interface RootModuleOptions extends StaticMixinOptions<{ path?: string }> {
+      interface MyDynamicOptions extends DynamicModuleOptions {
+        path?: string;
+      }
+      interface RootModuleOptions extends StaticMixinOptions<MyDynamicOptions> {
         one?: string;
         two?: string;
       }
       interface MixinMeta extends BaseNormalizedModuleMeta {
         path?: string;
       }
-      const mixinSome: MixinDecorator<RootModuleOptions, { path?: string }, MixinMeta> = Reflector.makeClassDecorator(
-        (d) => new ModuleMixin1(d),
-      );
-
       class ModuleMixin1Local extends ModuleMixin<RootModuleOptions> {
         override normalize({ modRefId }: NormalizedModuleMeta): MixinMeta {
           if (isDynamicModule(modRefId)) {
-            const params = modRefId.mixinOptions?.get(mixinSomeLocal);
+            const params = modRefId.mixinOptions?.get(mixinSome);
             return { path: params?.path } as MixinMeta;
           }
           return {} as MixinMeta;
         }
       }
 
+      const mixinSome: MixinDecorator<RootModuleOptions, MyDynamicOptions, MixinMeta> = Reflector.makeClassDecorator(
+        (d) => new ModuleMixin1Local(d),
+      );
+
       @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
       class Module1 {}
 
       const dynamicModule: DynamicModule = { module: Module1 };
 
-      const mixinSomeLocal: MixinDecorator<RootModuleOptions, { path?: string }, MixinMeta> = Reflector.makeClassDecorator(
-        (d) => new ModuleMixin1Local(d),
-      );
-
-      @mixinSomeLocal({ one: 'some-here', imports: [{ dynamicModule: dynamicModule, path: 'some-prefix' }] })
+      @mixinSome({ one: 'some-here', imports: [{ dynamicModule: dynamicModule, path: 'some-prefix' }] })
       @rootModule()
       class AppModuleLocal {}
 
       mock.scanRootModule(AppModuleLocal);
       const mod1 = mock.getNormalizedModuleMeta(dynamicModule)!;
-      expect(mod1.mixinMeta.get(mixinSomeLocal)).toEqual({ path: 'some-prefix' });
+      expect(mod1.mixinMeta.get(mixinSome)).toEqual({ path: 'some-prefix' });
     });
 
     it('should handle static Module1 not having an annotation with mixinSome, but imported in AppModule with this decorator', () => {
-      interface RootModuleOptions extends StaticMixinOptions<{ path?: string }> {
+      interface MyDynamicOptions extends DynamicModuleOptions {
+        path?: string;
+      }
+      interface RootModuleOptions extends StaticMixinOptions<MyDynamicOptions> {
         one?: string;
         two?: string;
       }
@@ -996,7 +1001,10 @@ describe('ModuleManager', () => {
     });
 
     it('should not propagate context hooks when inheritsContext is false for static Module1', () => {
-      interface RootModuleOptions extends StaticMixinOptions<{ path?: string }> {
+      interface MyDynamicOptions extends DynamicModuleOptions {
+        path?: string;
+      }
+      interface RootModuleOptions extends StaticMixinOptions<MyDynamicOptions> {
         one?: string;
       }
       interface MixinMeta extends BaseNormalizedModuleMeta {
@@ -1034,13 +1042,19 @@ describe('ModuleManager', () => {
     });
 
     it('should retrieve mixinOptions for three different modules with params', () => {
-      interface DecoratorOptions1 extends StaticMixinOptions<{ one?: string }> {
+      interface MyDynamicOptions1 extends DynamicModuleOptions {
+        one?: string;
+      }
+      interface MyDynamicOptions2 extends DynamicModuleOptions {
+        three?: string;
+      }
+      interface DecoratorOptions1 extends StaticMixinOptions<MyDynamicOptions1> {
         one?: string;
       }
       interface MixinMeta1 {
         paramsForMixinMeta1?: any;
       }
-      interface DecoratorOptions2 extends StaticMixinOptions<{ three?: string }> {
+      interface DecoratorOptions2 extends StaticMixinOptions<MyDynamicOptions2> {
         three?: string;
       }
       interface MixinMeta2 {
@@ -1111,9 +1125,7 @@ describe('ModuleManager', () => {
         }
       }
 
-      const mixinSomeLocal: MixinDecorator<any, any, any> = Reflector.makeClassDecorator(
-        (d) => new ModuleMixinLocal(d),
-      );
+      const mixinSomeLocal: MixinDecorator<any, any, any> = Reflector.makeClassDecorator((d) => new ModuleMixinLocal(d));
 
       @mixinSomeLocal()
       @featureModule()
