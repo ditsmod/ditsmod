@@ -7,7 +7,6 @@ import type {
   Class,
   ForwardRefFn,
 } from '@ditsmod/core';
-import { TestRestApplication } from './test-application.js';
 
 export type Level = 'App' | 'Mod' | 'Rou' | 'Req';
 
