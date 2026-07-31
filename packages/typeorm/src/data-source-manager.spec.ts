@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import type { ModuleInfo } from '@ditsmod/core';
 import type { DataSource } from 'typeorm';
 
 import { DataSourceManager } from './data-source-manager.js';
