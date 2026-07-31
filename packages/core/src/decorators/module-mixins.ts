@@ -210,7 +210,7 @@ class MyModule {
 class MyModuleMixin extends ModuleMixin<RootModuleOptions> {}
 ```
  */
-export interface MixinDecorator<T extends StaticMixinOptions, DynamicModuleOptions, MixinMeta> {
+export interface MixinDecorator<T extends StaticMixinOptions, DynamicMixinOptions, MixinMeta> {
   (data?: T): any;
 }
 
@@ -225,9 +225,10 @@ export interface DynamicModuleWrapper {
   module?: never;
 }
 
-// prettier-ignore
-export interface StaticMixinOptions<T extends DynamicModuleOptions = DynamicModuleOptions> extends Omit<FeatureModuleOptions,'imports'> {
-  imports?: (
-    ((DynamicModuleWrapper | DynamicModule) & T) | StaticModule | ForwardRefFn<ModRefId>
-  )[];
+/**
+ * In essence, it differs from the base {@link FeatureModuleOptions} only by its imports,
+ * where an extended type of dynamic modules can be passed.
+ */
+export interface StaticMixinOptions<T extends object = object> extends Omit<FeatureModuleOptions, 'imports'> {
+  imports?: (((DynamicModuleWrapper | DynamicModule) & T) | StaticModule | ForwardRefFn<ModRefId>)[];
 }
