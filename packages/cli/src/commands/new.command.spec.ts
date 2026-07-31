@@ -110,7 +110,7 @@ describe('runNew logic', () => {
   it('should throw on disallowed package manager', async () => {
     // We need a directory that does NOT exist yet so we reach the PM validation.
     // Use a deeply unique path that will not be created during the test.
-    const uniqueDir = `_ditsmod_test_nonexistent_${Date.now()}`;
+    // const uniqueDir = `_ditsmod_test_nonexistent_${Date.now()}`;
 
     // The clone step will fail because there is no network in unit tests.
     // We only want to verify that a disallowed PM is caught BEFORE that step.

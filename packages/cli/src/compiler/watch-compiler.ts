@@ -32,6 +32,7 @@ declare module 'typescript' {
   };
   export function createWatchStatusReporter(system: ts.System, pretty?: boolean): ts.WatchStatusReporter;
   export function createDiagnosticReporter(system: ts.System, pretty?: boolean): ts.DiagnosticReporter;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   export interface SolutionBuilder<T extends ts.BuilderProgram> {
     close(): void;
   }
