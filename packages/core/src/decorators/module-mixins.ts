@@ -2,12 +2,9 @@ import type { ModuleManager } from '#init/module-manager.js';
 import type { ShallowModuleImports } from '#init/types.js';
 import type { SystemLogMediator } from '#logger/system-log-mediator.js';
 import type { AnyObj } from '#types/mix.js';
-import type { DynamicModuleOptions, ModRefId, StaticModule } from './module-decorator-options.js';
+import type { ModRefId, StaticModule } from './module-decorator-options.js';
 import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { DynamicModule, FeatureModuleOptions } from '#decorators/module-decorator-options.js';
-import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
-import type { featureModule } from './feature-module.js';
-import type { rootModule } from './root-module.js';
 import { AppModuleMixins, type AppProviders } from '#types/metadata-per-mod.js';
 import { type NormalizedModuleMeta, getProxyForMixinMeta, BaseNormalizedModuleMeta } from '#init/normalized-meta.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
@@ -210,6 +207,7 @@ class MyModule {
 class MyModuleMixin extends ModuleMixin<RootModuleOptions> {}
 ```
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface MixinDecorator<T extends StaticMixinOptions, DynamicMixinOptions, MixinMeta> {
   (data?: T): any;
 }
