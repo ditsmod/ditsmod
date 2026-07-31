@@ -2,37 +2,39 @@
 sidebar_position: 2
 ---
 
-# Mixin Decorators and Module Mixins
+# Mixin Decorators
 
 :::warning
-If you can easily pass metadata to a module using a [dynamic module][1], then creating an mixin decorator is not recommended. That is, whenever you want to create an mixin decorator, first consider using a [dynamic module][1].
+If you can easily pass metadata to a module using a [dynamic module][1], then creating a mixin is not recommended.
 :::
 
-Mixin decorators are applied to module classes to pass metadata with extended data types. Mixin decorators can serve three roles:
+**Mixin decorators** are custom decorators applied to module classes to pass metadata with extended data types. Depending on how a mixin is configured, it can serve three roles:
 
-1. As a decorator for declaring a **root module**, which has an extended data type relative to the `rootModule` decorator. For example, `restRootModule` is an mixin decorator.
-2. As a decorator for declaring a **feature module**, which has an extended data type relative to the `featureModule` decorator. For example, `restModule` is an mixin decorator.
-3. As a decorator for extending an already declared **root module** or **feature module**. In this case, it is recommended to name the decorator with the `mixin*` prefix, for example `mixinRest`, `mixinTrpc`, `mixinGraphql`, etc. In this role, several mixin decorators can be applied to a single module class at once.
+1. As a decorator for declaring a **root module** (e.g., `restRootModule`).
+2. As a decorator for declaring a **feature module** (e.g., `restModule`).
+3. As a **modifier decorator** to extend an already declared module. Such decorators usually have a `mixin*` prefix (e.g., `mixinRest`, `mixinTrpc`). Multiple modifiers can be applied to a single module class.
 
-Since mixin decorators accept module metadata with an extended type, they must be able to normalize and validate this metadata. This can be achieved through **module mixins**, which are passed into transformers during the creation of class decorators. Each transformer used for an mixin decorator must return an instance of a class that extends `ModuleMixin`:
+Since these decorators accept module metadata with extended types, they need a way to normalize and validate this metadata. This is where the **`ModuleMixin`** base class comes in. 
 
-```ts {46,50}
+When you create a mixin using `Reflector.makeClassDecorator()`, you provide a transformer function. This transformer must return an instance of a class that extends `ModuleMixin`, which will act as the metadata processor for your decorator:
+
+```ts {24-26,46,50}
 import {
   ModuleMixin,
   MixinDecorator,
   Reflector,
-  MixinOptions,
+  StaticMixinOptions,
   DynamicModuleOptions,
   BaseNormalizedModuleMeta,
   NormalizedModuleMeta,
-  RootDecoratorOptions,
+  RootModuleOptions,
 } from '@ditsmod/core';
 // ...
 
 /**
  * An object with this type will be passed directly to the mixin decorator - @mixinSome({ one: 1, two: 2 })
  */
-interface ExtMixinDecorOpts extends MixinOptions<MixinOpts> {
+interface MyStaticMixinOptions extends StaticMixinOptions<DynamicMixinOptions> {
   one?: number;
   two?: number;
 }
@@ -40,27 +42,27 @@ interface ExtMixinDecorOpts extends MixinOptions<MixinOpts> {
 /**
  * The methods of this class will normalize and validate the module metadata.
  */
-class SomeModuleMixin extends ModuleMixin<ExtMixinDecorOpts> {
+class SomeModuleMixin extends ModuleMixin<MyStaticMixinOptions> {
   // ...
 }
 
 /**
- * An object with this type will be passed in the module metadata as a so-called "DynamicModule".
+ * An object with this type will be passed in the module metadata as dynamic module.
  */
-interface MixinOpts extends DynamicModuleOptions {
+interface DynamicMixinOptions extends DynamicModuleOptions {
   path?: string;
   num?: number;
 }
 
 /**
- * Module mixins transform an object of ExtMixinDecorOpts into an object of that type.
+ * Module mixins transform an object of MyStaticMixinOptions into an object of that type.
  */
-interface MixinMeta extends BaseNormalizedModuleMeta {
+interface MyNormalizedModuleMeta extends BaseNormalizedModuleMeta {
   normalizedModuleMeta: NormalizedModuleMeta;
-  mixinDecoratorOptions: RootDecoratorOptions;
+  mixinDecoratorOptions: RootModuleOptions;
 }
 
-function transformMixinOptions(data?: ExtMixinDecorOpts): ModuleMixin<ExtMixinDecorOpts> {
+function transformMixinOptions(data?: MyStaticMixinOptions): ModuleMixin<MyStaticMixinOptions> {
   const metadata = Object.assign({}, data);
   const moduleMixin = new SomeModuleMixin(metadata);
   moduleMixin.moduleRole = undefined;
@@ -70,7 +72,8 @@ function transformMixinOptions(data?: ExtMixinDecorOpts): ModuleMixin<ExtMixinDe
 }
 
 // Creating the mixin decorator
-const mixinSome: MixinDecorator<ExtMixinDecorOpts, MixinOpts, MixinMeta> = Reflector.makeClassDecorator(transformMixinOptions);
+const mixinSome: MixinDecorator<MyStaticMixinOptions, DynamicMixinOptions, MyNormalizedModuleMeta> =
+  Reflector.makeClassDecorator(transformMixinOptions);
 
 // Using mixin decorator
 @mixinSome({ one: 1, two: 2 })
@@ -81,10 +84,10 @@ export class SomeModule {}
 
 ## Interaction with Root and Feature Modules {#interaction-with-root-and-feature-modules}
 
-Depending on the role defined by the `moduleRole` property of the `ModuleMixin` class (which is returned by the transformer function), mixin decorators interact differently with standard decorators (`rootModule` and `featureModule`):
+Depending on the role defined by the `moduleRole` property of the `ModuleMixin` class (which is returned by the transformer function), mixin decorators interact differently with standard decorators - `rootModule` and `featureModule`:
 
-- **Substitute Decorators** (`moduleRole` is `'root'` or `'feature'`): These decorators act as complete module decorators. A class annotated with them (e.g. `@restRootModule` or `@restModule`) does not require `@featureModule` or `@rootModule`. The framework automatically recognizes their role and processes them.
-- **Modifier Decorators** (`moduleRole` is `undefined`): These decorators only modify/extend metadata. A class annotated with them (e.g. `@mixinRest`) **must** also have a standard module decorator (or a substitute decorator). If no module decorator is present, the framework throws a `MissingModuleDecorator` exception.
+- **Substitute Decorators**: when `moduleRole` is `'root'` or `'feature'`, the corresponding decorators act as full module decorators. A class annotated with them (e.g. `@restRootModule` or `@restModule`) does not require `@featureModule` or `@rootModule`. The framework automatically recognizes their role and processes them.
+- **Modifier Decorators**: when `moduleRole` is `undefined`, the corresponding decorators only modify/extend the metadata. A class annotated with them (e.g. `@mixinRest`) **must** also have a standard module decorator or a substitute decorator. If no module decorator is present, the framework throws a `MissingModuleDecorator` exception.
 
 Multiple modifier decorators can be stacked on a single class (for example, to add REST or tRPC metadata to the same module).
 
@@ -94,34 +97,22 @@ When creating a substitute decorator (with `'root'` or `'feature'` role) using `
 
 ## Customizing ModuleMixin {#customizing-inithooks}
 
-The `ModuleMixin` base class provides several lifecycle properties and methods you can override to control metadata processing:
+The `ModuleMixin` base class provides several lifecycle properties and methods you can override to control metadata processing.
 
-### Lifecycles and Properties {#lifecycles-and-properties}
-
-- `moduleRole?: 'root' | 'feature'`: Determines whether the decorator behaves as a substitute for `@rootModule` or `@featureModule`.
-- `hostModule?: ModuleType`: The class of the module to automatically import. When the decorator is applied to any class, the specified `hostModule` is automatically added to its `imports` array (if not already present).
-- `hostMixinOptions?: T`: Options to pass as mixin parameters for the host module. This allows attaching metadata to the host module class without directly decorating it with a mixin decorator, resolving potential circular dependencies.
-- `normalize(normalizedModuleMeta)`: Validates and normalizes decorator options, returning a structured metadata object that gets saved in `normalizedModuleMeta.mixinMeta`.
-- `getModulesToScan(meta)`: Returns an array of module classes/references that should also be scanned (e.g., appended modules in REST).
-- `exportAppProviders(config)`: Invoked at bootstrap to collect and export application-level providers.
-- `importModulesShallow(config)`: Invoked during the shallow import step to scan routes, paths, controllers, and guards.
-- `importModulesDeep(config)`: Invoked during the deep import step to resolve provider dependencies.
-- `getProvidersToOverride(meta)`: Returns an array of provider arrays that can be overridden (e.g., for testing).
-
-### Separation of Feature Module and Mixin Decorator using hostModule {#separation-of-feature-module-and-mixin-decorator-using-hostmodule}
+### Separation of Feature Module and Mixin Decorator {#separation-of-feature-module-and-mixin-decorator-using-hostmodule}
 
 Separating the mixin decorator's hook definitions from the host feature module is necessary to avoid circular dependencies (since the decorator imports the module, decorating the module with its own decorator would create an import loop):
 
 1. First, create a standard feature module (e.g., `MyLibModule`) containing all necessary extensions, default providers, and services.
 2. Next, define your custom `ModuleMixin` subclass setting `override hostModule = MyLibModule`.
-3. Create the base modifier decorator `mixin*` (e.g. `mixinMy`) which serves as the ID for the decorator group.
+3. Create the base modifier decorator `mixin*` (e.g. `mixinSome`) which serves as the ID for the decorator group.
 4. Create the transformer function that returns the hooks instance and sets `hooks.moduleRole = 'feature'` (or `'root'`).
-5. Create the substitute custom decorator (e.g. `myFeatureModule`) using `Reflector.makeClassDecorator()`, passing the transformer as the first argument, its name as the second, and the base modifier decorator (`mixinMy`) as the third argument (group ID).
+5. Create the substitute custom decorator (e.g. `myFeatureModule`) using `Reflector.makeClassDecorator()`, passing the transformer as the first argument, its name as the second, and the base modifier decorator (`mixinSome`) as the third argument (group ID).
 6. When developers apply this decorator (e.g., `@myFeatureModule`), the framework recognizes it as a module decorator (requiring only one decorator on the class instead of two) and automatically imports `MyLibModule`.
 
 Here is an example:
 
-```ts
+```ts {12}
 import { featureModule, ModuleMixin, Reflector } from '@ditsmod/core';
 
 // 1. Standard module containing actual logic/providers
@@ -137,7 +128,7 @@ class MyModuleMixin extends ModuleMixin {
 }
 
 // 3. Creating the base modifier decorator (serves as the group parent)
-export const mixinMy = Reflector.makeClassDecorator((data) => new MyModuleMixin(data), 'mixinMy');
+export const mixinSome = Reflector.makeClassDecorator((data) => new MyModuleMixin(data), 'mixinSome');
 
 // 4. Creating the transformer that sets moduleRole = 'feature'
 function transformFeatureMeta(data?: any) {
@@ -146,8 +137,8 @@ function transformFeatureMeta(data?: any) {
   return hooks;
 }
 
-// 5. Creating the substitute decorator, passing mixinMy as the 3rd argument
-export const myFeatureModule = Reflector.makeClassDecorator(transformFeatureMeta, 'myFeatureModule', mixinMy);
+// 5. Creating the substitute decorator, passing mixinSome as the 3rd argument
+export const myFeatureModule = Reflector.makeClassDecorator(transformFeatureMeta, 'myFeatureModule', mixinSome);
 
 // 6. Using only one decorator on the class (automatically imports MyLibModule)
 @myFeatureModule()
@@ -158,10 +149,13 @@ export class MyFeatureModule {}
 
 When importing a dynamic module in the context of an mixin decorator:
 
-1. The custom options (like `path` or `guards`) are automatically merged into `dynamicModule.mixinOptions` under the decorator's token key.
-2. If the imported module is a plain `@featureModule` (not decorated with the mixin decorator), the framework retrieves the default hook class for that decorator from the application context, clones it, registers it in the module's `moduleMixinMap` list, and calls `normalize()`.
+1. Custom parameters (such as `path` or `guards`) are automatically added to the Map using the decorator mixin as a key:
+    ```ts
+    dynamicModule.mixinOptions.set(mixinDecorator, { path: 'some-path' });
+    ```
+2. If the imported module is a plain `@featureModule` (not decorated with the mixin decorator), the framework retrieves the default mixin for that decorator from the application context, clones it, registers it in the module's `moduleMixinMap` list, and calls `normalize()`.
 3. This ensures that options like route prefixes and guards are correctly processed even when importing standard feature modules that have no custom mixin decorator annotations.
 
 [1]: /basic-components/modules/#DynamicModule
-[2]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/core/src/init/module-normalizer.spec.ts#L333-L531
-[3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/decorators/rest-module-mixins.ts
+[2]: https://github.com/ditsmod/ditsmod/blob/main/packages/core/src/init/module-normalizer.spec.ts
+[3]: https://github.com/ditsmod/ditsmod/blob/main/packages/rest/src/decorators/rest-module-mixins.ts
