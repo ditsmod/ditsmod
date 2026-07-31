@@ -1,11 +1,7 @@
 import { jest } from '@jest/globals';
 
-import { Logger, LoggerConfig } from '#logger/logger.js';
-import { ClassFactoryProvider, Provider } from '#di/top/types-and-models.js';
-import { ConsoleLogger } from '#logger/console-logger.js';
+import type { ClassFactoryProvider } from '#di/top/types-and-models.js';
 import { ProviderBuilder } from './providers.js';
-import { LogMediator } from '#logger/log-mediator.js';
-import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ClassWithoutDecorators } from '#error/core-errors.js';
 import { factoryMethod, injectable } from '#di/decorators.js';
 

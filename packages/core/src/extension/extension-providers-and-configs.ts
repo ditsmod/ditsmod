@@ -1,9 +1,6 @@
-import type { Extension, ExtensionClass } from '#extension/extension-types.js';
-import type { ExtensionManager } from './extension-manager.js';
+import type { ExtensionClass } from '#extension/extension-types.js';
 import type { AnyObj } from '#types/mix.js';
 import type { Provider } from '#di/top/types-and-models.js';
-import type { NormalizedModuleMeta } from '#init/normalized-meta.js';
-import type { ModuleNormalizer } from '#init/module-normalizer.js';
 import { KeyRegistry, type ExtensionGroupToken } from '#di/key-registry.js';
 
 /**

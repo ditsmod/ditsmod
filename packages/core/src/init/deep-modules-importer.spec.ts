@@ -3,14 +3,12 @@ import { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { Level } from '#types/mix.js';
 import { ModRefId } from '#decorators/module-decorator-options.js';
 import { Provider } from '#di/top/types-and-models.js';
-import { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { CyclicImports } from '#error/core-errors.js';
 import { BaseImportRegistry } from './types.js';
 import { injectable } from '#di/decorators.js';
-import { Injector } from '#di/injector.js';
 
 describe('DeepModulesImporter', () => {
   @injectable()
@@ -28,14 +26,11 @@ describe('DeepModulesImporter', () => {
   }
 
   let mock: DeepModulesImporterMock;
-  let shallowModulesImporter: ShallowModulesImporter;
   let moduleManager: ModuleManager;
   let systemLogMediator: SystemLogMediator;
 
   beforeEach(() => {
     clearDebugClassNames();
-    const injectorPerApp = Injector.resolveAndCreate([ShallowModulesImporter]);
-    shallowModulesImporter = injectorPerApp.get(ShallowModulesImporter);
     systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     moduleManager = new ModuleManager(systemLogMediator);
     mock = new DeepModulesImporterMock({

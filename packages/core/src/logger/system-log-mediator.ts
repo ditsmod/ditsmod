@@ -145,8 +145,7 @@ export class SystemLogMediator extends LogMediator {
   /**
    * [log any error]
    */
-  printReinitError(self: object, err: any) {
-    const className = self.constructor.name;
+  printReinitError(_self: object, err: any) {
     this.setLog('error', err.stack || err.message);
   }
 

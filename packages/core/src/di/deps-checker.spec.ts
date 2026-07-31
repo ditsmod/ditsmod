@@ -1,10 +1,9 @@
 import { jest } from '@jest/globals';
 
-import { Reflector } from './reflector.js';
 import { DepsChecker } from './deps-checker.js';
 
 import { CyclicDependency, NoProvider } from './di-errors.js';
-import { factoryMethod, inject, injectable, optional, skipSelf } from './decorators.js';
+import { factoryMethod, inject, injectable, skipSelf } from './decorators.js';
 import { InjectionToken } from './top/injection-token.js';
 import type { Provider } from './top/types-and-models.js';
 import { Injector } from './injector.js';
@@ -12,57 +11,15 @@ import { PathTracer } from './path-tracer.js';
 
 class Engine {}
 
-class BrokenEngine {
-  constructor() {
-    throw new Error('Broken Engine');
-  }
-}
-
-class DashboardSoftware {}
-
-@injectable()
-class Dashboard {
-  constructor(software: DashboardSoftware) {}
-}
-
-class TurboEngine extends Engine {}
-
 @injectable()
 class Car {
   constructor(public engine: Engine) {}
 }
 
 @injectable()
-class CarWithOptionalEngine {
-  constructor(@optional() public engine: Engine) {}
-}
-
-@injectable()
-class CarWithDashboard {
-  constructor(
-    public engine: Engine,
-    public dashboard: Dashboard,
-  ) {}
-}
-
-@injectable()
-class SportsCar extends Car {}
-
-@injectable()
-class CarWithInject {
-  constructor(@inject(TurboEngine) public engine: Engine) {}
-}
-
-@injectable()
 class CyclicEngine {
   constructor(car: Car) {}
 }
-
-class NoAnnotations {
-  constructor(secretDependency: any) {}
-}
-
-const factory = Reflector.makePropDecorator();
 const provider0 = new InjectionToken('provider0');
 const provider1 = new InjectionToken('provider1');
 const provider2 = new InjectionToken('provider2');

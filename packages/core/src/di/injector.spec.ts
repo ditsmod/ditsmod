@@ -61,11 +61,6 @@ class CarWithInject {
   constructor(@inject(TurboEngine) public engine: Engine) {}
 }
 
-@injectable()
-class CyclicEngine {
-  constructor(car: Car) {}
-}
-
 class NoAnnotations {
   constructor(secretDependency: any) {}
 }
@@ -200,7 +195,7 @@ describe('injector', () => {
       const rest = [false, null, undefined] as const;
 
       it('Parent', () => {
-        const deps1 = (Injector as typeof MockInjector).getDependencies(Parent);
+        const deps1 = MockInjector.getDependencies(Parent);
         expect(deps1).toEqual({
           deps: [
             new Dependency(KeyRegistry.get(AType), ...rest),
@@ -213,7 +208,7 @@ describe('injector', () => {
       });
 
       it('Child', () => {
-        const deps2 = (Injector as typeof MockInjector).getDependencies(Child);
+        const deps2 = MockInjector.getDependencies(Child);
         expect(deps2).toEqual({
           deps: [
             new Dependency(KeyRegistry.get(CType), ...rest),

@@ -2,7 +2,7 @@ import type { AnyObj } from '#types/mix.js';
 import type { ModRefId, StaticModule } from '#decorators/module-decorator-options.js';
 import type { AnyFn, Class, Provider } from '#di/top/types-and-models.js';
 import type { DynamicModule } from '../decorators/module-decorator-options.js';
-import type { ExtensionConfig, BaseExtensionConfig } from '#extension/extension-providers-and-configs.js';
+import type { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import type { MixinMetaMap, ModuleMixin, AllModuleMixins } from '#decorators/module-mixins.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
 import type { ExtensionGroupToken } from '#di/key-registry.js';

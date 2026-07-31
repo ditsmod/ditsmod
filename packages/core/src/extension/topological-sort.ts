@@ -3,10 +3,7 @@ import type { Graph, ExtensionConfig } from './tarjan-graph.js';
 import { getGraph } from './tarjan-graph.js';
 import { isExtensionConfig } from './type-guards.js';
 
-export function topologicalSort<T = any, R extends ExtensionConfig<T> = ExtensionConfig<any>>(
-  configs: AnyObj[],
-  extensionsOnly: true,
-): T[];
+export function topologicalSort<T = any>(configs: AnyObj[], extensionsOnly: true): T[];
 export function topologicalSort<T = any, R extends ExtensionConfig<T> = ExtensionConfig<any>>(
   configs: AnyObj[],
   extensionsOnly?: false,

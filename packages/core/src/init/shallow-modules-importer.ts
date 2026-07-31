@@ -13,7 +13,7 @@ import { getLastProviders } from '#utils/get-last-providers.js';
 import { getToken, getTokens } from '#utils/get-tokens.js';
 import { hasDeclaredInDir } from '#decorators/type-guards.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import type { ExtensionConfig, OverrideExtensionConfig, BaseExtensionConfig } from '#extension/extension-providers-and-configs.js';
+import type { ExtensionConfig, OverrideExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import { isOverrideExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import { findCycle } from '#extension/tarjan-graph.js';
 import { getProviderName } from '#utils/get-provider-name.js';
@@ -154,7 +154,7 @@ export class ShallowModulesImporter {
 
     const allExtensionConfigs = normalizedModuleMeta.extensionConfigs.concat(extensionConfigs);
     this.checkExtensionsGraph(allExtensionConfigs);
-    const orderedExtensions = topologicalSort<ExtensionClass, BaseExtensionConfig>(allExtensionConfigs, true);
+    const orderedExtensions = topologicalSort<ExtensionClass>(allExtensionConfigs, true);
 
     return this.shallowModuleImportsMap.set(
       modRefId,

@@ -3,8 +3,6 @@ import type { AnyObj } from '#types/mix.js';
 import type { ExtensionConfig } from '#extension/extension-providers-and-configs.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
 import type { MixinDynamicOptionsMap } from '#decorators/module-mixins.js';
-import type { rootModule } from '#decorators/root-module.js';
-import type { featureModule } from '#decorators/feature-module.js';
 import type { ProviderBuilder } from '#utils/providers.js';
 import type { Class, Provider } from '#di/top/types-and-models.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';

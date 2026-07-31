@@ -8,7 +8,6 @@ import { inject } from './decorators.js';
 
 const classDecoratorFactory = Reflector.makeClassDecorator();
 const propDecoratorFactory = Reflector.makePropDecorator();
-const paramDecoratorFactory = Reflector.makeParamDecorator();
 
 class ClassBefore1Param1 {}
 class ClassBefore1Param2 {}

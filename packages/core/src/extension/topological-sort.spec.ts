@@ -1,6 +1,5 @@
 import { topologicalSort } from './topological-sort.js';
 import type { ExtensionConfig } from './tarjan-graph.js';
-import { getGraph } from './tarjan-graph.js';
 
 describe('topologicalSort()', () => {
   it('case 1', () => {

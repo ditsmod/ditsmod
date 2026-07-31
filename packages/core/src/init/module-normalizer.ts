@@ -1,9 +1,8 @@
 import type { BaseExtensionConfig } from '#extension/extension-providers-and-configs.js';
-import type { ModuleManager } from './module-manager.js';
 import type { AnyObj, Level, PickProps } from '#types/mix.js';
 import type { ProvidersByLevel } from '#types/providers-metadata.js';
 import type { ModRefId, StaticModule } from '#decorators/module-decorator-options.js';
-import type { AnyFn, Provider, Class } from '#di/top/types-and-models.js';
+import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { DynamicModule, FeatureModuleOptions } from '#decorators/module-decorator-options.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
@@ -173,7 +172,9 @@ export class ModuleNormalizer {
     });
   }
 
-  protected normalizeResolvedCollisions(staticModuleOptions: StaticMixinOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>) {
+  protected normalizeResolvedCollisions(
+    staticModuleOptions: StaticMixinOptions & PickProps<RootModuleOptions, 'resolvedCollisionsPerApp'>,
+  ) {
     (['App', 'Mod', 'Rou', 'Req'] as const).forEach((level) => {
       const resolvedCollisionKey = `resolvedCollisionsPer${level}` as const;
       if (staticModuleOptions[resolvedCollisionKey]) {

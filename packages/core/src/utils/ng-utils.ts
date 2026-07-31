@@ -8,7 +8,6 @@
 
 import { resolveForwardRef } from '#di/forward-ref.js';
 import {
-  Class,
   type ClassProvider,
   type FactoryProvider,
   type Provider,

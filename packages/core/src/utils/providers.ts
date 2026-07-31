@@ -2,6 +2,7 @@ import type { UnionToIntersection } from '#types/mix.js';
 import type { AnyFn, Class, FunctionFactoryProvider, Provider, UseFactoryTuple } from '#di/top/types-and-models.js';
 import type { NormalizedProvider } from './ng-utils.js';
 import { ClassWithoutDecorators } from '#error/core-errors.js';
+import { factoryMethod } from '#di/decorators.js';
 import { Reflector } from '#di/reflector.js';
 import type { InjectionToken } from '#di/top/injection-token.js';
 import type { InjectionSymbol } from '#di/top/get-symbol.js';
@@ -97,8 +98,10 @@ export class ProviderBuilder {
           continue;
         }
         for (const decoratorMeta of classMeta[methodName].decorators) {
-          hasFactoryMethod = true;
-          this.pushProvider({ useFactory: [Cls, Cls.prototype[methodName]] });
+          if (decoratorMeta.decoratorId === factoryMethod) {
+            hasFactoryMethod = true;
+            this.pushProvider({ useFactory: [Cls, Cls.prototype[methodName]] });
+          }
         }
       }
       if (!hasFactoryMethod) {

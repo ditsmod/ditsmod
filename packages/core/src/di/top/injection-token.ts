@@ -25,6 +25,7 @@ const url = injector.get(BASE_URL);
 expect(url).toBe('http://localhost');
 ```
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export class InjectionToken<T = any> {
   constructor(protected desc: string) {}
 
