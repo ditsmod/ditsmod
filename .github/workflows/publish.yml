@@ -32,6 +32,7 @@ jobs:
           - sentry
           - session-cookie
           - trpc
+          - typeorm
         include:
           - package: openapi
             build_ui: true
