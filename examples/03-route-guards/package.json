@@ -17,7 +17,7 @@
     "#auth": "./dist/app/modules/auth/index.js"
   },
   "devDependencies": {
-    "@ditsmod/cli": "^3.0.0-next.15",
+    "@ditsmod/cli": "^3.0.0-next.18",
     "jest": "^30.4.2",
     "typescript-7": "npm:typescript@^7.0.2"
   }

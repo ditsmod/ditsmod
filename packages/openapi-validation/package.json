@@ -1,7 +1,7 @@
 {
   "name": "@ditsmod/openapi-validation",
   "type": "module",
-  "version": "3.0.0-next.17",
+  "version": "3.0.0-next.18",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ditsmod/ditsmod.git"
@@ -33,9 +33,9 @@
     "ajv": "^8.20.0"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-next.15",
-    "@ditsmod/openapi": "^3.0.0-next.15",
-    "@ditsmod/rest": "^3.0.0-next.15"
+    "@ditsmod/core": "^3.0.0-next.18",
+    "@ditsmod/openapi": "^3.0.0-next.18",
+    "@ditsmod/rest": "^3.0.0-next.18"
   },
   "devDependencies": {
     "jest": "^30.4.2",
