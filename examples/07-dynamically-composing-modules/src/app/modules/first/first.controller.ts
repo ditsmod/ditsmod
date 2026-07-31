@@ -1,10 +1,10 @@
 import { BaseAppInitializer, ModuleManager, DynamicModule, skipSelf } from '@ditsmod/core';
-import { controller, route, RequestContext, RestModuleOptions } from '@ditsmod/rest';
+import { controller, route, RequestContext, RestDynamicOptions } from '@ditsmod/rest';
 
 import { SecondModule } from '../second.module.js';
 import { ThirdModule } from '../third/third.module.js';
 
-const secondDynamicModule: DynamicModule & RestModuleOptions = { path: '', module: SecondModule };
+const secondDynamicModule: DynamicModule & RestDynamicOptions = { path: '', module: SecondModule };
 const thirdDynamicModule: DynamicModule = { module: ThirdModule };
 
 @controller()

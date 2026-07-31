@@ -11,7 +11,7 @@ import {
 import { CanActivate, guard } from '../interceptors/guard.js';
 import { controller } from '../types/controller.js';
 import { RequestContext } from '../services/request-context.js';
-import { AppendsWithOptions, type RestModuleOptions } from './rest-mixin-raw-meta.js';
+import { RestAppendOptions, type RestDynamicOptions } from './rest-mixin-raw-meta.js';
 import { mixinRest, restRootModule } from '#decorators/rest-module-mixins.js';
 
 let mock: MockModuleManager;
@@ -56,12 +56,12 @@ it('imports and appends with gruards for some modules', () => {
   @featureModule()
   class Module2 {}
 
-  const dynamicModule: RestModuleOptions & DynamicModule = {
+  const dynamicModule: RestDynamicOptions & DynamicModule = {
     path: 'module1',
     module: Module1,
     guards: [Guard1],
   };
-  const appendsWithOpts: AppendsWithOptions = {
+  const appendsWithOpts: RestAppendOptions = {
     path: 'module2',
     module: Module2,
     guards: [Guard2],

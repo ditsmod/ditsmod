@@ -18,7 +18,7 @@ import {
 } from '@ditsmod/core';
 
 import { controller } from '#types/controller.js';
-import { AppendsWithOptions } from './rest-mixin-raw-meta.js';
+import { RestAppendOptions } from './rest-mixin-raw-meta.js';
 import { mixinRest } from '#decorators/rest-module-mixins.js';
 import { RestShallowModulesImporter } from './rest-shallow-modules-importer.js';
 import { Level, RestAppProviders } from '#types/types.js';
@@ -261,8 +261,8 @@ describe('shallow importing modules', () => {
     @featureModule()
     class Module2 {}
 
-    const mod1: AppendsWithOptions = { path: 'prefix1', module: Module1 };
-    const mod2: AppendsWithOptions = { path: 'prefix2', module: Module2 };
+    const mod1: RestAppendOptions = { path: 'prefix1', module: Module1 };
+    const mod2: RestAppendOptions = { path: 'prefix2', module: Module2 };
     @mixinRest({
       appends: [mod1, mod2],
       controllers: [Controller1],
@@ -332,7 +332,7 @@ describe('shallow importing modules', () => {
     expect(() => importModulesShallow(AppModule)).toThrow(msg);
   });
 
-  it('should throw an error during appending module without controllers (AppendsWithOptions)', () => {
+  it('should throw an error during appending module without controllers (RestAppendOptions)', () => {
     class Provider1 {}
     class Provider2 {}
 
@@ -409,8 +409,8 @@ describe('shallow importing modules', () => {
     @featureModule()
     class Module2 {}
 
-    const mod1: AppendsWithOptions = { path: 'prefix1', module: Module1 };
-    const mod2: AppendsWithOptions = { path: 'prefix2', module: Module2 };
+    const mod1: RestAppendOptions = { path: 'prefix1', module: Module1 };
+    const mod2: RestAppendOptions = { path: 'prefix2', module: Module2 };
     @mixinRest({
       appends: [mod1, mod2],
       controllers: [Controller1],

@@ -361,11 +361,11 @@ Pay attention! If during re-export you import an object with `DynamicModule` int
 
 ```ts
 import { DynamicModule } from '@ditsmod/core';
-import { restModule, RestModuleOptions } from '@ditsmod/rest';
+import { restModule, RestDynamicOptions } from '@ditsmod/rest';
 
 import { Module1 } from './module1.js';
 
-const firstDynamicModule: DynamicModule & RestModuleOptions = { path: 'some-path', module: Module1 };
+const firstDynamicModule: DynamicModule & RestDynamicOptions = { path: 'some-path', module: Module1 };
 
 @restModule({
   imports: [firstDynamicModule],

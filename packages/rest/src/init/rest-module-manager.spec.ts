@@ -25,7 +25,7 @@ import {
 
 import { controller } from '../types/controller.js';
 import { mixinRest, restRootModule } from '#decorators/rest-module-mixins.js';
-import { AppendsWithOptions } from './rest-mixin-raw-meta.js';
+import { RestAppendOptions } from './rest-mixin-raw-meta.js';
 import { RestMixinMeta } from './rest-mixin-meta.js';
 import { CanActivate, guard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
@@ -450,7 +450,7 @@ describe('ModuleManager', () => {
 
     const dynamicModule = Module1.withOpts();
     dynamicModule.mixinOptions.set(mixinRest, { path: 'module1', guards: [Guard1] });
-    const appendsWithOpts: AppendsWithOptions = { path: 'module2', module: Module2, guards: [Guard2] };
+    const appendsWithOpts: RestAppendOptions = { path: 'module2', module: Module2, guards: [Guard2] };
 
     @mixinRest({ appends: [appendsWithOpts] })
     @rootModule({ imports: [dynamicModule] })

@@ -4,45 +4,45 @@ import type { GuardItem } from '#interceptors/guard.js';
 /**
  * Metadata for the `mixinRest` decorator, which adds REST metadata to a `featureModule` or `rootModule`.
  */
-export interface RestStaticMixinOptions extends StaticMixinOptions<RestModuleOptions> {
+export interface RestStaticOptions extends StaticMixinOptions<RestDynamicOptions> {
   /**
    * List of modules that contain controllers. Providers from these modules
    * are not imported into the current module. If the current module has a prefix path,
    * that path will be added to each controller route from the appended modules.
    */
-  appends?: Array<StaticModule | AppendsWithOptions | ForwardRefFn<StaticModule>>;
+  appends?: Array<StaticModule | RestAppendOptions | ForwardRefFn<StaticModule>>;
   /**
    * The application controllers.
    */
   controllers?: Class[];
 }
 
-export type RestModuleOptions = PathRestModuleOptions | AbsolutePathRestModuleOptions;
+export type RestDynamicOptions = RestDynamicPathOptions | RestDynamicAbsolutePathOptions;
 
-export interface BaseRestModuleOptions extends DynamicModuleOptions {
+export interface BaseRestDynamicOptions extends DynamicModuleOptions {
   /**
-   * List of modules, `RestModuleOptions` or tokens of providers exported by this
+   * List of modules, `RestDynamicOptions` or tokens of providers exported by this
    * module.
    */
   exports?: any[];
   guards?: GuardItem[];
 }
 
-export interface PathRestModuleOptions extends BaseRestModuleOptions {
+export interface RestDynamicPathOptions extends BaseRestDynamicOptions {
   path?: string;
   absolutePath?: never;
 }
 
-export interface AbsolutePathRestModuleOptions extends BaseRestModuleOptions {
+export interface RestDynamicAbsolutePathOptions extends BaseRestDynamicOptions {
   absolutePath?: string;
   path?: never;
 }
 /**
  * Used for module metadata, for `appends` array.
  */
-export type AppendsWithOptions<T extends AnyObj = AnyObj> = PathAppendsWithOptions<T> | AbsolutePathAppendsWithOptions<T>;
+export type RestAppendOptions<T extends AnyObj = AnyObj> = RestAppendPathOptions<T> | RestAppendAbsolutePathOptions<T>;
 
-export interface BaseAppendsWithOptions<T extends AnyObj = AnyObj> {
+export interface BaseRestAppendOptions<T extends AnyObj = AnyObj> {
   /**
    * The module ID.
    */
@@ -52,12 +52,12 @@ export interface BaseAppendsWithOptions<T extends AnyObj = AnyObj> {
   mixinOptions?: Map<AnyFn, any>;
 }
 
-export interface PathAppendsWithOptions<T extends AnyObj = AnyObj> extends BaseAppendsWithOptions<T> {
+export interface RestAppendPathOptions<T extends AnyObj = AnyObj> extends BaseRestAppendOptions<T> {
   path?: string;
   absolutePath?: never;
 }
 
-export interface AbsolutePathAppendsWithOptions<T extends AnyObj = AnyObj> extends BaseAppendsWithOptions<T> {
+export interface RestAppendAbsolutePathOptions<T extends AnyObj = AnyObj> extends BaseRestAppendOptions<T> {
   absolutePath?: string;
   path?: never;
 }

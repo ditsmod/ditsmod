@@ -6,7 +6,7 @@ import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js'
 import { CanActivate } from '#interceptors/guard.js';
 import { controller } from './controller.js';
 import { RequestContext } from '#services/request-context.js';
-import { AppendsWithOptions } from '#init/rest-mixin-raw-meta.js';
+import { RestAppendOptions } from '#init/rest-mixin-raw-meta.js';
 
 describe('type guards', () => {
   describe('isController()', () => {
@@ -29,9 +29,9 @@ describe('type guards', () => {
       @featureModule({})
       class Module1 {}
 
-      const modRefId1: AppendsWithOptions = { module: Module1, path: '' };
+      const modRefId1: RestAppendOptions = { module: Module1, path: '' };
       expect(isAppendsWithOptions(modRefId1)).toBe(true);
-      const modRefId2: AppendsWithOptions = { module: Module1, absolutePath: '' };
+      const modRefId2: RestAppendOptions = { module: Module1, absolutePath: '' };
       expect(isAppendsWithOptions(modRefId2)).toBe(true);
     });
   });

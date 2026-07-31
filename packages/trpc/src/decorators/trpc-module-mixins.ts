@@ -33,52 +33,52 @@ export class TrpcMixinMeta extends BaseNormalizedModuleMeta {
   params = new NormalizedParams();
 }
 
-export interface TrpcModuleOptions extends DynamicModuleOptions {
+export interface TrpcDynamicOptions extends DynamicModuleOptions {
   guards?: GuardItem[];
 }
 
 /**
  * Metadata for the `mixinTrpcModule` decorator, which adds TRPC metadata to a `featureModule` or `rootModule`.
  */
-export interface TrpcMixinOptions extends StaticMixinOptions<TrpcModuleOptions> {
+export interface TrpcStaticOptions extends StaticMixinOptions<TrpcDynamicOptions> {
   /**
    * The application controllers.
    */
   controllers?: Class[];
 }
 
-export const mixinTrpcModule: MixinDecorator<TrpcMixinOptions, TrpcModuleOptions, TrpcMixinMeta> = Reflector.makeClassDecorator(
+export const mixinTrpcModule: MixinDecorator<TrpcStaticOptions, TrpcDynamicOptions, TrpcMixinMeta> = Reflector.makeClassDecorator(
   transformMixinMeta,
   'mixinTrpcModule',
 );
 export const trpcRootModule: MixinDecorator<
-  TrpcMixinOptions & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<StaticModule>][] },
-  TrpcModuleOptions,
+  TrpcStaticOptions & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<StaticModule>][] },
+  TrpcDynamicOptions,
   TrpcMixinMeta
 > = Reflector.makeClassDecorator(transformRootMetadata, 'trpcRootModule', mixinTrpcModule);
-export const trpcModule: MixinDecorator<TrpcMixinOptions, TrpcModuleOptions, TrpcMixinMeta> = Reflector.makeClassDecorator(
+export const trpcModule: MixinDecorator<TrpcStaticOptions, TrpcDynamicOptions, TrpcMixinMeta> = Reflector.makeClassDecorator(
   transformFeatureMetadata,
   'trpcModule',
   mixinTrpcModule,
 );
 
-export function transformMixinMeta(data?: TrpcMixinOptions): ModuleMixin<TrpcMixinOptions> {
+export function transformMixinMeta(data?: TrpcStaticOptions): ModuleMixin<TrpcStaticOptions> {
   const metadata = Object.assign({}, data);
   return new TrpcModuleMixin(metadata);
 }
-export function transformRootMetadata(data?: TrpcMixinOptions): ModuleMixin<TrpcMixinOptions> {
+export function transformRootMetadata(data?: TrpcStaticOptions): ModuleMixin<TrpcStaticOptions> {
   const metadata = Object.assign({}, data);
   const moduleMixin = new TrpcModuleMixin(metadata);
   moduleMixin.moduleRole = 'root';
   return moduleMixin;
 }
-export function transformFeatureMetadata(data?: TrpcMixinOptions): ModuleMixin<TrpcMixinOptions> {
+export function transformFeatureMetadata(data?: TrpcStaticOptions): ModuleMixin<TrpcStaticOptions> {
   const metadata = transformRootMetadata(data);
   metadata.moduleRole = 'feature';
   return metadata;
 }
 
-export class TrpcModuleMixin extends ModuleMixin<TrpcMixinOptions> {
+export class TrpcModuleMixin extends ModuleMixin<TrpcStaticOptions> {
   override hostModule = TrpcModule;
 
   override normalize(normalizedModuleMeta: NormalizedModuleMeta): TrpcMixinMeta {

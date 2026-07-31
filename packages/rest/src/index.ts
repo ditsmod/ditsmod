@@ -5,12 +5,12 @@ export { RestAppInitializer } from './init/rest-app-initializer.js';
 export { DefaultRouter, PathParam, RouteHandler, Router, RouteMatch } from './services/router.js';
 export { Tree } from './services/tree.js';
 export {
-  AppendsWithOptions,
-  PathAppendsWithOptions,
-  AbsolutePathAppendsWithOptions,
-  BaseAppendsWithOptions,
-  RestStaticMixinOptions,
-  RestModuleOptions,
+  RestAppendOptions,
+  RestAppendPathOptions,
+  RestAppendAbsolutePathOptions,
+  BaseRestAppendOptions,
+  RestStaticOptions,
+  RestDynamicOptions,
 } from './init/rest-mixin-raw-meta.js';
 export { RouteParam, RouteExtensionMeta, RedirectStatusCodes } from './types/types.js';
 export { RestShallowModuleImports, RestResolvedModuleMeta } from '#init/types.js';

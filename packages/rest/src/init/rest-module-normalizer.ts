@@ -12,7 +12,7 @@ import {
 } from '@ditsmod/core';
 import { ForbiddenNormalizedExport, EmptyModuleMeta } from '@ditsmod/core/errors';
 
-import type { AppendsWithOptions, RestStaticMixinOptions } from '#init/rest-mixin-raw-meta.js';
+import type { RestAppendOptions, RestStaticOptions } from '#init/rest-mixin-raw-meta.js';
 import type { RestModRefId } from '#init/rest-mixin-meta.js';
 import { RestMixinMeta } from '#init/rest-mixin-meta.js';
 import { isAppendsWithOptions, isControllerDecorator } from '#types/type.guards.js';
@@ -27,7 +27,7 @@ export class RestModuleNormalizer {
   protected normalizedModuleMeta: NormalizedModuleMeta;
   protected meta: RestMixinMeta;
 
-  normalize(normalizedModuleMeta: NormalizedModuleMeta, moduleOptions: RestStaticMixinOptions) {
+  normalize(normalizedModuleMeta: NormalizedModuleMeta, moduleOptions: RestStaticOptions) {
     this.normalizedModuleMeta = normalizedModuleMeta;
     const meta = getProxyForMixinMeta(normalizedModuleMeta, RestMixinMeta);
     this.meta = meta;
@@ -66,14 +66,14 @@ export class RestModuleNormalizer {
     }
   }
 
-  protected appendModules(moduleOptions: RestStaticMixinOptions) {
+  protected appendModules(moduleOptions: RestStaticOptions) {
     moduleOptions.appends?.forEach((ap, i) => {
       ap = this.resolveForwardRef([ap])[0];
       if (isNormalizedProvider(ap)) {
         throw new ForbiddenNormalizedExport(this.normalizedModuleMeta.name, ap.token.name || ap.token);
       }
       if (isAppendsWithOptions(ap)) {
-        const params = { ...ap } as Partial<AppendsWithOptions>;
+        const params = { ...ap } as Partial<RestAppendOptions>;
         delete params.module;
         if (ap.mixinOptions) {
           ap.mixinOptions.set(mixinRest, params);

@@ -25,7 +25,7 @@ import { CanActivate, guard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
 import { mixinRest, restModule, restRootModule } from '#decorators/rest-module-mixins.js';
 import { RestResolvedModuleMeta } from './types.js';
-import { RestModuleOptions } from './rest-mixin-raw-meta.js';
+import { RestDynamicOptions } from './rest-mixin-raw-meta.js';
 
 describe('DeepModulesImporter', () => {
   class AppInitializerMock extends BaseAppInitializer {
@@ -203,7 +203,7 @@ describe('DeepModulesImporter', () => {
     @featureModule({ providersPerApp: [Provider1] })
     class Module1 {}
 
-    const dynamicModule: RestModuleOptions & DynamicModule = {
+    const dynamicModule: RestDynamicOptions & DynamicModule = {
       path: 'test-prefix',
       guards: [Guard1, [Guard2, { one: 1 }]],
       module: Module1,
@@ -573,7 +573,7 @@ describe('DeepModulesImporter', () => {
       }
     }
 
-    const mod1WithOpts: DynamicModule & RestModuleOptions = { module: Module1, guards: [BearerGuard1] };
+    const mod1WithOpts: DynamicModule & RestDynamicOptions = { module: Module1, guards: [BearerGuard1] };
     const provider: Provider = { token: BearerGuard1, useClass: BearerGuard2 };
 
     @restRootModule({ imports: [mod1WithOpts], providersPerRou: [provider, Service0, Service2] })

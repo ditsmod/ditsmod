@@ -15,7 +15,7 @@ import { mixinRest, restRootModule } from '#decorators/rest-module-mixins.js';
 import { controller } from '#types/controller.js';
 import { CanActivate, NormalizedGuard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
-import { AppendsWithOptions } from './rest-mixin-raw-meta.js';
+import { RestAppendOptions } from './rest-mixin-raw-meta.js';
 import { RestModule } from './rest.module.js';
 import { NormalizationFailure, ReexportFailure } from '@ditsmod/core/errors';
 
@@ -50,7 +50,7 @@ describe('rest ModuleNormalizer', () => {
 
     const dynamicModule = Module1.withOpts();
     dynamicModule.mixinOptions.set(mixinRest, { path: 'test1' });
-    const appendWithOpts: AppendsWithOptions = { module: Module2, path: 'test2' };
+    const appendWithOpts: RestAppendOptions = { module: Module2, path: 'test2' };
 
     // Although in `AppModule` `appendWithOpts` and `dynamicModule` are used in the context of the `mixinRest` decorator, `Module1` and `Module2`
     // themselves do not have this decorator, so it's important that `Module1` and `Module2` are processed using the module mixins taken from `AppModule`.
@@ -112,7 +112,7 @@ describe('rest ModuleNormalizer', () => {
       return module2WithOpts;
     });
     const module4WithOpts: DynamicModule = { module: forwardRef(() => Module4) };
-    const appendWithOpts: AppendsWithOptions = { module: forwardRef(() => Module6), path: 'test2' };
+    const appendWithOpts: RestAppendOptions = { module: forwardRef(() => Module6), path: 'test2' };
     @mixinRest({
       appends: [forwardRef(() => Module5), appendWithOpts],
       providersPerRou: [
@@ -178,7 +178,7 @@ describe('rest ModuleNormalizer', () => {
     @featureModule()
     class Module1 {}
 
-    const appendsWithOpts: AppendsWithOptions = {
+    const appendsWithOpts: RestAppendOptions = {
       path: 'one',
       guards: [Guard1, [Guard2, { property1: 'some-value' }]],
       module: Module1,

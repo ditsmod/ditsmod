@@ -1,7 +1,7 @@
 import type { ModRefId, NormalizedModuleMeta, MixinDecorator, Provider, ForwardRefFn, StaticModule } from '@ditsmod/core';
 import { Reflector, ModuleMixin } from '@ditsmod/core';
 
-import type { RestStaticMixinOptions, RestModuleOptions } from '#init/rest-mixin-raw-meta.js';
+import type { RestStaticOptions, RestDynamicOptions } from '#init/rest-mixin-raw-meta.js';
 import { RestModuleNormalizer } from '#init/rest-module-normalizer.js';
 import { RestShallowModulesImporter } from '#init/rest-shallow-modules-importer.js';
 import type {
@@ -15,38 +15,38 @@ import type { RestAppProviders } from '#types/types.js';
 import { RestModule } from '#init/rest.module.js';
 import { RestDeepModulesImporter } from '#init/rest-deep-modules-importer.js';
 
-export const mixinRest: MixinDecorator<RestStaticMixinOptions, RestModuleOptions, RestMixinMeta> = Reflector.makeClassDecorator(
+export const mixinRest: MixinDecorator<RestStaticOptions, RestDynamicOptions, RestMixinMeta> = Reflector.makeClassDecorator(
   transformMixinMeta,
   'mixinRest',
 );
 export const restRootModule: MixinDecorator<
-  RestStaticMixinOptions & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<StaticModule>][] },
-  RestModuleOptions,
+  RestStaticOptions & { resolvedCollisionsPerApp?: [any, ModRefId | ForwardRefFn<StaticModule>][] },
+  RestDynamicOptions,
   RestMixinMeta
 > = Reflector.makeClassDecorator(transformRootMeta, 'restRootModule', mixinRest);
-export const restModule: MixinDecorator<RestStaticMixinOptions, RestModuleOptions, RestMixinMeta> = Reflector.makeClassDecorator(
+export const restModule: MixinDecorator<RestStaticOptions, RestDynamicOptions, RestMixinMeta> = Reflector.makeClassDecorator(
   transformFeatureMeta,
   'restModule',
   mixinRest,
 );
 
-export function transformMixinMeta(data?: RestStaticMixinOptions): ModuleMixin<RestStaticMixinOptions> {
+export function transformMixinMeta(data?: RestStaticOptions): ModuleMixin<RestStaticOptions> {
   const metadata = Object.assign({}, data);
   return new RestModuleMixin(metadata);
 }
-export function transformRootMeta(data?: RestStaticMixinOptions): ModuleMixin<RestStaticMixinOptions> {
+export function transformRootMeta(data?: RestStaticOptions): ModuleMixin<RestStaticOptions> {
   const metadata = Object.assign({}, data);
   const moduleMixin = new RestModuleMixin(metadata);
   moduleMixin.moduleRole = 'root';
   return moduleMixin;
 }
-export function transformFeatureMeta(data?: RestStaticMixinOptions): ModuleMixin<RestStaticMixinOptions> {
+export function transformFeatureMeta(data?: RestStaticOptions): ModuleMixin<RestStaticOptions> {
   const metadata = transformRootMeta(data);
   metadata.moduleRole = 'feature';
   return metadata;
 }
 
-export class RestModuleMixin extends ModuleMixin<RestStaticMixinOptions> {
+export class RestModuleMixin extends ModuleMixin<RestStaticOptions> {
   override hostModule = RestModule;
 
   override normalize(normalizedModuleMeta: NormalizedModuleMeta): RestMixinMeta {
