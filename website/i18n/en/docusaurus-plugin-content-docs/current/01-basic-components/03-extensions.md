@@ -382,7 +382,7 @@ If you are using `@ditsmod/rest`, any extension can declare a dependency on the 
 
 You can see how it is done in [BodyParserExtension][102]:
 
-```ts {14,32,39}
+```ts {13,31,42}
 import { Extension, ExtensionManager, Injector, injectable, inject, PROVIDERS_PER_APP } from '@ditsmod/core';
 import { HTTP_INTERCEPTORS, RestRouteExtension } from '@ditsmod/rest';
 // ...

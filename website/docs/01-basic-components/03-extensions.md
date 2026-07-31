@@ -382,7 +382,7 @@ await this.extensionManager.stage1(Extension3); // Повертаються да
 
 Можна проглянути як це зроблено у [BodyParserExtension][102]:
 
-```ts {14,32,39}
+```ts {13,31,42}
 import { Extension, ExtensionManager, Injector, injectable, inject, PROVIDERS_PER_APP } from '@ditsmod/core';
 import { HTTP_INTERCEPTORS, RestRouteExtension } from '@ditsmod/rest';
 // ...
