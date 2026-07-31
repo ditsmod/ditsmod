@@ -31,7 +31,15 @@ export default defineConfig([
       '@typescript-eslint/no-explicit-any': 0,
       '@typescript-eslint/no-inferrable-types': 0,
       '@typescript-eslint/no-non-null-asserted-optional-chain': 0,
-      '@typescript-eslint/no-unused-vars': 0,
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          vars: 'all',
+          args: 'none',
+          caughtErrors: 'none',
+          ignoreRestSiblings: true,
+        },
+      ],
       '@typescript-eslint/triple-slash-reference': 0,
       '@typescript-eslint/no-unsafe-function-type': 0,
       'no-unused-private-class-members': 'warn',
@@ -56,7 +64,7 @@ export default defineConfig([
       '**/jest.matchers.ts',
       'packages/openapi/ui/*',
       'scripts/*',
-      'commitlint.config.ts'
+      'commitlint.config.ts',
     ],
   },
 ]);
