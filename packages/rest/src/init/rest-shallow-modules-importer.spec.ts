@@ -14,15 +14,13 @@ import {
   rootModule,
   SystemLogMediator,
   ShallowModulesImporter as ShallowModulesImporterBase,
-  ImportedProvider,
 } from '@ditsmod/core';
 
 import { controller } from '#types/controller.js';
 import { RestAppendOptions } from './rest-mixin-raw-meta.js';
 import { mixinRest } from '#decorators/rest-module-mixins.js';
 import { RestShallowModulesImporter } from './rest-shallow-modules-importer.js';
-import { Level, RestAppProviders } from '#types/types.js';
-import { getImportedProviders } from '../utils/get-imports.js';
+import { Level } from '#types/types.js';
 import { ModuleMustHaveControllers } from '#services/rest-errors.js';
 import { LevelCollisionNotFound } from '@ditsmod/core/errors';
 
@@ -51,7 +49,7 @@ beforeEach(() => {
 describe('shallow importing modules', () => {
   function importModulesShallow(modRefId: StaticModule) {
     expect(() => moduleManager.scanRootModule(modRefId)).not.toThrow();
-    const shallowModuleImportsBase = new ShallowModulesImporterBase().importModulesShallow({
+    new ShallowModulesImporterBase().importModulesShallow({
       appProviders: new AppProviders(),
       modRefId,
       moduleManager,
@@ -103,11 +101,11 @@ describe('shallow importing modules', () => {
 
     const normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
     const moduleMixin = normalizedModuleMeta.allModuleMixin.get(mixinRest)!;
-    const val = moduleMixin.exportAppProviders({
+    moduleMixin.exportAppProviders({
       moduleManager,
       appProviders: new AppProviders(),
       normalizedModuleMeta,
-    }) as RestAppProviders;
+    });
     // expect(getImportedProviders(val.importedProvidersPerReq)).toEqual([Provider2, Provider1]);
   });
 

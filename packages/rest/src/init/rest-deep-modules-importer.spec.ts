@@ -19,7 +19,6 @@ import {
   DynamicModule,
   Context,
 } from '@ditsmod/core';
-import { InstantiationError, NoProvider } from '@ditsmod/core/errors';
 
 import { CanActivate, guard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
@@ -51,7 +50,7 @@ describe('DeepModulesImporter', () => {
       providersPerApp: initializer.normalizedModuleMeta.providersPerApp,
       log: systemLogMediator,
     });
-    const { extensionCounters, resolvedModuleMetaMap } = deepModulesImporter.importModulesDeep();
+    const { resolvedModuleMetaMap } = deepModulesImporter.importModulesDeep();
     return resolvedModuleMetaMap as Map<ModRefId, ResolvedModuleMeta<RestResolvedModuleMeta>>;
   }
 
@@ -488,7 +487,7 @@ describe('DeepModulesImporter', () => {
     @injectable()
     class Service2 {
       constructor(public injector: Injector) {
-        const service1 = this.injector.get(Service1); // Lazy loading here.
+        this.injector.get(Service1); // Lazy loading here.
       }
     }
 
@@ -519,7 +518,7 @@ describe('DeepModulesImporter', () => {
     @injectable()
     class Service2 {
       constructor(public injector: Injector) {
-        const service1 = this.injector.get(Service1); // Lazy loading here.
+        this.injector.get(Service1); // Lazy loading here.
       }
     }
 

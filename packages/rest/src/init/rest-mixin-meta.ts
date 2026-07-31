@@ -1,5 +1,5 @@
 import type { AnyObj, StaticModule, Class, ModRefId } from '@ditsmod/core';
-import { Provider, MultiProvider, BaseNormalizedModuleMeta } from '@ditsmod/core';
+import { BaseNormalizedModuleMeta } from '@ditsmod/core';
 
 import type { NormalizedGuard } from '#interceptors/guard.js';
 import type { RestAppendOptions } from '#init/rest-mixin-raw-meta.js';

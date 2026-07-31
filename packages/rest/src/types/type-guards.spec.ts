@@ -1,4 +1,4 @@
-import { featureModule, injectable, isDynamicModule, Reflector } from '@ditsmod/core';
+import { featureModule, injectable, Reflector } from '@ditsmod/core';
 
 import { route } from '#decorators/route.js';
 import { isAppendsWithOptions, isControllerDecorator, isInterceptor, isRoute } from './type.guards.js';

@@ -1,7 +1,6 @@
 import type { HttpMethod, NormalizedModuleMeta } from '@ditsmod/core';
-import { ModuleInfo, AppModuleMixins, Provider } from '@ditsmod/core';
+import { ModuleInfo, AppModuleMixins } from '@ditsmod/core';
 
-import { RestImportedProvider } from '#init/types.js';
 import type { Tree } from '#services/tree.js';
 import type { ModuleScopedGuard } from '#interceptors/guard.js';
 import type { RouteHandler } from '#services/router.js';

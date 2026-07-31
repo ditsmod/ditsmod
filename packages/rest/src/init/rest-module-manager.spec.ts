@@ -468,8 +468,6 @@ describe('ModuleManager', () => {
       async stage1() {}
     }
 
-    const extensionProviders: Provider[] = [Extension1];
-
     @featureModule({
       extensions: [{ extension: Extension1 as any, export: true }],
     })
@@ -498,8 +496,6 @@ describe('ModuleManager', () => {
     class Extension1 implements Extension<void> {
       async stage1() {}
     }
-
-    const extensionProviders: Provider[] = [Extension1];
 
     @featureModule({
       extensions: [{ extension: Extension1 as any, export: true }],

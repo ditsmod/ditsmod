@@ -21,7 +21,9 @@ import { mixinRest } from '#decorators/rest-module-mixins.js';
 
 function getImportedTokens(map: Map<any, ImportedProvider<Provider>> | undefined) {
   return [...(map || [])].map(([key]) => key);
+}
 
+describe('RestAppInitializer', () => {
   @injectable()
   class AppInitializerMock extends RestAppInitializer {
     override collectProvidersShallow(moduleManager: ModuleManager) {
@@ -221,4 +223,4 @@ function getImportedTokens(map: Map<any, ImportedProvider<Provider>> | undefined
     const providersPerApp = mock.collectProvidersPerApp(meta);
     expect(providersPerApp).toEqual([]);
   });
-}
+});
