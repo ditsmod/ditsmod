@@ -64,11 +64,15 @@ export class TrpcApplication extends BaseApplication {
   protected async createServer(requestListener: RequestListener): Promise<HttpServer> {
     if (isHttp2SecureServerOptions(this.appOptions.serverOptions || {})) {
       const serverModule = this.appOptions.httpModule as typeof http2;
-      return serverModule.createSecureServer(this.appOptions.serverOptions || {}, requestListener);
+      return serverModule.createSecureServer(this.appOptions.serverOptions || {}, (req, res) => {
+        void requestListener(req, res);
+      });
     } else {
       const serverModule = (this.appOptions.httpModule || (await import('http'))) as HttpServerModule | HttpsServerModule;
       const serverOptions = this.appOptions.serverOptions as http.ServerOptions | https.ServerOptions;
-      return serverModule.createServer(serverOptions, requestListener);
+      return serverModule.createServer(serverOptions, (req, res) => {
+        void requestListener(req, res);
+      });
     }
   }
 }

@@ -6,7 +6,6 @@ import type { TrpcStaticOptions } from '#decorators/trpc-module-mixins.js';
 import { TrpcMixinMeta } from '#decorators/trpc-module-mixins.js';
 import { ControllerDoesNotHaveDecorator, DuplicateOfControllers, InvalidGuard } from '../error/trpc-errors.js';
 import type { NormalizedGuard } from '#interceptors/trpc-guard.js';
-import { GuardItem } from '#interceptors/trpc-guard.js';
 import { isControllerDecorator } from '#types/type.guards.js';
 
 /**

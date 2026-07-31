@@ -1,7 +1,7 @@
 import type { AnyFn, AnyObj, NormalizedModuleMeta, ModRefId, Override, Provider } from '@ditsmod/core';
 import { BaseAppOptions, AppModuleMixins, InjectionToken, createInjectionSymbol } from '@ditsmod/core';
 import type { AnyRouter } from '@trpc/server';
-import { initTRPC } from '@trpc/server';
+import type { initTRPC } from '@trpc/server';
 import type { CreateHTTPHandlerOptions } from '@trpc/server/adapters/standalone';
 import type { NodeHTTPCreateContextFnOptions, NodeHTTPRequest, NodeHTTPResponse } from '@trpc/server/adapters/node-http';
 import type * as http from 'node:http';
@@ -13,8 +13,6 @@ import type { TrpcMixinMeta, TrpcModRefId } from '#decorators/trpc-module-mixins
 import type { ModuleScopedGuard } from '#interceptors/trpc-guard.js';
 import type { ControllerMeta } from './controller-metadata.js';
 import type { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
-
-const t = initTRPC.create();
 
 export class TrpcAppOptions extends BaseAppOptions {
   httpModule?: HttpModule | null = null;
@@ -33,7 +31,11 @@ export type RawResponse = http.ServerResponse | Http2ServerResponse;
 export type RequestListener = (request: RawRequest, response: RawResponse) => void | Promise<void>;
 export type TrpcRootObject<T extends AnyObj> = ReturnType<ReturnType<typeof initTRPC.context<TrpcOpts['ctx'] & T>>['create']>;
 export type SetAppRouterOptions = Override<TrpcRouterOpts, { router?: never; createContext?: never }>;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+declare const t: ReturnType<typeof initTRPC.create>;
+
 export type RouterOptions = Parameters<typeof t.router>[0];
+
 export interface TrpcRootModule {
   /**
    * Passing options for {@link initTRPC.create | initTRPC.create()}
