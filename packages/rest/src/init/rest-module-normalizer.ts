@@ -12,7 +12,7 @@ import {
 } from '@ditsmod/core';
 import { ForbiddenNormalizedExport, EmptyModuleMeta } from '@ditsmod/core/errors';
 
-import type { AppendsWithOptions, RestMixinOptions } from '#init/rest-mixin-raw-meta.js';
+import type { AppendsWithOptions, RestStaticMixinOptions } from '#init/rest-mixin-raw-meta.js';
 import type { RestModRefId } from '#init/rest-mixin-meta.js';
 import { RestMixinMeta } from '#init/rest-mixin-meta.js';
 import { isAppendsWithOptions, isControllerDecorator } from '#types/type.guards.js';
@@ -27,7 +27,7 @@ export class RestModuleNormalizer {
   protected normalizedModuleMeta: NormalizedModuleMeta;
   protected meta: RestMixinMeta;
 
-  normalize(normalizedModuleMeta: NormalizedModuleMeta, moduleOptions: RestMixinOptions) {
+  normalize(normalizedModuleMeta: NormalizedModuleMeta, moduleOptions: RestStaticMixinOptions) {
     this.normalizedModuleMeta = normalizedModuleMeta;
     const meta = getProxyForMixinMeta(normalizedModuleMeta, RestMixinMeta);
     this.meta = meta;
@@ -66,7 +66,7 @@ export class RestModuleNormalizer {
     }
   }
 
-  protected appendModules(moduleOptions: RestMixinOptions) {
+  protected appendModules(moduleOptions: RestStaticMixinOptions) {
     moduleOptions.appends?.forEach((ap, i) => {
       ap = this.resolveForwardRef([ap])[0];
       if (isNormalizedProvider(ap)) {

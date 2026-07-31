@@ -9,7 +9,7 @@ export {
   PathAppendsWithOptions,
   AbsolutePathAppendsWithOptions,
   BaseAppendsWithOptions,
-  RestMixinOptions,
+  RestStaticMixinOptions,
   RestModuleOptions,
 } from './init/rest-mixin-raw-meta.js';
 export { RouteParam, RouteExtensionMeta, RedirectStatusCodes } from './types/types.js';

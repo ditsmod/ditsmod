@@ -4,7 +4,7 @@ import type { GuardItem } from '#interceptors/guard.js';
 /**
  * Metadata for the `mixinRest` decorator, which adds REST metadata to a `featureModule` or `rootModule`.
  */
-export interface RestMixinOptions extends StaticMixinOptions<RestModuleOptions> {
+export interface RestStaticMixinOptions extends StaticMixinOptions<RestModuleOptions> {
   /**
    * List of modules that contain controllers. Providers from these modules
    * are not imported into the current module. If the current module has a prefix path,
