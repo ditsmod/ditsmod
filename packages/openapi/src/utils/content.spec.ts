@@ -3,12 +3,7 @@ import { MediaTypeObject } from '@ts-stack/openapi-spec';
 import { property } from '#decorators/property.js';
 import { Content } from './content.js';
 import { REQUIRED } from '#constants';
-import { inspect } from 'util';
 import { ArrayTypeDefinitionConflict, EnumTypeDefinitionConflict } from '#services/openapi-errors.js';
-
-function print(obj: any) {
-  console.log(inspect(obj, undefined, null));
-}
 
 describe('Content', () => {
   it('simply model', () => {

@@ -70,7 +70,7 @@ export class OpenapiCompilerExtension implements Extension<XOasObject | false> {
       for (const routeExtensionMeta of extensionGroupMetaPerApp.groupData) {
         routeExtensionMeta.controllersMeta.forEach(({ httpMethods, fullPath, routeMeta, guards }) => {
           httpMethods.forEach((method) => {
-            const { oasPath, resolvedGuards, operationObject } = routeMeta as OasExtensionRouteMeta;
+            const { oasPath, operationObject } = routeMeta as OasExtensionRouteMeta;
             if (operationObject) {
               const clonedOperationObject = { ...operationObject };
               this.setSecurityInfo(clonedOperationObject, guards);
