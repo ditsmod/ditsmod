@@ -5,8 +5,33 @@ sidebar_position: 2
 # Mixin Decorators
 
 :::warning
-If you can easily pass metadata to a module using a [dynamic module][1], then creating a mixin is not recommended.
+If you can easily pass metadata to a module using a [dynamic module][1], it is highly recommended to do so. Creating a mixin is only justified when the capabilities of dynamic modules are insufficient.
 :::
+
+The primary limitation of dynamic modules is that they are strictly bound by the configuration types accepted by base decorators, and their configuration is entirely local. They cannot recursively apply custom dynamic options to the modules they import.
+
+In contrast, mixin decorators provide hooks that actively participate in the **recursive import and export** of modules, providers, and their dynamic options across the entire dependency graph. Here is exactly what mixins can do that dynamic modules **cannot**:
+
+- **Recursive propagation of dynamic options**: When you pass custom options (like a route `path`) via a mixin, these options automatically propagate down the dependency tree to all imported child modules.
+  
+  For example, dynamic modules are restricted by the base decorators (`@rootModule`, `@featureModule`). Even if you bypass TypeScript to pass a custom parameter like `path`, the base decorators will ignore it, and the dynamic module cannot recursively apply it to any `ChildModule` it imports:
+  ```ts
+  @featureModule({
+    // The base decorator will ignore the 'path' parameter, and it won't be passed to imported child modules
+    imports: [{ module: SomeModule, path: 'api' } as any]
+  })
+  export class AppModule {}
+  ```
+  With a mixin, the framework's hooks autonomously traverse the module hierarchy. The `path: 'api'` option will be transparently applied to `SomeModule`, to `ChildModule`, and to any other modules imported deeper in the chain—all without modifying their code:
+  ```ts
+  @mixinRest({
+    imports: [{ module: SomeModule, path: 'api' }]
+  })
+  @rootModule()
+  export class AppModule {}
+  ```
+
+- **Establishing architectural context**: Because mixins recursively propagate their hooks, they can wrap an entire tree of standard, agnostic feature modules (using plain `@featureModule()`) in a unified architectural context (such as REST or tRPC). This keeps your feature modules highly reusable.
 
 **Mixin decorators** are custom decorators applied to module classes to pass metadata with extended data types. Depending on how a mixin is configured, it can serve three roles:
 
