@@ -153,62 +153,28 @@ export interface MixinDynamicOptionsMap {
 }
 
 /**
- * Use this interface to create module mixin decorators.
+ * Use this interface to type module mixin decorators.
  *
- * ### Complete example
+ * Mixin decorators allow you to add custom metadata to Ditsmod modules. This metadata is then
+ * processed by extensions during the application initialization phase.
  *
- * In this example, `ReturnsType` is the type that will be returned by
- * {@link ModuleMixin.normalize} or {@link NormalizedModuleMeta.mixinMeta | normalizedModuleMeta.mixinMeta.get(addSome)}.
+ * Type parameters:
+ * - `T`: Options passed when using the decorator statically (e.g., `@myMixin({ ... })`).
+ * - `DynamicMixinOptions`: Options passed when applying the mixin dynamically.
+ * - `NormalizedMixinMeta`: The normalized metadata type resulting from `ModuleMixin.normalize()`.
  *
-```ts
-import {
-  makeClassDecorator,
-  MixinDecorator,
-  featureModule,
-  ModuleMixin,
-  DynamicModuleWithMixinOptions,
-} from '@ditsmod/core';
-
-interface RootModuleOptions {
-  one?: number;
-  two?: number;
-}
-interface MixinMeta {
-  other?: string;
-}
-
-function getModuleMixin(data?: RootModuleOptions): ModuleMixin<RootModuleOptions> {
-  const metadata = Object.assign({}, data);
-  return new MyModuleMixin(metadata);
-}
-// Creating a mixin decorator
-export const mixinSome: MixinDecorator<RootModuleOptions, { path?: string }, MixinMeta> = makeClassDecorator(getModuleMixin);
-
-@featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
-class Module1 {
-  static withOpts(): DynamicModuleWithMixinOptions<Module1> {
-    return {
-      module: this,
-      mixinOptions: new Map(),
-    };
-  }
-}
-
-const dynamicModule = Module1.withOpts();
-dynamicModule.mixinOptions.set(mixinSome, { path: 'some-prefix' });
-
-// Using the newly created mixin decorator
-@mixinSome({ one: 1, two: 2 })
-@featureModule({ imports: [dynamicModule] })
-class MyModule {
-  // Your code here
-}
-
-class MyModuleMixin extends ModuleMixin<RootModuleOptions> {}
-```
+ * For a complete guide, see the [Mixin Decorators documentation](http://ditsmod.github.io/en/deep-dive/module-mixins/).
+ *
+ * ### Example
+ *
+ * ```ts
+ * import { makeClassDecorator, MixinDecorator } from '@ditsmod/core';
+ *
+ * export const myMixin: MixinDecorator<StaticOpts, DynamicOpts, NormalizedMeta> = makeClassDecorator(getModuleMixin);
+ * ```
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export interface MixinDecorator<T extends StaticMixinOptions, DynamicMixinOptions, MixinMeta> {
+export interface MixinDecorator<T extends StaticMixinOptions, DynamicMixinOptions, NormalizedMixinMeta> {
   (data?: T): any;
 }
 
