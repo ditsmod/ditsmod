@@ -256,17 +256,17 @@ export class NormalizedModuleMeta<
     copy.extensionGroupTokensMap = new Map(copy.extensionGroupTokensMap);
     copy.exportedExtensionGroupTokensMap = new Map(copy.exportedExtensionGroupTokensMap);
     copy.normalizedMixinMetaMap = new Map();
-    copy.moduleMixinMap.forEach((moduleMixin, decorator) => {
+    copy.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
       const meta = moduleMixin.normalize(copy);
       if (meta) {
-        copy.normalizedMixinMetaMap.set(decorator, meta);
+        copy.normalizedMixinMetaMap.set(decoratorId, meta);
       }
     });
-    copy.allModuleMixinsMap.forEach((moduleMixin, decorator) => {
-      if (!copy.moduleMixinMap.has(decorator)) {
+    copy.allModuleMixinsMap.forEach((moduleMixin, decoratorId) => {
+      if (!copy.moduleMixinMap.has(decoratorId)) {
         const meta = moduleMixin.clone().normalize(copy);
         if (meta) {
-          copy.normalizedMixinMetaMap.set(decorator, meta);
+          copy.normalizedMixinMetaMap.set(decoratorId, meta);
         }
       }
     });

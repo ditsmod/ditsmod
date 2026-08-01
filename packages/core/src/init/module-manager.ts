@@ -106,8 +106,8 @@ export class ModuleManager {
     modRefId = resolveForwardRef(modRefId);
     const normalizedModuleMeta = this.normalizeMeta(modRefId, allModuleMixinsMap);
     const importsOrExports: (DynamicModule | StaticModule)[] = [];
-    normalizedModuleMeta.moduleMixinMap.forEach((moduleMixin, decorator) => {
-      const meta = normalizedModuleMeta.normalizedMixinMetaMap.get(decorator);
+    normalizedModuleMeta.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
+      const meta = normalizedModuleMeta.normalizedMixinMetaMap.get(decoratorId);
       if (meta) {
         importsOrExports.push(...moduleMixin.getModulesToScan(meta));
       }
@@ -145,7 +145,7 @@ export class ModuleManager {
     } else {
       this.map.set(modRefId, normalizedModuleMeta);
     }
-    normalizedModuleMeta.allModuleMixinsMap.forEach((moduleMixin, decorator) => allModuleMixinsMap.set(decorator, moduleMixin));
+    normalizedModuleMeta.allModuleMixinsMap.forEach((moduleMixin, decoratorId) => allModuleMixinsMap.set(decoratorId, moduleMixin));
 
     if (isRootScan) {
       this.applyHostMixinOptions();
@@ -431,11 +431,11 @@ export class ModuleManager {
    * properties, into which relevant metadata (such as controllers or appended routes) can later be imported.
    */
   protected callModuleMixinAfterScan(normalizedModuleMeta: NormalizedModuleMeta) {
-    normalizedModuleMeta.allModuleMixinsMap.forEach((moduleMixin, decorator) => {
-      if (!normalizedModuleMeta.moduleMixinMap.has(decorator)) {
+    normalizedModuleMeta.allModuleMixinsMap.forEach((moduleMixin, decoratorId) => {
+      if (!normalizedModuleMeta.moduleMixinMap.has(decoratorId)) {
         const meta = moduleMixin.clone().normalize(normalizedModuleMeta);
         if (meta) {
-          normalizedModuleMeta.normalizedMixinMetaMap.set(decorator, meta);
+          normalizedModuleMeta.normalizedMixinMetaMap.set(decoratorId, meta);
         }
       }
     });
@@ -545,8 +545,8 @@ export class ModuleManager {
     }
 
     const activeHooks: AllModuleMixins = new Map(inheritedHooks);
-    startMeta.moduleMixinMap.forEach((moduleMixin, decorator) => {
-      activeHooks.set(decorator, moduleMixin);
+    startMeta.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
+      activeHooks.set(decoratorId, moduleMixin);
     });
 
     if (startMeta.moduleMixinMap.size === 0 && activeHooks.size > 0) {
@@ -597,11 +597,11 @@ export class ModuleManager {
       const modulesToScan = new Set<ModRefId>();
 
       this.map.forEach((meta) => {
-        meta.moduleMixinMap.forEach((moduleMixin, decorator) => {
+        meta.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
           if (moduleMixin.hostModule && moduleMixin.hostMixinOptions) {
             const hostMeta = this.map.get(moduleMixin.hostModule);
-            if (hostMeta && !hostMeta.moduleMixinMap.has(decorator)) {
-              hasNewModules = this.applyHostMixinAndGatherDependencies(hostMeta, decorator, moduleMixin, modulesToScan);
+            if (hostMeta && !hostMeta.moduleMixinMap.has(decoratorId)) {
+              hasNewModules = this.applyHostMixinAndGatherDependencies(hostMeta, decoratorId, moduleMixin, modulesToScan);
             }
           }
         });
@@ -613,14 +613,14 @@ export class ModuleManager {
 
   protected applyHostMixinAndGatherDependencies(
     hostMeta: NormalizedModuleMeta,
-    decorator: AnyFn,
+    decoratorId: AnyFn,
     moduleMixin: ModuleMixin,
     modulesToScan: Set<ModRefId>,
   ): boolean {
     const newModuleMixin = moduleMixin.clone(moduleMixin.hostMixinOptions);
-    hostMeta.moduleMixinMap.set(decorator, newModuleMixin);
+    hostMeta.moduleMixinMap.set(decoratorId, newModuleMixin);
     try {
-      this.moduleNormalizer.applyHostMixinOptions(hostMeta, decorator, newModuleMixin);
+      this.moduleNormalizer.applyHostMixinOptions(hostMeta, decoratorId, newModuleMixin);
     } catch (err: any) {
       throw new NormalizationFailure(hostMeta.name, err);
     }

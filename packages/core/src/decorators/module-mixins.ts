@@ -59,7 +59,7 @@ export class ModuleMixin<T1 extends StaticMixinOptions = StaticMixinOptions> {
    * @param normalizedModuleMeta Normalized metadata that is passed
    * to the {@link featureModule} or {@link rootModule} decorator.
    */
-  normalize(normalizedModuleMeta: NormalizedModuleMeta) {
+  normalize(normalizedModuleMeta: NormalizedModuleMeta): BaseNormalizedModuleMeta {
     return getProxyForMixinMeta(normalizedModuleMeta, BaseNormalizedModuleMeta);
   }
 
