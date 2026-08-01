@@ -2,6 +2,7 @@ import { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { injectable } from '#di/decorators.js';
 import { ExtensionGroupToken } from '#di/key-registry.js';
 import type { Extension } from '#extension/extension-types.js';
+import { ModuleMixin } from '#decorators/module-mixins.js';
 
 describe('NormalizedModuleMeta', () => {
   @injectable()
@@ -51,5 +52,35 @@ describe('NormalizedModuleMeta', () => {
       group1: [Provider1, Provider2],
       config1: { key: 'modified' },
     });
+  });
+
+  it('should not mutate original moduleMixin instance when clone() calls normalize()', () => {
+    class MutatingMixin extends ModuleMixin<any> {
+      normalizedCount = 0;
+      constructor() {
+        super({});
+      }
+      override normalize(normalizedModuleMeta: NormalizedModuleMeta) {
+        this.normalizedCount++;
+        return super.normalize(normalizedModuleMeta);
+      }
+    }
+
+    const original = new NormalizedModuleMeta();
+    const mixin = new MutatingMixin();
+    original.moduleMixinMap.set(MutatingMixin as any, mixin);
+
+    expect(mixin.normalizedCount).toBe(0);
+
+    const copy = original.clone();
+
+    // The original mixin should remain untouched
+    expect(mixin.normalizedCount).toBe(0);
+
+    // The copied mixin in copy.moduleMixinMap should be a clone and should have been normalized
+    const copiedMixin = copy.moduleMixinMap.get(MutatingMixin as any) as unknown as MutatingMixin;
+    expect(copiedMixin).toBeDefined();
+    expect(copiedMixin).not.toBe(mixin);
+    expect(copiedMixin.normalizedCount).toBe(1);
   });
 });

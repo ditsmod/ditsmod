@@ -12,33 +12,35 @@ describe('ModuleGraphState', () => {
   @injectable()
   class Provider2 {}
 
+  @injectable()
+  class Provider3 {}
+
   @featureModule({ providersPerApp: [Provider1] })
   class FeatureModule1 {}
 
   @featureModule({ providersPerApp: [Provider2] })
   class FeatureModule2 {}
 
-  @rootModule({ providersPerApp: [Provider1] })
-  class RootAppModule {}
+  @rootModule({ providersPerApp: [Provider3] })
+  class AppModule {}
 
   it('should rebuild providersPerApp only from non-root modules', () => {
-    const state = new ModuleGraphState();
-    const meta1 = new NormalizedModuleMeta();
-    meta1.modRefId = FeatureModule1;
-    meta1.providersPerApp = [Provider1];
-    meta1.staticModuleOptions = new FeatureModuleOptions();
-
+    const featureMeta = new NormalizedModuleMeta();
+    featureMeta.modRefId = FeatureModule1;
+    featureMeta.providersPerApp = [Provider1];
+    featureMeta.staticModuleOptions = new FeatureModuleOptions();
+    
     const rootMeta = new NormalizedModuleMeta();
-    rootMeta.modRefId = RootAppModule;
+    rootMeta.modRefId = AppModule;
     rootMeta.providersPerApp = [Provider2];
     rootMeta.staticModuleOptions = new RootModuleOptions();
-
-    state.snapshotMap.set(FeatureModule1, meta1);
-    state.snapshotMap.set(RootAppModule, rootMeta);
+    
+    const state = new ModuleGraphState();
+    state.snapshotMap.set(FeatureModule1, featureMeta);
+    state.snapshotMap.set(AppModule, rootMeta);
 
     state.rebuildProvidersPerApp();
     expect(state.providersPerApp).toEqual([Provider1]);
-    expect(state.providersPerApp).not.toContain(Provider2);
   });
 
   it('should deeply clone snapshotMap, childrenMap, snapshotMapId, and providersPerApp', () => {

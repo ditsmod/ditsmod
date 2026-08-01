@@ -251,20 +251,26 @@ export class NormalizedModuleMeta<
       copy.extensionsMeta = extensionsMeta;
     }
 
-    copy.moduleMixinMap = new Map(copy.moduleMixinMap);
-    copy.allModuleMixinsMap = new Map(copy.allModuleMixinsMap);
     copy.extensionGroupTokensMap = new Map(copy.extensionGroupTokensMap);
     copy.exportedExtensionGroupTokensMap = new Map(copy.exportedExtensionGroupTokensMap);
     copy.normalizedMixinMetaMap = new Map();
-    copy.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
-      const meta = moduleMixin.normalize(copy);
+    copy.moduleMixinMap = new Map();
+    this.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
+      const clonedMixin = moduleMixin.clone(moduleMixin.moduleOptions);
+      copy.moduleMixinMap.set(decoratorId, clonedMixin);
+      const meta = clonedMixin.normalize(copy);
       if (meta) {
         copy.normalizedMixinMetaMap.set(decoratorId, meta);
       }
     });
-    copy.allModuleMixinsMap.forEach((moduleMixin, decoratorId) => {
+    copy.allModuleMixinsMap = new Map();
+    this.allModuleMixinsMap.forEach((moduleMixin, decoratorId) => {
+      const clonedMixin = (
+        copy.moduleMixinMap.has(decoratorId) ? copy.moduleMixinMap.get(decoratorId) : moduleMixin.clone()
+      ) as ModuleMixin;
+      copy.allModuleMixinsMap.set(decoratorId, clonedMixin);
       if (!copy.moduleMixinMap.has(decoratorId)) {
-        const meta = moduleMixin.clone().normalize(copy);
+        const meta = clonedMixin.normalize(copy);
         if (meta) {
           copy.normalizedMixinMetaMap.set(decoratorId, meta);
         }
