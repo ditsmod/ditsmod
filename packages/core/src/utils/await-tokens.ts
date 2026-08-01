@@ -1,5 +1,6 @@
 import { stringify } from '#di/stringify.js';
 import type { FunctionFactoryProvider } from '#di/top/types-and-models.js';
+import type { DeepModulesImporter } from '#init/deep-modules-importer.js';
 
 /**
  * Since {@link DeepModulesImporter} runs before extensions, and it does not know which providers will be added

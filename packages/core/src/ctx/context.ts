@@ -1,6 +1,6 @@
 import { injectable, fromSelf as fromSelfFn } from '#di/decorators.js';
 import type { Injector } from '#di/injector.js';
-import type { InjectionSymbol } from '#di/top/get-symbol.js';
+import type { InjectionSymbol, createInjectionSymbol } from '#di/top/get-symbol.js';
 
 /**
  * A service for storing specific context data at each level of the injector hierarchy.

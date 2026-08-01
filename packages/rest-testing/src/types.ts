@@ -8,6 +8,8 @@ import type {
   ForwardRefFn,
 } from '@ditsmod/core';
 
+import type { TestRestApplication } from './test-application.js';
+
 export type Level = 'App' | 'Mod' | 'Rou' | 'Req';
 
 export class ProvidersByLevel<T = ProviderBuilder | (Provider | ForwardRefFn<Provider>)[]> {

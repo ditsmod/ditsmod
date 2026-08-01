@@ -6,6 +6,8 @@ import type { MixinDynamicOptionsMap } from '#decorators/module-mixins.js';
 import type { ProviderBuilder } from '#utils/providers.js';
 import type { Class, Provider } from '#di/top/types-and-models.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
+import type { rootModule } from '#decorators/root-module.js';
+import type { featureModule } from '#decorators/feature-module.js';
 
 /**
  * Raw metadata that is passed to the {@link rootModule} and {@link featureModule} decorators.

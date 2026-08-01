@@ -8,6 +8,9 @@ import type { DynamicModule, FeatureModuleOptions } from '#decorators/module-dec
 import { AppModuleMixins, type AppProviders } from '#types/metadata-per-mod.js';
 import { type NormalizedModuleMeta, getProxyForMixinMeta, BaseNormalizedModuleMeta } from '#init/normalized-meta.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
+import type { rootModule } from '#decorators/root-module.js';
+import type { featureModule } from '#decorators/feature-module.js';
+import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 
 export type AllModuleMixins = Map<AnyFn, Omit<ModuleMixin, 'moduleOptions'>>;
 

@@ -8,6 +8,8 @@ import type {
   ForwardRefFn,
 } from '@ditsmod/core';
 
+import type { TestRestApplication } from './test-application.js';
+
 export type Level = 'App' | 'Mod' | 'Rou' | 'Req';
 
 export class ProvidersByLevel<T = ProviderBuilder | (Provider | ForwardRefFn<Provider>)[]> {
@@ -19,7 +21,7 @@ export class ProvidersByLevel<T = ProviderBuilder | (Provider | ForwardRefFn<Pro
 
 /**
  * The callback that is passed as the second argument
- * to the {@link TestApplication.overrideExtensionMeta | testApplication.overrideExtensionMeta()} method.
+ * to the {@link TestRestApplication.overrideExtensionMeta | testApplication.overrideExtensionMeta()} method.
  */
 export interface ExtensionMetaOverrider<T = any> {
   (extensionGroupMeta: ExtensionGroupMeta<T> | PartialExtensionGroupMeta<T>): void;

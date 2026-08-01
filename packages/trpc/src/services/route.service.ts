@@ -1,4 +1,4 @@
-import { AnyObj, inject, injectable, Injector, ResolvedProvider } from '@ditsmod/core';
+import { AnyObj, inject, injectable, Injector, ResolvedProvider, type ClassFactoryProvider } from '@ditsmod/core';
 import type { AnyMiddlewareFunction, TRPCMutationProcedure, TRPCQueryProcedure, TRPCProcedureBuilder } from '@trpc/server';
 import { ParserWithInputOutput, UnsetMarker } from '@trpc/server/unstable-core-do-not-import';
 
