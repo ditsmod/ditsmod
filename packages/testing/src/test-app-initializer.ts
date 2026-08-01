@@ -43,7 +43,7 @@ export class TestAppInitializer extends RestAppInitializer {
     const additionalProviders = this.additionalProvidersMap.get(modRefId);
     this.addAndOverrideProviders([normalizedModuleMeta.providersPerApp, normalizedModuleMeta.providersPerMod], additionalProviders);
     normalizedModuleMeta.moduleMixinMap.forEach((moduleMixin, decorator) => {
-      const meta = normalizedModuleMeta.mixinMeta.get(decorator);
+      const meta = normalizedModuleMeta.normalizedMixinMetaMap.get(decorator);
       if (meta) {
         this.addAndOverrideProviders(moduleMixin.getProvidersToOverride(meta), additionalProviders);
       }

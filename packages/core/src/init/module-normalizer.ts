@@ -63,7 +63,7 @@ export class ModuleNormalizer {
   /**
    * Returns normalized module metadata.
    */
-  normalize(modRefId: ModRefId, allModuleMixin: AllModuleMixins, systemLogMediator: SystemLogMediator) {
+  normalize(modRefId: ModRefId, allModuleMixinsMap: AllModuleMixins, systemLogMediator: SystemLogMediator) {
     this.systemLogMediator = systemLogMediator;
     const normalizedModuleMeta = this.initNormalizedModuleMeta(modRefId);
     const { staticModuleOptions } = normalizedModuleMeta;
@@ -89,7 +89,7 @@ export class ModuleNormalizer {
     this.callModuleMixinFromCurrentModule();
 
     // Phase 3: Handle module mixins for imported dynamic modules lacking their own mixin decorators.
-    this.addModuleMixinForImportedDynamicModule(allModuleMixin);
+    this.addModuleMixinForImportedDynamicModule(allModuleMixinsMap);
 
     this.quickCheckMeta(staticModuleOptions);
     return normalizedModuleMeta;
@@ -389,12 +389,12 @@ export class ModuleNormalizer {
   }
 
   /**
-   * Registers a module mixin into `allModuleMixin`, ensures the host module is imported,
+   * Registers a module mixin into `allModuleMixinsMap`, ensures the host module is imported,
    * normalizes the mixin, and backfills `moduleMixinMap` (needed for `quickCheckMeta`
    * and `callModuleMixinAfterScan`).
    */
   protected registerAndCallModuleMixin(decorator: AnyFn, moduleMixin: ModuleMixin): void {
-    this.normalizedModuleMeta.allModuleMixin.set(decorator, moduleMixin);
+    this.normalizedModuleMeta.allModuleMixinsMap.set(decorator, moduleMixin);
     this.ensureHostModuleImported(moduleMixin);
     this.callModuleMixin(decorator, moduleMixin);
     this.normalizedModuleMeta.moduleMixinMap.set(decorator, moduleMixin);
@@ -402,7 +402,7 @@ export class ModuleNormalizer {
 
   protected callModuleMixinFromCurrentModule() {
     this.normalizedModuleMeta.moduleMixinMap.forEach((moduleMixin, decorator) => {
-      this.normalizedModuleMeta.allModuleMixin.set(decorator, moduleMixin);
+      this.normalizedModuleMeta.allModuleMixinsMap.set(decorator, moduleMixin);
       this.ensureHostModuleImported(moduleMixin);
       this.fetchMixinOptions(decorator, moduleMixin.moduleOptions);
       this.callModuleMixin(decorator, moduleMixin);
@@ -412,7 +412,7 @@ export class ModuleNormalizer {
   /**
    * If the current module was imported as a dynamic module within a mixin decorator, but
    * does not have this decorator applied to its own class, this method retrieves the default 
-   * instances of the corresponding module mixins (for reading dynamic options) from `allModuleMixin`.
+   * instances of the corresponding module mixins (for reading dynamic options) from `allModuleMixinsMap`.
    *
    * For example, you have a library with a `@mixinRest` decorator:
    * 
@@ -432,10 +432,10 @@ export class AppModule {}
    * but `Module1` itself does not have an annotation with `mixinRest`. For such cases,
    * this method adds the corresponding module mixin so that the import of the dynamic `Module1` can be properly handled.
    */
-  protected addModuleMixinForImportedDynamicModule(allModuleMixin: AllModuleMixins) {
+  protected addModuleMixinForImportedDynamicModule(allModuleMixinsMap: AllModuleMixins) {
     (this.normalizedModuleMeta.modRefId as DynamicModule).mixinOptions?.forEach((params, decorator) => {
       if (!this.normalizedModuleMeta.moduleMixinMap.has(decorator)) {
-        const newModuleMixin = allModuleMixin.get(decorator)!.clone();
+        const newModuleMixin = allModuleMixinsMap.get(decorator)!.clone();
         this.registerAndCallModuleMixin(decorator, newModuleMixin);
       }
     });
@@ -547,7 +547,7 @@ export class AppModule {}
   protected callModuleMixin(decorator: AnyFn, moduleMixin: ModuleMixin) {
     const meta = moduleMixin.normalize(this.normalizedModuleMeta);
     if (meta) {
-      this.normalizedModuleMeta.mixinMeta.set(decorator, meta);
+      this.normalizedModuleMeta.normalizedMixinMetaMap.set(decorator, meta);
     }
   }
 
@@ -555,17 +555,17 @@ export class AppModule {}
     this.throwIfResolvingNormalizedProvider(staticModuleOptions);
   }
 
-  propagateParentHooks(normalizedModuleMeta: NormalizedModuleMeta, allModuleMixin: AllModuleMixins) {
+  propagateParentHooks(normalizedModuleMeta: NormalizedModuleMeta, allModuleMixinsMap: AllModuleMixins) {
     this.normalizedModuleMeta = normalizedModuleMeta;
-    this.addModuleMixinFromParent(allModuleMixin);
+    this.addModuleMixinFromParent(allModuleMixinsMap);
   }
 
-  protected addModuleMixinFromParent(allModuleMixin: AllModuleMixins) {
+  protected addModuleMixinFromParent(allModuleMixinsMap: AllModuleMixins) {
     const inheritsContext = this.normalizedModuleMeta.inheritsContext ?? !this.normalizedModuleMeta.isExternal;
     if (!inheritsContext || this.normalizedModuleMeta.moduleMixinMap.size > 0) {
       return;
     }
-    allModuleMixin.forEach((moduleMixin, decorator) => {
+    allModuleMixinsMap.forEach((moduleMixin, decorator) => {
       const newModuleMixin = moduleMixin.clone();
       this.registerAndCallModuleMixin(decorator, newModuleMixin);
     });

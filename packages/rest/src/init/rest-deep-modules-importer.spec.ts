@@ -98,14 +98,14 @@ describe('DeepModulesImporter', () => {
     expect(rootNormalizedModuleMeta?.providersPerApp.includes(Service5)).toBeTruthy();
     expect(rootNormalizedModuleMeta?.providersPerMod.includes(Service6)).toBeTruthy();
 
-    const mod1MixinMeta = mod1NormalizedModuleMeta?.mixinMeta.get(mixinRest);
+    const mod1MixinMeta = mod1NormalizedModuleMeta?.normalizedMixinMetaMap.get(mixinRest);
     expect(mod1NormalizedModuleMeta?.providersPerApp).toBe(mod1MixinMeta?.providersPerApp);
     expect(mod1NormalizedModuleMeta?.providersPerMod).toBe(mod1MixinMeta?.providersPerMod);
     expect(mod1MixinMeta?.providersPerApp).toEqual([Service1, Service3]);
     expect(mod1MixinMeta?.providersPerMod.includes(Service2)).toBeTruthy();
     expect(mod1MixinMeta?.providersPerMod.includes(Service4)).toBeTruthy();
 
-    const rootMixinMeta = rootNormalizedModuleMeta?.mixinMeta.get(mixinRest);
+    const rootMixinMeta = rootNormalizedModuleMeta?.normalizedMixinMetaMap.get(mixinRest);
     expect(rootNormalizedModuleMeta?.providersPerApp).toBe(rootMixinMeta?.providersPerApp);
     expect(rootNormalizedModuleMeta?.providersPerMod).toBe(rootMixinMeta?.providersPerMod);
     expect(rootMixinMeta?.providersPerApp.includes(Service5)).toBeTruthy();

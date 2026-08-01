@@ -100,7 +100,7 @@ describe('shallow importing modules', () => {
     class AppModule {}
 
     const normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
-    const moduleMixin = normalizedModuleMeta.allModuleMixin.get(mixinRest)!;
+    const moduleMixin = normalizedModuleMeta.allModuleMixinsMap.get(mixinRest)!;
     moduleMixin.exportAppProviders({
       moduleManager,
       appProviders: new AppProviders(),

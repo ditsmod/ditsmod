@@ -175,17 +175,17 @@ export class NormalizedModuleMeta<
    */
   inheritsContext?: boolean;
   /**
-   * Contains module mixins and mixin options collected from mixin module decorators.
+   * Contains instances of `ModuleMixin` and their options collected from mixin module decorators.
    */
   moduleMixinMap = new Map<AnyFn, ModuleMixin>();
   /**
    * Contains normalized metadata collected from module mixin decorators.
    */
-  mixinMeta: MixinMetaMap = new Map();
+  normalizedMixinMetaMap: MixinMetaMap = new Map();
   /**
    * List of unique module mixins found in the current module and all imported modules.
    */
-  allModuleMixin: AllModuleMixins = new Map();
+  allModuleMixinsMap: AllModuleMixins = new Map();
   /**
    * The mapping between an extension specified in {@link BaseExtensionConfig.groups | ExtensionConfig.groups}
    * and the extension group token assigned to it.
@@ -252,21 +252,21 @@ export class NormalizedModuleMeta<
     }
 
     copy.moduleMixinMap = new Map(copy.moduleMixinMap);
-    copy.allModuleMixin = new Map(copy.allModuleMixin);
+    copy.allModuleMixinsMap = new Map(copy.allModuleMixinsMap);
     copy.extensionGroupTokensMap = new Map(copy.extensionGroupTokensMap);
     copy.exportedExtensionGroupTokensMap = new Map(copy.exportedExtensionGroupTokensMap);
-    copy.mixinMeta = new Map();
+    copy.normalizedMixinMetaMap = new Map();
     copy.moduleMixinMap.forEach((moduleMixin, decorator) => {
       const meta = moduleMixin.normalize(copy);
       if (meta) {
-        copy.mixinMeta.set(decorator, meta);
+        copy.normalizedMixinMetaMap.set(decorator, meta);
       }
     });
-    copy.allModuleMixin.forEach((moduleMixin, decorator) => {
+    copy.allModuleMixinsMap.forEach((moduleMixin, decorator) => {
       if (!copy.moduleMixinMap.has(decorator)) {
         const meta = moduleMixin.clone().normalize(copy);
         if (meta) {
-          copy.mixinMeta.set(decorator, meta);
+          copy.normalizedMixinMetaMap.set(decorator, meta);
         }
       }
     });

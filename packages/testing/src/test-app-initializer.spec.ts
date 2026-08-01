@@ -60,7 +60,7 @@ describe('TestAppInitializer', () => {
       };
       mock.addProvidersToModule(modRefId, providersMeta1);
       const normalizedModuleMeta = new NormalizedModuleMeta();
-      normalizedModuleMeta.mixinMeta.set(mixinRest, new RestMixinMeta());
+      normalizedModuleMeta.normalizedMixinMetaMap.set(mixinRest, new RestMixinMeta());
       normalizedModuleMeta.providersPerApp.push(Provider0);
       normalizedModuleMeta.providersPerMod.push(Provider0);
 

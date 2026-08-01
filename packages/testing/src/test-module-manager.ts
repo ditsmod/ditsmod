@@ -11,8 +11,8 @@ export class TestModuleManager extends ModuleManager {
     });
   }
 
-  protected override normalizeMeta(modRefId: ModRefId, allModuleMixin: AllModuleMixins): NormalizedModuleMeta {
-    const normalizedModuleMeta = super.normalizeMeta(modRefId, allModuleMixin);
+  protected override normalizeMeta(modRefId: ModRefId, allModuleMixinsMap: AllModuleMixins): NormalizedModuleMeta {
+    const normalizedModuleMeta = super.normalizeMeta(modRefId, allModuleMixinsMap);
     const mod = getModule(modRefId);
     if (this.externalModules.has(mod)) {
       normalizedModuleMeta.isExternal = true;

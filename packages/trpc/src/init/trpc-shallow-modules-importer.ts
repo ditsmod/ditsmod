@@ -87,10 +87,10 @@ export class TrpcShallowModulesImporter {
   }
 
   protected getMixinMeta(normalizedModuleMeta: NormalizedModuleMeta): TrpcMixinMeta {
-    let meta = normalizedModuleMeta.mixinMeta.get(mixinTrpcModule);
+    let meta = normalizedModuleMeta.normalizedMixinMetaMap.get(mixinTrpcModule);
     if (!meta) {
       meta = getProxyForMixinMeta(normalizedModuleMeta, TrpcMixinMeta);
-      normalizedModuleMeta.mixinMeta.set(mixinTrpcModule, meta);
+      normalizedModuleMeta.normalizedMixinMetaMap.set(mixinTrpcModule, meta);
     }
     return meta;
   }

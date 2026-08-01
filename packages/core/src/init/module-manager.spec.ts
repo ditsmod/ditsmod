@@ -42,8 +42,8 @@ describe('ModuleManager', () => {
     declare state: ModuleGraphState;
     declare oldState: ModuleGraphState | undefined;
 
-    override normalizeMeta(modRefId: ModRefId, allModuleMixin: AllModuleMixins): NormalizedModuleMeta {
-      return super.normalizeMeta(modRefId, allModuleMixin);
+    override normalizeMeta(modRefId: ModRefId, allModuleMixinsMap: AllModuleMixins): NormalizedModuleMeta {
+      return super.normalizeMeta(modRefId, allModuleMixinsMap);
     }
 
     override getNormalizedModuleMetaFromSnapshot(moduleId: ModuleId) {
@@ -673,12 +673,12 @@ describe('ModuleManager', () => {
 
       // Maps should be new instances
       expect(copiedMod1.moduleMixinMap).not.toBe(originalMod1.moduleMixinMap);
-      expect(copiedMod1.allModuleMixin).not.toBe(originalMod1.allModuleMixin);
-      expect(copiedMod1.mixinMeta).not.toBe(originalMod1.mixinMeta);
+      expect(copiedMod1.allModuleMixinsMap).not.toBe(originalMod1.allModuleMixinsMap);
+      expect(copiedMod1.normalizedMixinMetaMap).not.toBe(originalMod1.normalizedMixinMetaMap);
 
-      // The proxy inside copiedMod1.mixinMeta should wrap copiedMod1.
-      const originalProxy = originalMod1.mixinMeta.get(mixinSome) as MixinMeta;
-      const copiedProxy = copiedMod1.mixinMeta.get(mixinSome) as MixinMeta;
+      // The proxy inside copiedMod1.normalizedMixinMetaMap should wrap copiedMod1.
+      const originalProxy = originalMod1.normalizedMixinMetaMap.get(mixinSome) as MixinMeta;
+      const copiedProxy = copiedMod1.normalizedMixinMetaMap.get(mixinSome) as MixinMeta;
 
       expect(copiedProxy).toBeDefined();
       expect(copiedProxy).not.toBe(originalProxy);
@@ -869,7 +869,7 @@ describe('ModuleManager', () => {
       override hostMixinOptions = { four: 4 };
     }
 
-    it('should propagate allModuleMixin so that they only contain module mixins imported into the current module', () => {
+    it('should propagate allModuleMixinsMap so that they only contain module mixins imported into the current module', () => {
       const mixinSome1: MixinDecorator<any, any, any> = Reflector.makeClassDecorator((data) => new ModuleMixin1(data));
       const mixinSome2: MixinDecorator<any, any, any> = Reflector.makeClassDecorator((data) => new ModuleMixin2(data));
       const mixinSome3: MixinDecorator<any, any, any> = Reflector.makeClassDecorator((data) => new ModuleMixin3(data));
@@ -903,23 +903,23 @@ describe('ModuleManager', () => {
       expect(mock.getNormalizedModuleMeta(HostModule3, true).modRefId).toBe(HostModule3);
       expect(mock.getNormalizedModuleMeta(HostModule4, true).modRefId).toBe(HostModule4);
 
-      expect(mod1.allModuleMixin.size).toBe(1);
-      expect(mod1.allModuleMixin.get(mixinSome1)?.hostModule).toBe(HostModule1);
+      expect(mod1.allModuleMixinsMap.size).toBe(1);
+      expect(mod1.allModuleMixinsMap.get(mixinSome1)?.hostModule).toBe(HostModule1);
 
-      expect(mod2.allModuleMixin.size).toBe(2);
-      expect(mod2.allModuleMixin.get(mixinSome1)?.hostModule).toBe(HostModule1);
-      expect(mod2.allModuleMixin.get(mixinSome2)?.hostModule).toBe(HostModule2);
+      expect(mod2.allModuleMixinsMap.size).toBe(2);
+      expect(mod2.allModuleMixinsMap.get(mixinSome1)?.hostModule).toBe(HostModule1);
+      expect(mod2.allModuleMixinsMap.get(mixinSome2)?.hostModule).toBe(HostModule2);
 
-      expect(mod3.allModuleMixin.size).toBe(3);
-      expect(mod3.allModuleMixin.get(mixinSome1)?.hostModule).toBe(HostModule1);
-      expect(mod3.allModuleMixin.get(mixinSome2)?.hostModule).toBe(HostModule2);
-      expect(mod3.allModuleMixin.get(mixinSome3)?.hostModule).toBe(HostModule3);
+      expect(mod3.allModuleMixinsMap.size).toBe(3);
+      expect(mod3.allModuleMixinsMap.get(mixinSome1)?.hostModule).toBe(HostModule1);
+      expect(mod3.allModuleMixinsMap.get(mixinSome2)?.hostModule).toBe(HostModule2);
+      expect(mod3.allModuleMixinsMap.get(mixinSome3)?.hostModule).toBe(HostModule3);
 
-      expect(mod4.allModuleMixin.size).toBe(4);
-      expect(mod4.allModuleMixin.get(mixinSome1)?.hostModule).toBe(HostModule1);
-      expect(mod4.allModuleMixin.get(mixinSome2)?.hostModule).toBe(HostModule2);
-      expect(mod4.allModuleMixin.get(mixinSome3)?.hostModule).toBe(HostModule3);
-      expect(mod4.allModuleMixin.get(mixinSome4)?.hostModule).toBe(HostModule4);
+      expect(mod4.allModuleMixinsMap.size).toBe(4);
+      expect(mod4.allModuleMixinsMap.get(mixinSome1)?.hostModule).toBe(HostModule1);
+      expect(mod4.allModuleMixinsMap.get(mixinSome2)?.hostModule).toBe(HostModule2);
+      expect(mod4.allModuleMixinsMap.get(mixinSome3)?.hostModule).toBe(HostModule3);
+      expect(mod4.allModuleMixinsMap.get(mixinSome4)?.hostModule).toBe(HostModule4);
     });
 
     it('should handle Module1 not having an annotation with mixinSome, but imported in AppModule with this decorator', () => {
@@ -958,7 +958,7 @@ describe('ModuleManager', () => {
 
       mock.scanRootModule(AppModuleLocal);
       const mod1 = mock.getNormalizedModuleMeta(dynamicModule)!;
-      expect(mod1.mixinMeta.get(mixinSome)).toEqual({ path: 'some-prefix' });
+      expect(mod1.normalizedMixinMetaMap.get(mixinSome)).toEqual({ path: 'some-prefix' });
     });
 
     it('should handle static Module1 not having an annotation with mixinSome, but imported in AppModule with this decorator', () => {
@@ -996,7 +996,7 @@ describe('ModuleManager', () => {
 
       mock.scanRootModule(AppModuleLocal);
       const mod1 = mock.getNormalizedModuleMeta(Module1)!;
-      expect(mod1.mixinMeta.get(mixinSomeLocal)).toEqual({ path: 'static-default' });
+      expect(mod1.normalizedMixinMetaMap.get(mixinSomeLocal)).toEqual({ path: 'static-default' });
       expect(mod1.importedStaticModules.includes(HostModule1Local)).toBe(true);
     });
 
@@ -1037,7 +1037,7 @@ describe('ModuleManager', () => {
 
       mock.scanRootModule(AppModuleLocal);
       const mod1 = mock.getNormalizedModuleMeta(Module1)!;
-      expect(mod1.mixinMeta.has(mixinSomeLocal)).toBe(false);
+      expect(mod1.normalizedMixinMetaMap.has(mixinSomeLocal)).toBe(false);
       expect(mod1.importedStaticModules.includes(HostModule1Local)).toBe(false);
     });
 
@@ -1132,7 +1132,7 @@ describe('ModuleManager', () => {
       class MixinModuleLocal {}
 
       // Notice the order: HostModuleLocal is imported FIRST.
-      // In the old single-pass system, HostModuleLocal would be scanned when allModuleMixin is empty,
+      // In the old single-pass system, HostModuleLocal would be scanned when allModuleMixinsMap is empty,
       // so it wouldn't receive its hostMixinOptions.
       @rootModule({
         imports: [HostModuleLocal, MixinModuleLocal],

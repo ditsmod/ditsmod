@@ -107,10 +107,10 @@ export class RestShallowModulesImporter {
   }
 
   protected getMixinMeta(normalizedModuleMeta: NormalizedModuleMeta): RestMixinMeta {
-    let meta = normalizedModuleMeta.mixinMeta.get(mixinRest);
+    let meta = normalizedModuleMeta.normalizedMixinMetaMap.get(mixinRest);
     if (!meta) {
       meta = getProxyForMixinMeta(normalizedModuleMeta, RestMixinMeta);
-      normalizedModuleMeta.mixinMeta.set(mixinRest, meta);
+      normalizedModuleMeta.normalizedMixinMetaMap.set(mixinRest, meta);
     }
     return meta;
   }
@@ -202,7 +202,7 @@ export class RestShallowModulesImporter {
     const moduleName = getDebugClassName(modRefId2) || '""';
     const tokenName = token2.name || token2;
     const normalizedModuleMeta2 = this.moduleManager.getNormalizedModuleMeta(modRefId2);
-    const meta2 = normalizedModuleMeta2?.mixinMeta.get(mixinRest);
+    const meta2 = normalizedModuleMeta2?.normalizedMixinMetaMap.get(mixinRest);
     if (!normalizedModuleMeta2) {
       throw new AppCollisionNotFound(this.moduleName, moduleName, level, tokenName);
     }

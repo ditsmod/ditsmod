@@ -74,8 +74,8 @@ it('imports and appends with gruards for some modules', () => {
   class AppModule {}
 
   mock.scanRootModule(AppModule);
-  const mixinMeta1 = mock.getNormalizedModuleMeta(dynamicModule)?.mixinMeta.get(mixinRest)?.params;
-  const mixinMeta2 = mock.getNormalizedModuleMeta(appendsWithOpts)?.mixinMeta.get(mixinRest)?.params;
+  const mixinMeta1 = mock.getNormalizedModuleMeta(dynamicModule)?.normalizedMixinMetaMap.get(mixinRest)?.params;
+  const mixinMeta2 = mock.getNormalizedModuleMeta(appendsWithOpts)?.normalizedMixinMetaMap.get(mixinRest)?.params;
   expect(mock.map.size).toBe(5);
   expect(mixinMeta1).toMatchObject({ guards: [{ guard: Guard1 }], path: 'module1' });
   expect(mixinMeta2).toMatchObject({ guards: [{ guard: Guard2 }], path: 'module2' });

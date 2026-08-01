@@ -57,14 +57,14 @@ describe('rest ModuleNormalizer', () => {
     })
     class AppModule {}
 
-    const meta1 = moduleManager.scanRootModule(AppModule).mixinMeta.get(mixinRest)!;
+    const meta1 = moduleManager.scanRootModule(AppModule).normalizedMixinMetaMap.get(mixinRest)!;
     expect(dynamicModule.mixinOptions?.get(mixinRest)).toEqual({ path: 'test1' });
     expect(meta1.appendsWithOpts).toEqual([appendWithOpts]);
 
-    const meta2 = moduleManager.getNormalizedModuleMeta(dynamicModule, true).mixinMeta.get(mixinRest)!;
+    const meta2 = moduleManager.getNormalizedModuleMeta(dynamicModule, true).normalizedMixinMetaMap.get(mixinRest)!;
     expect(meta2.params.path).toEqual('test1');
 
-    const meta3 = moduleManager.getNormalizedModuleMeta(appendWithOpts, true).mixinMeta.get(mixinRest)!;
+    const meta3 = moduleManager.getNormalizedModuleMeta(appendWithOpts, true).normalizedMixinMetaMap.get(mixinRest)!;
     expect(meta3.params.path).toEqual('test2');
   });
 
@@ -129,7 +129,7 @@ describe('rest ModuleNormalizer', () => {
 
     const normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
 
-    const meta1 = moduleManager.getNormalizedModuleMeta(AppModule, true).mixinMeta.get(mixinRest)!;
+    const meta1 = moduleManager.getNormalizedModuleMeta(AppModule, true).normalizedMixinMetaMap.get(mixinRest)!;
     expect(meta1.providersPerRou).toEqual([Service1, { token: Service3, useClass: Service3, multi: true }]);
     expect(meta1.providersPerReq).toEqual([Service2, { token: Service4, useToken: Service4, multi: true }]);
     expect(meta1.exportedProvidersPerRou).toEqual([Service1]);
@@ -141,10 +141,10 @@ describe('rest ModuleNormalizer', () => {
     expect(meta1.appendsModules).toEqual([Module5]);
     expect(meta1.appendsWithOpts).toEqual([appendWithOpts]);
 
-    const meta2 = moduleManager.getNormalizedModuleMeta('test-id', true).mixinMeta.get(mixinRest)!;
+    const meta2 = moduleManager.getNormalizedModuleMeta('test-id', true).normalizedMixinMetaMap.get(mixinRest)!;
     expect(meta2.params.path).toEqual('test1');
 
-    const meta3 = moduleManager.getNormalizedModuleMeta(appendWithOpts, true).mixinMeta.get(mixinRest)!;
+    const meta3 = moduleManager.getNormalizedModuleMeta(appendWithOpts, true).normalizedMixinMetaMap.get(mixinRest)!;
     expect(meta3.params.path).toEqual('test2');
 
     expect(normalizedModuleMeta.importedStaticModules).toEqual([Module1, RestModule]);
@@ -186,13 +186,13 @@ describe('rest ModuleNormalizer', () => {
     class AppModule {}
 
     const normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
-    const meta1 = moduleManager.getNormalizedModuleMeta(AppModule, true).mixinMeta.get(mixinRest)!;
-    const modRefIds = normalizedModuleMeta.allModuleMixin.get(mixinRest)?.getModulesToScan(meta1);
+    const meta1 = moduleManager.getNormalizedModuleMeta(AppModule, true).normalizedMixinMetaMap.get(mixinRest)!;
+    const modRefIds = normalizedModuleMeta.allModuleMixinsMap.get(mixinRest)?.getModulesToScan(meta1);
     expect(modRefIds).toEqual([appendsWithOpts]);
     expect(normalizedModuleMeta.importedStaticModules).toEqual([RestModule]);
     expect(normalizedModuleMeta.importedDynamicModules).toEqual([]);
 
-    const meta2 = moduleManager.getNormalizedModuleMeta(appendsWithOpts, true).mixinMeta.get(mixinRest)!;
+    const meta2 = moduleManager.getNormalizedModuleMeta(appendsWithOpts, true).normalizedMixinMetaMap.get(mixinRest)!;
     expect(meta2.params.path).toBe('one');
     expect(meta2.params.guards).toEqual<NormalizedGuard[]>([
       { guard: Guard1 },
@@ -258,13 +258,13 @@ describe('rest ModuleNormalizer', () => {
     class AppModule {}
 
     const normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
-    const meta1 = moduleManager.getNormalizedModuleMeta(AppModule, true).mixinMeta.get(mixinRest)!;
-    const modRefIds = normalizedModuleMeta.allModuleMixin.get(mixinRest)?.getModulesToScan(meta1);
+    const meta1 = moduleManager.getNormalizedModuleMeta(AppModule, true).normalizedMixinMetaMap.get(mixinRest)!;
+    const modRefIds = normalizedModuleMeta.allModuleMixinsMap.get(mixinRest)?.getModulesToScan(meta1);
     expect(modRefIds).toEqual([]);
     expect(normalizedModuleMeta.importedStaticModules).toEqual([RestModule]);
     expect(normalizedModuleMeta.importedDynamicModules).toEqual([dynamicModule]);
 
-    const meta2 = moduleManager.getNormalizedModuleMeta(dynamicModule, true).mixinMeta.get(mixinRest)!;
+    const meta2 = moduleManager.getNormalizedModuleMeta(dynamicModule, true).normalizedMixinMetaMap.get(mixinRest)!;
     expect(meta2.params.path).toBe('one');
     expect(meta2.params.guards).toEqual<NormalizedGuard[]>([
       { guard: Guard1 },
@@ -299,7 +299,7 @@ describe('rest ModuleNormalizer', () => {
     class AppModule {}
 
     const normalizedModuleMeta = moduleManager.scanRootModule(AppModule);
-    const meta = normalizedModuleMeta.mixinMeta.get(mixinRest)!;
+    const meta = normalizedModuleMeta.normalizedMixinMetaMap.get(mixinRest)!;
     expect(meta.controllers).toEqual([Controller1]);
     expect(meta.providersPerRou).toEqual([Service1, { token: Service2, useClass: Service2, multi: true }]);
     expect(meta.exportedProvidersPerRou).toEqual([Service1]);

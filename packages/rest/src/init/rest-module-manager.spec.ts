@@ -44,7 +44,7 @@ describe('ModuleManager', () => {
   function getMixinMeta(moduleId: ModuleId) {
     const normalizedModuleMeta = mock.getNormalizedModuleMeta(moduleId);
     // console.log(normalizedModuleMeta);
-    return normalizedModuleMeta?.mixinMeta.get(mixinRest);
+    return normalizedModuleMeta?.normalizedMixinMetaMap.get(mixinRest);
   }
 
   beforeEach(() => {
@@ -152,13 +152,13 @@ describe('ModuleManager', () => {
     expect(rootNormalizedModuleMeta?.providersPerApp).toEqual([Service5]);
     expect(rootNormalizedModuleMeta?.providersPerMod.includes(Service6)).toBeTruthy();
 
-    const mod1MixinMeta = normalizedModuleMeta1?.mixinMeta.get(mixinRest);
+    const mod1MixinMeta = normalizedModuleMeta1?.normalizedMixinMetaMap.get(mixinRest);
     expect(mod1MixinMeta?.providersPerApp).toEqual(normalizedModuleMeta1?.providersPerApp);
     expect(mod1MixinMeta?.providersPerMod).toEqual(normalizedModuleMeta1?.providersPerMod);
     expect(mod1MixinMeta?.providersPerMod.includes(Service2)).toBeTruthy();
     expect(mod1MixinMeta?.providersPerMod.includes(Service4)).toBeTruthy();
 
-    const rootMixinMeta = rootNormalizedModuleMeta?.mixinMeta.get(mixinRest);
+    const rootMixinMeta = rootNormalizedModuleMeta?.normalizedMixinMetaMap.get(mixinRest);
     expect(rootMixinMeta?.providersPerApp).toEqual(rootNormalizedModuleMeta?.providersPerApp);
     expect(rootMixinMeta?.providersPerMod).toEqual(rootNormalizedModuleMeta?.providersPerMod);
     expect(rootMixinMeta?.providersPerMod.includes(Service6)).toBeTruthy();
@@ -403,12 +403,12 @@ describe('ModuleManager', () => {
     expect(mock.map.size).toBe(6);
     expect(getMixinMeta(Module1)?.controllers).toEqual([Controller1]);
 
-    expect(mock.map.get(Module2)?.mixinMeta.get(mixinRest)?.providersPerRou).toEqual([Provider1]);
-    expect(mock.map.get(Module2)?.mixinMeta.get(mixinRest)?.exportedProvidersPerRou).toEqual([Provider1]);
+    expect(mock.map.get(Module2)?.normalizedMixinMetaMap.get(mixinRest)?.providersPerRou).toEqual([Provider1]);
+    expect(mock.map.get(Module2)?.normalizedMixinMetaMap.get(mixinRest)?.exportedProvidersPerRou).toEqual([Provider1]);
 
     expect(getMixinMeta('root')?.importedStaticModules).toEqual([Module1, Module2, RestModule]);
 
-    const mixinMeta = mock.map.get(module4WithOpts)?.mixinMeta.get(mixinRest);
+    const mixinMeta = mock.map.get(module4WithOpts)?.normalizedMixinMetaMap.get(mixinRest);
     expect(mixinMeta?.importedStaticModules).toEqual([RestModule]);
   });
 

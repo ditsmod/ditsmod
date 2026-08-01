@@ -209,19 +209,19 @@ export class BaseAppInitializer {
     const appProviders = shallowModulesImporter1.exportAppProviders(moduleManager);
     this.log.printAppProviders(this, appProviders);
     const shallowModulesImporter2 = new ShallowModulesImporter();
-    const { modRefId, allModuleMixin } = moduleManager.getNormalizedModuleMeta('root', true);
+    const { modRefId, allModuleMixinsMap } = moduleManager.getNormalizedModuleMeta('root', true);
     const shallowModuleImportsMap = shallowModulesImporter2.importModulesShallow({
       appProviders,
       modRefId,
       moduleManager,
       unfinishedScanModules: new Set(),
     });
-    if (allModuleMixin.size == 0) {
+    if (allModuleMixinsMap.size == 0) {
       return shallowModuleImportsMap;
     }
     const mergedShallowModuleImportsMap: Map<ModRefId, ShallowModuleImports> = new Map();
     // @todo Refactor this.
-    allModuleMixin.forEach((moduleMixin, decorator) => {
+    allModuleMixinsMap.forEach((moduleMixin, decorator) => {
       const val = moduleMixin.importModulesShallow({
         moduleManager,
         appProviders,
@@ -286,7 +286,7 @@ export class BaseAppInitializer {
     for (const [modRefId, { normalizedModuleMeta }] of resolvedModuleMetaMap) {
       try {
         this.overrideMetaAfterStage1(normalizedModuleMeta.modRefId, normalizedModuleMeta);
-        normalizedModuleMeta.mixinMeta.forEach((meta) => this.overrideMetaAfterStage1(normalizedModuleMeta.modRefId, meta));
+        normalizedModuleMeta.normalizedMixinMetaMap.forEach((meta) => this.overrideMetaAfterStage1(normalizedModuleMeta.modRefId, meta));
       } catch (err: any) {
         const debugModuleName = getDebugClassName(modRefId) || 'unknown';
         throw new MetaOverrideFailure(debugModuleName, err);

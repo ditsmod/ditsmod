@@ -100,14 +100,14 @@ export class ModuleManager {
    * or `controllers`), builds the module dependency graph (`this.state.childrenMap`), accumulates global providers into `providersPerApp`,
    * and executes initialization hooks across the hierarchy.
    */
-  scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>, allModuleMixin?: AllModuleMixins, saveToSnapshot?: boolean) {
+  scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>, allModuleMixinsMap?: AllModuleMixins, saveToSnapshot?: boolean) {
     const isRootScan = this.unfinishedScanModules.size == 0;
-    allModuleMixin ??= new Map();
+    allModuleMixinsMap ??= new Map();
     modRefId = resolveForwardRef(modRefId);
-    const normalizedModuleMeta = this.normalizeMeta(modRefId, allModuleMixin);
+    const normalizedModuleMeta = this.normalizeMeta(modRefId, allModuleMixinsMap);
     const importsOrExports: (DynamicModule | StaticModule)[] = [];
     normalizedModuleMeta.moduleMixinMap.forEach((moduleMixin, decorator) => {
-      const meta = normalizedModuleMeta.mixinMeta.get(decorator);
+      const meta = normalizedModuleMeta.normalizedMixinMetaMap.get(decorator);
       if (meta) {
         importsOrExports.push(...moduleMixin.getModulesToScan(meta));
       }
@@ -127,7 +127,7 @@ export class ModuleManager {
         continue;
       }
       this.unfinishedScanModules.add(input);
-      this.scanModule(input, normalizedModuleMeta.allModuleMixin, saveToSnapshot);
+      this.scanModule(input, normalizedModuleMeta.allModuleMixinsMap, saveToSnapshot);
       this.unfinishedScanModules.delete(input);
       this.scannedModules.add(input);
     }
@@ -145,7 +145,7 @@ export class ModuleManager {
     } else {
       this.map.set(modRefId, normalizedModuleMeta);
     }
-    normalizedModuleMeta.allModuleMixin.forEach((moduleMixin, decorator) => allModuleMixin.set(decorator, moduleMixin));
+    normalizedModuleMeta.allModuleMixinsMap.forEach((moduleMixin, decorator) => allModuleMixinsMap.set(decorator, moduleMixin));
 
     if (isRootScan) {
       this.applyHostMixinOptions();
@@ -431,11 +431,11 @@ export class ModuleManager {
    * properties, into which relevant metadata (such as controllers or appended routes) can later be imported.
    */
   protected callModuleMixinAfterScan(normalizedModuleMeta: NormalizedModuleMeta) {
-    normalizedModuleMeta.allModuleMixin.forEach((moduleMixin, decorator) => {
+    normalizedModuleMeta.allModuleMixinsMap.forEach((moduleMixin, decorator) => {
       if (!normalizedModuleMeta.moduleMixinMap.has(decorator)) {
         const meta = moduleMixin.clone().normalize(normalizedModuleMeta);
         if (meta) {
-          normalizedModuleMeta.mixinMeta.set(decorator, meta);
+          normalizedModuleMeta.normalizedMixinMetaMap.set(decorator, meta);
         }
       }
     });
@@ -502,9 +502,9 @@ export class ModuleManager {
    * Delegates module decorator reflection and metadata normalization to {@link ModuleNormalizer}.
    * On failure, enriches the error message with the full dependency scan trajectory (e.g., `ModuleA -> ModuleB`).
    */
-  protected normalizeMeta(modRefId: ModRefId, allModuleMixin: AllModuleMixins): NormalizedModuleMeta {
+  protected normalizeMeta(modRefId: ModRefId, allModuleMixinsMap: AllModuleMixins): NormalizedModuleMeta {
     try {
-      return this.moduleNormalizer.normalize(modRefId, allModuleMixin, this.systemLogMediator);
+      return this.moduleNormalizer.normalize(modRefId, allModuleMixinsMap, this.systemLogMediator);
     } catch (err: any) {
       const moduleName = getDebugClassName(modRefId);
       let path = [...this.unfinishedScanModules].map((id) => getDebugClassName(id)).join(' -> ');
@@ -627,7 +627,7 @@ export class ModuleManager {
 
     const importsOrExports: (DynamicModule | StaticModule)[] = [];
     hostMeta.moduleMixinMap.forEach((mixin, dec) => {
-      const mixinMeta = hostMeta.mixinMeta.get(dec);
+      const mixinMeta = hostMeta.normalizedMixinMetaMap.get(dec);
       if (mixinMeta) {
         importsOrExports.push(...mixin.getModulesToScan(mixinMeta));
       }

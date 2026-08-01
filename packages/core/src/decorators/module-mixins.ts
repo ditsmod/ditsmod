@@ -51,7 +51,7 @@ export class ModuleMixin<T1 extends StaticMixinOptions = StaticMixinOptions> {
   }
 
   /**
-   * Normalizes the metadata from the current decorator. It is then inserted into {@link NormalizedModuleMeta.mixinMeta | normalizedModuleMeta.mixinMeta}.
+   * Normalizes the metadata from the current decorator. It is then inserted into {@link NormalizedModuleMeta.normalizedMixinMetaMap | normalizedModuleMeta.normalizedMixinMetaMap}.
    *
    * @param normalizedModuleMeta Normalized metadata that is passed
    * to the {@link featureModule} or {@link rootModule} decorator.
