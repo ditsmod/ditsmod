@@ -5,11 +5,23 @@ import type { ModuleId } from '#init/module-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { ModuleGraphState } from '#init/module-graph-state.js';
 import type { NormalizedModuleMeta } from '#init/normalized-meta.js';
-import type { ModRefId, StaticModule} from '#decorators/module-decorator-options.js';
+import type { ModRefId, StaticModule } from '#decorators/module-decorator-options.js';
 import { isDynamicModule } from '#decorators/type-guards.js';
 import { getDebugClassName } from '#utils/get-debug-class-name.js';
-import { ImportAdditionFailure, ImportRemovalFailure, ForbiddenRollback, ForbiddenSavingSnapshot, NormalizationFailure } from '#errors';
+import {
+  ImportAdditionFailure,
+  ImportRemovalFailure,
+  ForbiddenRollback,
+  ForbiddenSavingSnapshot,
+  NormalizationFailure,
+} from '#errors';
 
+/**
+ * @experimental The mutability of the module graph is an experimental feature.
+ *
+ * Extends `ModuleManager` to support dynamic addition and removal of module imports
+ * at runtime. Modifying the module graph is done transactionally.
+ */
 export class MutableModuleManager extends ModuleManager {
   protected state = new ModuleGraphState();
   protected oldState?: ModuleGraphState;
@@ -48,6 +60,11 @@ export class MutableModuleManager extends ModuleManager {
     }
   }
 
+  /**
+   * @experimental The mutability of the module graph is an experimental feature.
+   *
+   * Dynamically adds a module import to a specified target module.
+   */
   addImport(inputModule: ModRefId, targetModuleId: ModuleId = 'root'): boolean | void {
     const targetNormalizedModuleMeta = this.getNormalizedModuleMetaFromSnapshot(targetModuleId);
     if (!targetNormalizedModuleMeta) {
@@ -81,6 +98,11 @@ export class MutableModuleManager extends ModuleManager {
     }
   }
 
+  /**
+   * @experimental The mutability of the module graph is an experimental feature.
+   *
+   * Dynamically removes a module import from a specified target module.
+   */
   removeImport(inputModuleId: ModuleId, targetModuleId: ModuleId = 'root'): boolean | void {
     const inputNormalizedModuleMeta = this.getNormalizedModuleMetaFromSnapshot(inputModuleId);
     if (!inputNormalizedModuleMeta) {
@@ -119,6 +141,9 @@ export class MutableModuleManager extends ModuleManager {
     }
   }
 
+  /**
+   * @experimental The mutability of the module graph is an experimental feature.
+   */
   startTransaction() {
     if (this.oldState) {
       return false;
@@ -127,6 +152,9 @@ export class MutableModuleManager extends ModuleManager {
     return true;
   }
 
+  /**
+   * @experimental The mutability of the module graph is an experimental feature.
+   */
   rollback(err?: Error) {
     if (!this.oldState) {
       throw new ForbiddenRollback();
@@ -139,11 +167,17 @@ export class MutableModuleManager extends ModuleManager {
     return this;
   }
 
+  /**
+   * @experimental The mutability of the module graph is an experimental feature.
+   */
   commit() {
     this.oldState = undefined;
     return this;
   }
 
+  /**
+   * @experimental The mutability of the module graph is an experimental feature.
+   */
   reset() {
     this.map = new Map();
     this.state.snapshotMap.forEach((normalizedModuleMeta, key) =>
@@ -219,7 +253,7 @@ export class MutableModuleManager extends ModuleManager {
       this.state.snapshotMapId = new Map(this.mapId);
     }
   }
-  
+
   protected override propagateContextMixins(startModule: ModRefId, inheritedMixins?: Map<any, any>, visited?: Set<ModRefId>) {
     // Override to fallback to snapshotMap if not in map
     if (!visited) {
