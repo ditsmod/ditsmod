@@ -219,7 +219,7 @@ describe('RestAppInitializer', () => {
     @featureModule()
     class Module7 {}
 
-    const meta = moduleManager.scanModule(Module7);
+    const meta = moduleManager.scanRootModule(Module7);
     const providersPerApp = mock.collectProvidersPerApp(meta);
     expect(providersPerApp).toEqual([]);
   });

@@ -13,6 +13,8 @@ import {
   Provider,
   DynamicModuleWithMixinOptions,
   ModRefId,
+  ForwardRefFn,
+  AllModuleMixins,
 } from '@ditsmod/core';
 import {
   UnknownExport,
@@ -38,6 +40,10 @@ describe('ModuleManager', () => {
   class MockModuleManager extends ModuleManager {
     declare map: Map<ModRefId, NormalizedModuleMeta>;
     declare mapId: Map<string, ModRefId>;
+
+    override scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>, allModuleMixinsMap?: AllModuleMixins) {
+      return super.scanModule(modRefId, allModuleMixinsMap);
+    }
   }
 
   let mock: MockModuleManager;

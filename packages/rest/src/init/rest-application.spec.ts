@@ -10,6 +10,7 @@ import {
   rootModule,
   ModuleManager,
   LoggerConfig,
+  BaseAppOptions,
 } from '@ditsmod/core';
 
 import { RestApplication } from './rest-application.js';
@@ -18,6 +19,7 @@ import { AppOptions } from '../types/app-options.js';
 describe('RestApplication', () => {
   class ApplicationMock extends RestApplication {
     override appOptions = new AppOptions();
+    override baseAppOptions = new BaseAppOptions();
     declare log: SystemLogMediator;
 
     override init(appOptions?: AppOptions) {
