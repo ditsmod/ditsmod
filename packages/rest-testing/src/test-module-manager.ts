@@ -1,7 +1,7 @@
 import type { ModRefId, NormalizedModuleMeta, AllModuleMixins } from '@ditsmod/core';
-import { getModule, ModuleManager } from '@ditsmod/core';
+import { getModule, MutableModuleManager } from '@ditsmod/core';
 
-export class TestModuleManager extends ModuleManager {
+export class TestModuleManager extends MutableModuleManager {
   protected externalModules = new Set<ModRefId>();
 
   markModuleAsExternal(...modRefIds: ModRefId[]) {

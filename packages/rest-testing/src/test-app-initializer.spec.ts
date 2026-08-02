@@ -3,47 +3,35 @@ import { NormalizedModuleMeta, ProviderBuilder } from '@ditsmod/core';
 import { RestMixinMeta, mixinRest } from '@ditsmod/rest';
 
 import { TestAppInitializer } from '#app/test-app-initializer.js';
-import type { ProvidersByLevel } from '#app/types.js';
 
 describe('TestAppInitializer', () => {
   class MockTestAppInitializer extends TestAppInitializer {
-    override additionalProvidersMap = new Map<ModRefId, ProvidersByLevel<Provider[]>>();
+    override additionalProvidersMap = new Map<ModRefId, Provider[]>();
 
     override overrideMetaAfterStage1(modRefId: ModRefId, providersByLevel: NormalizedModuleMeta) {
       return super.overrideMetaAfterStage1(modRefId, providersByLevel);
     }
   }
   const mock = new MockTestAppInitializer(null as any, null as any, null as any);
+  (mock as any).normalizedModuleMeta = new NormalizedModuleMeta();
 
   describe('addProvidersToModule()', () => {
-    it('adding instanse of ProviderBuilder to providersPerApp', () => {
+    it('adding array of providers', () => {
       const modRefId = {} as ModRefId;
       class Provider1 {}
 
-      const providersMeta1: Partial<ProvidersByLevel> = {
-        providersPerApp: [Provider1],
-        providersPerMod: [Provider1],
-      };
-      mock.addProvidersToModule(modRefId, providersMeta1);
-      expect(mock.additionalProvidersMap.get(modRefId)?.providersPerApp).toEqual([Provider1]);
-      expect(mock.additionalProvidersMap.get(modRefId)?.providersPerMod).toEqual([Provider1]);
+      mock.addProvidersToModule(modRefId, [Provider1]);
+      expect(mock.additionalProvidersMap.get(modRefId)).toEqual([Provider1]);
     });
 
-    it('adding mix (Provider[] and instanse of ProviderBuilder) to providersPerApp', () => {
+    it('adding mix (Provider[] and instanse of ProviderBuilder)', () => {
       const modRefId = {} as ModRefId;
       class Provider1 {}
       class Provider2 {}
 
-      const providersMeta1: Partial<ProvidersByLevel> = {
-        providersPerApp: [Provider1],
-      };
-
-      const providersMeta2: Partial<ProvidersByLevel> = {
-        providersPerApp: new ProviderBuilder().passThrough(Provider2),
-      };
-      mock.addProvidersToModule(modRefId, providersMeta1);
-      mock.addProvidersToModule(modRefId, providersMeta2);
-      expect(mock.additionalProvidersMap.get(modRefId)?.providersPerApp).toEqual([Provider1, Provider2]);
+      mock.addProvidersToModule(modRefId, [Provider1]);
+      mock.addProvidersToModule(modRefId, new ProviderBuilder().passThrough(Provider2));
+      expect(mock.additionalProvidersMap.get(modRefId)).toEqual([Provider1, Provider2]);
     });
   });
 
@@ -54,11 +42,7 @@ describe('TestAppInitializer', () => {
       class Provider0 {}
       class Provider1 {}
 
-      const providersMeta1: Partial<ProvidersByLevel> = {
-        providersPerApp: [Provider1],
-        providersPerMod: [Provider1],
-      };
-      mock.addProvidersToModule(modRefId, providersMeta1);
+      mock.addProvidersToModule(modRefId, [Provider1]);
       const normalizedModuleMeta = new NormalizedModuleMeta();
       normalizedModuleMeta.normalizedMixinMetaMap.set(mixinRest, new RestMixinMeta());
       normalizedModuleMeta.providersPerApp.push(Provider0);
