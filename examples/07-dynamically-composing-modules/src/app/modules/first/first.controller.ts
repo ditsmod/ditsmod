@@ -1,4 +1,4 @@
-import { BaseAppInitializer, ModuleManager, DynamicModule, skipSelf } from '@ditsmod/core';
+import { BaseAppInitializer, MutableModuleManager, DynamicModule, skipSelf } from '@ditsmod/core';
 import { controller, route, RequestContext, RestDynamicOptions } from '@ditsmod/rest';
 
 import { SecondModule } from '../second.module.js';
@@ -10,7 +10,7 @@ const thirdDynamicModule: DynamicModule = { module: ThirdModule };
 @controller()
 export class FirstController {
   constructor(
-    @skipSelf() private moduleManager: ModuleManager,
+    @skipSelf() private moduleManager: MutableModuleManager,
     @skipSelf() private appInitializer: BaseAppInitializer,
   ) {}
 
