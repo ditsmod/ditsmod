@@ -868,7 +868,7 @@ describe('ModuleNormalizer', () => {
     });
   });
 
-  describe('propagateParentHooks', () => {
+  describe('propagateParentMixins', () => {
     class PropagateMixinMeta extends BaseNormalizedModuleMeta {
       propagated?: boolean;
     }
@@ -894,7 +894,7 @@ describe('ModuleNormalizer', () => {
       expect(normalizedModuleMeta.moduleMixinMap.size).toBe(0);
 
       const allModuleMixinsMap = new Map([[initPropagate, new PropagateModuleMixin({})]]);
-      normalizer.propagateParentHooks(normalizedModuleMeta, allModuleMixinsMap);
+      normalizer.propagateParentMixins(normalizedModuleMeta, allModuleMixinsMap);
 
       expect(normalizedModuleMeta.moduleMixinMap.has(initPropagate)).toBe(true);
       expect(normalizedModuleMeta.normalizedMixinMetaMap.get(initPropagate)?.propagated).toBe(true);
@@ -907,7 +907,7 @@ describe('ModuleNormalizer', () => {
       const normalizedModuleMeta = normalizer.normalize(Module1);
 
       const allModuleMixinsMap = new Map([[initPropagate, new PropagateModuleMixin({})]]);
-      normalizer.propagateParentHooks(normalizedModuleMeta, allModuleMixinsMap);
+      normalizer.propagateParentMixins(normalizedModuleMeta, allModuleMixinsMap);
 
       expect(normalizedModuleMeta.moduleMixinMap.has(initPropagate)).toBe(false);
     });
@@ -920,7 +920,7 @@ describe('ModuleNormalizer', () => {
       normalizedModuleMeta.isExternal = true;
 
       const allModuleMixinsMap = new Map([[initPropagate, new PropagateModuleMixin({})]]);
-      normalizer.propagateParentHooks(normalizedModuleMeta, allModuleMixinsMap);
+      normalizer.propagateParentMixins(normalizedModuleMeta, allModuleMixinsMap);
 
       expect(normalizedModuleMeta.moduleMixinMap.has(initPropagate)).toBe(false);
     });
@@ -935,7 +935,7 @@ describe('ModuleNormalizer', () => {
       expect(originalSize).toBeGreaterThan(0);
 
       const allModuleMixinsMap = new Map([[initPropagate, new PropagateModuleMixin({})]]);
-      normalizer.propagateParentHooks(normalizedModuleMeta, allModuleMixinsMap);
+      normalizer.propagateParentMixins(normalizedModuleMeta, allModuleMixinsMap);
 
       expect(normalizedModuleMeta.moduleMixinMap.size).toBe(originalSize);
     });

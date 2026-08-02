@@ -1,24 +1,13 @@
-import { format } from 'node:util';
-
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { AnyObj } from '#types/mix.js';
 import { StaticModule, ModRefId } from '#decorators/module-decorator-options.js';
 import { DynamicModule } from '#decorators/module-decorator-options.js';
 import { BaseNormalizedModuleMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
-import { ModuleGraphState } from '#init/module-graph-state.js';
-import { isDynamicModule, isRootModule } from '#decorators/type-guards.js';
+import { isRootModule } from '#decorators/type-guards.js';
 import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
 import { ModuleNormalizer } from '#init/module-normalizer.js';
 import { AllModuleMixins, ModuleMixin } from '#decorators/module-mixins.js';
-import {
-  ImportAdditionFailure,
-  ImportRemovalFailure,
-  ForbiddenRollback,
-  ModuleIdNotFound,
-  NormalizationFailure,
-  ForbiddenSavingSnapshot,
-  MissingRootDecorator,
-} from '#errors';
+import { ModuleIdNotFound, NormalizationFailure, MissingRootDecorator } from '#errors';
 import { getModule } from '#utils/get-module.js';
 import { injectable } from '#di/decorators.js';
 import type { Provider, AnyFn } from '#di/top/types-and-models.js';
@@ -36,13 +25,10 @@ export type ModuleId = string | ModRefId;
  * Essentially, `ModRefId` is the form in which a module is passed in the `imports` array — that is,
  * either the static module class itself (`StaticModule`) or a dynamic module configuration object (`DynamicModule`).
  *
- * `ModuleManager` also stores module-level DI injectors, manages application-scoped providers, propagates initialization hooks,
- * and enables dynamic runtime modifications to module imports with atomic transaction support (rollback and commit).
+ * `ModuleManager` also stores module-level DI injectors, manages application-scoped providers, and propagates initialization hooks.
  */
 @injectable()
 export class ModuleManager {
-  protected state = new ModuleGraphState();
-  protected oldState?: ModuleGraphState;
   protected injectorPerModMap = new Map<ModRefId, Injector>();
   protected map: ModulesMap = new Map();
   protected mapId = new Map<'root' | (string & {}), ModRefId>();
@@ -55,33 +41,49 @@ export class ModuleManager {
     'exportedStaticModules',
     'exportedDynamicModules',
   ] satisfies (keyof BaseNormalizedModuleMeta)[];
+  #childrenMap = new Map<ModRefId, Set<ModRefId>>();
+  #providersPerApp: Provider[] = [];
+
+  protected get childrenMap() {
+    return this.#childrenMap;
+  }
+  protected set childrenMap(val: Map<ModRefId, Set<ModRefId>>) {
+    this.#childrenMap = val;
+  }
 
   get providersPerApp(): Provider[] {
-    return this.state.providersPerApp;
+    return this.#providersPerApp;
   }
-  set providersPerApp(val: Provider[]) {
-    this.state.providersPerApp = val;
+  protected set providersPerApp(val: Provider[]) {
+    this.#providersPerApp = val;
+  }
+
+  /**
+   * Returns the active mapping between module reference IDs (`ModRefId`) and their {@link NormalizedModuleMeta}.
+   */
+  get modulesMap(): ReadonlyMap<ModRefId, NormalizedModuleMeta> {
+    return this.map;
+  }
+
+  /**
+   * Returns the internal registry mapping module reference IDs (`ModRefId`) to their instantiated module-level injectors.
+   */
+  get injectorsPerMod(): ReadonlyMap<ModRefId, Injector> {
+    return this.injectorPerModMap;
   }
 
   constructor(protected systemLogMediator: SystemLogMediator) {}
 
   /**
-   * Creates an immutable snapshot of {@link NormalizedModuleMeta} for the root module, stores it locally, and returns it.
-   * You can later retrieve the result via: `moduleManager.getNormalizedModuleMeta('root')`.
-   *
    * Resets internal scan state and initiates recursive metadata resolution for all imported feature modules in the dependency graph.
    */
   scanRootModule(appModule: StaticModule): NormalizedModuleMeta {
-    if (this.state.snapshotMap.size) {
-      this.systemLogMediator.forbiddenRescanRootModule(this);
-      return this.getNormalizedModuleMeta('root', true);
-    }
     this.providersPerApp = [];
     if (!Reflector.getClassLevelMeta(appModule, isRootModule)) {
       throw new MissingRootDecorator(appModule.name);
     }
 
-    this.state.childrenMap.clear();
+    this.childrenMap.clear();
     const normalizedModuleMeta = this.scanModule(appModule);
 
     this.injectorPerModMap.clear();
@@ -89,7 +91,6 @@ export class ModuleManager {
     this.scannedModules.clear();
     clearDebugClassNames();
     this.mapId.set('root', appModule);
-    this.saveSnapshot();
     return normalizedModuleMeta;
   }
 
@@ -97,15 +98,45 @@ export class ModuleManager {
    * Recursively normalizes and registers metadata for a specified static or dynamic module reference.
    *
    * Traverses module dependencies (`imports`, `exports`, and modules discovered via specialized module mixins such as `appends`
-   * or `controllers`), builds the module dependency graph (`this.state.childrenMap`), accumulates global providers into `providersPerApp`,
+   * or `controllers`), builds the module dependency graph (`this.childrenMap`), accumulates global providers into `providersPerApp`,
    * and executes initialization hooks across the hierarchy.
    */
-  scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>, allModuleMixinsMap?: AllModuleMixins, saveToSnapshot?: boolean) {
+  protected scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>, allModuleMixinsMap?: AllModuleMixins) {
     const isRootScan = this.unfinishedScanModules.size == 0;
     allModuleMixinsMap ??= new Map();
     modRefId = resolveForwardRef(modRefId);
     const normalizedModuleMeta = this.normalizeMeta(modRefId, allModuleMixinsMap);
-    const importsOrExports: (DynamicModule | StaticModule)[] = [];
+
+    const children = new Set<ModRefId>();
+    this.childrenMap.set(normalizedModuleMeta.modRefId, children);
+
+    for (const input of this.getModulesToScan(normalizedModuleMeta)) {
+      children.add(input);
+      if (this.unfinishedScanModules.has(input) || this.scannedModules.has(input)) {
+        continue;
+      }
+      this.unfinishedScanModules.add(input);
+      this.scanModule(input, normalizedModuleMeta.allModuleMixinsMap);
+      this.unfinishedScanModules.delete(input);
+      this.scannedModules.add(input);
+    }
+
+    this.callModuleMixinAfterScan(normalizedModuleMeta);
+    this.registerModuleId(normalizedModuleMeta, modRefId);
+    this.accumulateProvidersPerApp(normalizedModuleMeta);
+
+    this.setMeta(modRefId, normalizedModuleMeta);
+    normalizedModuleMeta.allModuleMixinsMap.forEach((moduleMixin, decoratorId) => allModuleMixinsMap.set(decoratorId, moduleMixin));
+
+    if (isRootScan) {
+      this.finalizeRootScan(modRefId);
+    }
+
+    return normalizedModuleMeta;
+  }
+
+  protected getModulesToScan(normalizedModuleMeta: NormalizedModuleMeta): ModRefId[] {
+    const importsOrExports: ModRefId[] = [];
     normalizedModuleMeta.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
       const meta = normalizedModuleMeta.normalizedMixinMetaMap.get(decoratorId);
       if (meta) {
@@ -113,48 +144,32 @@ export class ModuleManager {
       }
     });
 
-    // Merging arrays with this props in one array.
-    const inputs = this.propsWithModules
+    return this.propsWithModules
       .map((p) => normalizedModuleMeta[p])
       .reduce<ModRefId[]>((prev, curr) => prev.concat(curr), importsOrExports);
+  }
 
-    const children = new Set<ModRefId>();
-    this.state.childrenMap.set(normalizedModuleMeta.modRefId, children);
-
-    for (const input of inputs) {
-      children.add(input);
-      if (this.unfinishedScanModules.has(input) || this.scannedModules.has(input)) {
-        continue;
-      }
-      this.unfinishedScanModules.add(input);
-      this.scanModule(input, normalizedModuleMeta.allModuleMixinsMap, saveToSnapshot);
-      this.unfinishedScanModules.delete(input);
-      this.scannedModules.add(input);
-    }
-
-    this.callModuleMixinAfterScan(normalizedModuleMeta);
-
+  protected registerModuleId(normalizedModuleMeta: NormalizedModuleMeta, modRefId: ModRefId) {
     if (normalizedModuleMeta.id) {
       this.mapId.set(normalizedModuleMeta.id, modRefId);
       this.systemLogMediator.moduleHasId(this, normalizedModuleMeta.id);
     }
+  }
+
+  protected accumulateProvidersPerApp(normalizedModuleMeta: NormalizedModuleMeta) {
     const providersPerApp = isRootModule(normalizedModuleMeta) ? [] : normalizedModuleMeta.providersPerApp;
     this.providersPerApp.push(...providersPerApp);
-    if (saveToSnapshot) {
-      this.state.snapshotMap.set(modRefId, normalizedModuleMeta);
-    } else {
-      this.map.set(modRefId, normalizedModuleMeta);
-    }
-    normalizedModuleMeta.allModuleMixinsMap.forEach((moduleMixin, decoratorId) => allModuleMixinsMap.set(decoratorId, moduleMixin));
+  }
 
-    if (isRootScan) {
-      this.applyHostMixinOptions();
-      const rootModule = this.mapId.get('root') || resolveForwardRef(modRefId);
-      this.propagateContextHooks(rootModule);
-      this.checkEmptyMetaForAllModules();
-    }
+  protected finalizeRootScan(modRefId: ModRefId) {
+    this.applyHostMixinOptions();
+    const rootModule = this.mapId.get('root') || resolveForwardRef(modRefId);
+    this.propagateContextMixins(rootModule);
+    this.checkEmptyMetaForAllModules();
+  }
 
-    return normalizedModuleMeta;
+  protected setMeta(modRefId: ModRefId, normalizedModuleMeta: NormalizedModuleMeta) {
+    this.map.set(modRefId, normalizedModuleMeta);
   }
 
   /**
@@ -189,165 +204,6 @@ export class ModuleManager {
     }
 
     return normalizedModuleMeta;
-  }
-
-  /**
-   * Dynamically appends a new module (`inputModule`) to the imports of a specified target module in the snapshot mapping.
-   * This operation runs within a transaction; if recursive scanning or normalization of the added module fails,
-   * all changes are rolled back to the previous snapshot state.
-   *
-   * Returns `true` if `inputModule` was successfully added, or `false` if it was already imported or could not be processed.
-   *
-   * @param inputModule Module to be added (`StaticModule` or `DynamicModule`).
-   * @param targetModuleId Module ID to which the input module will be added (defaults to `'root'`).
-   */
-  addImport(inputModule: ModRefId, targetModuleId: ModuleId = 'root'): boolean | void {
-    const targetNormalizedModuleMeta = this.getNormalizedModuleMetaFromSnapshot(targetModuleId);
-    if (!targetNormalizedModuleMeta) {
-      const modName = getDebugClassName(inputModule);
-      const modIdStr = format(targetModuleId).slice(0, 50);
-      throw new ImportAdditionFailure(modName, modIdStr);
-    }
-
-    const prop = isDynamicModule(inputModule) ? 'importedDynamicModules' : 'importedStaticModules';
-    if (targetNormalizedModuleMeta[prop].some((imp: ModRefId) => imp === inputModule)) {
-      const modIdStr = format(targetModuleId).slice(0, 50);
-      this.systemLogMediator.moduleAlreadyImported(this, inputModule, modIdStr);
-      return false;
-    }
-
-    this.startTransaction();
-    try {
-      (targetNormalizedModuleMeta[prop] as ModRefId[]).push(inputModule);
-      let children = this.state.childrenMap.get(targetNormalizedModuleMeta.modRefId);
-      if (!children) {
-        children = new Set();
-        this.state.childrenMap.set(targetNormalizedModuleMeta.modRefId, children);
-      }
-      children.add(inputModule);
-
-      this.scanModule(inputModule, undefined, true);
-      this.systemLogMediator.successfulAddedModuleToImport(this, inputModule, targetNormalizedModuleMeta.name);
-      return true;
-    } catch (err) {
-      this.rollback(err as Error);
-    }
-  }
-
-  /**
-   * Removes an imported module from a target module's import array within the snapshot mapping.
-   * Runs inside a transaction; if the removed module is no longer referenced anywhere within the application module graph,
-   * its normalized metadata and child relationships are safely garbage collected.
-   *
-   * Returns `true` if removed successfully, or `false` if the target or imported module was not found.
-   *
-   * @param inputModuleId Module ID or reference to remove from imports.
-   * @param targetModuleId Module ID from where the input module will be removed (defaults to `'root'`).
-   */
-  removeImport(inputModuleId: ModuleId, targetModuleId: ModuleId = 'root'): boolean | void {
-    const inputNormalizedModuleMeta = this.getNormalizedModuleMetaFromSnapshot(inputModuleId);
-    if (!inputNormalizedModuleMeta) {
-      const modIdStr = format(inputModuleId).slice(0, 50);
-      this.systemLogMediator.moduleNotFound(this, modIdStr);
-      return false;
-    }
-
-    const targetMeta = this.getNormalizedModuleMetaFromSnapshot(targetModuleId);
-    if (!targetMeta) {
-      const modIdStr = format(targetModuleId).slice(0, 50);
-      throw new ImportRemovalFailure(inputNormalizedModuleMeta.name, modIdStr);
-    }
-    const prop = isDynamicModule(inputNormalizedModuleMeta.modRefId) ? 'importedDynamicModules' : 'importedStaticModules';
-    const index = targetMeta[prop].findIndex((imp: ModRefId) => imp === inputNormalizedModuleMeta.modRefId);
-    if (index == -1) {
-      const modIdStr = format(inputModuleId).slice(0, 50);
-      this.systemLogMediator.moduleNotFound(this, modIdStr);
-      return false;
-    }
-
-    this.startTransaction();
-    try {
-      targetMeta[prop].splice(index, 1);
-      const targetChildren = this.state.childrenMap.get(targetMeta.modRefId);
-      if (targetChildren) {
-        targetChildren.delete(inputNormalizedModuleMeta.modRefId);
-      }
-      if (!this.includesInSomeModule(inputModuleId, 'root')) {
-        this.state.removeOrphanModule(inputNormalizedModuleMeta.modRefId, inputNormalizedModuleMeta.id);
-      }
-      this.systemLogMediator.moduleSuccessfulRemoved(this, inputNormalizedModuleMeta.name, targetMeta.name);
-      return true;
-    } catch (err) {
-      this.rollback(err as Error);
-    }
-  }
-
-  /**
-   * Initiates an atomic transaction by capturing an immutable backup of the current {@link ModuleGraphState}.
-   * Returns `true` if a new transaction was started, or `false` if a transaction is already active.
-   */
-  startTransaction() {
-    if (this.oldState) {
-      // Transaction already started.
-      return false;
-    }
-
-    this.oldState = this.state.clone();
-
-    return true;
-  }
-
-  /**
-   * Reverts all snapshot mappings and child relationships back to the backed-up {@link ModuleGraphState}.
-   * Automatically commits (clears backup history) after restoring state.
-   *
-   * @throws ForbiddenRollback if invoked without an active transaction.
-   */
-  rollback(err?: Error) {
-    if (!this.oldState) {
-      throw new ForbiddenRollback();
-    }
-    this.state = this.oldState;
-    this.commit();
-    if (err) {
-      throw err;
-    }
-    return this;
-  }
-
-  /**
-   * Successfully finishes the active transaction by clearing the backed-up {@link ModuleGraphState}.
-   */
-  commit() {
-    this.oldState = undefined;
-    return this;
-  }
-
-  /**
-   * Resets any modifications made to {@link NormalizedModuleMeta} in the active workspace mapping (`this.map`)
-   * by restoring fresh deep clones from the immutable snapshot map (`this.state.snapshotMap`).
-   */
-  reset() {
-    this.map = new Map();
-    this.state.snapshotMap.forEach((normalizedModuleMeta, key) =>
-      this.map.set(key, this.copyNormalizedModuleMeta(normalizedModuleMeta)),
-    );
-    this.mapId = new Map(this.state.snapshotMapId);
-    return this;
-  }
-
-  /**
-   * Returns a shallow copy of the active mapping between module reference IDs (`ModRefId`) and their {@link NormalizedModuleMeta}.
-   */
-  getModulesMap() {
-    return new Map(this.map);
-  }
-
-  /**
-   * Returns the internal registry mapping module reference IDs (`ModRefId`) to their instantiated module-level injectors.
-   */
-  getInjectorsPerMod() {
-    return this.injectorPerModMap;
   }
 
   /**
@@ -407,23 +263,6 @@ export class ModuleManager {
   }
 
   /**
-   * Retrieves immutable {@link NormalizedModuleMeta} directly from the saved snapshot map, resolving string aliases if necessary.
-   */
-  protected getNormalizedModuleMetaFromSnapshot(moduleId: ModuleId) {
-    let normalizedModuleMeta: NormalizedModuleMeta | undefined;
-    if (typeof moduleId == 'string') {
-      const mapId = this.state.snapshotMapId.get(moduleId);
-      if (mapId) {
-        normalizedModuleMeta = this.state.snapshotMap.get(mapId);
-      }
-    } else {
-      normalizedModuleMeta = this.state.snapshotMap.get(moduleId);
-    }
-
-    return normalizedModuleMeta;
-  }
-
-  /**
    * The current module may sometimes lack explicit mixin decorators that are present in imported modules
    * (for example, importing an architectural feature module without decorating the importer).
    * In such cases, after scanning all imported modules, the collected module mixins from them are also
@@ -448,56 +287,6 @@ export class ModuleManager {
     return normalizedModuleMeta.clone();
   }
 
-  protected rebuildProvidersPerAppFromSnapshot() {
-    this.state.rebuildProvidersPerApp();
-  }
-
-  /**
-   * Recursively searches for an input module across the dependency tree using the O(1) adjacency map (`this.state.childrenMap`).
-   * Returns `true` if `inputModuleId` is included in the static or dynamic imports/exports of `targetModuleId` or its submodules.
-   *
-   * @param inputModuleId The target module reference or ID to find.
-   * @param targetModuleId Module within which to search for `inputModuleId`.
-   */
-  protected includesInSomeModule(inputModuleId: ModuleId, targetModuleId: ModuleId, visited = new Set<ModuleId>()): boolean {
-    if (visited.has(targetModuleId)) {
-      return false;
-    }
-    visited.add(targetModuleId);
-
-    const targetMeta = this.getNormalizedModuleMetaFromSnapshot(targetModuleId);
-    if (!targetMeta) {
-      return false;
-    }
-    if (targetMeta.modRefId !== targetModuleId) {
-      if (visited.has(targetMeta.modRefId)) {
-        return false;
-      }
-      visited.add(targetMeta.modRefId);
-    }
-
-    const targetModRefId = targetMeta.modRefId;
-    const children = this.state.childrenMap.get(targetModRefId);
-    if (!children || children.size === 0) {
-      return false;
-    }
-
-    const resolvedInputId =
-      typeof inputModuleId === 'string' ? this.state.snapshotMapId.get(inputModuleId) || inputModuleId : inputModuleId;
-
-    if (children.has(resolvedInputId as ModRefId)) {
-      return true;
-    }
-
-    for (const child of children) {
-      if (this.includesInSomeModule(resolvedInputId, child, visited)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
   /**
    * Delegates module decorator reflection and metadata normalization to {@link ModuleNormalizer}.
    * On failure, enriches the error message with the full dependency scan trajectory (e.g., `ModuleA -> ModuleB`).
@@ -514,70 +303,48 @@ export class ModuleManager {
   }
 
   /**
-   * Freezes the initialized module metadata mapping into an immutable baseline snapshot (`this.state.snapshotMap`).
-   * Throws {@link ForbiddenSavingSnapshot} if a snapshot has already been established.
-   */
-  protected saveSnapshot() {
-    if (this.state.snapshotMap.size) {
-      throw new ForbiddenSavingSnapshot();
-    } else {
-      this.map.forEach((normalizedModuleMeta, modRefId) =>
-        this.state.snapshotMap.set(modRefId, this.copyNormalizedModuleMeta(normalizedModuleMeta)),
-      );
-      this.state.snapshotMapId = new Map(this.mapId);
-    }
-  }
-
-  /**
-   * Recursively traverses the module dependency graph (`this.state.childrenMap`) from `startModule`, propagating parent module mixins
+   * Recursively traverses the module dependency graph (`this.childrenMap`) from `startModule`, propagating parent module mixins
    * down to child modules that have no module mixins of their own. This ensures consistent contextual decorator evaluation
    * across architectural hierarchies (e.g., REST or tRPC routes).
    */
-  protected propagateContextHooks(startModule: ModRefId, inheritedHooks: AllModuleMixins = new Map(), visited = new Set<ModRefId>()) {
+  protected propagateContextMixins(startModule: ModRefId, inheritedMixins: AllModuleMixins = new Map(), visited = new Set<ModRefId>()) {
     if (visited.has(startModule)) {
       return;
     }
     visited.add(startModule);
 
-    const startMeta = this.map.get(startModule) || this.state.snapshotMap.get(startModule);
+    const startMeta = this.map.get(startModule);
     if (!startMeta) {
       return;
     }
 
-    const activeHooks: AllModuleMixins = new Map(inheritedHooks);
+    const activeMixins: AllModuleMixins = new Map(inheritedMixins);
     startMeta.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
-      activeHooks.set(decoratorId, moduleMixin);
+      activeMixins.set(decoratorId, moduleMixin);
     });
 
-    if (startMeta.moduleMixinMap.size === 0 && activeHooks.size > 0) {
+    if (startMeta.moduleMixinMap.size === 0 && activeMixins.size > 0) {
       try {
-        this.moduleNormalizer.propagateParentHooks(startMeta, activeHooks);
+        this.moduleNormalizer.propagateParentMixins(startMeta, activeMixins);
       } catch (err: any) {
         throw new NormalizationFailure(startMeta.name, err);
       }
     }
 
-    const children = this.state.childrenMap.get(startModule);
+    const children = this.childrenMap.get(startModule);
     if (children) {
       for (const child of children) {
-        this.propagateContextHooks(child, activeHooks, visited);
+        this.propagateContextMixins(child, activeMixins, visited);
       }
     }
   }
 
   /**
-   * Validates all modules in both active and snapshot registries, verifying that no module possesses completely empty metadata
+   * Validates all modules in active registries, verifying that no module possesses completely empty metadata
    * (which typically indicates missing module decorators or invalid import structures).
    */
   protected checkEmptyMetaForAllModules() {
     this.map.forEach((meta) => {
-      try {
-        this.moduleNormalizer.checkEmptyMeta(meta);
-      } catch (err: any) {
-        throw new NormalizationFailure(meta.name, err);
-      }
-    });
-    this.state.snapshotMap.forEach((meta) => {
       try {
         this.moduleNormalizer.checkEmptyMeta(meta);
       } catch (err: any) {
@@ -637,7 +404,7 @@ export class ModuleManager {
       .map((p) => hostMeta[p])
       .reduce<ModRefId[]>((prev, curr) => prev.concat(curr), importsOrExports);
 
-    const children = this.state.childrenMap.get(hostMeta.modRefId);
+    const children = this.childrenMap.get(hostMeta.modRefId);
     if (children) {
       inputs.forEach((input) => {
         children.add(input);

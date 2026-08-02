@@ -5,6 +5,7 @@ import type { StaticModule } from '#decorators/module-decorator-options.js';
 import type { BaseAppInitializer } from '#init/base-app-initializer.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';
+import { MutableModuleManager } from '#init/mutable-module-manager.js';
 import type { Injector } from '#di/injector.js';
 import { SHUTDOWN_SIGNALS } from '#init/hooks.js';
 
@@ -102,7 +103,11 @@ export abstract class BaseApplication {
    * for the root module and all its dependencies.
    */
   protected scanRootModule(appModule: StaticModule) {
-    this.moduleManager = new ModuleManager(this.log);
+    if (this.baseAppOptions.allowRuntimeReinit) {
+      this.moduleManager = new MutableModuleManager(this.log);
+    } else {
+      this.moduleManager = new ModuleManager(this.log);
+    }
     this.moduleManager.scanRootModule(appModule);
     return this.moduleManager;
   }
@@ -145,7 +150,7 @@ export abstract class BaseApplication {
       activeInjectors.push(this.injectorPerApp);
     }
     if (this.moduleManager) {
-      const moduleInjectors = this.moduleManager.getInjectorsPerMod().values();
+      const moduleInjectors = this.moduleManager.injectorsPerMod.values();
       activeInjectors.push(...moduleInjectors);
     }
 

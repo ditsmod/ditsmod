@@ -556,7 +556,7 @@ export class AppModule {}
     this.throwIfResolvingNormalizedProvider(staticModuleOptions);
   }
 
-  propagateParentHooks(normalizedModuleMeta: NormalizedModuleMeta, allModuleMixinsMap: AllModuleMixins) {
+  propagateParentMixins(normalizedModuleMeta: NormalizedModuleMeta, allModuleMixinsMap: AllModuleMixins) {
     this.normalizedModuleMeta = normalizedModuleMeta;
     this.addModuleMixinFromParent(allModuleMixinsMap);
   }

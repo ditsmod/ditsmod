@@ -5,25 +5,16 @@ import { featureModule } from '#decorators/feature-module.js';
 import { rootModule } from '#decorators/root-module.js';
 import { Extension } from '#extension/extension-types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { ModuleId, ModuleManager } from './module-manager.js';
+import { ModuleManager } from './module-manager.js';
 import { AllModuleMixins, StaticMixinOptions, MixinDecorator, ModuleMixin } from '#decorators/module-mixins.js';
 import { BaseNormalizedModuleMeta, NormalizedModuleMeta, getProxyForMixinMeta } from '#init/normalized-meta.js';
-import { ModuleGraphState } from '#init/module-graph-state.js';
 import { DynamicModuleOptions, ModRefId } from '#decorators/module-decorator-options.js';
 import { DynamicModule } from '#decorators/module-decorator-options.js';
 import { clearDebugClassNames } from '#utils/get-debug-class-name.js';
 import { isDynamicModule } from '#decorators/type-guards.js';
-import {
-  ImportAdditionFailure,
-  ImportRemovalFailure,
-  ForbiddenRollback,
-  ModuleIdNotFound,
-  NormalizationFailure,
-  ForbiddenSavingSnapshot,
-  MissingRootDecorator,
-} from '#errors';
+import { ModuleIdNotFound, NormalizationFailure, MissingRootDecorator } from '#errors';
 import { injectable } from '#di/decorators.js';
-import { forwardRef } from '#di/forward-ref.js';
+import { forwardRef, type ForwardRefFn } from '#di/forward-ref.js';
 import type { Provider } from '#di/top/types-and-models.js';
 import { isMultiProvider } from '#di/utils.js';
 
@@ -39,23 +30,13 @@ describe('ModuleManager', () => {
     declare systemLogMediator: SystemLogMediator;
     declare map: Map<ModRefId, NormalizedModuleMeta>;
     declare mapId: Map<string, ModRefId>;
-    declare state: ModuleGraphState;
-    declare oldState: ModuleGraphState | undefined;
 
     override normalizeMeta(modRefId: ModRefId, allModuleMixinsMap: AllModuleMixins): NormalizedModuleMeta {
       return super.normalizeMeta(modRefId, allModuleMixinsMap);
     }
 
-    override getNormalizedModuleMetaFromSnapshot(moduleId: ModuleId) {
-      return super.getNormalizedModuleMetaFromSnapshot(moduleId);
-    }
-
-    override copyNormalizedModuleMeta(normalizedModuleMeta: NormalizedModuleMeta): NormalizedModuleMeta {
-      return super.copyNormalizedModuleMeta(normalizedModuleMeta);
-    }
-
-    override saveSnapshot() {
-      super.saveSnapshot();
+    override scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>, allModuleMixinsMap?: AllModuleMixins) {
+      return super.scanModule(modRefId, allModuleMixinsMap);
     }
   }
 
@@ -99,22 +80,6 @@ describe('ModuleManager', () => {
     it('should throw MissingRootDecorator error if the module lacks a root module decorator', () => {
       class AppModule {}
       expect(() => mock.scanRootModule(AppModule)).toThrow(new MissingRootDecorator('AppModule'));
-    });
-
-    it('should log a warning and return root metadata if scanned twice', () => {
-      @rootModule({ providersPerApp: [Service1] })
-      class AppModule {}
-
-      const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
-      jest.spyOn(systemLogMediator, 'externalModuleDetectionFailed').mockImplementation(() => {});
-      const spy = jest.spyOn(systemLogMediator, 'forbiddenRescanRootModule').mockImplementation(() => {});
-      const manager = new MockModuleManager(systemLogMediator);
-
-      const meta1 = manager.scanRootModule(AppModule);
-      const meta2 = manager.scanRootModule(AppModule);
-
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(meta1).toBe(meta2);
     });
 
     it('should throw NormalizationFailure if metadata normalization fails', () => {
@@ -214,299 +179,6 @@ describe('ModuleManager', () => {
       expect(() => mock.scanRootModule(AppModule)).not.toThrow();
       expect(mock.getNormalizedModuleMeta(Module1)?.importedStaticModules).toEqual([Module3]);
       expect(mock.getNormalizedModuleMeta(Module3)?.importedStaticModules).toEqual([Module2]);
-    });
-
-    it('should not throw maximum call stack size exceeded in includesInSomeModule during removeImport with circular imports', () => {
-      @featureModule({ providersPerApp: [Service1], imports: [forwardRef(() => Module2)] })
-      class Module1 {}
-
-      @featureModule({ providersPerApp: [Service1], imports: [Module1] })
-      class Module2 {}
-
-      @featureModule({ providersPerApp: [Service1], imports: [Module1] })
-      class Module3 {}
-
-      @featureModule({ providersPerApp: [Service1] })
-      class Module4 {}
-
-      @rootModule({
-        imports: [Module3, Module4],
-      })
-      class AppModule {}
-
-      mock.scanRootModule(AppModule);
-      expect(() => mock.removeImport(Module4)).not.toThrow();
-    });
-  });
-
-  describe('dynamic imports (addImport)', () => {
-    @rootModule({
-      imports: [],
-      providersPerMod: [Service1],
-      extensionsMeta: {},
-      exports: [],
-    })
-    class AppModule {}
-
-    @featureModule({ providersPerMod: [Service1], exports: [Service1] })
-    class Module1 {}
-
-    @featureModule({ providersPerMod: [Service1], exports: [Service1] })
-    class Module2 {}
-
-    @featureModule({ providersPerMod: [Service1], exports: [Service1] })
-    class Module3 {}
-
-    @featureModule({ providersPerMod: [Service1], exports: [Service1] })
-    class Module4 {}
-
-    const module3WithProviders: DynamicModule = { module: Module3, providersPerMod: [Service2] };
-
-    const getExpectedMeta1 = () => {
-      const expectedMeta1 = new NormalizedModuleMeta();
-      expectedMeta1.id = '';
-      expectedMeta1.name = 'AppModule';
-      expectedMeta1.modRefId = AppModule;
-      expectedMeta1.providersPerMod = [Service1];
-      expectedMeta1.declaredInDir = expect.any(String);
-      expectedMeta1.isExternal = false;
-      expectedMeta1.moduleMixinMap = expect.any(Map);
-      expectedMeta1.staticModuleOptions = expect.any(Object);
-      return expectedMeta1;
-    };
-
-    it('should add a module to root imports and check maps, size, and commit/reset behavior', () => {
-      const expectedMeta1 = getExpectedMeta1();
-
-      mock.scanRootModule(AppModule);
-      expect(mock.map.size).toBe(1);
-      expect(mock.getNormalizedModuleMeta('root')).not.toBe(mock.getNormalizedModuleMetaFromSnapshot('root'));
-      expect(mock.getNormalizedModuleMeta('root')).toBe(mock.getNormalizedModuleMeta('root'));
-      expect(mock.getNormalizedModuleMeta('root')).toEqual(expectedMeta1);
-
-      expect(mock.addImport(Module1)).toBe(true);
-      expect(mock.state.snapshotMap.size).toBe(2);
-      expect(mock.map.size).toBe(1);
-      expect(mock.state.snapshotMap.has(Module1)).toBe(true);
-      expect(mock.map.has(Module1)).toBe(false);
-      expect(mock.oldState?.snapshotMapId.size).toBe(1);
-      expect(mock.oldState?.snapshotMapId.get('root')).toBe(AppModule);
-      expect(mock.oldState?.snapshotMap.size).toBe(1);
-      expect(mock.oldState?.snapshotMap.get(AppModule)).toEqual(expectedMeta1);
-
-      mock.commit();
-      expect(mock.oldState).toBeUndefined();
-      expect(mock.state.snapshotMap.size).toBe(2);
-      expect(mock.state.snapshotMap.has(AppModule)).toBe(true);
-      expect(mock.state.snapshotMap.has(Module1)).toBe(true);
-
-      mock.reset();
-      expect(mock.oldState).toBeUndefined();
-      expect(mock.map.size).toBe(2);
-      expect(mock.map.has(AppModule)).toBe(true);
-      expect(mock.map.has(Module1)).toBe(true);
-    });
-
-    it('should return false when trying to add an already imported module', () => {
-      mock.scanRootModule(AppModule);
-      expect(mock.addImport(Module1)).toBe(true);
-      mock.commit();
-      mock.reset();
-
-      const spy = jest.spyOn(mock.systemLogMediator, 'moduleAlreadyImported').mockImplementation(() => {});
-      expect(mock.addImport(Module1)).toBe(false);
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    it('should throw ImportAdditionFailure when target module ID is not found', () => {
-      mock.scanRootModule(AppModule);
-      expect(() => mock.addImport(Module2, 'fakeId')).toThrow(new ImportAdditionFailure('Module2', 'fakeId'));
-    });
-
-    it('should support multiple additions, commit, reset and verify metadata', () => {
-      mock.scanRootModule(AppModule);
-      mock.addImport(Module1);
-      mock.commit();
-      mock.reset();
-
-      mock.addImport(Module2);
-      mock.addImport(Module4);
-
-      mock.commit();
-      mock.reset();
-
-      const expectedMeta3 = new NormalizedModuleMeta();
-      expectedMeta3.id = '';
-      expectedMeta3.name = 'AppModule';
-      expectedMeta3.modRefId = AppModule;
-      expectedMeta3.importedStaticModules = [Module1, Module2, Module4];
-      expectedMeta3.providersPerMod = [Service1];
-      expectedMeta3.declaredInDir = expect.any(String);
-      expectedMeta3.isExternal = false;
-      expectedMeta3.moduleMixinMap = expect.any(Map);
-      expectedMeta3.staticModuleOptions = expect.any(Object);
-
-      expect(mock.getNormalizedModuleMeta('root')).toEqual(expectedMeta3);
-    });
-
-    it('should support rollback operations', () => {
-      mock.scanRootModule(AppModule);
-      mock.addImport(Module1);
-      mock.commit();
-      mock.reset();
-
-      const expectedMeta3 = new NormalizedModuleMeta();
-      expectedMeta3.id = '';
-      expectedMeta3.name = 'AppModule';
-      expectedMeta3.modRefId = AppModule;
-      expectedMeta3.importedStaticModules = [Module1];
-      expectedMeta3.providersPerMod = [Service1];
-      expectedMeta3.declaredInDir = expect.any(String);
-      expectedMeta3.isExternal = false;
-      expectedMeta3.moduleMixinMap = expect.any(Map);
-      expectedMeta3.staticModuleOptions = expect.any(Object);
-
-      mock.addImport(module3WithProviders);
-      expect(mock.state.snapshotMap.size).toBe(3);
-      expect(mock.map.size).toBe(2);
-      expect(mock.getNormalizedModuleMetaFromSnapshot('root')).toEqual({
-        ...expectedMeta3,
-        importedDynamicModules: [module3WithProviders],
-      });
-
-      mock.rollback();
-      expect(mock.state.snapshotMap.size).toBe(2);
-      expect(mock.map.size).toBe(2);
-      expect(mock.getNormalizedModuleMetaFromSnapshot('root')).toEqual(expectedMeta3);
-      expect(mock.getNormalizedModuleMeta('root')).toEqual(expectedMeta3);
-    });
-  });
-
-  describe('dynamic removal (removeImport)', () => {
-    @featureModule({ providersPerMod: [Service1], exports: [Service1] })
-    class Module0 {}
-
-    @featureModule({ imports: [Module0], providersPerMod: [Service1], exports: [Service1] })
-    class Module1 {}
-
-    @featureModule({ imports: [Module0], providersPerMod: [Service1], exports: [Service1] })
-    class Module2 {}
-
-    @featureModule({ providersPerMod: [Service1], exports: [Service1] })
-    class Module3 {
-      static withOpts(providersPerMod: Provider[]): DynamicModule<Module3> {
-        return {
-          module: Module3,
-          providersPerMod,
-        };
-      }
-    }
-
-    const module3WithProviders = Module3.withOpts([Service2]);
-
-    const moduleId = 'my-mix';
-    @featureModule({ providersPerMod: [Service1], exports: [Service1] })
-    class Module4 {
-      static withOpts(providersPerMod: Provider[]): DynamicModule<Module4> {
-        return {
-          id: moduleId,
-          module: Module4,
-          providersPerMod,
-        };
-      }
-    }
-
-    const module4WithProviders = Module4.withOpts([Service2]);
-
-    @rootModule({
-      imports: [Module1, Module2, module3WithProviders, module4WithProviders],
-      providersPerMod: [Service1],
-      extensionsMeta: {},
-      exports: [],
-    })
-    class AppModule {}
-
-    const getExpectedMeta1 = () => {
-      const expectedMeta1 = new NormalizedModuleMeta();
-      expectedMeta1.id = '';
-      expectedMeta1.name = 'AppModule';
-      expectedMeta1.modRefId = AppModule;
-      expectedMeta1.importedStaticModules = [Module1, Module2];
-      expectedMeta1.importedDynamicModules = [module3WithProviders, module4WithProviders];
-      expectedMeta1.providersPerMod = [Service1];
-      expectedMeta1.declaredInDir = expect.any(String);
-      expectedMeta1.isExternal = false;
-      expectedMeta1.moduleMixinMap = expect.any(Map);
-      expectedMeta1.staticModuleOptions = expect.any(Object);
-      return expectedMeta1;
-    };
-
-    it('should remove a module from imports and update maps/snapshots correctly', () => {
-      mock.scanRootModule(AppModule);
-      expect(mock.state.snapshotMap.size).toBe(6);
-      expect(mock.map.size).toBe(6);
-      expect(mock.getNormalizedModuleMeta('root')).toEqual(getExpectedMeta1());
-
-      expect(mock.removeImport(Module0, Module1)).toBe(true);
-      expect(mock.state.snapshotMap.get(Module1)?.importedStaticModules).toEqual([]);
-      expect(mock.map.get(Module1)?.importedStaticModules).toEqual([Module0]);
-
-      expect(mock.removeImport(Module0, Module2)).toBe(true);
-      expect(mock.state.snapshotMap.get(Module2)?.importedStaticModules).toEqual([]);
-      expect(mock.map.get(Module2)?.importedStaticModules).toEqual([Module0]);
-      expect(mock.state.snapshotMap.size).toBe(5);
-      expect(mock.map.size).toBe(6);
-
-      mock.commit();
-      mock.reset();
-      expect(mock.state.snapshotMap.size).toBe(5);
-      expect(mock.map.size).toBe(5);
-
-      expect(mock.removeImport(Module2)).toBe(true);
-      expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importedStaticModules).toEqual([Module1]);
-      expect(mock.getNormalizedModuleMeta('root')?.importedStaticModules).toEqual([Module1, Module2]);
-      expect(mock.state.snapshotMap.size).toBe(4);
-      expect(mock.map.size).toBe(5);
-
-      expect(mock.removeImport(module3WithProviders)).toBe(true);
-      expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importedDynamicModules).toEqual([module4WithProviders]);
-      expect(mock.state.snapshotMap.size).toBe(3);
-
-      expect(mock.removeImport(moduleId)).toBe(true);
-      expect(mock.state.snapshotMap.size).toBe(2);
-    });
-
-    it('should return false when trying to remove a module that is not imported', () => {
-      mock.scanRootModule(AppModule);
-      mock.removeImport(Module2);
-      const spy = jest.spyOn(mock.systemLogMediator, 'moduleNotFound').mockImplementation(() => {});
-      expect(mock.removeImport(Module2)).toBe(false);
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    it('should return false if input module to remove is not found in snapshot', () => {
-      mock.scanRootModule(AppModule);
-      const spy = jest.spyOn(mock.systemLogMediator, 'moduleNotFound').mockImplementation(() => {});
-      expect(mock.removeImport('non-existent')).toBe(false);
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    it('should throw ImportRemovalFailure if target module ID is not found', () => {
-      mock.scanRootModule(AppModule);
-      expect(() => mock.removeImport(Module1, 'non-existent-target')).toThrow(
-        new ImportRemovalFailure('Module1', 'non-existent-target'),
-      );
-    });
-
-    it('should support rollback operations during removal', () => {
-      mock.scanRootModule(AppModule);
-      mock.removeImport(moduleId);
-      expect(mock.state.snapshotMap.size).toBe(5);
-
-      mock.rollback();
-      expect(mock.state.snapshotMap.size).toBe(6);
-      expect(mock.map.size).toBe(6);
-      expect(mock.getNormalizedModuleMeta('root')).toEqual(getExpectedMeta1());
     });
   });
 
@@ -610,83 +282,6 @@ describe('ModuleManager', () => {
     it('should return undefined if throwErrIfNotFound is false and module injector is not found', () => {
       mock.scanRootModule(AppModule);
       expect(mock.getInstanceOf('non-existent', false)).toBeUndefined();
-    });
-  });
-
-  describe('rollback()', () => {
-    it('should throw ForbiddenRollback if no transaction is active', () => {
-      expect(() => mock.rollback()).toThrow(new ForbiddenRollback());
-    });
-  });
-
-  describe('saveSnapshot()', () => {
-    it('should throw ForbiddenSavingSnapshot if snapshot is already saved', () => {
-      @rootModule({ providersPerApp: [Service1] })
-      class AppModule {}
-      mock.scanRootModule(AppModule);
-      expect(() => mock.saveSnapshot()).toThrow(new ForbiddenSavingSnapshot());
-    });
-  });
-
-  describe('copyNormalizedModuleMeta()', () => {
-    it('should copy NormalizedModuleMeta correctly, preserving prototype and recreating mixinMeta proxies wrapping the copy', () => {
-      interface MyDynamicOptions extends DynamicModuleOptions {
-        path?: string;
-      }
-      interface RootMixinOptions extends StaticMixinOptions<MyDynamicOptions> {
-        one?: string;
-      }
-      class MixinMeta extends BaseNormalizedModuleMeta {
-        path?: string;
-      }
-      class ModuleMixin1 extends ModuleMixin<RootMixinOptions> {
-        override normalize(normalizedModuleMeta: NormalizedModuleMeta): MixinMeta {
-          const meta = getProxyForMixinMeta(normalizedModuleMeta, MixinMeta);
-          if (isDynamicModule(normalizedModuleMeta.modRefId)) {
-            const params = normalizedModuleMeta.modRefId.mixinOptions?.get(mixinSome);
-            meta.path = params?.path;
-          }
-          return meta;
-        }
-      }
-      const mixinSome: MixinDecorator<RootMixinOptions, { path?: string }, MixinMeta> = Reflector.makeClassDecorator(
-        (d) => new ModuleMixin1(d),
-      );
-
-      @featureModule({ providersPerApp: [{ token: 'token1', useValue: 'value1' }] })
-      class Module1 {}
-
-      const dynamicModule: DynamicModule = { module: Module1 };
-
-      @mixinSome({ one: 'some-here', imports: [{ dynamicModule: dynamicModule, path: 'some-prefix' }] })
-      @rootModule()
-      class AppModule {}
-
-      mock.scanRootModule(AppModule);
-      const originalMod1 = mock.getNormalizedModuleMeta(dynamicModule)!;
-      expect(originalMod1).toBeInstanceOf(NormalizedModuleMeta);
-
-      // Call copyNormalizedModuleMeta
-      const copiedMod1 = mock.copyNormalizedModuleMeta(originalMod1);
-      expect(copiedMod1).toBeInstanceOf(NormalizedModuleMeta);
-      expect(copiedMod1).not.toBe(originalMod1);
-
-      // Maps should be new instances
-      expect(copiedMod1.moduleMixinMap).not.toBe(originalMod1.moduleMixinMap);
-      expect(copiedMod1.allModuleMixinsMap).not.toBe(originalMod1.allModuleMixinsMap);
-      expect(copiedMod1.normalizedMixinMetaMap).not.toBe(originalMod1.normalizedMixinMetaMap);
-
-      // The proxy inside copiedMod1.normalizedMixinMetaMap should wrap copiedMod1.
-      const originalProxy = originalMod1.normalizedMixinMetaMap.get(mixinSome) as MixinMeta;
-      const copiedProxy = copiedMod1.normalizedMixinMetaMap.get(mixinSome) as MixinMeta;
-
-      expect(copiedProxy).toBeDefined();
-      expect(copiedProxy).not.toBe(originalProxy);
-
-      // When we mutate providersPerApp of copiedMod1, it should NOT affect originalProxy, but it should affect copiedProxy.
-      copiedMod1.providersPerApp.push({ token: 'new-token', useValue: 'new-val' });
-      expect(originalProxy.providersPerApp.some((p) => (p as any).token === 'new-token')).toBe(false);
-      expect(copiedProxy.providersPerApp.some((p) => (p as any).token === 'new-token')).toBe(true);
     });
   });
 
@@ -1145,125 +740,6 @@ describe('ModuleManager', () => {
       expect(hostMeta?.moduleMixinMap.has(mixinSomeLocal)).toBe(true);
       const hostMixinInst = hostMeta?.moduleMixinMap.get(mixinSomeLocal);
       expect(hostMixinInst?.moduleOptions).toEqual({ customProp: 'works' });
-    });
-  });
-
-  describe('refactored cloning, rollback, and providersPerApp cleanup', () => {
-    it('should deeply clone NormalizedModuleMeta and isolate array/object mutations in extensionsMeta', () => {
-      const meta = new NormalizedModuleMeta();
-      meta.name = 'TestModule';
-      meta.providersPerMod = [Service1];
-      meta.extensionsMeta = {
-        group1: ['config1', 'config2'],
-        group2: { setting: true },
-      };
-
-      const clone = meta.clone();
-      expect(clone).not.toBe(meta);
-      expect(clone.providersPerMod).toEqual([Service1]);
-      expect(clone.providersPerMod).not.toBe(meta.providersPerMod);
-
-      // Mutate clone
-      clone.providersPerMod.push(Service2);
-      (clone.extensionsMeta as any).group1.push('config3');
-      (clone.extensionsMeta as any).group2.setting = false;
-
-      // Verify original untouched
-      expect(meta.providersPerMod).toEqual([Service1]);
-      expect((meta.extensionsMeta as any).group1).toEqual(['config1', 'config2']);
-      expect((meta.extensionsMeta as any).group2.setting).toBe(true);
-    });
-
-    it('should correctly restore providersPerApp during startTransaction and rollback', () => {
-      @featureModule({ providersPerApp: [{ token: 'tokenA', useValue: 'valueA' }] })
-      class ModuleA {}
-
-      @rootModule()
-      class AppModule {}
-
-      mock.scanRootModule(AppModule);
-      expect(mock.providersPerApp).toEqual([]);
-
-      mock.addImport(ModuleA);
-      mock.commit();
-      expect(mock.providersPerApp).toEqual([{ token: 'tokenA', useValue: 'valueA' }]);
-
-      // Start manual transaction and push temporary providersPerApp
-      mock.startTransaction();
-      mock.providersPerApp.push({ token: 'tokenB', useValue: 'valueB' });
-      expect(mock.providersPerApp.length).toBe(2);
-
-      // Rollback should restore providersPerApp from oldState
-      mock.rollback();
-      expect(mock.providersPerApp).toEqual([{ token: 'tokenA', useValue: 'valueA' }]);
-    });
-
-    it('should remove orphaned providersPerApp when a module is removed via removeImport', () => {
-      @featureModule({ providersPerApp: [{ token: 'globalToken1', useValue: 'val1' }] })
-      class RemovableModule {}
-
-      @rootModule({
-        imports: [RemovableModule],
-      })
-      class AppModule {}
-
-      mock.scanRootModule(AppModule);
-      expect(mock.providersPerApp).toEqual([{ token: 'globalToken1', useValue: 'val1' }]);
-
-      // Remove RemovableModule from AppModule
-      expect(mock.removeImport(RemovableModule, AppModule)).toBe(true);
-      expect(mock.providersPerApp).toEqual([]);
-    });
-  });
-
-  describe('ModuleGraphState (Memento pattern) integration', () => {
-    it('should clone state and preserve independent snapshots during transactions', () => {
-      @featureModule({ providersPerApp: [{ token: 'stateToken', useValue: 'stateVal' }] })
-      class StateModule {}
-
-      @rootModule({
-        imports: [StateModule],
-      })
-      class AppModule {}
-
-      mock.scanRootModule(AppModule);
-      expect(mock.state).toBeInstanceOf(ModuleGraphState);
-      expect(mock.oldState).toBeUndefined();
-
-      // Start transaction
-      expect(mock.startTransaction()).toBe(true);
-      expect(mock.oldState).toBeInstanceOf(ModuleGraphState);
-      expect(mock.oldState).not.toBe(mock.state);
-
-      // Verify deep copying of NormalizedModuleMeta
-      const activeMeta = mock.state.snapshotMap.get(StateModule);
-      const backupMeta = mock.oldState?.snapshotMap.get(StateModule);
-      expect(backupMeta).toEqual(activeMeta);
-      expect(backupMeta).not.toBe(activeMeta);
-
-      // Rollback restores exact previous oldState reference
-      const savedOldState = mock.oldState;
-      mock.rollback();
-      expect(mock.state).toBe(savedOldState!);
-      expect(mock.oldState).toBeUndefined();
-    });
-
-    it('should return false when starting a transaction while one is already active and preserve original backup', () => {
-      @featureModule({ providersPerApp: [{ token: 'stateToken2', useValue: 'stateVal2' }] })
-      class StateModule {}
-
-      @rootModule({ imports: [StateModule] })
-      class AppModule {}
-
-      mock.scanRootModule(AppModule);
-      expect(mock.startTransaction()).toBe(true);
-      const originalBackup = mock.oldState;
-      expect(mock.startTransaction()).toBe(false);
-      expect(mock.oldState).toBe(originalBackup);
-    });
-
-    it('should throw ForbiddenRollback when rollback is invoked without startTransaction', () => {
-      expect(() => mock.rollback()).toThrow(new ForbiddenRollback());
     });
   });
 });

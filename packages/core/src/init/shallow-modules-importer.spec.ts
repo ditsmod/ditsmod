@@ -15,7 +15,8 @@ import { LevelMultiProviderCollision, UnknownExport, NormalizationFailure, Provi
 import { ShallowModuleImports } from './types.js';
 import { injectable } from '#di/decorators.js';
 import type { FactoryProvider, Provider } from '#di/top/types-and-models.js';
-import { forwardRef } from '#di/forward-ref.js';
+import { forwardRef, type ForwardRefFn } from '#di/forward-ref.js';
+import { AllModuleMixins } from '#decorators/module-mixins.js';
 import { Reflector } from '#di/reflector.js';
 
 describe('ShallowModulesImporter', () => {
@@ -42,6 +43,12 @@ describe('ShallowModulesImporter', () => {
     }
   }
 
+  class MockModuleManager extends ModuleManager {
+    override scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>, allModuleMixinsMap?: AllModuleMixins) {
+      return super.scanModule(modRefId, allModuleMixinsMap);
+    }
+  }
+
   function importModulesShallow(modRefId: ModRefId) {
     moduleManager.scanModule(modRefId);
     return mock.importModulesShallow({
@@ -53,14 +60,14 @@ describe('ShallowModulesImporter', () => {
   }
 
   let mock: MockShallowModulesImporter;
-  let moduleManager: ModuleManager;
+  let moduleManager: MockModuleManager;
 
   beforeEach(() => {
     clearDebugClassNames();
     mock = new MockShallowModulesImporter();
     const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
     jest.spyOn(systemLogMediator, 'externalModuleDetectionFailed').mockImplementation(() => {});
-    moduleManager = new ModuleManager(systemLogMediator);
+    moduleManager = new MockModuleManager(systemLogMediator);
   });
 
   describe('exportAppProviders()', () => {

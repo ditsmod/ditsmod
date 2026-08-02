@@ -1,3 +1,4 @@
+import { RuntimeReinitDisabled } from '#error/core-errors.js';
 import { DeepModulesImporter } from '#init/deep-modules-importer.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import type { PublicLogMediator } from '#logger/system-log-mediator.js';
@@ -10,6 +11,7 @@ import { defaultProvidersPerApp } from './default-providers-per-app.js';
 import { ExtensionContext } from '#extension/extensions-context.js';
 import { ExtensionManager, InternalExtensionManager } from '#extension/extension-manager.js';
 import { ModuleManager } from '#init/module-manager.js';
+import { MutableModuleManager } from '#init/mutable-module-manager.js';
 import type { ModRefId } from '#decorators/module-decorator-options.js';
 import type { Provider } from '#di/top/types-and-models.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
@@ -93,7 +95,7 @@ export class BaseAppInitializer {
   protected findModulesCausedCollisions(collisions: any[]) {
     const modulesNames: string[] = [];
 
-    this.moduleManager.getModulesMap().forEach((meta) => {
+    this.moduleManager.modulesMap.forEach((meta) => {
       const tokens = getTokens(meta.providersPerApp);
       const moduleCausesCollisions = tokens.some((t) => collisions.includes(t));
       if (moduleCausesCollisions) {
@@ -140,6 +142,10 @@ export class BaseAppInitializer {
   }
 
   async reinit(autocommit: boolean = true): Promise<void | Error> {
+    if (!(this.moduleManager instanceof MutableModuleManager)) {
+      return new RuntimeReinitDisabled();
+    }
+    
     this.log.flush();
     LogMediator.bufferLogs = true;
     this.log.preserveLogger();
@@ -162,7 +168,7 @@ export class BaseAppInitializer {
       await this.bootstrapModulesAndExtensions();
       (this.log as PublicLogMediator).updateOutputLogLevel();
       if (autocommit) {
-        this.moduleManager.commit();
+        (this.moduleManager as MutableModuleManager).commit();
       } else {
         this.log.skippingAutocommitModulesConfig(this);
       }
@@ -178,7 +184,7 @@ export class BaseAppInitializer {
   protected async handleReinitError(err: unknown) {
     this.log.printReinitError(this, err);
     this.log.startRollbackModuleConfigChanges(this);
-    this.moduleManager.rollback();
+    (this.moduleManager as MutableModuleManager).rollback();
     this.bootstrapProvidersPerApp();
     await this.bootstrapModulesAndExtensions();
     (this.log as PublicLogMediator).updateOutputLogLevel();
@@ -187,12 +193,16 @@ export class BaseAppInitializer {
   }
 
   protected addDefaultProvidersPerApp() {
-    this.normalizedModuleMeta.providersPerApp.unshift(
+    const providers: Provider[] = [
       ...defaultProvidersPerApp,
       { token: BaseAppOptions, useValue: this.baseAppOptions },
       { token: ModuleManager, useValue: this.moduleManager },
       { token: BaseAppInitializer, useValue: this },
-    );
+    ];
+    if (this.moduleManager instanceof MutableModuleManager) {
+      providers.push({ token: MutableModuleManager, useValue: this.moduleManager });
+    }
+    this.normalizedModuleMeta.providersPerApp.unshift(...providers);
   }
 
   /**

@@ -40,6 +40,7 @@ export {
   MetaOverrideFailure,
   ForbiddenInjectorReinit,
   ClassWithoutDecorators,
+  RuntimeReinitDisabled,
 } from '#error/core-errors.js';
 
 export * from '#di/errors.js';

@@ -563,3 +563,14 @@ export class NormalizationFailure extends CustomError {
     );
   }
 }
+/**
+ * 'Runtime module modification is disabled. To enable it, set "allowRuntimeReinit: true" in ApplicationOptions.'
+ */
+export class RuntimeReinitDisabled extends CustomError {
+  constructor() {
+    super({
+      msg1: 'Runtime module modification is disabled. To enable it, set "allowRuntimeReinit: true" in ApplicationOptions.',
+      level: 'warn',
+    });
+  }
+}

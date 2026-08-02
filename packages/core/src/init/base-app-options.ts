@@ -40,4 +40,14 @@ export class BaseAppOptions {
    * Default - `50`.
    */
   stackTraceLimit?: number = 50;
+  /**
+   * @experimental
+   * 
+   * Enables runtime modifications of the module graph via `ModuleManager.addImport()`, `ModuleManager.removeImport()`, 
+   * and `BaseAppInitializer.reinit()`. If enabled, the application will use `MutableModuleManager` under the hood,
+   * which clones module metadata during initialization.
+   * 
+   * Default - `false` (for faster cold starts).
+   */
+  allowRuntimeReinit?: boolean = false;
 }
