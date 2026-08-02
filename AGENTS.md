@@ -66,6 +66,10 @@ Run `yarn docs-en` to preview changes locally.
 
 - **Proposing Changes**: If an agent clearly sees that a truly useful architectural feature or improvement is missing in the framework, they are encouraged (and requested) to propose it to the user.
 
+## Tool Usage
+
+- **Prioritize Built-in Agent Tools**: Agents must always prioritize dedicated agent tools (e.g., `view_file`, `grep_search`, `replace_file_content`, `list_dir`). Ask the user for permission to execute Linux utilities (such as `cat`) only when built-in agent tools cannot accomplish the task.
+
 ## User Interaction
 
 - If the user asks a question, do not modify any code immediately. It is sufficient to answer the question first. Only modify the code when the user explicitly instructs to do so.
