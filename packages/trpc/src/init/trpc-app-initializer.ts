@@ -1,5 +1,5 @@
 import type { ModRefId, ProvidersByLevel } from '@ditsmod/core';
-import { BaseAppInitializer, NormalizedModuleMeta } from '@ditsmod/core';
+import { AppInitializer, NormalizedModuleMeta } from '@ditsmod/core';
 import { initTRPC } from '@trpc/server';
 
 import type { RequestListener, TrpcRootModule } from '../types/types.js';
@@ -10,7 +10,7 @@ import { TRPC_ROOT } from '#types/constants.js';
 import { TrpcInternalService } from '#services/trpc-internal.service.js';
 import { TrpcService } from '#services/trpc.service.js';
 
-export class TrpcAppInitializer extends BaseAppInitializer {
+export class TrpcAppInitializer extends AppInitializer {
   protected requestDispatcher: TrpcRequestDispatcher;
   protected server: HttpServer;
 
