@@ -5,7 +5,7 @@ import { jest } from '@jest/globals';
 import {
   SystemLogMediator,
   StaticModule,
-  BaseAppInitializer,
+  AppInitializer,
   LogMediator,
   rootModule,
   ModuleManager,
@@ -34,7 +34,7 @@ describe('RestApplication', () => {
       return super.scanRootModule(appModule);
     }
 
-    override bootstrapApplication(appInitializer: BaseAppInitializer) {
+    override bootstrapApplication(appInitializer: AppInitializer) {
       return super.bootstrapApplication(appInitializer);
     }
   }
@@ -102,7 +102,7 @@ describe('RestApplication', () => {
 
     it('should replace systemLogMediator during call bootstrapApplication()', async () => {
       const moduleManager = mock.scanRootModule(AppModule);
-      const appInitializer = new BaseAppInitializer(new AppOptions(), moduleManager, new SystemLogMediator({ moduleName: '' }));
+      const appInitializer = new AppInitializer(new AppOptions(), moduleManager, new SystemLogMediator({ moduleName: '' }));
       const { log } = mock;
       await mock.bootstrapApplication(appInitializer);
       expect(mock.log !== log).toBe(true);

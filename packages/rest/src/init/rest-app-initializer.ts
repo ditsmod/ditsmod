@@ -1,11 +1,11 @@
-import { BaseAppInitializer } from '@ditsmod/core';
+import { AppInitializer } from '@ditsmod/core';
 
 import type { RequestListener } from '#services/request.js';
 import { RequestDispatcher } from '#services/request-dispatcher.js';
 import type { HttpServer } from '#types/server-options.js';
 import { SERVER } from '../top/constants.js';
 
-export class RestAppInitializer extends BaseAppInitializer {
+export class RestAppInitializer extends AppInitializer {
   protected requestDispatcher: RequestDispatcher;
   protected server: HttpServer;
 

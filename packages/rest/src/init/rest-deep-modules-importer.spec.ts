@@ -10,7 +10,7 @@ import {
   Provider,
   rootModule,
   SystemLogMediator,
-  BaseAppInitializer,
+  AppInitializer,
   BaseAppOptions,
   NormalizedModuleMeta,
   DeepModulesImporter,
@@ -27,7 +27,7 @@ import { RestResolvedModuleMeta } from './types.js';
 import { RestDynamicOptions } from './rest-mixin-raw-meta.js';
 
 describe('DeepModulesImporter', () => {
-  class AppInitializerMock extends BaseAppInitializer {
+  class AppInitializerMock extends AppInitializer {
     override normalizedModuleMeta = new NormalizedModuleMeta();
 
     override collectProvidersShallow(moduleManager: ModuleManager) {
