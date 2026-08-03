@@ -1,4 +1,4 @@
-import { BaseAppInitializer, MutableModuleManager, DynamicModule, skipSelf } from '@ditsmod/core';
+import { AppReinitializer, MutableModuleManager, DynamicModule, skipSelf } from '@ditsmod/core';
 import { controller, route, RequestContext, RestDynamicOptions } from '@ditsmod/rest';
 
 import { SecondModule } from '../second.module.js';
@@ -11,7 +11,7 @@ const thirdDynamicModule: DynamicModule = { module: ThirdModule };
 export class FirstController {
   constructor(
     @skipSelf() private moduleManager: MutableModuleManager,
-    @skipSelf() private appInitializer: BaseAppInitializer,
+    @skipSelf() private appReinitializer: AppReinitializer,
   ) {}
 
   @route('GET')
@@ -44,7 +44,7 @@ export class FirstController {
   }
 
   private async reinitApp(ctx: RequestContext, moduleName: 'second' | 'third', action: 'importing' | 'removing') {
-    const err = await this.appInitializer.reinit();
+    const err = await this.appReinitializer.reinit();
     if (err) {
       ctx.send(`${action} ${moduleName} failed: ${err.message}\n`);
     } else {
