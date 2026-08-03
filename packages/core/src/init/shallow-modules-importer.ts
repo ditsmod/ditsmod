@@ -367,8 +367,8 @@ export class ShallowModulesImporter {
         if (collision) {
           const importedProvider = this[`importedProvidersPer${level}`].get(token)!;
           const hostModulePath = this.moduleManager.getNormalizedModuleMeta(importedProvider.modRefId)?.declaredInDir || '.';
-          const decorAndVal = Reflector.getClassLevelMeta(token, hasDeclaredInDir)?.at(0);
-          const collisionWithPath = decorAndVal?.declaredInDir || '.';
+          const decorMeta = Reflector.getClassLevelMeta(token, hasDeclaredInDir)?.at(0);
+          const collisionWithPath = decorMeta?.declaredInDir || '.';
           if (hostModulePath !== '.' && collisionWithPath !== '.' && collisionWithPath.startsWith(hostModulePath)) {
             // Allow collisions in host modules.
           } else {

@@ -27,7 +27,7 @@ export function isDynamicModuleWrapper(arg?: any): arg is { dynamicModule: Dynam
   return isDynamicModule(arg?.dynamicModule);
 }
 
-export function isRootModule(decorAndVal?: DecoratorMeta): decorAndVal is DecoratorMeta<RootModuleOptions>;
+export function isRootModule(decorMeta?: DecoratorMeta): decorMeta is DecoratorMeta<RootModuleOptions>;
 export function isRootModule(
   normalizedModuleMeta?: NormalizedModuleMeta,
 ): normalizedModuleMeta is NormalizedModuleMeta<RootModuleOptions>;
