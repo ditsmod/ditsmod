@@ -1,6 +1,6 @@
 import type { PublicLogMediator } from '#logger/system-log-mediator.js';
 import type { StaticModule } from '#decorators/module-decorator-options.js';
-import { BaseAppInitializer } from './base-app-initializer.js';
+import { AppInitializer } from './app-initializer.js';
 import type { BaseAppOptions } from './base-app-options.js';
 import { BaseApplication } from './base-application.js';
 
@@ -28,8 +28,8 @@ export class StandaloneApplication extends BaseApplication {
     try {
       app.init(baseOptions);
       const moduleManager = app.scanRootModule(appModule);
-      const baseAppInitializer = new BaseAppInitializer(app.baseAppOptions, moduleManager, app.log);
-      await app.bootstrapApplication(baseAppInitializer);
+      const appInitializer = new AppInitializer(app.baseAppOptions, moduleManager, app.log);
+      await app.bootstrapApplication(appInitializer);
       return app;
     } catch (err: any) {
       // Ensure the logger uses the correct level before reporting the fatal error.

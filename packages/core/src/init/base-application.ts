@@ -2,7 +2,7 @@ import { BaseAppOptions } from '#init/base-app-options.js';
 import type { PublicLogMediator } from '#logger/system-log-mediator.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import type { StaticModule } from '#decorators/module-decorator-options.js';
-import type { BaseAppInitializer } from '#init/base-app-initializer.js';
+import type { AppInitializer } from '#init/app-initializer.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { MutableModuleManager } from '#init/mutable-module-manager.js';
@@ -116,18 +116,18 @@ export abstract class BaseApplication {
    * Bootstraps the application by sequentially initializing providers, modules, and extensions.
    * It also manages the transition of the Logger from its default state to custom configurations.
    */
-  protected async bootstrapApplication(baseAppInitializer: BaseAppInitializer) {
+  protected async bootstrapApplication(appInitializer: AppInitializer) {
     // Phase 1: The default Logger is active until application-level providers are initialized.
-    baseAppInitializer.bootstrapProvidersPerApp();
+    appInitializer.bootstrapProvidersPerApp();
 
     // Phase 2: Application-level providers are ready. Re-initialize the Logger with the new configuration.
-    this.log = baseAppInitializer.log;
+    this.log = appInitializer.log;
     (this.log as PublicLogMediator).updateOutputLogLevel();
 
-    this.injectorPerApp = await baseAppInitializer.bootstrapModulesAndExtensions();
+    this.injectorPerApp = await appInitializer.bootstrapModulesAndExtensions();
 
     // Phase 3: Extensions are initialized. Re-initialize the Logger again to reflect any extension-specific configs.
-    this.log = baseAppInitializer.log;
+    this.log = appInitializer.log;
     (this.log as PublicLogMediator).updateOutputLogLevel();
   }
 

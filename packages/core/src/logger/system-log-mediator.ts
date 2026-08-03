@@ -202,9 +202,9 @@ export class SystemLogMediator extends LogMediator {
 
   /**
    * trace: 
-- BaseAppInitializer: app providers per a module: []
-- BaseAppInitializer: app providers per a route: []
-- BaseAppInitializer: app providers per a request: []
+- AppInitializer: app providers per a module: []
+- AppInitializer: app providers per a route: []
+- AppInitializer: app providers per a request: []
    */
   printAppProviders(self: object, appProviders: AppProviders) {
     const className = self.constructor.name;

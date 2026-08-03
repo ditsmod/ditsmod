@@ -176,7 +176,6 @@ export interface MixinDynamicOptionsMap {
  * export const myMixin: MixinDecorator<StaticOpts, DynamicOpts, NormalizedMeta> = makeClassDecorator(getModuleMixin);
  * ```
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface MixinDecorator<T extends StaticMixinOptions, DynamicMixinOptions, NormalizedMixinMeta> {
   (data?: T): any;
 }

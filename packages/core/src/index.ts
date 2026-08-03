@@ -4,6 +4,8 @@ export { PROVIDERS_PER_APP } from '#init/constants.js';
 export { awaitTokens } from '#utils/await-tokens.js';
 export { defaultProvidersPerMod } from '#init/default-providers-per-mod.js';
 export { BaseAppInitializer } from '#init/base-app-initializer.js';
+export { AppInitializer } from '#init/app-initializer.js';
+export { AppReinitializer } from '#init/app-reinitializer.js';
 export { ShallowModuleImports, BaseImportRegistry } from '#init/types.js';
 export { BaseApplication } from '#init/base-application.js';
 export { StandaloneApplication } from '#init/standalone-application.js';

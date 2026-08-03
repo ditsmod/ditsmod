@@ -43,7 +43,14 @@ export class ModuleManager {
   ] satisfies (keyof BaseNormalizedModuleMeta)[];
   #childrenMap = new Map<ModRefId, Set<ModRefId>>();
   #providersPerApp: Provider[] = [];
-
+  /**
+   * Represents the module dependency graph.
+   *
+   * It maps `ModRefId` to a `Set` of `ModRefId` of its child modules
+   * (modules that it imports, exports, or includes via specialized module mixins).
+   * This graph is built during the module scanning phase and is subsequently used
+   * for recursive traversal, such as propagating parent module mixins to child modules.
+   */
   protected get childrenMap() {
     return this.#childrenMap;
   }
@@ -307,7 +314,11 @@ export class ModuleManager {
    * down to child modules that have no module mixins of their own. This ensures consistent contextual decorator evaluation
    * across architectural hierarchies (e.g., REST or tRPC routes).
    */
-  protected propagateContextMixins(startModule: ModRefId, inheritedMixins: AllModuleMixins = new Map(), visited = new Set<ModRefId>()) {
+  protected propagateContextMixins(
+    startModule: ModRefId,
+    inheritedMixins: AllModuleMixins = new Map(),
+    visited = new Set<ModRefId>(),
+  ) {
     if (visited.has(startModule)) {
       return;
     }

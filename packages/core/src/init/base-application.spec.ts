@@ -5,7 +5,7 @@ import { ModuleManager } from '#init/module-manager.js';
 // import { Router } from '#types/router.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 import { StaticModule } from '#decorators/module-decorator-options.js';
-import { BaseAppInitializer } from '#init/base-app-initializer.js';
+import { AppInitializer } from '#init/app-initializer.js';
 import { BaseApplication } from '#init/base-application.js';
 import { rootModule } from '#decorators/root-module.js';
 import { LogMediator } from '#logger/log-mediator.js';
@@ -24,8 +24,8 @@ describe('BaseApplication', () => {
       return super.scanRootModule(appModule);
     }
 
-    override bootstrapApplication(baseAppInitializer: BaseAppInitializer) {
-      return super.bootstrapApplication(baseAppInitializer);
+    override bootstrapApplication(appInitializer: AppInitializer) {
+      return super.bootstrapApplication(appInitializer);
     }
   }
 
@@ -63,13 +63,13 @@ describe('BaseApplication', () => {
 
     it('should replace systemLogMediator during call bootstrapApplication()', async () => {
       const moduleManager = mock.scanRootModule(AppModule);
-      const baseAppInitializer = new BaseAppInitializer(
+      const appInitializer = new AppInitializer(
         new BaseAppOptions(),
         moduleManager,
         new SystemLogMediator({ moduleName: '' }),
       );
       const { log: systemLogMediator } = mock;
-      await mock.bootstrapApplication(baseAppInitializer);
+      await mock.bootstrapApplication(appInitializer);
       expect(mock.log !== systemLogMediator).toBe(true);
     });
   });
@@ -107,12 +107,12 @@ describe('BaseApplication', () => {
 
       const app = mock;
       const moduleManager = app.scanRootModule(AppModule);
-      const baseAppInitializer = new BaseAppInitializer(
+      const appInitializer = new AppInitializer(
         new BaseAppOptions(),
         moduleManager,
         new SystemLogMediator({ moduleName: '' }),
       );
-      await app.bootstrapApplication(baseAppInitializer);
+      await app.bootstrapApplication(appInitializer);
 
       // Instantiate them so they exist in registry
       (app as any).injectorPerApp!.get(TestServiceBefore);
@@ -147,12 +147,12 @@ describe('BaseApplication', () => {
 
       const app = mock;
       const moduleManager = app.scanRootModule(AppModule);
-      const baseAppInitializer = new BaseAppInitializer(
+      const appInitializer = new AppInitializer(
         new BaseAppOptions(),
         moduleManager,
         new SystemLogMediator({ moduleName: '' }),
       );
-      await app.bootstrapApplication(baseAppInitializer);
+      await app.bootstrapApplication(appInitializer);
 
       await app.close('SIGTERM');
 
@@ -194,12 +194,12 @@ describe('BaseApplication', () => {
 
       const app = mock;
       const moduleManager = app.scanRootModule(AppModule);
-      const baseAppInitializer = new BaseAppInitializer(
+      const appInitializer = new AppInitializer(
         new BaseAppOptions(),
         moduleManager,
         new SystemLogMediator({ moduleName: '' }),
       );
-      await app.bootstrapApplication(baseAppInitializer);
+      await app.bootstrapApplication(appInitializer);
 
       (app as any).injectorPerApp!.get(TestServiceBeforeFail);
       (app as any).injectorPerApp!.get(TestServiceBeforeSuccess);
