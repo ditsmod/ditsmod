@@ -41,6 +41,13 @@ describe('type guards', () => {
       expect(isFeatureModule(metadata)).toBe(false);
     });
 
+    it('returns true for a class with featureModule decorator', () => {
+      @featureModule()
+      class Module1 {}
+      // Passing the class directly
+      expect(isFeatureModule(Module1)).toBe(true);
+    });
+
     it('returns true for DecoratorMeta with featureModule', () => {
       @featureModule()
       class Module1 {}
@@ -124,6 +131,13 @@ describe('type guards', () => {
       expect(isRootModule(metadata)).toBe(false);
     });
 
+    it('returns true for a class with rootModule decorator', () => {
+      @rootModule({})
+      class Module1 {}
+      // Passing the class directly
+      expect(isRootModule(Module1)).toBe(true);
+    });
+
     it('returns true for DecoratorMeta with rootModule', () => {
       @rootModule({})
       class Module1 {}
@@ -197,6 +211,13 @@ describe('type guards', () => {
       class Module1 {}
       const metadata = Reflector.getClassLevelMeta(Module1)![0];
       expect(isModuleDecorator(metadata)).toBe(true);
+    });
+
+    it('returns true for a class with rootModule decorator', () => {
+      @rootModule({})
+      class Module1 {}
+      // Passing the class directly
+      expect(isModuleDecorator(Module1 as any)).toBe(true);
     });
 
     it('returns true for featureModule DecoratorMeta', () => {

@@ -12,7 +12,6 @@ import { getModule } from '#utils/get-module.js';
 import { injectable } from '#di/decorators.js';
 import type { Provider, AnyFn } from '#di/top/types-and-models.js';
 import type { Injector } from '#di/injector.js';
-import { Reflector } from '#di/reflector.js';
 import { resolveForwardRef, type ForwardRefFn } from '#di/forward-ref.js';
 
 export type ModulesMap = Map<ModRefId, NormalizedModuleMeta>;
@@ -85,14 +84,12 @@ export class ModuleManager {
    * Resets internal scan state and initiates recursive metadata resolution for all imported feature modules in the dependency graph.
    */
   scanRootModule(appModule: StaticModule): NormalizedModuleMeta {
-    this.providersPerApp = [];
-    if (!Reflector.getClassLevelMeta(appModule, isRootModule)) {
+    if (!isRootModule(appModule)) {
       throw new MissingRootDecorator(appModule.name);
     }
-
+    this.providersPerApp = [];
     this.childrenMap.clear();
     const normalizedModuleMeta = this.scanModule(appModule);
-
     this.injectorPerModMap.clear();
     this.unfinishedScanModules.clear();
     this.scannedModules.clear();

@@ -5,6 +5,7 @@ import { FeatureModuleOptions } from '#decorators/module-decorator-options.js';
 import { ModuleMixin } from '#decorators/module-mixins.js';
 import { NormalizedModuleMeta } from '#init/normalized-meta.js';
 import { RootModuleOptions } from './root-module.js';
+import { Reflector } from '#di/reflector.js';
 
 function checkModuleRole(arg: any, expectedRole: 'root' | 'feature', ExpectedClass: any): boolean {
   if (arg instanceof DecoratorMeta) {
@@ -19,6 +20,10 @@ function checkModuleRole(arg: any, expectedRole: 'root' | 'feature', ExpectedCla
     return arg.staticModuleOptions instanceof ExpectedClass;
   } else if (arg instanceof ModuleMixin) {
     return arg.moduleRole === expectedRole;
+  }
+  const decoratorMeta = Reflector.getClassLevelMeta(arg);
+  if (decoratorMeta) {
+    return decoratorMeta.some(m => checkModuleRole(m, expectedRole, ExpectedClass));
   }
   return arg instanceof ExpectedClass;
 }
