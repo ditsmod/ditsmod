@@ -36,8 +36,8 @@ import { DecoratorMeta } from '#di/top/decorator-and-value.js';
 
 describe('ModuleNormalizer', () => {
   class MockModuleNormalizer extends ModuleNormalizer {
-    override normalize(modRefId: ModRefId, allModuleMixinsMap = new Map()): NormalizedModuleMeta {
-      return super.normalize(modRefId, allModuleMixinsMap, { externalModuleDetectionFailed: () => {} } as any);
+    override normalize(modRefId: ModRefId): NormalizedModuleMeta {
+      return super.normalize(modRefId, { externalModuleDetectionFailed: () => {} } as any);
     }
   }
 
@@ -819,9 +819,9 @@ describe('ModuleNormalizer', () => {
       const hostInitSome: MixinDecorator<SomeMixinOptions, {}, {}> = Reflector.makeClassDecorator((data) => new HostModuleMixin(data));
       const moduleMixin = new HostModuleMixin({}).clone({ flag: true });
 
-      const normalizedModuleMeta = normalizer.normalize(HostModule, new Map());
+      const normalizedModuleMeta = normalizer.normalize(HostModule);
       normalizer.applyHostMixinOptions(normalizedModuleMeta, hostInitSome, moduleMixin as any);
-      
+
       expect(normalizedModuleMeta.normalizedMixinMetaMap.get(hostInitSome)).toEqual({ flag: true, targetModRefId: HostModule });
     });
 
@@ -845,100 +845,7 @@ describe('ModuleNormalizer', () => {
       expect(normalizedModuleMeta.importedStaticModules).toContain(HostModule);
     });
 
-    it('adds module mixins from allModuleMixinsMap for an imported dynamic module whose class does not have that mixin decorator', () => {
-      class Service1 {}
 
-      @featureModule({ providersPerApp: [Service1] })
-      class Module1 {}
-
-      const dynamicModule: DynamicModule = { module: Module1 };
-      const allModuleMixinsMap = new Map([[mixinSome, new SomeModuleMixin({})]]);
-
-      @mixinSome({ imports: [{ dynamicModule, path: 'prefix' }] })
-      @rootModule()
-      class AppModule {}
-
-      normalizer.normalize(AppModule);
-
-      const normalizedModuleMeta = normalizer.normalize(dynamicModule, allModuleMixinsMap);
-      expect(normalizedModuleMeta.normalizedMixinMetaMap.get(mixinSome)).toMatchObject({
-        path: 'prefix',
-        targetModRefId: dynamicModule,
-      });
-    });
-  });
-
-  describe('propagateParentMixins', () => {
-    class PropagateMixinMeta extends BaseNormalizedModuleMeta {
-      propagated?: boolean;
-    }
-
-    class PropagateModuleMixin extends ModuleMixin {
-      override normalize(normalizedModuleMeta: NormalizedModuleMeta) {
-        const meta = getProxyForMixinMeta(normalizedModuleMeta, PropagateMixinMeta);
-        meta.propagated = true;
-        return meta;
-      }
-    }
-
-    const initPropagate: MixinDecorator<StaticMixinOptions, {}, PropagateMixinMeta> = Reflector.makeClassDecorator(
-      (data) => new PropagateModuleMixin(data || {}),
-      'initPropagate',
-    );
-
-    it('propagates module mixins to a module without mixin decorators when inheritsContext defaults to true', () => {
-      @featureModule({ providersPerApp: [{ token: 'tok', useValue: 1 }] })
-      class Module1 {}
-
-      const normalizedModuleMeta = normalizer.normalize(Module1);
-      expect(normalizedModuleMeta.moduleMixinMap.size).toBe(0);
-
-      const allModuleMixinsMap = new Map([[initPropagate, new PropagateModuleMixin({})]]);
-      normalizer.propagateParentMixins(normalizedModuleMeta, allModuleMixinsMap);
-
-      expect(normalizedModuleMeta.moduleMixinMap.has(initPropagate)).toBe(true);
-      expect(normalizedModuleMeta.normalizedMixinMetaMap.get(initPropagate)?.propagated).toBe(true);
-    });
-
-    it('does not propagate module mixins when inheritsContext is false', () => {
-      @featureModule({ inheritsContext: false, providersPerApp: [{ token: 'tok', useValue: 1 }] })
-      class Module1 {}
-
-      const normalizedModuleMeta = normalizer.normalize(Module1);
-
-      const allModuleMixinsMap = new Map([[initPropagate, new PropagateModuleMixin({})]]);
-      normalizer.propagateParentMixins(normalizedModuleMeta, allModuleMixinsMap);
-
-      expect(normalizedModuleMeta.moduleMixinMap.has(initPropagate)).toBe(false);
-    });
-
-    it('does not propagate module mixins when isExternal is true and inheritsContext is not set', () => {
-      @featureModule({ providersPerApp: [{ token: 'tok', useValue: 1 }] })
-      class Module1 {}
-
-      const normalizedModuleMeta = normalizer.normalize(Module1);
-      normalizedModuleMeta.isExternal = true;
-
-      const allModuleMixinsMap = new Map([[initPropagate, new PropagateModuleMixin({})]]);
-      normalizer.propagateParentMixins(normalizedModuleMeta, allModuleMixinsMap);
-
-      expect(normalizedModuleMeta.moduleMixinMap.has(initPropagate)).toBe(false);
-    });
-
-    it('does not propagate module mixins when the module already has its own mixin decorators', () => {
-      @initPropagate({})
-      @featureModule({ providersPerApp: [{ token: 'tok', useValue: 1 }] })
-      class Module1 {}
-
-      const normalizedModuleMeta = normalizer.normalize(Module1);
-      const originalSize = normalizedModuleMeta.moduleMixinMap.size;
-      expect(originalSize).toBeGreaterThan(0);
-
-      const allModuleMixinsMap = new Map([[initPropagate, new PropagateModuleMixin({})]]);
-      normalizer.propagateParentMixins(normalizedModuleMeta, allModuleMixinsMap);
-
-      expect(normalizedModuleMeta.moduleMixinMap.size).toBe(originalSize);
-    });
   });
 
   describe('validation errors', () => {
@@ -1020,8 +927,8 @@ describe('ModuleNormalizer', () => {
     class ExternalModuleNormalizer extends ModuleNormalizer {
       customMeta = new Map<StaticModule, DecoratorMeta[]>();
 
-      override normalize(modRefId: any, allModuleMixinsMap = new Map()): NormalizedModuleMeta {
-        return super.normalize(modRefId, allModuleMixinsMap, { externalModuleDetectionFailed: () => {} } as any);
+      override normalize(modRefId: any): NormalizedModuleMeta {
+        return super.normalize(modRefId, { externalModuleDetectionFailed: () => {} } as any);
       }
 
       protected override getDecoratorMeta(modRefId: any) {

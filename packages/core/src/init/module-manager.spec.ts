@@ -32,12 +32,12 @@ describe('ModuleManager', () => {
     declare map: Map<ModRefId, NormalizedModuleMeta>;
     declare mapId: Map<string, ModRefId>;
 
-    override normalizeMeta(modRefId: ModRefId, allModuleMixinsMap: AllModuleMixins): NormalizedModuleMeta {
-      return super.normalizeMeta(modRefId, allModuleMixinsMap);
+    override normalizeMeta(modRefId: ModRefId): NormalizedModuleMeta {
+      return super.normalizeMeta(modRefId);
     }
 
-    override scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>, allModuleMixinsMap?: AllModuleMixins) {
-      return super.scanModule(modRefId, allModuleMixinsMap);
+    override scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>) {
+      return super.scanModule(modRefId);
     }
   }
 
@@ -67,7 +67,7 @@ describe('ModuleManager', () => {
 
       manager.scanRootModule(AppModule);
 
-      expect(normalizeSpy).toHaveBeenCalledWith(AppModule, new Map(), systemLogMediator);
+      expect(normalizeSpy).toHaveBeenCalledWith(AppModule, systemLogMediator);
     });
   });
 
@@ -90,9 +90,9 @@ describe('ModuleManager', () => {
 
       jest.spyOn(mock, 'normalizeMeta');
       mock.scanRootModule(AppModule);
-      expect(mock.normalizeMeta).toHaveBeenNthCalledWith(1, AppModule, new Map());
-      expect(mock.normalizeMeta).toHaveBeenNthCalledWith(2, Module2, new Map());
-      expect(mock.normalizeMeta).toHaveBeenNthCalledWith(3, Module1, new Map());
+      expect(mock.normalizeMeta).toHaveBeenNthCalledWith(1, AppModule);
+      expect(mock.normalizeMeta).toHaveBeenNthCalledWith(2, Module2);
+      expect(mock.normalizeMeta).toHaveBeenNthCalledWith(3, Module1);
     });
 
     it('should throw MissingRootDecorator error if the module lacks a root module decorator', () => {
@@ -758,6 +758,51 @@ describe('ModuleManager', () => {
       expect(hostMeta?.moduleMixinMap.has(mixinSomeLocal)).toBe(true);
       const hostMixinInst = hostMeta?.moduleMixinMap.get(mixinSomeLocal);
       expect(hostMixinInst?.moduleOptions).toEqual({ customProp: 'works' });
+    });
+    it('should accumulate the exact same allModuleMixinsMap in the parent regardless of import order', () => {
+      class ModuleMixin1 extends ModuleMixin<any> {
+        override normalize(normalizedModuleMeta: NormalizedModuleMeta) {
+          return normalizedModuleMeta;
+        }
+      }
+      class ModuleMixin2 extends ModuleMixin<any> {
+        override normalize(normalizedModuleMeta: NormalizedModuleMeta) {
+          return normalizedModuleMeta;
+        }
+      }
+
+      const mixinDec1: MixinDecorator<any, any, any> = Reflector.makeClassDecorator((d) => new ModuleMixin1(d));
+      const mixinDec2: MixinDecorator<any, any, any> = Reflector.makeClassDecorator((d) => new ModuleMixin2(d));
+
+      @mixinDec1()
+      @featureModule()
+      class ModuleA {}
+
+      @mixinDec2()
+      @featureModule()
+      class ModuleB {}
+
+      @rootModule({ imports: [ModuleA, ModuleB] })
+      class AppModuleOrder1 {}
+
+      @rootModule({ imports: [ModuleB, ModuleA] })
+      class AppModuleOrder2 {}
+
+      const mock1 = new MockModuleManager(new SystemLogMediator({ moduleName: '1' }));
+      mock1.scanRootModule(AppModuleOrder1);
+      const meta1 = mock1.getNormalizedModuleMeta(AppModuleOrder1);
+
+      const mock2 = new MockModuleManager(new SystemLogMediator({ moduleName: '2' }));
+      mock2.scanRootModule(AppModuleOrder2);
+      const meta2 = mock2.getNormalizedModuleMeta(AppModuleOrder2);
+
+      expect(meta1!.allModuleMixinsMap.size).toBe(2);
+      expect(meta1!.allModuleMixinsMap.has(mixinDec1)).toBe(true);
+      expect(meta1!.allModuleMixinsMap.has(mixinDec2)).toBe(true);
+
+      expect(meta2!.allModuleMixinsMap.size).toBe(2);
+      expect(meta2!.allModuleMixinsMap.has(mixinDec1)).toBe(true);
+      expect(meta2!.allModuleMixinsMap.has(mixinDec2)).toBe(true);
     });
   });
 });

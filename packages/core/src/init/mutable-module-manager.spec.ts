@@ -51,8 +51,8 @@ describe('ModuleManager', () => {
     declare state: ModuleGraphState;
     declare oldState: ModuleGraphState | undefined;
 
-    override normalizeMeta(modRefId: ModRefId, allModuleMixinsMap: AllModuleMixins): NormalizedModuleMeta {
-      return super.normalizeMeta(modRefId, allModuleMixinsMap);
+    override normalizeMeta(modRefId: ModRefId): NormalizedModuleMeta {
+      return super.normalizeMeta(modRefId);
     }
 
     override getNormalizedModuleMetaFromSnapshot(moduleId: ModuleId) {

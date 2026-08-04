@@ -44,8 +44,8 @@ describe('ShallowModulesImporter', () => {
   }
 
   class MockModuleManager extends ModuleManager {
-    override scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>, allModuleMixinsMap?: AllModuleMixins) {
-      return super.scanModule(modRefId, allModuleMixinsMap);
+    override scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>) {
+      return super.scanModule(modRefId);
     }
   }
 

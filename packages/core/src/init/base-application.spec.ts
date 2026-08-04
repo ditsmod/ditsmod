@@ -65,7 +65,7 @@ describe('BaseApplication', () => {
       mock.scanRootModule(AppModule);
 
       expect(moduleNormalizerFactory).toHaveBeenCalledTimes(1);
-      expect(normalizeSpy).toHaveBeenCalledWith(AppModule, new Map(), mock.log);
+      expect(normalizeSpy).toHaveBeenCalledWith(AppModule, mock.log);
     });
 
     it('should pass a ModuleNormalizer created by moduleNormalizerFactory to MutableModuleManager', () => {
@@ -78,7 +78,7 @@ describe('BaseApplication', () => {
 
       expect(moduleManager).toBeInstanceOf(MutableModuleManager);
       expect(moduleNormalizerFactory).toHaveBeenCalledTimes(1);
-      expect(normalizeSpy).toHaveBeenCalledWith(AppModule, new Map(), mock.log);
+      expect(normalizeSpy).toHaveBeenCalledWith(AppModule, mock.log);
     });
   });
 
