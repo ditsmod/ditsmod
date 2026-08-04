@@ -113,15 +113,15 @@ export class ModuleManager {
     const children = new Set<ModRefId>();
     this.childrenMap.set(normalizedModuleMeta.modRefId, children);
 
-    for (const input of this.getModulesToScan(normalizedModuleMeta)) {
-      children.add(input);
-      if (this.unfinishedScanModules.has(input) || this.scannedModules.has(input)) {
+    for (const child of this.getModulesToScan(normalizedModuleMeta)) {
+      children.add(child);
+      if (this.unfinishedScanModules.has(child) || this.scannedModules.has(child)) {
         continue;
       }
-      this.unfinishedScanModules.add(input);
-      this.scanModule(input, normalizedModuleMeta.allModuleMixinsMap);
-      this.unfinishedScanModules.delete(input);
-      this.scannedModules.add(input);
+      this.unfinishedScanModules.add(child);
+      this.scanModule(child, normalizedModuleMeta.allModuleMixinsMap);
+      this.unfinishedScanModules.delete(child);
+      this.scannedModules.add(child);
     }
 
     this.callModuleMixinAfterScan(normalizedModuleMeta);
@@ -147,9 +147,26 @@ export class ModuleManager {
       }
     });
 
-    return this.propsWithModules
-      .map((p) => normalizedModuleMeta[p])
-      .reduce<ModRefId[]>((prev, curr) => prev.concat(curr), importsOrExports);
+    this.propsWithModules.forEach((p) => importsOrExports.push(...normalizedModuleMeta[p]));
+    return importsOrExports;
+  }
+
+  /**
+   * The current module may sometimes lack explicit mixin decorators that are present in imported modules
+   * (for example, importing an architectural feature module without decorating the importer).
+   * In such cases, after scanning all imported modules, the collected module mixins from them are also
+   * executed for the current module. The result of executing these module mixins is objects with initialized
+   * properties, into which relevant metadata (such as controllers or appended routes) can later be imported.
+   */
+  protected callModuleMixinAfterScan(normalizedModuleMeta: NormalizedModuleMeta) {
+    normalizedModuleMeta.allModuleMixinsMap.forEach((moduleMixin, decoratorId) => {
+      if (!normalizedModuleMeta.moduleMixinMap.has(decoratorId)) {
+        const meta = moduleMixin.clone().normalize(normalizedModuleMeta);
+        if (meta) {
+          normalizedModuleMeta.normalizedMixinMetaMap.set(decoratorId, meta);
+        }
+      }
+    });
   }
 
   protected registerModuleId(normalizedModuleMeta: NormalizedModuleMeta, modRefId: ModRefId) {
@@ -263,24 +280,6 @@ export class ModuleManager {
       return this.getInjectorPerMod(moduleId, true).get(Mod);
     }
     return this.getInjectorPerMod(moduleId, throwErrIfNotFound)?.get(Mod);
-  }
-
-  /**
-   * The current module may sometimes lack explicit mixin decorators that are present in imported modules
-   * (for example, importing an architectural feature module without decorating the importer).
-   * In such cases, after scanning all imported modules, the collected module mixins from them are also
-   * executed for the current module. The result of executing these module mixins is objects with initialized
-   * properties, into which relevant metadata (such as controllers or appended routes) can later be imported.
-   */
-  protected callModuleMixinAfterScan(normalizedModuleMeta: NormalizedModuleMeta) {
-    normalizedModuleMeta.allModuleMixinsMap.forEach((moduleMixin, decoratorId) => {
-      if (!normalizedModuleMeta.moduleMixinMap.has(decoratorId)) {
-        const meta = moduleMixin.clone().normalize(normalizedModuleMeta);
-        if (meta) {
-          normalizedModuleMeta.normalizedMixinMetaMap.set(decoratorId, meta);
-        }
-      }
-    });
   }
 
   /**
@@ -407,9 +406,8 @@ export class ModuleManager {
       }
     });
 
-    const inputs = this.propsWithModules
-      .map((p) => hostMeta[p])
-      .reduce<ModRefId[]>((prev, curr) => prev.concat(curr), importsOrExports);
+    const inputs: ModRefId[] = importsOrExports;
+    this.propsWithModules.forEach((p) => inputs.push(...hostMeta[p]));
 
     const children = this.childrenMap.get(hostMeta.modRefId);
     if (children) {
