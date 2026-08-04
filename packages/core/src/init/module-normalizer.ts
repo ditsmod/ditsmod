@@ -6,7 +6,7 @@ import type { AnyFn, Provider } from '#di/top/types-and-models.js';
 import type { DynamicModule, FeatureModuleOptions } from '#decorators/module-decorator-options.js';
 import type { ForwardRefFn } from '#di/forward-ref.js';
 import type { ExtensionClass } from '#extension/extension-types.js';
-import type { AllModuleMixins, StaticMixinOptions, ModuleMixin } from '#decorators/module-mixins.js';
+import type { StaticMixinOptions, ModuleMixin } from '#decorators/module-mixins.js';
 import type { ProviderBuilder } from '#utils/providers.js';
 import type { ModuleManager } from '#init/module-manager.js';
 import { normalizeExtensionConfig } from '#extension/extension-providers-and-configs.js';
@@ -63,8 +63,12 @@ export class ModuleNormalizer {
 
   /**
    * Returns normalized module metadata.
+   *
+   * Only processes the module's own decorators. Cross-module mixin propagation
+   * (for dynamic modules with `mixinOptions` or static modules without own decorators)
+   * is handled separately by {@link ModuleManager} after the scan phase completes.
    */
-  normalize(modRefId: ModRefId, allModuleMixinsMap: AllModuleMixins, systemLogMediator: SystemLogMediator) {
+  normalize(modRefId: ModRefId, systemLogMediator: SystemLogMediator) {
     this.systemLogMediator = systemLogMediator;
     const normalizedModuleMeta = this.initNormalizedModuleMeta(modRefId);
     const { staticModuleOptions } = normalizedModuleMeta;
@@ -88,9 +92,6 @@ export class ModuleNormalizer {
 
     // Phase 2: Process mixin decorators applied directly to the current module.
     this.callModuleMixinFromCurrentModule();
-
-    // Phase 3: Handle module mixins for imported dynamic modules lacking their own mixin decorators.
-    this.addModuleMixinForImportedDynamicModule(allModuleMixinsMap);
 
     this.quickCheckMeta(staticModuleOptions);
     return normalizedModuleMeta;
@@ -390,15 +391,19 @@ export class ModuleNormalizer {
   }
 
   /**
-   * Registers a module mixin into `allModuleMixinsMap`, ensures the host module is imported,
-   * normalizes the mixin, and backfills `moduleMixinMap` (needed for `quickCheckMeta`
-   * and `applyMissingModuleMixins`).
+   * Registers a cloned module mixin on the given module: adds it to `allModuleMixinsMap`
+   * and `moduleMixinMap`, ensures the host module is imported, normalizes the mixin
+   * and stores the result in `normalizedMixinMetaMap`.
+   *
+   * This is the single entry point used by {@link ModuleManager} to register a mixin
+   * on a module during the post-scan propagation phase.
    */
-  protected registerAndCallModuleMixin(decoratorId: AnyFn, moduleMixin: ModuleMixin): void {
-    this.normalizedModuleMeta.allModuleMixinsMap.set(decoratorId, moduleMixin);
+  registerMixinOnModule(normalizedModuleMeta: NormalizedModuleMeta, decoratorId: AnyFn, moduleMixin: ModuleMixin): void {
+    this.normalizedModuleMeta = normalizedModuleMeta;
+    normalizedModuleMeta.allModuleMixinsMap.set(decoratorId, moduleMixin);
     this.ensureHostModuleImported(moduleMixin);
     this.callModuleMixin(decoratorId, moduleMixin);
-    this.normalizedModuleMeta.moduleMixinMap.set(decoratorId, moduleMixin);
+    normalizedModuleMeta.moduleMixinMap.set(decoratorId, moduleMixin);
   }
 
   protected callModuleMixinFromCurrentModule() {
@@ -407,38 +412,6 @@ export class ModuleNormalizer {
       this.ensureHostModuleImported(moduleMixin);
       this.fetchMixinOptions(decoratorId, moduleMixin.moduleOptions);
       this.callModuleMixin(decoratorId, moduleMixin);
-    });
-  }
-
-  /**
-   * If the current module was imported as a dynamic module within a mixin decorator, but
-   * does not have this decorator applied to its own class, this method retrieves the default 
-   * instances of the corresponding module mixins (for reading dynamic options) from `allModuleMixinsMap`.
-   *
-   * For example, you have a library with a `@mixinRest` decorator:
-   * 
-```ts
-import { featureModule, rootModule } from '@ditsmod/core';
-import { mixinRest } from '@ditsmod/rest';
-
-@featureModule()
-class Module1 {}
-
-@mixinRest({ imports: [{ module: Module1, path: 'some-prefix' }] })
-@rootModule()
-export class AppModule {}
-```
-   * 
-   * As you can see, `Module1` is imported in the context of the `mixinRest` decorator,
-   * but `Module1` itself does not have an annotation with `mixinRest`. For such cases,
-   * this method adds the corresponding module mixin so that the import of the dynamic `Module1` can be properly handled.
-   */
-  protected addModuleMixinForImportedDynamicModule(allModuleMixinsMap: AllModuleMixins) {
-    (this.normalizedModuleMeta.modRefId as DynamicModule).mixinOptions?.forEach((params, decoratorId) => {
-      if (!this.normalizedModuleMeta.moduleMixinMap.has(decoratorId)) {
-        const newModuleMixin = allModuleMixinsMap.get(decoratorId)!.clone();
-        this.registerAndCallModuleMixin(decoratorId, newModuleMixin);
-      }
     });
   }
 
@@ -554,22 +527,6 @@ export class AppModule {}
 
   protected quickCheckMeta(staticModuleOptions: RootModuleOptions) {
     this.throwIfResolvingNormalizedProvider(staticModuleOptions);
-  }
-
-  propagateParentMixins(normalizedModuleMeta: NormalizedModuleMeta, allModuleMixinsMap: AllModuleMixins) {
-    this.normalizedModuleMeta = normalizedModuleMeta;
-    this.addModuleMixinFromParent(allModuleMixinsMap);
-  }
-
-  protected addModuleMixinFromParent(allModuleMixinsMap: AllModuleMixins) {
-    const inheritsContext = this.normalizedModuleMeta.inheritsContext ?? !this.normalizedModuleMeta.isExternal;
-    if (!inheritsContext || this.normalizedModuleMeta.moduleMixinMap.size > 0) {
-      return;
-    }
-    allModuleMixinsMap.forEach((moduleMixin, decoratorId) => {
-      const newModuleMixin = moduleMixin.clone();
-      this.registerAndCallModuleMixin(decoratorId, newModuleMixin);
-    });
   }
 
   checkEmptyMeta(normalizedModuleMeta: NormalizedModuleMeta) {

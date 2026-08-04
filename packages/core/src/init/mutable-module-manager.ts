@@ -254,43 +254,82 @@ export class MutableModuleManager extends ModuleManager {
     }
   }
 
-  protected override propagateContextMixins(startModule: ModRefId, inheritedMixins?: Map<any, any>, visited?: Set<ModRefId>) {
+  protected override propagateMixinsTopDown(startModule: ModRefId, parentMixins?: Map<any, any>, visited?: Set<ModRefId>) {
     // Override to fallback to snapshotMap if not in map
     if (!visited) {
       visited = new Set<ModRefId>();
     }
-    if (!inheritedMixins) {
-      inheritedMixins = new Map();
+    if (!parentMixins) {
+      parentMixins = new Map();
     }
     if (visited.has(startModule)) {
       return;
     }
     visited.add(startModule);
 
-    const startMeta = this.map.get(startModule) || this.state.snapshotMap.get(startModule);
-    if (!startMeta) {
+    const meta = this.map.get(startModule) || this.state.snapshotMap.get(startModule);
+    if (!meta) {
       return;
     }
 
-    const activeMixins = new Map(inheritedMixins);
-    startMeta.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
+    const activeMixins = new Map(parentMixins);
+    meta.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
       activeMixins.set(decoratorId, moduleMixin);
     });
 
-    if (startMeta.moduleMixinMap.size === 0 && activeMixins.size > 0) {
-      try {
-        this.moduleNormalizer.propagateParentMixins(startMeta, activeMixins);
-      } catch (err: any) {
-        throw new NormalizationFailure(startMeta.name, err);
+    this.applyMixinsForDynamicModule(meta, activeMixins);
+    this.inheritParentMixins(meta, activeMixins);
+
+    meta.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
+      activeMixins.set(decoratorId, moduleMixin);
+    });
+
+    const children = this.childrenMap.get(startModule);
+    if (children) {
+      for (const child of children) {
+        this.propagateMixinsTopDown(child, activeMixins, visited);
       }
+    }
+  }
+
+  protected override accumulateMixinsBottomUp(startModule: ModRefId, visited?: Set<ModRefId>) {
+    if (!visited) {
+      visited = new Set<ModRefId>();
+    }
+    if (visited.has(startModule)) {
+      return;
+    }
+    visited.add(startModule);
+
+    const meta = this.map.get(startModule) || this.state.snapshotMap.get(startModule);
+    if (!meta) {
+      return;
     }
 
     const children = this.childrenMap.get(startModule);
     if (children) {
       for (const child of children) {
-        this.propagateContextMixins(child, activeMixins, visited);
+        this.accumulateMixinsBottomUp(child, visited);
+      }
+
+      for (const child of children) {
+        const childMeta = this.map.get(child) || this.state.snapshotMap.get(child);
+        childMeta?.allModuleMixinsMap.forEach((mixin, decoratorId) => {
+          if (!meta.allModuleMixinsMap.has(decoratorId)) {
+            meta.allModuleMixinsMap.set(decoratorId, mixin);
+          }
+        });
       }
     }
+
+    meta.allModuleMixinsMap.forEach((mixin, decoratorId) => {
+      if (!meta.moduleMixinMap.has(decoratorId) && !meta.normalizedMixinMetaMap.has(decoratorId)) {
+        const readOnlyMeta = mixin.clone().normalize(meta);
+        if (readOnlyMeta) {
+          meta.normalizedMixinMetaMap.set(decoratorId, readOnlyMeta);
+        }
+      }
+    });
   }
 
   protected override checkEmptyMetaForAllModules() {
