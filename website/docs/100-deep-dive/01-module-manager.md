@@ -2,11 +2,13 @@
 sidebar_position: 1
 ---
 
-# ModuleManager
+# ModuleManager {#module-manager}
 
 Перший етап обробки метаданих, які ви передаєте у декораторах модулів (таких як `@rootModule` чи `@featureModule`), відбувається у сервісі `ModuleManager`.
 
 Він рекурсивно сканує усі модулі, починаючи з кореневого модуля, пропускає опції декораторів через `ModuleNormalizer` і зберігає зібрані нормалізовані метадані у вигляді об'єктів `NormalizedModuleMeta`.
+
+На цьому етапі DI-контейнер застосунку ще не існує. Для framework-level кастомізації `BaseAppOptions.moduleNormalizerFactory` може створити кастомний `ModuleNormalizer`; ця опція експериментальна.
 
 ## Сканування та нормалізація метаданих {#scanning-and-normalization-workflow}
 

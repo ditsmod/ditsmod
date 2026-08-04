@@ -6,6 +6,7 @@ import { rootModule } from '#decorators/root-module.js';
 import { Extension } from '#extension/extension-types.js';
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleManager } from './module-manager.js';
+import { ModuleNormalizer } from './module-normalizer.js';
 import { AllModuleMixins, StaticMixinOptions, MixinDecorator, ModuleMixin } from '#decorators/module-mixins.js';
 import { BaseNormalizedModuleMeta, NormalizedModuleMeta, getProxyForMixinMeta } from '#init/normalized-meta.js';
 import { DynamicModuleOptions, ModRefId } from '#decorators/module-decorator-options.js';
@@ -51,6 +52,23 @@ describe('ModuleManager', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+  });
+
+  describe('constructor()', () => {
+    it('should use ModuleNormalizer passed through constructor', () => {
+      @rootModule()
+      class AppModule {}
+
+      const systemLogMediator = new SystemLogMediator({ moduleName: 'fakeName' });
+      jest.spyOn(systemLogMediator, 'externalModuleDetectionFailed').mockImplementation(() => {});
+      const moduleNormalizer = new ModuleNormalizer();
+      const normalizeSpy = jest.spyOn(moduleNormalizer, 'normalize');
+      const manager = new MockModuleManager(systemLogMediator, moduleNormalizer);
+
+      manager.scanRootModule(AppModule);
+
+      expect(normalizeSpy).toHaveBeenCalledWith(AppModule, new Map(), systemLogMediator);
+    });
   });
 
   describe('scanRootModule()', () => {

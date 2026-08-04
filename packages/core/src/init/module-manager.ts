@@ -1,18 +1,17 @@
-import { SystemLogMediator } from '#logger/system-log-mediator.js';
-import { AnyObj } from '#types/mix.js';
-import { StaticModule, ModRefId } from '#decorators/module-decorator-options.js';
-import { DynamicModule } from '#decorators/module-decorator-options.js';
-import { BaseNormalizedModuleMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
-import { isRootModule } from '#decorators/type-guards.js';
-import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
-import { ModuleNormalizer } from '#init/module-normalizer.js';
-import { AllModuleMixins, ModuleMixin } from '#decorators/module-mixins.js';
-import { ModuleIdNotFound, NormalizationFailure, MissingRootDecorator } from '#errors';
-import { getModule } from '#utils/get-module.js';
-import { injectable } from '#di/decorators.js';
+import type { SystemLogMediator } from '#logger/system-log-mediator.js';
+import type { AnyObj } from '#types/mix.js';
+import type { StaticModule, ModRefId } from '#decorators/module-decorator-options.js';
+import type { DynamicModule } from '#decorators/module-decorator-options.js';
+import type { BaseNormalizedModuleMeta, NormalizedModuleMeta } from '#init/normalized-meta.js';
+import type { AllModuleMixins, ModuleMixin } from '#decorators/module-mixins.js';
 import type { Provider, AnyFn } from '#di/top/types-and-models.js';
 import type { Injector } from '#di/injector.js';
 import { resolveForwardRef, type ForwardRefFn } from '#di/forward-ref.js';
+import { isRootModule } from '#decorators/type-guards.js';
+import { clearDebugClassNames, getDebugClassName } from '#utils/get-debug-class-name.js';
+import { ModuleNormalizer } from '#init/module-normalizer.js';
+import { ModuleIdNotFound, NormalizationFailure, MissingRootDecorator } from '#errors';
+import { getModule } from '#utils/get-module.js';
 
 export type ModulesMap = Map<ModRefId, NormalizedModuleMeta>;
 export type ModulesMapId = Map<string, ModRefId>;
@@ -24,16 +23,14 @@ export type ModuleId = string | ModRefId;
  * Essentially, `ModRefId` is the form in which a module is passed in the `imports` array — that is,
  * either the static module class itself (`StaticModule`) or a dynamic module configuration object (`DynamicModule`).
  *
- * `ModuleManager` also stores module-level DI injectors, manages application-scoped providers, and propagates initialization hooks.
+ * `ModuleManager` also stores module-level DI injectors, manages application-scoped providers, and propagates module mixins.
  */
-@injectable()
 export class ModuleManager {
   protected injectorPerModMap = new Map<ModRefId, Injector>();
   protected map: ModulesMap = new Map();
   protected mapId = new Map<'root' | (string & {}), ModRefId>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected scannedModules = new Set<ModRefId>();
-  protected moduleNormalizer = new ModuleNormalizer();
   protected propsWithModules = [
     'importedStaticModules',
     'importedDynamicModules',
@@ -78,7 +75,10 @@ export class ModuleManager {
     return this.injectorPerModMap;
   }
 
-  constructor(protected systemLogMediator: SystemLogMediator) {}
+  constructor(
+    protected systemLogMediator: SystemLogMediator,
+    protected moduleNormalizer: ModuleNormalizer = new ModuleNormalizer(),
+  ) {}
 
   /**
    * Resets internal scan state and initiates recursive metadata resolution for all imported feature modules in the dependency graph.
@@ -103,10 +103,9 @@ export class ModuleManager {
    *
    * Traverses module dependencies (`imports`, `exports`, and modules discovered via specialized module mixins such as `appends`
    * or `controllers`), builds the module dependency graph (`this.childrenMap`), accumulates global providers into `providersPerApp`,
-   * and executes initialization hooks across the hierarchy.
+   * and processes module mixins across the hierarchy.
    */
   protected scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>, allModuleMixinsMap?: AllModuleMixins) {
-    const isRootScan = this.unfinishedScanModules.size == 0;
     allModuleMixinsMap ??= new Map();
     modRefId = resolveForwardRef(modRefId);
     const normalizedModuleMeta = this.normalizeMeta(modRefId, allModuleMixinsMap);
@@ -132,7 +131,7 @@ export class ModuleManager {
     this.setMeta(modRefId, normalizedModuleMeta);
     normalizedModuleMeta.allModuleMixinsMap.forEach((moduleMixin, decoratorId) => allModuleMixinsMap.set(decoratorId, moduleMixin));
 
-    if (isRootScan) {
+    if (this.unfinishedScanModules.size == 0) {
       this.finalizeRootScan(modRefId);
     }
 

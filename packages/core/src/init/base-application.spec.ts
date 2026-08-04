@@ -2,6 +2,8 @@ import { jest } from '@jest/globals';
 
 import { SystemLogMediator } from '#logger/system-log-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';
+import { MutableModuleManager } from '#init/mutable-module-manager.js';
+import { ModuleNormalizer } from '#init/module-normalizer.js';
 // import { Router } from '#types/router.js';
 import { BaseAppOptions } from '#init/base-app-options.js';
 import { StaticModule } from '#decorators/module-decorator-options.js';
@@ -53,6 +55,31 @@ describe('BaseApplication', () => {
     it('should return instance of ModuleManager', () => {
       expect(mock.scanRootModule(AppModule)).toBeInstanceOf(ModuleManager);
     });
+
+    it('should use a ModuleNormalizer created by moduleNormalizerFactory', () => {
+      const moduleNormalizer = new ModuleNormalizer();
+      const moduleNormalizerFactory = jest.fn(() => moduleNormalizer);
+      const normalizeSpy = jest.spyOn(moduleNormalizer, 'normalize');
+
+      mock.init({ moduleNormalizerFactory });
+      mock.scanRootModule(AppModule);
+
+      expect(moduleNormalizerFactory).toHaveBeenCalledTimes(1);
+      expect(normalizeSpy).toHaveBeenCalledWith(AppModule, new Map(), mock.log);
+    });
+
+    it('should pass a ModuleNormalizer created by moduleNormalizerFactory to MutableModuleManager', () => {
+      const moduleNormalizer = new ModuleNormalizer();
+      const moduleNormalizerFactory = jest.fn(() => moduleNormalizer);
+      const normalizeSpy = jest.spyOn(moduleNormalizer, 'normalize');
+
+      mock.init({ allowRuntimeReinit: true, moduleNormalizerFactory });
+      const moduleManager = mock.scanRootModule(AppModule);
+
+      expect(moduleManager).toBeInstanceOf(MutableModuleManager);
+      expect(moduleNormalizerFactory).toHaveBeenCalledTimes(1);
+      expect(normalizeSpy).toHaveBeenCalledWith(AppModule, new Map(), mock.log);
+    });
   });
 
   describe('bootstrapApplication()', () => {
@@ -63,11 +90,7 @@ describe('BaseApplication', () => {
 
     it('should replace systemLogMediator during call bootstrapApplication()', async () => {
       const moduleManager = mock.scanRootModule(AppModule);
-      const appInitializer = new AppInitializer(
-        new BaseAppOptions(),
-        moduleManager,
-        new SystemLogMediator({ moduleName: '' }),
-      );
+      const appInitializer = new AppInitializer(new BaseAppOptions(), moduleManager, new SystemLogMediator({ moduleName: '' }));
       const { log: systemLogMediator } = mock;
       await mock.bootstrapApplication(appInitializer);
       expect(mock.log !== systemLogMediator).toBe(true);
@@ -107,11 +130,7 @@ describe('BaseApplication', () => {
 
       const app = mock;
       const moduleManager = app.scanRootModule(AppModule);
-      const appInitializer = new AppInitializer(
-        new BaseAppOptions(),
-        moduleManager,
-        new SystemLogMediator({ moduleName: '' }),
-      );
+      const appInitializer = new AppInitializer(new BaseAppOptions(), moduleManager, new SystemLogMediator({ moduleName: '' }));
       await app.bootstrapApplication(appInitializer);
 
       // Instantiate them so they exist in registry
@@ -147,11 +166,7 @@ describe('BaseApplication', () => {
 
       const app = mock;
       const moduleManager = app.scanRootModule(AppModule);
-      const appInitializer = new AppInitializer(
-        new BaseAppOptions(),
-        moduleManager,
-        new SystemLogMediator({ moduleName: '' }),
-      );
+      const appInitializer = new AppInitializer(new BaseAppOptions(), moduleManager, new SystemLogMediator({ moduleName: '' }));
       await app.bootstrapApplication(appInitializer);
 
       await app.close('SIGTERM');
@@ -194,11 +209,7 @@ describe('BaseApplication', () => {
 
       const app = mock;
       const moduleManager = app.scanRootModule(AppModule);
-      const appInitializer = new AppInitializer(
-        new BaseAppOptions(),
-        moduleManager,
-        new SystemLogMediator({ moduleName: '' }),
-      );
+      const appInitializer = new AppInitializer(new BaseAppOptions(), moduleManager, new SystemLogMediator({ moduleName: '' }));
       await app.bootstrapApplication(appInitializer);
 
       (app as any).injectorPerApp!.get(TestServiceBeforeFail);

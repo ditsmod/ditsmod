@@ -6,6 +6,7 @@ import type { AppInitializer } from '#init/app-initializer.js';
 import { LogMediator } from '#logger/log-mediator.js';
 import { ModuleManager } from '#init/module-manager.js';
 import { MutableModuleManager } from '#init/mutable-module-manager.js';
+import { ModuleNormalizer } from '#init/module-normalizer.js';
 import type { Injector } from '#di/injector.js';
 import { SHUTDOWN_SIGNALS } from '#init/hooks.js';
 
@@ -103,10 +104,11 @@ export abstract class BaseApplication {
    * for the root module and all its dependencies.
    */
   protected scanRootModule(appModule: StaticModule) {
+    const moduleNormalizer = this.baseAppOptions.moduleNormalizerFactory?.() ?? new ModuleNormalizer();
     if (this.baseAppOptions.allowRuntimeReinit) {
-      this.moduleManager = new MutableModuleManager(this.log);
+      this.moduleManager = new MutableModuleManager(this.log, moduleNormalizer);
     } else {
-      this.moduleManager = new ModuleManager(this.log);
+      this.moduleManager = new ModuleManager(this.log, moduleNormalizer);
     }
     this.moduleManager.scanRootModule(appModule);
     return this.moduleManager;

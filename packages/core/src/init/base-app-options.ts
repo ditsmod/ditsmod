@@ -1,4 +1,5 @@
 import type { OutputLogLevel } from '#logger/logger.js';
+import type { ModuleNormalizer } from '#init/module-normalizer.js';
 
 /**
  * Configs of logger is not added to the providers array as a separate provider but can be directly
@@ -50,4 +51,12 @@ export class BaseAppOptions {
    * Default - `false` (for faster cold starts).
    */
   allowRuntimeReinit?: boolean = false;
+  /**
+   * @experimental
+   *
+   * Creates a custom {@link ModuleNormalizer} instance for the early module scanning phase.
+   * The application DI container is not available yet when `ModuleManager` is created, so this
+   * factory is the low-level extension point for replacing the default normalizer.
+   */
+  moduleNormalizerFactory?: () => ModuleNormalizer;
 }

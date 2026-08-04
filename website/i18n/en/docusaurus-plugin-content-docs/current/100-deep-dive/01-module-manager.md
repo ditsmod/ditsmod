@@ -2,11 +2,13 @@
 sidebar_position: 1
 ---
 
-# ModuleManager
+# ModuleManager {#module-manager}
 
 The first stage of processing metadata passed to module decorators (such as `@rootModule` or `@featureModule`) occurs within the `ModuleManager` service.
 
 It recursively scans all modules starting from the root module, passes decorator options through `ModuleNormalizer`, and stores the collected normalized metadata as `NormalizedModuleMeta` instances.
+
+At this phase the application DI container does not exist yet. For framework-level customization, `BaseAppOptions.moduleNormalizerFactory` can create a custom `ModuleNormalizer`; this option is experimental.
 
 ## Scanning and Normalization Workflow {#scanning-and-normalization-workflow}
 
