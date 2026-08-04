@@ -12,7 +12,7 @@ import type { rootModule } from '#decorators/root-module.js';
 import type { featureModule } from '#decorators/feature-module.js';
 import type { ShallowModulesImporter } from '#init/shallow-modules-importer.js';
 
-export type AllModuleMixins = Map<AnyFn, Omit<ModuleMixin, 'moduleOptions'>>;
+export type AllModuleMixins = Map<MixinDecorator<any, any, any>, Omit<ModuleMixin, 'moduleOptions'>>;
 
 /**
  * A base class for creating module mixins. They carry metadata attached by corresponding decorators
