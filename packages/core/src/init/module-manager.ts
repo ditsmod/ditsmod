@@ -89,6 +89,7 @@ export class ModuleManager {
     this.providersPerApp = [];
     this.childrenMap.clear();
     const normalizedModuleMeta = this.scanModule(appModule);
+    this.finalizeRootScan(appModule);
     this.injectorPerModMap.clear();
     this.unfinishedScanModules.clear();
     this.scannedModules.clear();
@@ -129,10 +130,6 @@ export class ModuleManager {
     this.accumulateProvidersPerApp(normalizedModuleMeta);
     this.setNormalizedModuleMeta(modRefId, normalizedModuleMeta);
 
-    if (this.unfinishedScanModules.size == 0) {
-      this.finalizeRootScan(modRefId);
-    }
-
     return normalizedModuleMeta;
   }
 
@@ -161,16 +158,16 @@ export class ModuleManager {
     this.providersPerApp.push(...providersPerApp);
   }
 
+  protected setNormalizedModuleMeta(modRefId: ModRefId, normalizedModuleMeta: NormalizedModuleMeta) {
+    this.map.set(modRefId, normalizedModuleMeta);
+  }
+
   protected finalizeRootScan(modRefId: ModRefId) {
     this.applyHostMixinOptions();
     const rootModule = this.mapId.get('root') || resolveForwardRef(modRefId);
     this.propagateMixinsTopDown(rootModule);
     this.accumulateMixinsBottomUp(rootModule);
     this.checkEmptyMetaForAllModules();
-  }
-
-  protected setNormalizedModuleMeta(modRefId: ModRefId, normalizedModuleMeta: NormalizedModuleMeta) {
-    this.map.set(modRefId, normalizedModuleMeta);
   }
 
   /**

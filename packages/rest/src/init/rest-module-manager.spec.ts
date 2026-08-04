@@ -42,7 +42,9 @@ describe('ModuleManager', () => {
     declare mapId: Map<string, ModRefId>;
 
     override scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>) {
-      return super.scanModule(modRefId);
+      const meta = super.scanModule(modRefId);
+      this.finalizeRootScan(meta.modRefId);
+      return meta;
     }
   }
 
