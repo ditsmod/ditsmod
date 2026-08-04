@@ -127,8 +127,7 @@ export class ModuleManager {
     this.applyMissingModuleMixins(normalizedModuleMeta);
     this.registerModuleId(normalizedModuleMeta, modRefId);
     this.accumulateProvidersPerApp(normalizedModuleMeta);
-
-    this.setMeta(modRefId, normalizedModuleMeta);
+    this.setNormalizedModuleMeta(modRefId, normalizedModuleMeta);
     normalizedModuleMeta.allModuleMixinsMap.forEach((moduleMixin, decoratorId) => allModuleMixinsMap.set(decoratorId, moduleMixin));
 
     if (this.unfinishedScanModules.size == 0) {
@@ -188,7 +187,7 @@ export class ModuleManager {
     this.checkEmptyMetaForAllModules();
   }
 
-  protected setMeta(modRefId: ModRefId, normalizedModuleMeta: NormalizedModuleMeta) {
+  protected setNormalizedModuleMeta(modRefId: ModRefId, normalizedModuleMeta: NormalizedModuleMeta) {
     this.map.set(modRefId, normalizedModuleMeta);
   }
 

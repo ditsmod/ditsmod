@@ -52,7 +52,7 @@ export class MutableModuleManager extends ModuleManager {
     return meta;
   }
 
-  protected override setMeta(modRefId: ModRefId, normalizedModuleMeta: NormalizedModuleMeta) {
+  protected override setNormalizedModuleMeta(modRefId: ModRefId, normalizedModuleMeta: NormalizedModuleMeta) {
     if (this.oldState) {
       this.state.snapshotMap.set(modRefId, normalizedModuleMeta);
     } else {
