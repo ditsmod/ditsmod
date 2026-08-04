@@ -368,10 +368,10 @@ export class ModuleNormalizer {
     });
   }
 
-  applyHostMixinOptions(normalizedModuleMeta: NormalizedModuleMeta, decorator: AnyFn, moduleMixin: ModuleMixin) {
+  applyHostMixinOptions(normalizedModuleMeta: NormalizedModuleMeta, decoratorId: AnyFn, moduleMixin: ModuleMixin) {
     this.normalizedModuleMeta = normalizedModuleMeta;
-    this.fetchMixinOptions(decorator, moduleMixin.moduleOptions);
-    this.callModuleMixin(decorator, moduleMixin);
+    this.fetchMixinOptions(decoratorId, moduleMixin.moduleOptions);
+    this.callModuleMixin(decoratorId, moduleMixin);
   }
 
   /**
@@ -394,19 +394,19 @@ export class ModuleNormalizer {
    * normalizes the mixin, and backfills `moduleMixinMap` (needed for `quickCheckMeta`
    * and `applyMissingModuleMixins`).
    */
-  protected registerAndCallModuleMixin(decorator: AnyFn, moduleMixin: ModuleMixin): void {
-    this.normalizedModuleMeta.allModuleMixinsMap.set(decorator, moduleMixin);
+  protected registerAndCallModuleMixin(decoratorId: AnyFn, moduleMixin: ModuleMixin): void {
+    this.normalizedModuleMeta.allModuleMixinsMap.set(decoratorId, moduleMixin);
     this.ensureHostModuleImported(moduleMixin);
-    this.callModuleMixin(decorator, moduleMixin);
-    this.normalizedModuleMeta.moduleMixinMap.set(decorator, moduleMixin);
+    this.callModuleMixin(decoratorId, moduleMixin);
+    this.normalizedModuleMeta.moduleMixinMap.set(decoratorId, moduleMixin);
   }
 
   protected callModuleMixinFromCurrentModule() {
-    this.normalizedModuleMeta.moduleMixinMap.forEach((moduleMixin, decorator) => {
-      this.normalizedModuleMeta.allModuleMixinsMap.set(decorator, moduleMixin);
+    this.normalizedModuleMeta.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
+      this.normalizedModuleMeta.allModuleMixinsMap.set(decoratorId, moduleMixin);
       this.ensureHostModuleImported(moduleMixin);
-      this.fetchMixinOptions(decorator, moduleMixin.moduleOptions);
-      this.callModuleMixin(decorator, moduleMixin);
+      this.fetchMixinOptions(decoratorId, moduleMixin.moduleOptions);
+      this.callModuleMixin(decoratorId, moduleMixin);
     });
   }
 
@@ -434,10 +434,10 @@ export class AppModule {}
    * this method adds the corresponding module mixin so that the import of the dynamic `Module1` can be properly handled.
    */
   protected addModuleMixinForImportedDynamicModule(allModuleMixinsMap: AllModuleMixins) {
-    (this.normalizedModuleMeta.modRefId as DynamicModule).mixinOptions?.forEach((params, decorator) => {
-      if (!this.normalizedModuleMeta.moduleMixinMap.has(decorator)) {
-        const newModuleMixin = allModuleMixinsMap.get(decorator)!.clone();
-        this.registerAndCallModuleMixin(decorator, newModuleMixin);
+    (this.normalizedModuleMeta.modRefId as DynamicModule).mixinOptions?.forEach((params, decoratorId) => {
+      if (!this.normalizedModuleMeta.moduleMixinMap.has(decoratorId)) {
+        const newModuleMixin = allModuleMixinsMap.get(decoratorId)!.clone();
+        this.registerAndCallModuleMixin(decoratorId, newModuleMixin);
       }
     });
   }
@@ -463,25 +463,25 @@ export class AppModule {}
     }) as Exclude<T, ForwardRefFn>[];
   }
 
-  protected fetchMixinOptions(decorator: AnyFn, mixinOptions: StaticMixinOptions) {
-    this.fetchMixinImports(decorator, mixinOptions);
+  protected fetchMixinOptions(decoratorId: AnyFn, mixinOptions: StaticMixinOptions) {
+    this.fetchMixinImports(decoratorId, mixinOptions);
     this.fetchMixinExports(mixinOptions);
     this.normalizeExtensions(mixinOptions);
     this.normalizeProvidersAndResolvedCollisions(mixinOptions);
     this.normalizeExports(mixinOptions, 'Static exports');
   }
 
-  protected fetchMixinImports(decorator: AnyFn, mixinOptions: StaticMixinOptions) {
+  protected fetchMixinImports(decoratorId: AnyFn, mixinOptions: StaticMixinOptions) {
     if (mixinOptions.imports) {
       this.resolveAllForwardRefs(mixinOptions.imports).forEach((imp) => {
         if (isDynamicModule(imp)) {
           const params = { ...imp };
-          this.mergeMixinDynamicOptions(decorator, params, imp);
+          this.mergeMixinDynamicOptions(decoratorId, params, imp);
         } else if (isDynamicModuleWrapper(imp)) {
           const params = { ...imp } as { dynamicModule?: DynamicModule };
           this.mergeObjects(params, imp.dynamicModule);
           delete params.dynamicModule;
-          this.mergeMixinDynamicOptions(decorator, params, imp.dynamicModule);
+          this.mergeMixinDynamicOptions(decoratorId, params, imp.dynamicModule);
         } else {
           if (!this.normalizedModuleMeta.importedStaticModules.includes(imp)) {
             this.normalizedModuleMeta.importedStaticModules.push(imp);
@@ -491,15 +491,15 @@ export class AppModule {}
     }
   }
 
-  protected mergeMixinDynamicOptions(decorator: AnyFn, params: AnyObj, dynamicModule: DynamicModule) {
+  protected mergeMixinDynamicOptions(decoratorId: AnyFn, params: AnyObj, dynamicModule: DynamicModule) {
     delete params.module;
     delete params.mixinOptions;
     dynamicModule.mixinOptions ??= new Map();
-    if (dynamicModule.mixinOptions.has(decorator)) {
-      const existingParams = dynamicModule.mixinOptions.get(decorator)!;
-      dynamicModule.mixinOptions.set(decorator, this.mergeObjects(params, existingParams));
+    if (dynamicModule.mixinOptions.has(decoratorId)) {
+      const existingParams = dynamicModule.mixinOptions.get(decoratorId)!;
+      dynamicModule.mixinOptions.set(decoratorId, this.mergeObjects(params, existingParams));
     } else {
-      dynamicModule.mixinOptions.set(decorator, params);
+      dynamicModule.mixinOptions.set(decoratorId, params);
     }
     if (!this.normalizedModuleMeta.importedDynamicModules.includes(dynamicModule)) {
       this.normalizedModuleMeta.importedDynamicModules.push(dynamicModule);
@@ -545,10 +545,10 @@ export class AppModule {}
     }
   }
 
-  protected callModuleMixin(decorator: AnyFn, moduleMixin: ModuleMixin) {
+  protected callModuleMixin(decoratorId: AnyFn, moduleMixin: ModuleMixin) {
     const meta = moduleMixin.normalize(this.normalizedModuleMeta);
     if (meta) {
-      this.normalizedModuleMeta.normalizedMixinMetaMap.set(decorator, meta);
+      this.normalizedModuleMeta.normalizedMixinMetaMap.set(decoratorId, meta);
     }
   }
 
@@ -566,9 +566,9 @@ export class AppModule {}
     if (!inheritsContext || this.normalizedModuleMeta.moduleMixinMap.size > 0) {
       return;
     }
-    allModuleMixinsMap.forEach((moduleMixin, decorator) => {
+    allModuleMixinsMap.forEach((moduleMixin, decoratorId) => {
       const newModuleMixin = moduleMixin.clone();
-      this.registerAndCallModuleMixin(decorator, newModuleMixin);
+      this.registerAndCallModuleMixin(decoratorId, newModuleMixin);
     });
   }
 
