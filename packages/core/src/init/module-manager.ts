@@ -124,7 +124,7 @@ export class ModuleManager {
       this.scannedModules.add(child);
     }
 
-    this.callModuleMixinAfterScan(normalizedModuleMeta);
+    this.applyMissingModuleMixins(normalizedModuleMeta);
     this.registerModuleId(normalizedModuleMeta, modRefId);
     this.accumulateProvidersPerApp(normalizedModuleMeta);
 
@@ -158,7 +158,7 @@ export class ModuleManager {
    * executed for the current module. The result of executing these module mixins is objects with initialized
    * properties, into which relevant metadata (such as controllers or appended routes) can later be imported.
    */
-  protected callModuleMixinAfterScan(normalizedModuleMeta: NormalizedModuleMeta) {
+  protected applyMissingModuleMixins(normalizedModuleMeta: NormalizedModuleMeta) {
     normalizedModuleMeta.allModuleMixinsMap.forEach((moduleMixin, decoratorId) => {
       if (!normalizedModuleMeta.moduleMixinMap.has(decoratorId)) {
         const meta = moduleMixin.clone().normalize(normalizedModuleMeta);

@@ -392,7 +392,7 @@ export class ModuleNormalizer {
   /**
    * Registers a module mixin into `allModuleMixinsMap`, ensures the host module is imported,
    * normalizes the mixin, and backfills `moduleMixinMap` (needed for `quickCheckMeta`
-   * and `callModuleMixinAfterScan`).
+   * and `applyMissingModuleMixins`).
    */
   protected registerAndCallModuleMixin(decorator: AnyFn, moduleMixin: ModuleMixin): void {
     this.normalizedModuleMeta.allModuleMixinsMap.set(decorator, moduleMixin);
