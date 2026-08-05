@@ -68,7 +68,7 @@ export class FeatureModuleOptions<T extends AnyObj = AnyObj> {
    * Whether this module inherits module mixins / context (like REST or tRPC) from parent modules.
    * By default, it is true for local modules and false for external modules.
    */
-  declare inheritsContext?: boolean;
+  declare inheritsMixins?: boolean;
 }
 
 /**

@@ -613,7 +613,7 @@ describe('ModuleManager', () => {
       expect(mod1.importedStaticModules.includes(HostModule1Local)).toBe(true);
     });
 
-    it('should not propagate context hooks when inheritsContext is false for static Module1', () => {
+    it('should not propagate context hooks when inheritsMixins is false for static Module1', () => {
       interface MyDynamicOptions extends DynamicModuleOptions {
         path?: string;
       }
@@ -639,7 +639,7 @@ describe('ModuleManager', () => {
       );
 
       @featureModule({
-        inheritsContext: false,
+        inheritsMixins: false,
         providersPerApp: [{ token: 'token1', useValue: 'value1' }],
       })
       class Module1 {}

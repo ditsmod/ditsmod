@@ -152,8 +152,8 @@ export class ModuleNormalizer {
       this.systemLogMediator.externalModuleDetectionFailed(this);
     }
 
-    if (staticModuleOptions.inheritsContext !== undefined) {
-      this.normalizedModuleMeta.inheritsContext = staticModuleOptions.inheritsContext;
+    if (staticModuleOptions.inheritsMixins !== undefined) {
+      this.normalizedModuleMeta.inheritsMixins = staticModuleOptions.inheritsMixins;
     }
   }
 

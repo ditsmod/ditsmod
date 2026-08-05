@@ -171,9 +171,11 @@ export class NormalizedModuleMeta<
    */
   isExternal?: boolean;
   /**
-   * Indicates whether this module inherits context/module mixins from parent modules.
+   * @experimental
+   *
+   * Indicates whether this module inherits mixins from parent modules.
    */
-  inheritsContext?: boolean;
+  inheritsMixins?: boolean;
   /**
    * Contains instances of `ModuleMixin` collected from module mixin decorators.
    */

@@ -992,12 +992,12 @@ describe('ModuleNormalizer', () => {
       expect(externalModuleNormalizer.normalize(DitsmodModule).isExternal).toBe(true);
     });
 
-    it('sets inheritsContext from moduleOptions when explicitly specified', () => {
-      @featureModule({ inheritsContext: false, providersPerApp: [{ token: 'tok', useValue: 1 }] })
+    it('sets inheritsMixins from moduleOptions when explicitly specified', () => {
+      @featureModule({ inheritsMixins: false, providersPerApp: [{ token: 'tok', useValue: 1 }] })
       class Module1 {}
 
       const normalizedModuleMeta = normalizer.normalize(Module1);
-      expect(normalizedModuleMeta.inheritsContext).toBe(false);
+      expect(normalizedModuleMeta.inheritsMixins).toBe(false);
     });
   });
 });

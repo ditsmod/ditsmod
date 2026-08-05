@@ -350,11 +350,11 @@ export class ModuleManager {
 
   /**
    * For modules without any own mixin decorators, inherits all mixins from the parent.
-   * Respects `inheritsContext` and `isExternal` flags.
+   * Respects `inheritsMixins` and `isExternal` flags.
    */
   protected inheritParentMixins(meta: NormalizedModuleMeta, parentMixins: AllModuleMixins) {
-    const inheritsContext = meta.inheritsContext ?? !meta.isExternal;
-    if (!inheritsContext || meta.moduleMixinMap.size > 0) {
+    const inheritsMixins = meta.inheritsMixins ?? !meta.isExternal;
+    if (!inheritsMixins || meta.moduleMixinMap.size > 0) {
       return;
     }
     parentMixins.forEach((mixin, decoratorId) => {
