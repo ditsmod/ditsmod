@@ -90,7 +90,7 @@ ditsmod start
 dm start
 ```
 
-The `@ditsmod/cli` utility automatically handles incremental TypeScript compilation and restarts the Node.js server whenever source files are changed, eliminating the need to run separate compiler and server terminals.
+The `@ditsmod/cli` utility automatically handles incremental TypeScript compilation and restarts the Ditsmod application whenever source files are changed, eliminating the need to run separate compiler and server terminals.
 
 You can customize the startup behavior using options:
 
@@ -115,8 +115,8 @@ Note that there are four config files for TypeScript in the `ditsmod/rest-starte
 
 - `tsconfig.json` - the basic configuration used by your IDE (in most cases it is probably VS Code).
 - `tsconfig.build.json` - this configuration is used to compile the code from the `src` directory to the `dist` directory, it is intended for application code.
-- `tsconfig.e2e.json` - this configuration is used to compile end-to-end tests.
 - `tsconfig.unit.json` - this configuration is used to compile unit tests.
+- `tsconfig.e2e.json` - this configuration is used to compile end-to-end tests.
 
 Also, note that since `ditsmod/rest-starter` is declared as an EcmaScript Module (ESM), you can use [native Node.js aliases][18] to shorten file paths. This is analogous to `compilerOptions.paths` in `tsconfig`. Such aliases are declared in `package.json` in the `imports` field:
 
