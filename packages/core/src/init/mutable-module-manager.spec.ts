@@ -46,8 +46,8 @@ describe('ModuleManager', () => {
 
   class MockModuleManager extends MutableModuleManager {
     declare systemLogMediator: SystemLogMediator;
-    declare map: Map<ModRefId, NormalizedModuleMeta>;
-    declare mapId: Map<string, ModRefId>;
+    declare normalizedMetaMap: Map<ModRefId, NormalizedModuleMeta>;
+    declare moduleIdMap: Map<string, ModRefId>;
     declare state: ModuleGraphState;
     declare oldState: ModuleGraphState | undefined;
 
@@ -145,16 +145,16 @@ describe('ModuleManager', () => {
       const expectedMeta1 = getExpectedMeta1();
 
       mock.scanRootModule(AppModule);
-      expect(mock.map.size).toBe(1);
+      expect(mock.normalizedMetaMap.size).toBe(1);
       expect(mock.getNormalizedModuleMeta('root')).not.toBe(mock.getNormalizedModuleMetaFromSnapshot('root'));
       expect(mock.getNormalizedModuleMeta('root')).toBe(mock.getNormalizedModuleMeta('root'));
       expect(mock.getNormalizedModuleMeta('root')).toEqual(expectedMeta1);
 
       expect(mock.addImport(Module1)).toBe(true);
       expect(mock.state.snapshotMap.size).toBe(2);
-      expect(mock.map.size).toBe(1);
+      expect(mock.normalizedMetaMap.size).toBe(1);
       expect(mock.state.snapshotMap.has(Module1)).toBe(true);
-      expect(mock.map.has(Module1)).toBe(false);
+      expect(mock.normalizedMetaMap.has(Module1)).toBe(false);
       expect(mock.oldState?.snapshotMapId.size).toBe(1);
       expect(mock.oldState?.snapshotMapId.get('root')).toBe(AppModule);
       expect(mock.oldState?.snapshotMap.size).toBe(1);
@@ -168,9 +168,9 @@ describe('ModuleManager', () => {
 
       mock.reset();
       expect(mock.oldState).toBeUndefined();
-      expect(mock.map.size).toBe(2);
-      expect(mock.map.has(AppModule)).toBe(true);
-      expect(mock.map.has(Module1)).toBe(true);
+      expect(mock.normalizedMetaMap.size).toBe(2);
+      expect(mock.normalizedMetaMap.has(AppModule)).toBe(true);
+      expect(mock.normalizedMetaMap.has(Module1)).toBe(true);
     });
 
     it('should return false when trying to add an already imported module', () => {
@@ -234,7 +234,7 @@ describe('ModuleManager', () => {
 
       mock.addImport(module3WithProviders);
       expect(mock.state.snapshotMap.size).toBe(3);
-      expect(mock.map.size).toBe(2);
+      expect(mock.normalizedMetaMap.size).toBe(2);
       expect(mock.getNormalizedModuleMetaFromSnapshot('root')).toEqual({
         ...expectedMeta3,
         importedDynamicModules: [module3WithProviders],
@@ -242,7 +242,7 @@ describe('ModuleManager', () => {
 
       mock.rollback();
       expect(mock.state.snapshotMap.size).toBe(2);
-      expect(mock.map.size).toBe(2);
+      expect(mock.normalizedMetaMap.size).toBe(2);
       expect(mock.getNormalizedModuleMetaFromSnapshot('root')).toEqual(expectedMeta3);
       expect(mock.getNormalizedModuleMeta('root')).toEqual(expectedMeta3);
     });
@@ -310,29 +310,29 @@ describe('ModuleManager', () => {
     it('should remove a module from imports and update maps/snapshots correctly', () => {
       mock.scanRootModule(AppModule);
       expect(mock.state.snapshotMap.size).toBe(6);
-      expect(mock.map.size).toBe(6);
+      expect(mock.normalizedMetaMap.size).toBe(6);
       expect(mock.getNormalizedModuleMeta('root')).toEqual(getExpectedMeta1());
 
       expect(mock.removeImport(Module0, Module1)).toBe(true);
       expect(mock.state.snapshotMap.get(Module1)?.importedStaticModules).toEqual([]);
-      expect(mock.map.get(Module1)?.importedStaticModules).toEqual([Module0]);
+      expect(mock.normalizedMetaMap.get(Module1)?.importedStaticModules).toEqual([Module0]);
 
       expect(mock.removeImport(Module0, Module2)).toBe(true);
       expect(mock.state.snapshotMap.get(Module2)?.importedStaticModules).toEqual([]);
-      expect(mock.map.get(Module2)?.importedStaticModules).toEqual([Module0]);
+      expect(mock.normalizedMetaMap.get(Module2)?.importedStaticModules).toEqual([Module0]);
       expect(mock.state.snapshotMap.size).toBe(5);
-      expect(mock.map.size).toBe(6);
+      expect(mock.normalizedMetaMap.size).toBe(6);
 
       mock.commit();
       mock.reset();
       expect(mock.state.snapshotMap.size).toBe(5);
-      expect(mock.map.size).toBe(5);
+      expect(mock.normalizedMetaMap.size).toBe(5);
 
       expect(mock.removeImport(Module2)).toBe(true);
       expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importedStaticModules).toEqual([Module1]);
       expect(mock.getNormalizedModuleMeta('root')?.importedStaticModules).toEqual([Module1, Module2]);
       expect(mock.state.snapshotMap.size).toBe(4);
-      expect(mock.map.size).toBe(5);
+      expect(mock.normalizedMetaMap.size).toBe(5);
 
       expect(mock.removeImport(module3WithProviders)).toBe(true);
       expect(mock.getNormalizedModuleMetaFromSnapshot('root')?.importedDynamicModules).toEqual([module4WithProviders]);
@@ -371,7 +371,7 @@ describe('ModuleManager', () => {
 
       mock.rollback();
       expect(mock.state.snapshotMap.size).toBe(6);
-      expect(mock.map.size).toBe(6);
+      expect(mock.normalizedMetaMap.size).toBe(6);
       expect(mock.getNormalizedModuleMeta('root')).toEqual(getExpectedMeta1());
     });
   });

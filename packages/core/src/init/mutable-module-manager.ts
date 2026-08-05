@@ -56,7 +56,7 @@ export class MutableModuleManager extends ModuleManager {
     if (this.oldState) {
       this.state.snapshotMap.set(modRefId, normalizedModuleMeta);
     } else {
-      this.map.set(modRefId, normalizedModuleMeta);
+      this.normalizedMetaMap.set(modRefId, normalizedModuleMeta);
     }
   }
 
@@ -180,11 +180,11 @@ export class MutableModuleManager extends ModuleManager {
    * @experimental The mutability of the module graph is an experimental feature.
    */
   reset() {
-    this.map = new Map();
+    this.normalizedMetaMap = new Map();
     this.state.snapshotMap.forEach((normalizedModuleMeta, key) =>
-      this.map.set(key, this.copyNormalizedModuleMeta(normalizedModuleMeta)),
+      this.normalizedMetaMap.set(key, this.copyNormalizedModuleMeta(normalizedModuleMeta)),
     );
-    this.mapId = new Map(this.state.snapshotMapId);
+    this.moduleIdMap = new Map(this.state.snapshotMapId);
     return this;
   }
 
@@ -248,15 +248,15 @@ export class MutableModuleManager extends ModuleManager {
     if (this.state.snapshotMap.size) {
       throw new ForbiddenSavingSnapshot();
     } else {
-      this.map.forEach((normalizedModuleMeta, modRefId) =>
+      this.normalizedMetaMap.forEach((normalizedModuleMeta, modRefId) =>
         this.state.snapshotMap.set(modRefId, this.copyNormalizedModuleMeta(normalizedModuleMeta)),
       );
-      this.state.snapshotMapId = new Map(this.mapId);
+      this.state.snapshotMapId = new Map(this.moduleIdMap);
     }
   }
 
   protected override propagateMixinsTopDown(startModule: ModRefId, parentMixins?: Map<any, any>, visited?: Set<ModRefId>) {
-    // Override to fallback to snapshotMap if not in map
+    // Override to fallback to snapshotMap if not in normalizedMetaMap
     if (!visited) {
       visited = new Set<ModRefId>();
     }
@@ -268,7 +268,7 @@ export class MutableModuleManager extends ModuleManager {
     }
     visited.add(startModule);
 
-    const meta = this.map.get(startModule) || this.state.snapshotMap.get(startModule);
+    const meta = this.normalizedMetaMap.get(startModule) || this.state.snapshotMap.get(startModule);
     if (!meta) {
       return;
     }
@@ -302,7 +302,7 @@ export class MutableModuleManager extends ModuleManager {
     }
     visited.add(startModule);
 
-    const meta = this.map.get(startModule) || this.state.snapshotMap.get(startModule);
+    const meta = this.normalizedMetaMap.get(startModule) || this.state.snapshotMap.get(startModule);
     if (!meta) {
       return;
     }
@@ -314,7 +314,7 @@ export class MutableModuleManager extends ModuleManager {
       }
 
       for (const child of children) {
-        const childMeta = this.map.get(child) || this.state.snapshotMap.get(child);
+        const childMeta = this.normalizedMetaMap.get(child) || this.state.snapshotMap.get(child);
         childMeta?.allModuleMixinsMap.forEach((mixin, decoratorId) => {
           if (!meta.allModuleMixinsMap.has(decoratorId)) {
             meta.allModuleMixinsMap.set(decoratorId, mixin);

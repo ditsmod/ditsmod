@@ -29,8 +29,8 @@ describe('ModuleManager', () => {
 
   class MockModuleManager extends ModuleManager {
     declare systemLogMediator: SystemLogMediator;
-    declare map: Map<ModRefId, NormalizedModuleMeta>;
-    declare mapId: Map<string, ModRefId>;
+    declare normalizedMetaMap: Map<ModRefId, NormalizedModuleMeta>;
+    declare moduleIdMap: Map<string, ModRefId>;
 
     override normalizeMeta(modRefId: ModRefId): NormalizedModuleMeta {
       return super.normalizeMeta(modRefId);
@@ -251,7 +251,7 @@ describe('ModuleManager', () => {
       expect(mock.getInjectorPerMod('root')).toBeUndefined();
     });
 
-    it('should throw ModuleIdNotFound on setInjectorPerMod if target module string ID is not found in mapId', () => {
+    it('should throw ModuleIdNotFound on setInjectorPerMod if target module string ID is not found in moduleIdMap', () => {
       mock.scanRootModule(AppModule);
       const fakeInjector = {} as any;
       expect(() => mock.setInjectorPerMod('non-existent', fakeInjector)).toThrow(new ModuleIdNotFound('non-existent'));

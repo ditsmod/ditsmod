@@ -38,8 +38,8 @@ describe('ModuleManager', () => {
   type ModuleId = string | ModRefId;
 
   class MockModuleManager extends ModuleManager {
-    declare map: Map<ModRefId, NormalizedModuleMeta>;
-    declare mapId: Map<string, ModRefId>;
+    declare normalizedMetaMap: Map<ModRefId, NormalizedModuleMeta>;
+    declare moduleIdMap: Map<string, ModRefId>;
 
     override scanModule(modRefId: ModRefId | ForwardRefFn<ModRefId>) {
       const meta = super.scanModule(modRefId);
@@ -151,8 +151,8 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     mock.scanRootModule(AppModule);
-    const rootNormalizedModuleMeta = mock.map.get(AppModule);
-    const normalizedModuleMeta1 = mock.map.get(Module1);
+    const rootNormalizedModuleMeta = mock.normalizedMetaMap.get(AppModule);
+    const normalizedModuleMeta1 = mock.normalizedMetaMap.get(Module1);
 
     expect(normalizedModuleMeta1?.providersPerApp).toEqual([Service1, Service3]);
     expect(normalizedModuleMeta1?.providersPerMod.includes(Service2)).toBeTruthy();
@@ -177,8 +177,8 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     mock.scanRootModule(AppModule);
-    expect(mock.map.size).toBe(1);
-    expect(mock.map.get(AppModule)).toBeDefined();
+    expect(mock.normalizedMetaMap.size).toBe(1);
+    expect(mock.normalizedMetaMap.get(AppModule)).toBeDefined();
   });
 
   it('empty root module with mixinRest decorator', () => {
@@ -186,9 +186,9 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     mock.scanRootModule(AppModule);
-    expect(mock.map.size).toBe(3);
-    expect(mock.map.get(AppModule)).toBeDefined();
-    expect(mock.map.get(RestModule)).toBeDefined();
+    expect(mock.normalizedMetaMap.size).toBe(3);
+    expect(mock.normalizedMetaMap.get(AppModule)).toBeDefined();
+    expect(mock.normalizedMetaMap.get(RestModule)).toBeDefined();
   });
 
   it('non properly exports from root module', () => {
@@ -210,7 +210,7 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     mock.scanRootModule(AppModule);
-    expect(mock.map.size).toBe(3);
+    expect(mock.normalizedMetaMap.size).toBe(3);
     expect(getMixinMeta('root')?.providersPerReq).toEqual([Provider1]);
   });
 
@@ -408,15 +408,15 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     mock.scanRootModule(AppModule);
-    expect(mock.map.size).toBe(6);
+    expect(mock.normalizedMetaMap.size).toBe(6);
     expect(getMixinMeta(Module1)?.controllers).toEqual([Controller1]);
 
-    expect(mock.map.get(Module2)?.normalizedMixinMetaMap.get(mixinRest)?.providersPerRou).toEqual([Provider1]);
-    expect(mock.map.get(Module2)?.normalizedMixinMetaMap.get(mixinRest)?.exportedProvidersPerRou).toEqual([Provider1]);
+    expect(mock.normalizedMetaMap.get(Module2)?.normalizedMixinMetaMap.get(mixinRest)?.providersPerRou).toEqual([Provider1]);
+    expect(mock.normalizedMetaMap.get(Module2)?.normalizedMixinMetaMap.get(mixinRest)?.exportedProvidersPerRou).toEqual([Provider1]);
 
     expect(getMixinMeta('root')?.importedStaticModules).toEqual([Module1, Module2, RestModule]);
 
-    const mixinMeta = mock.map.get(module4WithOpts)?.normalizedMixinMetaMap.get(mixinRest);
+    const mixinMeta = mock.normalizedMetaMap.get(module4WithOpts)?.normalizedMixinMetaMap.get(mixinRest);
     expect(mixinMeta?.importedStaticModules).toEqual([RestModule]);
   });
 
@@ -465,7 +465,7 @@ describe('ModuleManager', () => {
     class AppModule {}
 
     mock.scanRootModule(AppModule);
-    expect(mock.map.size).toBe(5);
+    expect(mock.normalizedMetaMap.size).toBe(5);
     expect(getMixinMeta(dynamicModule)?.params.guards).toMatchObject([{ guard: Guard1 }]);
     expect(getMixinMeta(appendsWithOpts)?.params.guards).toMatchObject([{ guard: Guard2 }]);
   });

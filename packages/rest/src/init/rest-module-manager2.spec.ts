@@ -17,8 +17,8 @@ import { mixinRest, restRootModule } from '#decorators/rest-module-mixins.js';
 let mock: MockModuleManager;
 
 class MockModuleManager extends ModuleManager {
-  declare map: Map<ModRefId, NormalizedModuleMeta>;
-  declare mapId: Map<string, ModRefId>;
+  declare normalizedMetaMap: Map<ModRefId, NormalizedModuleMeta>;
+  declare moduleIdMap: Map<string, ModRefId>;
 }
 
 beforeEach(() => {
@@ -76,7 +76,7 @@ it('imports and appends with gruards for some modules', () => {
   mock.scanRootModule(AppModule);
   const mixinMeta1 = mock.getNormalizedModuleMeta(dynamicModule)?.normalizedMixinMetaMap.get(mixinRest)?.params;
   const mixinMeta2 = mock.getNormalizedModuleMeta(appendsWithOpts)?.normalizedMixinMetaMap.get(mixinRest)?.params;
-  expect(mock.map.size).toBe(5);
+  expect(mock.normalizedMetaMap.size).toBe(5);
   expect(mixinMeta1).toMatchObject({ guards: [{ guard: Guard1 }], path: 'module1' });
   expect(mixinMeta2).toMatchObject({ guards: [{ guard: Guard2 }], path: 'module2' });
 });

@@ -26,8 +26,8 @@ export type ModuleId = string | ModRefId;
  */
 export class ModuleManager {
   protected injectorPerModMap = new Map<ModRefId, Injector>();
-  protected map: ModulesMap = new Map();
-  protected mapId = new Map<'root' | (string & {}), ModRefId>();
+  protected normalizedMetaMap: ModulesMap = new Map();
+  protected moduleIdMap = new Map<'root' | (string & {}), ModRefId>();
   protected unfinishedScanModules = new Set<ModRefId>();
   protected scannedModules = new Set<ModRefId>();
   protected propsWithModules = [
@@ -64,7 +64,7 @@ export class ModuleManager {
    * Returns the active mapping between module reference IDs (`ModRefId`) and their {@link NormalizedModuleMeta}.
    */
   get modulesMap(): ReadonlyMap<ModRefId, NormalizedModuleMeta> {
-    return this.map;
+    return this.normalizedMetaMap;
   }
 
   /**
@@ -94,7 +94,7 @@ export class ModuleManager {
     this.unfinishedScanModules.clear();
     this.scannedModules.clear();
     clearDebugClassNames();
-    this.mapId.set('root', appModule);
+    this.moduleIdMap.set('root', appModule);
     return normalizedModuleMeta;
   }
 
@@ -148,7 +148,7 @@ export class ModuleManager {
 
   protected registerModuleId(normalizedModuleMeta: NormalizedModuleMeta, modRefId: ModRefId) {
     if (normalizedModuleMeta.id) {
-      this.mapId.set(normalizedModuleMeta.id, modRefId);
+      this.moduleIdMap.set(normalizedModuleMeta.id, modRefId);
       this.systemLogMediator.moduleHasId(this, normalizedModuleMeta.id);
     }
   }
@@ -159,19 +159,19 @@ export class ModuleManager {
   }
 
   protected setNormalizedModuleMeta(modRefId: ModRefId, normalizedModuleMeta: NormalizedModuleMeta) {
-    this.map.set(modRefId, normalizedModuleMeta);
+    this.normalizedMetaMap.set(modRefId, normalizedModuleMeta);
   }
 
   protected finalizeRootScan(modRefId: ModRefId) {
     this.applyHostMixinOptions();
-    const rootModule = this.mapId.get('root') || resolveForwardRef(modRefId);
+    const rootModule = this.moduleIdMap.get('root') || resolveForwardRef(modRefId);
     this.propagateMixinsTopDown(rootModule);
     this.accumulateMixinsBottomUp(rootModule);
     this.checkEmptyMetaForAllModules();
   }
 
   /**
-   * Returns a mutable {@link NormalizedModuleMeta} from the active workspace mapping (`this.map`).
+   * Returns a mutable {@link NormalizedModuleMeta} from the active workspace mapping (`this.normalizedMetaMap`).
    * Therefore, if you retrieve a {@link NormalizedModuleMeta} using this method and subsequently modify it,
    * the next call will return the already modified {@link NormalizedModuleMeta}.
    *
@@ -183,12 +183,12 @@ export class ModuleManager {
   getNormalizedModuleMeta(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
     let normalizedModuleMeta: NormalizedModuleMeta | undefined;
     if (typeof moduleId == 'string') {
-      const mapId = this.mapId.get(moduleId);
-      if (mapId) {
-        normalizedModuleMeta = this.map.get(mapId);
+      const moduleIdMap = this.moduleIdMap.get(moduleId);
+      if (moduleIdMap) {
+        normalizedModuleMeta = this.normalizedMetaMap.get(moduleIdMap);
       }
     } else {
-      normalizedModuleMeta = this.map.get(moduleId);
+      normalizedModuleMeta = this.normalizedMetaMap.get(moduleId);
     }
 
     if (throwErrIfNotFound && !normalizedModuleMeta) {
@@ -209,7 +209,7 @@ export class ModuleManager {
    */
   setInjectorPerMod(moduleId: ModuleId, injectorPerMod: Injector) {
     if (typeof moduleId == 'string') {
-      const modRefId = this.mapId.get(moduleId);
+      const modRefId = this.moduleIdMap.get(moduleId);
       if (modRefId) {
         this.injectorPerModMap.set(modRefId, injectorPerMod);
       } else {
@@ -228,7 +228,7 @@ export class ModuleManager {
   getInjectorPerMod(moduleId: ModuleId, throwErrIfNotFound?: boolean): Injector | undefined {
     let inj: Injector | undefined;
     if (typeof moduleId == 'string') {
-      const modRefId = this.mapId.get(moduleId);
+      const modRefId = this.moduleIdMap.get(moduleId);
       if (modRefId) {
         inj = this.injectorPerModMap.get(modRefId);
       }
@@ -251,7 +251,7 @@ export class ModuleManager {
   getInstanceOf(moduleId: ModuleId, throwErrIfNotFound: true): AnyObj;
   getInstanceOf(moduleId: ModuleId, throwErrIfNotFound?: false): AnyObj | undefined;
   getInstanceOf(moduleId: ModuleId, throwErrIfNotFound?: boolean) {
-    const modRefId = typeof moduleId == 'string' ? this.mapId.get(moduleId)! : moduleId;
+    const modRefId = typeof moduleId == 'string' ? this.moduleIdMap.get(moduleId)! : moduleId;
     const Mod = getModule(modRefId);
     if (throwErrIfNotFound === true) {
       // Make TypeScript happy
@@ -297,7 +297,7 @@ export class ModuleManager {
     }
     visited.add(startModule);
 
-    const meta = this.map.get(startModule);
+    const meta = this.normalizedMetaMap.get(startModule);
     if (!meta) {
       return;
     }
@@ -380,7 +380,7 @@ export class ModuleManager {
     }
     visited.add(startModule);
 
-    const meta = this.map.get(startModule);
+    const meta = this.normalizedMetaMap.get(startModule);
     if (!meta) {
       return;
     }
@@ -394,7 +394,7 @@ export class ModuleManager {
 
       // Now add children's mixins to the current module's allModuleMixinsMap.
       for (const child of children) {
-        const childMeta = this.map.get(child);
+        const childMeta = this.normalizedMetaMap.get(child);
         childMeta?.allModuleMixinsMap.forEach((mixin, decoratorId) => {
           if (!meta.allModuleMixinsMap.has(decoratorId)) {
             meta.allModuleMixinsMap.set(decoratorId, mixin);
@@ -419,7 +419,7 @@ export class ModuleManager {
    * (which typically indicates missing module decorators or invalid import structures).
    */
   protected checkEmptyMetaForAllModules() {
-    this.map.forEach((meta) => {
+    this.normalizedMetaMap.forEach((meta) => {
       try {
         this.moduleNormalizer.checkEmptyMeta(meta);
       } catch (err: any) {
@@ -438,10 +438,10 @@ export class ModuleManager {
       hasNewModules = false;
       const modulesToScan = new Set<ModRefId>();
 
-      this.map.forEach((meta) => {
+      this.normalizedMetaMap.forEach((meta) => {
         meta.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
           if (moduleMixin.hostModule && moduleMixin.hostMixinOptions) {
-            const hostMeta = this.map.get(moduleMixin.hostModule);
+            const hostMeta = this.normalizedMetaMap.get(moduleMixin.hostModule);
             if (hostMeta && !hostMeta.moduleMixinMap.has(decoratorId)) {
               hasNewModules = this.applyHostMixinAndGatherDependencies(hostMeta, decoratorId, moduleMixin, modulesToScan);
             }
