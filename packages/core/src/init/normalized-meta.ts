@@ -175,7 +175,7 @@ export class NormalizedModuleMeta<
    */
   inheritsContext?: boolean;
   /**
-   * Contains instances of `ModuleMixin` and their options collected from mixin module decorators.
+   * Contains instances of `ModuleMixin` collected from module mixin decorators.
    */
   moduleMixinMap = new Map<AnyFn, ModuleMixin>();
   /**
