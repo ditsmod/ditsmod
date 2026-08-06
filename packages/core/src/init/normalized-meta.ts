@@ -177,11 +177,11 @@ export class NormalizedModuleMeta<
    */
   inheritsMixins?: boolean;
   /**
-   * Contains instances of `ModuleMixin` collected from module mixin decorators.
+   * Contains instances of `ModuleMixin` collected from current module.
    */
   moduleMixinMap = new Map<AnyFn, ModuleMixin>();
   /**
-   * Contains normalized metadata collected from module mixin decorators.
+   * Contains normalized mixins metadata collected from current module.
    */
   normalizedMixinMetaMap: MixinMetaMap = new Map();
   /**

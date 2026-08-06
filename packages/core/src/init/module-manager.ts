@@ -171,6 +171,188 @@ export class ModuleManager {
   }
 
   /**
+   * Identifies module mixins containing `hostMixinOptions` and applies them to their respective host modules.
+   * Runs recursively to scan any newly added dependencies triggered by these options.
+   */
+  protected applyHostMixinOptions() {
+    let hasNewModules = true;
+    while (hasNewModules) {
+      hasNewModules = false;
+      const modulesToScan = new Set<ModRefId>();
+
+      this.normalizedMetaMap.forEach((meta) => {
+        meta.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
+          if (moduleMixin.hostModule && moduleMixin.hostMixinOptions) {
+            const hostMeta = this.normalizedMetaMap.get(moduleMixin.hostModule);
+            if (hostMeta && !hostMeta.moduleMixinMap.has(decoratorId)) {
+              hasNewModules = this.applyHostMixinAndGatherDependencies(hostMeta, decoratorId, moduleMixin, modulesToScan);
+            }
+          }
+        });
+      });
+
+      this.scanNewlyAddedModules(modulesToScan);
+    }
+  }
+
+  protected applyHostMixinAndGatherDependencies(
+    hostMeta: NormalizedModuleMeta,
+    decoratorId: AnyFn,
+    moduleMixin: ModuleMixin,
+    modulesToScan: Set<ModRefId>,
+  ): boolean {
+    const newModuleMixin = moduleMixin.clone(moduleMixin.hostMixinOptions);
+    hostMeta.moduleMixinMap.set(decoratorId, newModuleMixin);
+    try {
+      this.moduleNormalizer.applyHostMixinOptions(hostMeta, decoratorId, newModuleMixin);
+    } catch (err: any) {
+      throw new NormalizationFailure(hostMeta.name, err);
+    }
+
+    const importsOrExports: (DynamicModule | StaticModule)[] = [];
+    hostMeta.moduleMixinMap.forEach((mixin, dec) => {
+      const mixinMeta = hostMeta.normalizedMixinMetaMap.get(dec);
+      if (mixinMeta) {
+        importsOrExports.push(...mixin.getModulesToScan(mixinMeta));
+      }
+    });
+
+    const inputs: ModRefId[] = importsOrExports;
+    this.propsWithModules.forEach((p) => inputs.push(...hostMeta[p]));
+
+    const children = this.childrenMap.get(hostMeta.modRefId);
+    if (children) {
+      inputs.forEach((input) => {
+        children.add(input);
+        if (!this.scannedModules.has(input)) {
+          modulesToScan.add(input);
+        }
+      });
+    }
+
+    return true; // Indicates a change occurred
+  }
+
+  protected scanNewlyAddedModules(modulesToScan: Set<ModRefId>) {
+    for (const input of modulesToScan) {
+      if (!this.scannedModules.has(input)) {
+        this.unfinishedScanModules.add(input);
+        this.scanModule(input);
+        this.unfinishedScanModules.delete(input);
+        this.scannedModules.add(input);
+      }
+    }
+  }
+
+  /**
+   * Top-down traversal of the module dependency graph.
+   *
+   * Propagates parent module mixins to child modules that:
+   * - Are dynamic modules with `mixinOptions` but no own mixin decorator for that decorator.
+   * - Are static modules without any own mixin decorators (inheriting full parent context).
+   *
+   * Modules with their own mixin decorators keep them and do not inherit from the parent.
+   */
+  protected propagateMixinsTopDown(startModule: ModRefId, parentMixins: AllModuleMixins = new Map(), visited = new Set<ModRefId>()) {
+    if (visited.has(startModule)) {
+      return;
+    }
+    visited.add(startModule);
+
+    const meta = this.normalizedMetaMap.get(startModule);
+    if (!meta) {
+      return;
+    }
+
+    // Build the active mixin context: parent's mixins + current module's own mixins.
+    const activeMixins: AllModuleMixins = new Map(parentMixins);
+    meta.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
+      activeMixins.set(decoratorId, moduleMixin);
+    });
+
+    // Apply mixins for dynamic modules imported with mixinOptions.
+    this.applyMixinsForDynamicModule(meta, activeMixins);
+
+    // Inherit parent mixins for static modules without own decorators.
+    this.inheritParentMixins(meta, activeMixins);
+
+    // After applying/inheriting, rebuild activeMixins to include newly added entries.
+    meta.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
+      activeMixins.set(decoratorId, moduleMixin);
+    });
+
+    // Recurse into children.
+    const children = this.childrenMap.get(startModule);
+    if (children) {
+      for (const child of children) {
+        this.propagateMixinsTopDown(child, activeMixins, visited);
+      }
+    }
+  }
+
+  /**
+   * Post-order (bottom-up) traversal that accumulates `allModuleMixinsMap` for each module.
+   *
+   * After this pass, each module's `allModuleMixinsMap` contains the union of the module's
+   * own mixins and all mixins found in descendant modules.
+   * Also creates read-only `normalizedMixinMetaMap` entries for mixins that are in
+   * `allModuleMixinsMap` but not in `moduleMixinMap`.
+   */
+  protected accumulateMixinsBottomUp(startModule: ModRefId, visited = new Set<ModRefId>()) {
+    if (visited.has(startModule)) {
+      return;
+    }
+    visited.add(startModule);
+
+    const meta = this.normalizedMetaMap.get(startModule);
+    if (!meta) {
+      return;
+    }
+
+    // Recurse into children first (post-order).
+    const children = this.childrenMap.get(startModule);
+    if (children) {
+      for (const child of children) {
+        this.accumulateMixinsBottomUp(child, visited);
+      }
+
+      // Now add children's mixins to the current module's allModuleMixinsMap.
+      for (const child of children) {
+        const childMeta = this.normalizedMetaMap.get(child);
+        childMeta?.allModuleMixinsMap.forEach((mixin, decoratorId) => {
+          if (!meta.allModuleMixinsMap.has(decoratorId)) {
+            meta.allModuleMixinsMap.set(decoratorId, mixin);
+          }
+        });
+      }
+    }
+
+    // Create read-only normalizedMixinMetaMap entries for accumulated (non-own) mixins.
+    meta.allModuleMixinsMap.forEach((mixin, decoratorId) => {
+      if (!meta.moduleMixinMap.has(decoratorId) && !meta.normalizedMixinMetaMap.has(decoratorId)) {
+        const readOnlyMeta = mixin.clone().normalize(meta);
+        if (readOnlyMeta) {
+          meta.normalizedMixinMetaMap.set(decoratorId, readOnlyMeta);
+        }
+      }
+    });
+  }
+
+  /**
+   * Validates all modules in active registries, verifying that no module possesses completely empty metadata
+   * (which typically indicates missing module decorators or invalid import structures).
+   */
+  protected checkEmptyMetaForAllModules() {
+    this.normalizedMetaMap.forEach((meta) => {
+      try {
+        this.moduleNormalizer.checkEmptyMeta(meta);
+      } catch (err: any) {
+        throw new NormalizationFailure(meta.name, err);
+      }
+    });
+  }
+
+  /**
    * Returns a mutable {@link NormalizedModuleMeta} from the active workspace mapping (`this.normalizedMetaMap`).
    * Therefore, if you retrieve a {@link NormalizedModuleMeta} using this method and subsequently modify it,
    * the next call will return the already modified {@link NormalizedModuleMeta}.
@@ -254,17 +436,9 @@ export class ModuleManager {
     const modRefId = typeof moduleId == 'string' ? this.moduleIdMap.get(moduleId)! : moduleId;
     const Mod = getModule(modRefId);
     if (throwErrIfNotFound === true) {
-      // Make TypeScript happy
       return this.getInjectorPerMod(moduleId, true).get(Mod);
     }
     return this.getInjectorPerMod(moduleId, throwErrIfNotFound)?.get(Mod);
-  }
-
-  /**
-   * Performs a deep clone of a {@link NormalizedModuleMeta} instance by delegating to its internal `clone()` method.
-   */
-  protected copyNormalizedModuleMeta(normalizedModuleMeta: NormalizedModuleMeta) {
-    return normalizedModuleMeta.clone();
   }
 
   /**
@@ -279,52 +453,6 @@ export class ModuleManager {
       let path = [...this.unfinishedScanModules].map((id) => getDebugClassName(id)).join(' -> ');
       path = this.unfinishedScanModules.size > 1 ? `${moduleName} (${path})` : `${moduleName}`;
       throw new NormalizationFailure(path, err);
-    }
-  }
-
-  /**
-   * Top-down traversal of the module dependency graph.
-   *
-   * Propagates parent module mixins to child modules that:
-   * - Are dynamic modules with `mixinOptions` but no own mixin decorator for that decorator.
-   * - Are static modules without any own mixin decorators (inheriting full parent context).
-   *
-   * Modules with their own mixin decorators keep them and do not inherit from the parent.
-   */
-  protected propagateMixinsTopDown(startModule: ModRefId, parentMixins: AllModuleMixins = new Map(), visited = new Set<ModRefId>()) {
-    if (visited.has(startModule)) {
-      return;
-    }
-    visited.add(startModule);
-
-    const meta = this.normalizedMetaMap.get(startModule);
-    if (!meta) {
-      return;
-    }
-
-    // Build the active mixin context: parent's mixins + current module's own mixins.
-    const activeMixins: AllModuleMixins = new Map(parentMixins);
-    meta.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
-      activeMixins.set(decoratorId, moduleMixin);
-    });
-
-    // Apply mixins for dynamic modules imported with mixinOptions.
-    this.applyMixinsForDynamicModule(meta, activeMixins);
-
-    // Inherit parent mixins for static modules without own decorators.
-    this.inheritParentMixins(meta, activeMixins);
-
-    // After applying/inheriting, rebuild activeMixins to include newly added entries.
-    meta.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
-      activeMixins.set(decoratorId, moduleMixin);
-    });
-
-    // Recurse into children.
-    const children = this.childrenMap.get(startModule);
-    if (children) {
-      for (const child of children) {
-        this.propagateMixinsTopDown(child, activeMixins, visited);
-      }
     }
   }
 
@@ -364,141 +492,5 @@ export class ModuleManager {
         throw new NormalizationFailure(meta.name, err);
       }
     });
-  }
-
-  /**
-   * Post-order (bottom-up) traversal that accumulates `allModuleMixinsMap` for each module.
-   *
-   * After this pass, each module's `allModuleMixinsMap` contains the union of the module's
-   * own mixins and all mixins found in descendant modules.
-   * Also creates read-only `normalizedMixinMetaMap` entries for mixins that are in
-   * `allModuleMixinsMap` but not in `moduleMixinMap`.
-   */
-  protected accumulateMixinsBottomUp(startModule: ModRefId, visited = new Set<ModRefId>()) {
-    if (visited.has(startModule)) {
-      return;
-    }
-    visited.add(startModule);
-
-    const meta = this.normalizedMetaMap.get(startModule);
-    if (!meta) {
-      return;
-    }
-
-    // Recurse into children first (post-order).
-    const children = this.childrenMap.get(startModule);
-    if (children) {
-      for (const child of children) {
-        this.accumulateMixinsBottomUp(child, visited);
-      }
-
-      // Now add children's mixins to the current module's allModuleMixinsMap.
-      for (const child of children) {
-        const childMeta = this.normalizedMetaMap.get(child);
-        childMeta?.allModuleMixinsMap.forEach((mixin, decoratorId) => {
-          if (!meta.allModuleMixinsMap.has(decoratorId)) {
-            meta.allModuleMixinsMap.set(decoratorId, mixin);
-          }
-        });
-      }
-    }
-
-    // Create read-only normalizedMixinMetaMap entries for accumulated (non-own) mixins.
-    meta.allModuleMixinsMap.forEach((mixin, decoratorId) => {
-      if (!meta.moduleMixinMap.has(decoratorId) && !meta.normalizedMixinMetaMap.has(decoratorId)) {
-        const readOnlyMeta = mixin.clone().normalize(meta);
-        if (readOnlyMeta) {
-          meta.normalizedMixinMetaMap.set(decoratorId, readOnlyMeta);
-        }
-      }
-    });
-  }
-
-  /**
-   * Validates all modules in active registries, verifying that no module possesses completely empty metadata
-   * (which typically indicates missing module decorators or invalid import structures).
-   */
-  protected checkEmptyMetaForAllModules() {
-    this.normalizedMetaMap.forEach((meta) => {
-      try {
-        this.moduleNormalizer.checkEmptyMeta(meta);
-      } catch (err: any) {
-        throw new NormalizationFailure(meta.name, err);
-      }
-    });
-  }
-
-  /**
-   * Identifies module mixins containing `hostMixinOptions` and applies them to their respective host modules.
-   * Runs recursively to scan any newly added dependencies triggered by these options.
-   */
-  protected applyHostMixinOptions() {
-    let hasNewModules = true;
-    while (hasNewModules) {
-      hasNewModules = false;
-      const modulesToScan = new Set<ModRefId>();
-
-      this.normalizedMetaMap.forEach((meta) => {
-        meta.moduleMixinMap.forEach((moduleMixin, decoratorId) => {
-          if (moduleMixin.hostModule && moduleMixin.hostMixinOptions) {
-            const hostMeta = this.normalizedMetaMap.get(moduleMixin.hostModule);
-            if (hostMeta && !hostMeta.moduleMixinMap.has(decoratorId)) {
-              hasNewModules = this.applyHostMixinAndGatherDependencies(hostMeta, decoratorId, moduleMixin, modulesToScan);
-            }
-          }
-        });
-      });
-
-      this.scanNewlyAddedModules(modulesToScan);
-    }
-  }
-
-  protected applyHostMixinAndGatherDependencies(
-    hostMeta: NormalizedModuleMeta,
-    decoratorId: AnyFn,
-    moduleMixin: ModuleMixin,
-    modulesToScan: Set<ModRefId>,
-  ): boolean {
-    const newModuleMixin = moduleMixin.clone(moduleMixin.hostMixinOptions);
-    hostMeta.moduleMixinMap.set(decoratorId, newModuleMixin);
-    try {
-      this.moduleNormalizer.applyHostMixinOptions(hostMeta, decoratorId, newModuleMixin);
-    } catch (err: any) {
-      throw new NormalizationFailure(hostMeta.name, err);
-    }
-
-    const importsOrExports: (DynamicModule | StaticModule)[] = [];
-    hostMeta.moduleMixinMap.forEach((mixin, dec) => {
-      const mixinMeta = hostMeta.normalizedMixinMetaMap.get(dec);
-      if (mixinMeta) {
-        importsOrExports.push(...mixin.getModulesToScan(mixinMeta));
-      }
-    });
-
-    const inputs: ModRefId[] = importsOrExports;
-    this.propsWithModules.forEach((p) => inputs.push(...hostMeta[p]));
-
-    const children = this.childrenMap.get(hostMeta.modRefId);
-    if (children) {
-      inputs.forEach((input) => {
-        children.add(input);
-        if (!this.scannedModules.has(input)) {
-          modulesToScan.add(input);
-        }
-      });
-    }
-
-    return true; // Indicates a change occurred
-  }
-
-  protected scanNewlyAddedModules(modulesToScan: Set<ModRefId>) {
-    for (const input of modulesToScan) {
-      if (!this.scannedModules.has(input)) {
-        this.unfinishedScanModules.add(input);
-        this.scanModule(input);
-        this.unfinishedScanModules.delete(input);
-        this.scannedModules.add(input);
-      }
-    }
   }
 }

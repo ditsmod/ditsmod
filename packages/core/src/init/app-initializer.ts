@@ -109,10 +109,10 @@ export class AppInitializer implements BaseAppInitializer {
   protected getResolvedCollisionsPerApp() {
     const rootModuleName = this.moduleManager.getNormalizedModuleMeta('root', true).name;
     const resolvedProviders: Provider[] = [];
-    this.normalizedModuleMeta.resolvedCollisionsPerApp.forEach(([token, module]) => {
-      const moduleName = getDebugClassName(module) || 'unknown';
+    this.normalizedModuleMeta.resolvedCollisionsPerApp.forEach(([token, modRefId]) => {
+      const moduleName = getDebugClassName(modRefId) || 'unknown';
       const tokenName = token.name || token;
-      const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(module);
+      const normalizedModuleMeta = this.moduleManager.getNormalizedModuleMeta(modRefId);
       if (!normalizedModuleMeta) {
         throw new ModuleNotImported(rootModuleName, moduleName, tokenName);
       }

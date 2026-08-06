@@ -181,9 +181,7 @@ export class MutableModuleManager extends ModuleManager {
    */
   reset() {
     this.normalizedMetaMap = new Map();
-    this.state.snapshotMap.forEach((normalizedModuleMeta, key) =>
-      this.normalizedMetaMap.set(key, this.copyNormalizedModuleMeta(normalizedModuleMeta)),
-    );
+    this.state.snapshotMap.forEach((normalizedModuleMeta, key) => this.normalizedMetaMap.set(key, normalizedModuleMeta.clone()));
     this.moduleIdMap = new Map(this.state.snapshotMapId);
     return this;
   }
@@ -249,7 +247,7 @@ export class MutableModuleManager extends ModuleManager {
       throw new ForbiddenSavingSnapshot();
     } else {
       this.normalizedMetaMap.forEach((normalizedModuleMeta, modRefId) =>
-        this.state.snapshotMap.set(modRefId, this.copyNormalizedModuleMeta(normalizedModuleMeta)),
+        this.state.snapshotMap.set(modRefId, normalizedModuleMeta.clone()),
       );
       this.state.snapshotMapId = new Map(this.moduleIdMap);
     }

@@ -59,10 +59,6 @@ describe('ModuleManager', () => {
       return super.getNormalizedModuleMetaFromSnapshot(moduleId);
     }
 
-    override copyNormalizedModuleMeta(normalizedModuleMeta: NormalizedModuleMeta): NormalizedModuleMeta {
-      return super.copyNormalizedModuleMeta(normalizedModuleMeta);
-    }
-
     override saveSnapshot() {
       super.saveSnapshot();
     }
@@ -391,7 +387,7 @@ describe('ModuleManager', () => {
     });
   });
 
-  describe('copyNormalizedModuleMeta()', () => {
+  describe('clone() on NormalizedModuleMeta', () => {
     it('should copy NormalizedModuleMeta correctly, preserving prototype and recreating mixinMeta proxies wrapping the copy', () => {
       interface MyDynamicOptions extends DynamicModuleOptions {
         path?: string;
@@ -429,8 +425,8 @@ describe('ModuleManager', () => {
       const originalMod1 = mock.getNormalizedModuleMeta(dynamicModule)!;
       expect(originalMod1).toBeInstanceOf(NormalizedModuleMeta);
 
-      // Call copyNormalizedModuleMeta
-      const copiedMod1 = mock.copyNormalizedModuleMeta(originalMod1);
+      // Call clone
+      const copiedMod1 = originalMod1.clone();
       expect(copiedMod1).toBeInstanceOf(NormalizedModuleMeta);
       expect(copiedMod1).not.toBe(originalMod1);
 
