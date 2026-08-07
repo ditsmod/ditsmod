@@ -11,7 +11,7 @@ const FeatureList = [
     description: (
       <>
         <Translate>
-          Ditsmod має ієрархічний Dependency Injection, що дуже суттєво спрощує розширення та тестування застосунків.
+          Holu має ієрархічний Dependency Injection, що дуже суттєво спрощує розширення та тестування застосунків.
         </Translate>
       </>
     ),
@@ -22,7 +22,7 @@ const FeatureList = [
     description: (
       <>
         <Translate>
-          Ditsmod написаний на TypeScript, що дозволяє помітно зменшити кількість помилок в коді, а також дозволяє на
+          Holu написаний на TypeScript, що дозволяє помітно зменшити кількість помилок в коді, а також дозволяє на
           порядок покращити користувацький досвід написання коду у вашій IDE.
         </Translate>
       </>
@@ -31,7 +31,7 @@ const FeatureList = [
   {
     title: 'Modularity',
     Svg: require('../../static/img/mod.svg').default,
-    description: <><Translate>Масштабованість застосунків реалізується завдяки модульній архітектурі Ditsmod.</Translate></>,
+    description: <><Translate>Масштабованість застосунків реалізується завдяки модульній архітектурі Holu.</Translate></>,
   },
 ];
 

@@ -1,5 +1,5 @@
-import { restModule } from '@ditsmod/rest';
-import { DictService } from '@ditsmod/i18n';
+import { restModule } from '@holu/rest';
+import { DictService } from '@holu/i18n';
 
 import { FirstModule } from './first.module.js';
 import { MyDictService } from './third/dict.service.js';

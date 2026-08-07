@@ -96,7 +96,7 @@ export abstract class BaseApplication {
     LogMediator.bufferLogs = this.baseAppOptions.bufferLogs;
 
     // Log the startup event. Note: The actual OutputLogLevel is determined later in the bootstrap.
-    this.log.startingDitsmod(this);
+    this.log.startingHolu(this);
   }
 
   /**

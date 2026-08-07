@@ -1,4 +1,4 @@
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 import { RequestScopedBearerGuard, RouteScopedBearerGuard } from './auth/bearer.guard.js';
 import { AuthService } from './auth/auth.service.js';

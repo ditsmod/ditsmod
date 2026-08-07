@@ -6,7 +6,7 @@ import {
   factoryMethod,
   optional,
   BaseAppOptions,
-} from '@ditsmod/core';
+} from '@holu/core';
 import { createLogger, LogLevel as BunyanLogLevel } from 'bunyan';
 import * as BunyanLogger from 'bunyan';
 

@@ -1,4 +1,4 @@
-import { injectable, OnShutdown } from '@ditsmod/core';
+import { injectable, OnShutdown } from '@holu/core';
 import type { DataSource } from 'typeorm';
 
 import { TypeormLogMediator } from './typeorm.log-mediator.js';

@@ -1,5 +1,5 @@
-import type { Class } from '@ditsmod/core';
-import { ProviderBuilder } from '@ditsmod/core';
+import type { Class } from '@holu/core';
+import { ProviderBuilder } from '@holu/core';
 import type { Dictionary, DictGroup, Translations} from './types/mix.js';
 import { I18N_TRANSLATIONS, I18nOptions } from './types/mix.js';
 

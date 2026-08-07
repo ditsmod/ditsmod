@@ -1,8 +1,8 @@
 import request from 'supertest';
-import type { HttpServer } from '@ditsmod/rest';
-import { HttpErrorHandler } from '@ditsmod/rest';
-import { TestRestApplication } from '@ditsmod/rest-testing';
-import { InstantiationError, NoProvider } from '@ditsmod/core/errors';
+import type { HttpServer } from '@holu/rest';
+import { HttpErrorHandler } from '@holu/rest';
+import { TestRestApplication } from '@holu/rest-testing';
+import { InstantiationError, NoProvider } from '@holu/core/errors';
 import { jest } from '@jest/globals';
 
 import { AppModule } from '#app/app.module.js';

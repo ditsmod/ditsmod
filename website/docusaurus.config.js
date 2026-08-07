@@ -3,14 +3,14 @@ const i18n = require('./i18n');
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
   i18n,
-  title: 'Ditsmod',
-  url: 'https://ditsmod.github.io',
+  title: 'Holu',
+  url: 'https://holu.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   markdown: { hooks: { onBrokenMarkdownLinks: 'throw' } },
   favicon: 'img/favicon.ico',
-  organizationName: 'ditsmod', // Usually your GitHub org/user name.
-  projectName: 'ditsmod.github.io', // Usually your repo name.
+  organizationName: 'holu', // Usually your GitHub org/user name.
+  projectName: 'holu.github.io', // Usually your repo name.
   trailingSlash: true,
   markdown: {
     mermaid: true,
@@ -20,7 +20,7 @@ module.exports = {
     navbar: {
       // title: 'Головна',
       logo: {
-        alt: 'Ditsmod Logo',
+        alt: 'Holu Logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -28,10 +28,10 @@ module.exports = {
         //   type: 'doc',
         //   docId: 'intro',
         //   position: 'left',
-        //   label: 'Документація Ditsmod',
+        //   label: 'Документація Holu',
         // },
         {
-          href: 'https://github.com/ditsmod/ditsmod',
+          href: 'https://github.com/holu/holu',
           position: 'right',
           className: 'header-github-link',
           'aria-label': 'GitHub repository',
@@ -49,7 +49,7 @@ module.exports = {
     algolia: {
       appId: 'KXSV6YPHSY',
       apiKey: '4d1c9badb24964d992fb4d1b6badc88e',
-      indexName: 'ditsmod',
+      indexName: 'holu',
 
       // optional: see doc section below
       contextualSearch: true,
@@ -70,11 +70,11 @@ module.exports = {
           items: [
             {
               label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/ditsmod',
+              href: 'https://stackoverflow.com/questions/tagged/holu',
             },
             {
               label: 'Twitter',
-              href: 'https://twitter.com/ditsmod',
+              href: 'https://twitter.com/holu',
             },
           ],
         },
@@ -87,7 +87,7 @@ module.exports = {
             // },
             {
               label: 'GitHub',
-              href: 'https://github.com/ditsmod/ditsmod',
+              href: 'https://github.com/holu/holu',
             },
           ],
         },
@@ -109,13 +109,13 @@ module.exports = {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: ({ version, versionDocsDirPath, docPath, locale }) =>
             locale == 'en'
-              ? `https://github.com/ditsmod/ditsmod/edit/develop/website/i18n/en/docusaurus-plugin-content-docs/${version}/${docPath}`
-              : `https://github.com/ditsmod/ditsmod/edit/develop/website/${versionDocsDirPath}/${docPath}`,
+              ? `https://github.com/holu/holu/edit/develop/website/i18n/en/docusaurus-plugin-content-docs/${version}/${docPath}`
+              : `https://github.com/holu/holu/edit/develop/website/${versionDocsDirPath}/${docPath}`,
         },
         // blog: {
         //   showReadingTime: true,
         //   editUrl:
-        //     'https://github.com/ditsmod/ditsmod/edit/main/website/blog/',
+        //     'https://github.com/holu/holu/edit/main/website/blog/',
         // },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

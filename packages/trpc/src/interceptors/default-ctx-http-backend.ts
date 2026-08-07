@@ -1,4 +1,4 @@
-import { injectable } from '@ditsmod/core';
+import { injectable } from '@holu/core';
 
 import { RouteScopedTrpcHttpBackend } from './tokens-and-types.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';

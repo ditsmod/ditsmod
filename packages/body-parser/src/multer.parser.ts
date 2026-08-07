@@ -1,5 +1,5 @@
-import { ctx, injectable, optional } from '@ditsmod/core';
-import { RAW_REQ, RawRequest } from '@ditsmod/rest';
+import { ctx, injectable, optional } from '@holu/core';
+import { RAW_REQ, RawRequest } from '@holu/rest';
 import { Multer, MulterGroup } from '@ts-stack/multer';
 
 import { MulterExtendedOptions } from './multer-extended-options.js';

@@ -1,4 +1,4 @@
-import type { FunctionFactoryProvider } from '@ditsmod/core';
+import type { FunctionFactoryProvider } from '@holu/core';
 import type { DataSource } from 'typeorm';
 
 import type { EntityClassOrSchema } from './types.js';

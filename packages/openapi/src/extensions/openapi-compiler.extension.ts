@@ -9,7 +9,7 @@ import {
   AppExtensionGroupMeta,
   PartialExtensionGroupMeta,
   Context,
-} from '@ditsmod/core';
+} from '@holu/core';
 import {
   PathItemObject,
   XOasObject,
@@ -20,7 +20,7 @@ import {
   XSecurityRequirementObject,
 } from '@ts-stack/openapi-spec';
 import { stringify } from 'yaml';
-import { RouteExtensionMeta, NormalizedGuard, RestRouteExtension } from '@ditsmod/rest';
+import { RouteExtensionMeta, NormalizedGuard, RestRouteExtension } from '@holu/rest';
 
 import { OasExtensionRouteMeta } from '#types/oas-route-meta.js';
 import { DEFAULT_OAS_OBJECT, defaultForNonOasGuard } from '#constants';

@@ -1,4 +1,4 @@
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 
 import { RouteScopedDefaultTrpcHttpFrontend } from './default-ctx-http-frontend.js';
 import { TrpcOpts } from '#types/types.js';

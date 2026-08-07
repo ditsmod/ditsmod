@@ -6,7 +6,7 @@
   "license": "MIT",
   "module": "dist/index.js",
   "scripts": {
-    "start": "ditsmod start",
+    "start": "holu start",
     "clean": "rm -r dist*",
     "test": "yarn build-test && yarn esm-jest",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
@@ -20,7 +20,7 @@
     "#service/*": "./dist/app/modules/service/*"
   },
   "devDependencies": {
-    "@ditsmod/cli": "^3.0.0-next.18",
+    "@holu/cli": "^3.0.0-next.18",
     "jest": "^30.4.2",
     "typescript-7": "npm:typescript@^7.0.2"
   }

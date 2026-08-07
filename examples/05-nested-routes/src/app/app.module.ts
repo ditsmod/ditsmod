@@ -1,5 +1,5 @@
-import { LoggerConfig, ProviderBuilder } from '@ditsmod/core';
-import { restRootModule } from '@ditsmod/rest';
+import { LoggerConfig, ProviderBuilder } from '@holu/core';
+import { restRootModule } from '@holu/rest';
 
 import { PostsModule } from './posts/posts.module.js';
 

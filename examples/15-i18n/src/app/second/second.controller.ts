@@ -1,6 +1,6 @@
-import { AnyObj, ctx } from '@ditsmod/core';
-import { controller, route, PATH_PARAMS, RequestContext } from '@ditsmod/rest';
-import { DictService } from '@ditsmod/i18n';
+import { AnyObj, ctx } from '@holu/core';
+import { controller, route, PATH_PARAMS, RequestContext } from '@holu/rest';
+import { DictService } from '@holu/i18n';
 
 import { FirstService } from '../first/first.service.js';
 import { SecondDict } from '#app/second/i18n/current/_base-en/second.dict.js';

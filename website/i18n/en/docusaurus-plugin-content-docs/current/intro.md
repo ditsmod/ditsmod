@@ -3,22 +3,22 @@ slug: /
 sidebar_position: 0
 ---
 
-# What is Ditsmod
+# What is Holu
 
-## Introduction to Ditsmod {#introduction-to-ditsmod}
+## Introduction to Holu {#introduction-to-holu}
 
-Ditsmod is a Node.js-based web framework designed for building highly extensible and fast applications. Its name combines **DI** + **TS** + **Mod** to highlight its key features: it includes **D**ependency **I**njection, is written in **T**ype**S**cript in ESM format, and is designed with strong **Mod**ularity in mind.
+Holu is a Node.js-based web framework designed for building highly extensible and fast applications. Its name combines **DI** + **TS** + **Mod** to highlight its key features: it includes **D**ependency **I**njection, is written in **T**ype**S**cript in ESM format, and is designed with strong **Mod**ularity in mind.
 
-### Key Features of Ditsmod {#key-features-of-ditsmod}
+### Key Features of Holu {#key-features-of-holu}
 
 - **Modular architecture** with decorators, enabling declarative application structure definition.
 - Support for creating custom extensions (sometimes referred to as plugins) that can initialize asynchronously and depend on one another.
 - Built-in **OpenAPI** support with request validation based on OpenAPI metadata.
-- As of today, [Ditsmod is one of the fastest Node.js web frameworks][14]:
+- As of today, [Holu is one of the fastest Node.js web frameworks][14]:
 
 ![JS frameworks benchmarks][22]
 
-Some architectural concepts in Ditsmod are inspired by [Angular][9], with its DI system built on Angular's native DI module.
+Some architectural concepts in Holu are inspired by [Angular][9], with its DI system built on Angular's native DI module.
 
 ## Prerequisites {#prerequisites}
 
@@ -26,13 +26,13 @@ Please make sure that Node.js >= v24.0.0 is installed on your operating system.
 
 ## Installation {#installation}
 
-You can install the `@ditsmod/cli` package globally:
+You can install the `@holu/cli` package globally:
 
 ```bash
-npm i -g @ditsmod/cli
+npm i -g @holu/cli
 ```
 
-To see the list of all available commands and options of `@ditsmod/cli`, run:
+To see the list of all available commands and options of `@holu/cli`, run:
 
 ```bash
 dm --help
@@ -51,10 +51,10 @@ This is how you can create a starter REST application project:
 dm new my-app
 ```
 
-You can also use `@ditsmod/cli` without a global installation:
+You can also use `@holu/cli` without a global installation:
 
 ```bash
-npx @ditsmod/cli new my-app
+npx @holu/cli new my-app
 ```
 
 ### Add `AGENTS.md` and `SKILL.md` for AI agents {#add-agent-skills}
@@ -66,10 +66,10 @@ cd my-app # Go to starter repository
 npm run setup:agents
 ```
 
-Additionally, you can install [AI agent skills][5] to help them better understand the specifics of Ditsmod applications:
+Additionally, you can install [AI agent skills][5] to help them better understand the specifics of Holu applications:
 
 ```bash
-npx skills add https://github.com/ditsmod/agent-skills --skill '*' -y
+npx skills add https://github.com/holu/agent-skills --skill '*' -y
 ```
 
 AI agent skills are only loaded when needed, when you ask something relevant to them.
@@ -82,15 +82,15 @@ You can start the application in development mode with the following command:
 npm run start:dev
 ```
 
-Or directly using Ditsmod CLI:
+Or directly using Holu CLI:
 
 ```bash
-ditsmod start
+holu start
 # or using the shorthand alias:
 dm start
 ```
 
-The `@ditsmod/cli` utility automatically handles incremental TypeScript compilation and restarts the Ditsmod application whenever source files are changed, eliminating the need to run separate compiler and server terminals.
+The `@holu/cli` utility automatically handles incremental TypeScript compilation and restarts the Holu application whenever source files are changed, eliminating the need to run separate compiler and server terminals.
 
 You can customize the startup behavior using options:
 
@@ -109,16 +109,16 @@ Or simply by going to [http://localhost:3000/api/hello](http://localhost:3000/ap
 
 By default, the application works with `info` log level. You can change it in the file `src/app/app.module.ts` (or `apps/backend/src/app/app.module.ts` in the monorepository).
 
-Thanks to [ditsmod/rest-starter][2]'s use of the so-called [Project References][16] and `tsc -b` build mode, even very large projects compile very quickly.
+Thanks to [holu/rest-starter][2]'s use of the so-called [Project References][16] and `tsc -b` build mode, even very large projects compile very quickly.
 
-Note that there are four config files for TypeScript in the `ditsmod/rest-starter` repository:
+Note that there are four config files for TypeScript in the `holu/rest-starter` repository:
 
 - `tsconfig.json` - the basic configuration used by your IDE (in most cases it is probably VS Code).
 - `tsconfig.build.json` - this configuration is used to compile the code from the `src` directory to the `dist` directory, it is intended for application code.
 - `tsconfig.unit.json` - this configuration is used to compile unit tests.
 - `tsconfig.e2e.json` - this configuration is used to compile end-to-end tests.
 
-Also, note that since `ditsmod/rest-starter` is declared as an EcmaScript Module (ESM), you can use [native Node.js aliases][18] to shorten file paths. This is analogous to `compilerOptions.paths` in `tsconfig`. Such aliases are declared in `package.json` in the `imports` field:
+Also, note that since `holu/rest-starter` is declared as an EcmaScript Module (ESM), you can use [native Node.js aliases][18] to shorten file paths. This is analogous to `compilerOptions.paths` in `tsconfig`. Such aliases are declared in `package.json` in the `imports` field:
 
 ```json {2}
 "imports": {
@@ -159,13 +159,13 @@ npm run start-prod
 
 ## Entry file for Node.js {#entry-file-for-nodejs}
 
-After [installing Ditsmod starter][1], the first thing you need to know: all the application code is in the `src` folder, it is compiled using the TypeScript utility `tsc`, after compilation it goes to the `dist` folder, and then as JavaScript code it can be executed in Node.js.
+After [installing Holu starter][1], the first thing you need to know: all the application code is in the `src` folder, it is compiled using the TypeScript utility `tsc`, after compilation it goes to the `dist` folder, and then as JavaScript code it can be executed in Node.js.
 
 Let's look at the `src/main.ts` file:
 
 ```ts
 import { ServerOptions } from 'node:http';
-import { RestApplication } from '@ditsmod/rest';
+import { RestApplication } from '@holu/rest';
 
 import { AppModule } from './app/app.module.js';
 import { checkCliAndSetPort } from './app/utils/check-cli-and-set-port.js';
@@ -184,9 +184,9 @@ node dist/main.js
 
 Looking at the file `src/main.ts`, you can see that an instance of the class `RestApplication` is created, and as an argument for the method `create()` is passed `AppModule`. Here `AppModule` is the root module to which other application modules then imports.
 
-## ExpressJS vs. Ditsmod {#expressjs-vs-ditsmod}
+## ExpressJS vs. Holu {#expressjs-vs-holu}
 
-For comparison, the following examples demonstrate the minimal code needed to start applications with ExpressJS and Ditsmod.
+For comparison, the following examples demonstrate the minimal code needed to start applications with ExpressJS and Holu.
 
 ```js
 import express from 'express';
@@ -200,7 +200,7 @@ app.listen(3000, '0.0.0.0');
 ```
 
 ```ts
-import { controller, route, restRootModule, RestApplication } from '@ditsmod/rest';
+import { controller, route, restRootModule, RestApplication } from '@holu/rest';
 
 @controller()
 class ExampleController {
@@ -217,17 +217,17 @@ const app = await RestApplication.create(AppModule);
 app.server.listen(3000, '0.0.0.0');
 ```
 
-But why isn’t Ditsmod as minimalistic as ExpressJS? As you can see in the example, ExpressJS creates an application object, to which routes are then added. The `app` object represents the API of various separate components, including router configuration, error handling setup, rendering system configuration, HTTP server setup, etc. Such code looks very compact in simple examples, but in essence, it violates the [Single Responsibility Principle][21]. In contrast, Ditsmod clearly distinguishes between:
+But why isn’t Holu as minimalistic as ExpressJS? As you can see in the example, ExpressJS creates an application object, to which routes are then added. The `app` object represents the API of various separate components, including router configuration, error handling setup, rendering system configuration, HTTP server setup, etc. Such code looks very compact in simple examples, but in essence, it violates the [Single Responsibility Principle][21]. In contrast, Holu clearly distinguishes between:
 
 - the role of the controller in which the route is created;
 - the role of the module where the controllers are declared;
 - the role of the application that contains the HTTP server.
 
-Looking at the amount of code, you might think that Ditsmod is slower than ExpressJS because of its verbosity. But in fact, only Ditsmod's cold start is slightly slower (it starts in 34 ms on my laptop, while ExpressJS starts in 4 ms). As for request processing speed, [Ditsmod is ~30% faster than ExpressJS][14].
+Looking at the amount of code, you might think that Holu is slower than ExpressJS because of its verbosity. But in fact, only Holu's cold start is slightly slower (it starts in 34 ms on my laptop, while ExpressJS starts in 4 ms). As for request processing speed, [Holu is ~30% faster than ExpressJS][14].
 
-More application examples are available in the [Ditsmod][4] repository, as well as in the [RealWorld][13] repository.
+More application examples are available in the [Holu][4] repository, as well as in the [RealWorld][13] repository.
 
-P.S. Although a link to a repository with all the necessary settings for Ditsmod applications is provided above, still, if you want to use only the code from the previous example, do not forget to specify the following in the tsconfig files:
+P.S. Although a link to a repository with all the necessary settings for Holu applications is provided above, still, if you want to use only the code from the previous example, do not forget to specify the following in the tsconfig files:
 
 ```json {4-5}
 {
@@ -240,17 +240,17 @@ P.S. Although a link to a repository with all the necessary settings for Ditsmod
 ```
 
 [1]: #installation
-[2]: https://github.com/ditsmod/rest-starter
-[3]: https://github.com/ditsmod/agent-skills/blob/main/AGENTS.md
-[4]: https://github.com/ditsmod/ditsmod/tree/main/examples
+[2]: https://github.com/holu/rest-starter
+[3]: https://github.com/holu/agent-skills/blob/main/AGENTS.md
+[4]: https://github.com/holu/holu/tree/main/examples
 [5]: https://agentskills.io/home
 [9]: https://github.com/angular/angular
 [10]: https://jestjs.io/en/
 [12]: https://en.wikipedia.org/wiki/Singleton_pattern
-[13]: https://github.com/ditsmod/realworld
-[14]: https://github.com/ditsmod/vs-webframework
+[13]: https://github.com/holu/realworld
+[14]: https://github.com/holu/vs-webframework
 [16]: https://www.typescriptlang.org/docs/handbook/project-references.html
 [17]: https://github.com/TypeStrong/ts-node
 [18]: https://nodejs.org/api/packages.html#imports
 [21]: https://en.wikipedia.org/wiki/Single-responsibility_principle
-[22]: https://raw.githubusercontent.com/ditsmod/vs-webframework/refs/heads/main/req-per-sec-frameworks4.png
+[22]: https://raw.githubusercontent.com/holu/vs-webframework/refs/heads/main/req-per-sec-frameworks4.png

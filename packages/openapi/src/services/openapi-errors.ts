@@ -1,4 +1,4 @@
-import { CustomError } from '@ditsmod/core/errors';
+import { CustomError } from '@holu/core/errors';
 
 /**
  * `You can not set this action to non-exists parameter`

@@ -1,5 +1,5 @@
-import { restModule } from '@ditsmod/rest';
-import { MulterExtendedOptions } from '@ditsmod/body-parser';
+import { restModule } from '@holu/rest';
+import { MulterExtendedOptions } from '@holu/body-parser';
 
 import { RequestScopedController } from './some/some.controller.js';
 import { RouteScopedController } from './some/some-ctx.controller.js';

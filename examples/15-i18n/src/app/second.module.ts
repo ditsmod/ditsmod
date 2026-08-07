@@ -1,5 +1,5 @@
-import { restModule } from '@ditsmod/rest';
-import { I18nModule, I18nProviders, I18N_TRANSLATIONS } from '@ditsmod/i18n';
+import { restModule } from '@holu/rest';
+import { I18nModule, I18nProviders, I18N_TRANSLATIONS } from '@holu/i18n';
 
 import { FirstModule } from './first.module.js';
 import { SecondController } from './second/second.controller.js';

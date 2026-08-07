@@ -1,11 +1,11 @@
-# @ditsmod/typeorm
+# @holu/typeorm
 
-Integrates [TypeORM](https://typeorm.io/) into Ditsmod applications. It provides seamless `DataSource` management, automatic entity registration, connection retries during application bootstrap, dependency injection decorators for repositories, and graceful connection shutdown.
+Integrates [TypeORM](https://typeorm.io/) into Holu applications. It provides seamless `DataSource` management, automatic entity registration, connection retries during application bootstrap, dependency injection decorators for repositories, and graceful connection shutdown.
 
 ## Installation
 
 ```bash
-npm i @ditsmod/typeorm typeorm
+npm i @holu/typeorm typeorm
 ```
 
 ## Quick Start
@@ -15,8 +15,8 @@ npm i @ditsmod/typeorm typeorm
 Import `TypeormModule.forRoot()` in your root module (`AppModule`) and attach feature modules via `appends`:
 
 ```ts
-import { restRootModule } from '@ditsmod/rest';
-import { TypeormModule } from '@ditsmod/typeorm';
+import { restRootModule } from '@holu/rest';
+import { TypeormModule } from '@holu/typeorm';
 import { UserModule } from './user.module.js';
 
 @restRootModule({
@@ -55,8 +55,8 @@ export class UserEntity {
 ```
 
 ```ts
-import { restModule } from '@ditsmod/rest';
-import { TypeormModule } from '@ditsmod/typeorm';
+import { restModule } from '@holu/rest';
+import { TypeormModule } from '@holu/typeorm';
 import { UserEntity } from './user.entity.js';
 import { UserController } from './user.controller.js';
 
@@ -72,8 +72,8 @@ export class UserModule {}
 Inject entity repositories into your controllers or services using `@injectRepository(Entity)`:
 
 ```ts
-import { controller, route } from '@ditsmod/rest';
-import { injectRepository } from '@ditsmod/typeorm';
+import { controller, route } from '@holu/rest';
+import { injectRepository } from '@holu/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './user.entity.js';
 
@@ -99,8 +99,8 @@ export class UserController {
 You can inject the initialized `DataSource` or `EntityManager` instances directly:
 
 ```ts
-import { controller, route } from '@ditsmod/rest';
-import { injectDataSource, injectEntityManager } from '@ditsmod/typeorm';
+import { controller, route } from '@holu/rest';
+import { injectDataSource, injectEntityManager } from '@holu/typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 
 @controller()
@@ -146,7 +146,7 @@ export class AppModule {}
 Register entities for the specific database in feature modules by specifying the `dataSourceName`:
 
 ```ts
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 @restModule({
   imports: [TypeormModule.forFeature([LogEntity], 'analytics')],
@@ -171,7 +171,7 @@ export class AnalyticsController {
 
 ## Configuration Options
 
-`TypeormModuleOptions` extends TypeORM's native `DataSourceOptions` with additional Ditsmod-specific properties:
+`TypeormModuleOptions` extends TypeORM's native `DataSourceOptions` with additional Holu-specific properties:
 
 | Option                 | Type                               | Default     | Description                                                                                      |
 | ---------------------- | ---------------------------------- | ----------- | ------------------------------------------------------------------------------------------------ |
@@ -188,4 +188,4 @@ export class AnalyticsController {
 
 ## Graceful Shutdown
 
-Connections registered via `TypeormModule.forRoot()` are managed by `DataSourceManager`, which implements `OnShutdown`. When the Ditsmod application stops, all active connections are cleanly destroyed.
+Connections registered via `TypeormModule.forRoot()` are managed by `DataSourceManager`, which implements `OnShutdown`. When the Holu application stops, all active connections are cleanly destroyed.

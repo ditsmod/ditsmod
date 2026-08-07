@@ -12,13 +12,13 @@ sidebar_position: 40
 
 ## Unit тестування {#unit-testing}
 
-Хороші знання в архітектурі [Ditsmod DI][1] допоможуть вам легко писати юніт-тести для Ditsmod-застосунків, оскільки однією з головних переваг DI - є полегшене тестування. Перш за все, ви повинні навчитись працювати з [інжекторами][2] та з [ієрархією інжекторів][3].
+Хороші знання в архітектурі [Holu DI][1] допоможуть вам легко писати юніт-тести для Holu-застосунків, оскільки однією з головних переваг DI - є полегшене тестування. Перш за все, ви повинні навчитись працювати з [інжекторами][2] та з [ієрархією інжекторів][3].
 
 Припустимо, ви хочете протестувати `Service2` у цьому прикладі:
 
 ```ts
 // service1.ts
-import { injectable } from '@ditsmod/core';
+import { injectable } from '@holu/core';
 
 class Service1 {
   saySomething() {
@@ -40,7 +40,7 @@ class Service2 {
 Оскільки `Service2` залежить від `Service1`, нам необхідно ізолювати цей сервіс від взаємодії з `Service1`. Перед тим, як написати тести, давайте нагадаємо, як можна створити інжектор, який вміє вирішувати залежності класів з нашого прикладу:
 
 ```ts
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 
 import { Service1 } from './service1.js';
 import { Service2 } from './service2.js';
@@ -54,7 +54,7 @@ const service2 = injector.get(Service2);
 В даному разі, для створення `Service2`, інжектор спочатку створить інстанс класу `Service1`. Але щоб написати тести саме для `Service2`, нам не важливо чи справно працює `Service1`, тому замість справжнього класу `Service1` нам можна імітувати його роботу за допомогою [мок-функцій][101]. Ось як це виглядатиме (покищо без тестів):
 
 ```ts {8}
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 import { jest } from '@jest/globals';
 
 import { Service1 } from './service1.js';
@@ -72,7 +72,7 @@ const service2 = injector.get(Service2);
 Тепер можна написати тест, використовуючи цю техніку підміни провайдерів:
 
 ```ts {8-9,16}
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 import { jest } from '@jest/globals';
 
 import { Service1 } from './service1.js';
@@ -114,8 +114,8 @@ describe('Service2', () => {
 
 ```ts {14,21}
 import request from 'supertest';
-import { HttpServer } from '@ditsmod/rest';
-import { TestRestApplication } from '@ditsmod/rest-testing';
+import { HttpServer } from '@holu/rest';
+import { TestRestApplication } from '@holu/rest-testing';
 import { jest } from '@jest/globals';
 
 import { AppModule } from '#app/app.module.js';
@@ -193,7 +193,7 @@ interface ExtensionMetaOverrider<T = any> {
 Даний метод призначений для створення плагінів, які можуть динамічно додавати методи та властивості до інстансу `TestRestApplication`:
 
 ```ts
-import { TestRestApplication } from '@ditsmod/rest-testing';
+import { TestRestApplication } from '@holu/rest-testing';
 
 class Plugin1 extends TestRestApplication {
   method1() {
@@ -218,7 +218,7 @@ TestRestApplication.createTestApp(AppModule)
   .overrideModuleMeta([]);
 ```
 
-Як бачите, після використання `$use()` інстанс `TestRestApplication` може використовувати методи плагінів. [Приклад використання такого плагіна в реальному житті][103] можна проглянути в модулі `@ditsmod/rest`.
+Як бачите, після використання `$use()` інстанс `TestRestApplication` може використовувати методи плагінів. [Приклад використання такого плагіна в реальному житті][103] можна проглянути в модулі `@holu/rest`.
 
 
 ### `TestRestPlugin` {#testrestplugin}
@@ -226,9 +226,9 @@ TestRestApplication.createTestApp(AppModule)
 В класі `TestRestPlugin` використовується `testRestApplication.overrideExtensionMeta()` для підміни провайдерів у метаданих, що додаються групою `RestRouteExtension`:
 
 ```ts
-import { Provider } from '@ditsmod/core';
-import { RouteExtensionMeta, RestRouteExtension } from '@ditsmod/rest';
-import { TestRestApplication, ExtensionMetaOverrider } from '@ditsmod/rest-testing';
+import { Provider } from '@holu/core';
+import { RouteExtensionMeta, RestRouteExtension } from '@holu/rest';
+import { TestRestApplication, ExtensionMetaOverrider } from '@holu/rest-testing';
 
 export class TestRestPlugin extends TestRestApplication {
   overrideExtensionRestMeta(providersToOverride: Provider[]) {
@@ -244,12 +244,12 @@ export class TestRestPlugin extends TestRestApplication {
 }
 ```
 
-Ви можете використовувати цей приклад для створення плагінів, що будуть підміняти провайдери для інших груп розширень. Повний приклад з `TestRestPlugin` ви можете знайти [в репозиторії Ditsmod][104]. По-суті, цей плагін вам буде потрібен у тестах, якщо вам потрібно буде підмінити провайдери, які у вашому застосунку ви додали у метадані контролера:
+Ви можете використовувати цей приклад для створення плагінів, що будуть підміняти провайдери для інших груп розширень. Повний приклад з `TestRestPlugin` ви можете знайти [в репозиторії Holu][104]. По-суті, цей плагін вам буде потрібен у тестах, якщо вам потрібно буде підмінити провайдери, які у вашому застосунку ви додали у метадані контролера:
 
 ```ts {14-15}
-import { Provider } from '@ditsmod/core';
-import { TestRestApplication } from '@ditsmod/rest-testing';
-import { TestRestPlugin } from '@ditsmod/rest-testing';
+import { Provider } from '@holu/core';
+import { TestRestApplication } from '@holu/rest-testing';
+import { TestRestPlugin } from '@holu/rest-testing';
 
 import { AppModule } from './app.module.js';
 import { Service1, Service2 } from './services.js';
@@ -279,5 +279,5 @@ const server = await TestRestApplication.createTestApp(AppModule)
 [100]: https://jestjs.io/
 [101]: https://jestjs.io/docs/mock-functions
 [102]: https://github.com/ladjs/supertest
-[103]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/e2e/app1/app1-with-overriden-providers.spec.ts#L36
-[104]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest-testing/src/test-rest.plugin.ts
+[103]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/e2e/app1/app1-with-overriden-providers.spec.ts#L36
+[104]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest-testing/src/test-rest.plugin.ts

@@ -1,4 +1,4 @@
-import { inject, injectable, optional } from '@ditsmod/core';
+import { inject, injectable, optional } from '@holu/core';
 
 import {
   TrpcHttpBackend,

@@ -1,6 +1,6 @@
 # Example 20 - Auth.js Integration
 
-This example demonstrates how to integrate [Auth.js](https://authjs.dev/) into a Ditsmod REST application using the `@ditsmod/authjs` module.
+This example demonstrates how to integrate [Auth.js](https://authjs.dev/) into a Holu REST application using the `@holu/authjs` module.
 
 ## Key Features Demonstrated
 
@@ -28,4 +28,4 @@ npm run start
 
 Open your browser at http://localhost:3000/
 
-For more comprehensive information, see the Ditsmod documentation: https://ditsmod.github.io/en/native-modules/authjs/
+For more comprehensive information, see the Holu documentation: https://holu.github.io/en/native-modules/authjs/

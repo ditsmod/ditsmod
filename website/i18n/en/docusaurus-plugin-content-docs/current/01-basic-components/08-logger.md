@@ -7,7 +7,7 @@ sidebar_position: 8
 The logging level can be set by passing a provider with the `LoggerConfig` token:
 
 ```ts {5}
-import { rootModule } from '@ditsmod/core';
+import { rootModule } from '@holu/core';
 // ...
 @rootModule({
   // ...
@@ -19,7 +19,7 @@ export class AppModule {}
 However, better type support is provided by the [ProviderBuilder][2] helper:
 
 ```ts {5}
-import { rootModule, ProviderBuilder, LoggerConfig } from '@ditsmod/core';
+import { rootModule, ProviderBuilder, LoggerConfig } from '@holu/core';
 // ...
 @rootModule({
   // ...
@@ -31,8 +31,8 @@ export class AppModule {}
 As you can see, `LoggerConfig` is provided at the application level. If you need a different logging level in a specific module, you should provide both the logging configuration and a provider with the `Logger` token:
 
 ```ts {7-9}
-import { Logger, ProviderBuilder } from '@ditsmod/core';
-import { restModule } from '@ditsmod/rest';
+import { Logger, ProviderBuilder } from '@holu/core';
+import { restModule } from '@holu/rest';
 import { PatchLogger } from './patch-logger.js';
 // ...
 @restModule({
@@ -46,7 +46,7 @@ export class SomeModule {}
 
 Please note that these providers are passed at the module level.
 
-Ditsmod uses the [Logger][100] class as an interface as well as a DI token. By default, [ConsoleLogger][101] is used for logging. There are 8 logging levels in total (borrowed from [log4j][102]):
+Holu uses the [Logger][100] class as an interface as well as a DI token. By default, [ConsoleLogger][101] is used for logging. There are 8 logging levels in total (borrowed from [log4j][102]):
 
 - `all`- All events should be logged.
 - `trace` - A fine-grained debug message, typically capturing the flow through the application.
@@ -59,7 +59,7 @@ Ditsmod uses the [Logger][100] class as an interface as well as a DI token. By d
 
 In this documentation, when we talk about "log levels", we mean the "level of log detail". The highest level of detail is `all`, and the lowest level of detail is `off`.
 
-In Ditsmod system messages, you may encounter two types that denote the log level:
+In Holu system messages, you may encounter two types that denote the log level:
 
 - **InputLogLevel** - this type denotes the log level assigned to a specific message. Note that the `off` level is not present in `InputLogLevel`. For example, in the following entry, the log level `info` is used:
   ```ts
@@ -90,10 +90,10 @@ In this case, the logger will not record anything, because the log filter is set
 
 ## Substitution the system logger {#substitution-the-system-logger}
 
-If you want the system logs written by Ditsmod to be written by your own logger, it must implement the [Logger][100] interface. It can then be passed to DI at the application level:
+If you want the system logs written by Holu to be written by your own logger, it must implement the [Logger][100] interface. It can then be passed to DI at the application level:
 
 ```ts
-import { Logger, rootModule } from '@ditsmod/core';
+import { Logger, rootModule } from '@holu/core';
 import { MyLogger } from './my-loggegr.js';
 
 @rootModule({
@@ -108,7 +108,7 @@ But, most likely, you will want to use some ready-made, well-known logger. And t
 Let's write the code for this provider first. At the moment (2023-09-02), one of the most popular Node.js loggers is [winston][103]. For patching, we wrote a class method before which we added the `factoryMethod` decorator:
 
 ```ts {42-44,47-49}
-import { Logger, LoggerConfig, OutputLogLevel, factoryMethod, optional } from '@ditsmod/core';
+import { Logger, LoggerConfig, OutputLogLevel, factoryMethod, optional } from '@holu/core';
 import { createLogger, addColors, format, transports } from 'winston';
 
 export class PatchLogger {
@@ -165,12 +165,12 @@ export class PatchLogger {
 }
 ```
 
-As you can see, in addition to the usual settings for `winston`, the highlighted lines add two methods to his instance - `setLevel` and `getLevel` - which it does not have, but which are necessary for Ditsmod to interact with it properly.
+As you can see, in addition to the usual settings for `winston`, the highlighted lines add two methods to his instance - `setLevel` and `getLevel` - which it does not have, but which are necessary for Holu to interact with it properly.
 
 And now this class can be passed to DI at the application level:
 
 ```ts
-import { Logger, rootModule } from '@ditsmod/core';
+import { Logger, rootModule } from '@holu/core';
 import { PatchLogger } from './patch-logger.js';
 
 @rootModule({
@@ -182,15 +182,15 @@ import { PatchLogger } from './patch-logger.js';
 export class AppModule {}
 ```
 
-You can view finished examples with loggers [in the Ditsmod repository][104].
+You can view finished examples with loggers [in the Holu repository][104].
 
 ## Using the logger in production mode {#using-the-logger-in-production-mode}
 
 To change the logging level in production mode, you do not need to change the compiled code. You can create a custom controller, guard it, and then call the appropriate route to change the logging level that you specify in the URL:
 
 ```ts
-import { AnyObj, ctx, Logger, InputLogLevel } from '@ditsmod/core';
-import { route, QUERY_PARAMS, RequestContext, controller } from '@ditsmod/rest';
+import { AnyObj, ctx, Logger, InputLogLevel } from '@holu/core';
+import { route, QUERY_PARAMS, RequestContext, controller } from '@holu/rest';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';
@@ -219,8 +219,8 @@ As you can see, the route path `/set-loglevel` is created here, with protection 
 [1]: /rest-application/guards#helpers-for-guards-with-parameters
 [2]: /basic-components/providers-helper/
 
-[100]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/core/src/logger/logger.ts
-[101]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/core/src/logger/console-logger.ts
+[100]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/core/src/logger/logger.ts
+[101]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/core/src/logger/console-logger.ts
 [102]: https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Level.html
 [103]: https://github.com/winstonjs/winston
-[104]: https://github.com/ditsmod/ditsmod/tree/3.0.0-next.15/examples/04-logger/src/app/modules
+[104]: https://github.com/holu/holu/tree/3.0.0-next.15/examples/04-logger/src/app/modules

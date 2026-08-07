@@ -9,7 +9,7 @@ sidebar_position: 90
 Using the `Reflector` class (do not confuse it with the standard [Reflect][1]), you can create a custom decorator at any level:
 
 ```ts
-import { Reflector } from '@ditsmod/core/di';
+import { Reflector } from '@holu/core/di';
 
 const classLevel = Reflector.makeClassDecorator();
 const propertyLevel = Reflector.makePropDecorator();
@@ -31,7 +31,7 @@ console.log(metadata);
 This example demonstrates how to create decorator factories at the class, property, and parameter levels. Since no transformers are provided here, the factory simply returns the input data as an array. In the next example, we will supply a basic transformer to the decorator factory that returns the single argument unchanged:
 
 ```ts {3}
-import { Reflector } from '@ditsmod/core/di';
+import { Reflector } from '@holu/core/di';
 
 const classLevel = Reflector.makeClassDecorator((obj: any) => obj);
 
@@ -47,7 +47,7 @@ Note that class-level metadata is attached to the `metadata.constructor` propert
 The reflector stores metadata for the entire class inheritance chain:
 
 ```ts {21}
-import { Reflector } from '@ditsmod/core/di';
+import { Reflector } from '@holu/core/di';
 
 const classLevel = Reflector.makeClassDecorator((val?: string) => val);
 
@@ -93,6 +93,6 @@ interface InjectTransformResult {
 }
 ```
 
-This example shows how Ditsmod declares types for the `inject` parameter decorator. The type complexity arises because the transformer function has multiple signatures, and TypeScript currently cannot infer more than one signature.
+This example shows how Holu declares types for the `inject` parameter decorator. The type complexity arises because the transformer function has multiple signatures, and TypeScript currently cannot infer more than one signature.
 
 [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect

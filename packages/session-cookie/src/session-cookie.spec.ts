@@ -1,12 +1,12 @@
-import { Injector } from '@ditsmod/core';
-import type { RawRequest, RawResponse } from '@ditsmod/rest';
-import { RAW_REQ, RAW_RES } from '@ditsmod/rest';
+import { Injector } from '@holu/core';
+import type { RawRequest, RawResponse } from '@holu/rest';
+import { RAW_REQ, RAW_RES } from '@holu/rest';
 import { jest } from '@jest/globals';
 
 import { SessionCookie } from './session-cookie.js';
 import { SessionCookieOptions } from './types.js';
 
-describe('@ditsmod/session-cookie', () => {
+describe('@holu/session-cookie', () => {
   const setHeader = jest.fn();
   let rawReq: RawRequest;
   let rawRes: RawResponse;

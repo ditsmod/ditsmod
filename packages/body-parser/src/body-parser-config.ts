@@ -1,5 +1,5 @@
-import type { HttpMethod } from '@ditsmod/core';
-import { createInjectionSymbol } from '@ditsmod/core';
+import type { HttpMethod } from '@holu/core';
+import { createInjectionSymbol } from '@holu/core';
 import type { JsonOptions, RawOptions, TextOptions, UrlencodedOptions } from '@ts-stack/body-parser';
 
 export class BodyParserConfig {

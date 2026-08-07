@@ -1,5 +1,5 @@
-import type { AnyObj, Class } from '@ditsmod/core';
-import { Reflector } from '@ditsmod/core';
+import type { AnyObj, Class } from '@holu/core';
+import { Reflector } from '@holu/core';
 import type { XSchemaObject } from '@ts-stack/openapi-spec';
 
 export type AnyEnum<T extends number | string = number | string> = Record<T, T>;

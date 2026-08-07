@@ -1,4 +1,4 @@
-import type { Class, Provider } from '@ditsmod/core';
+import type { Class, Provider } from '@holu/core';
 
 import type { TrpcRouteMeta } from './trpc-route-data.js';
 import type { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';

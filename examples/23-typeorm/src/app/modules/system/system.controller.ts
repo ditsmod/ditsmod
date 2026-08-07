@@ -1,5 +1,5 @@
-import { controller, route } from '@ditsmod/rest';
-import { injectDataSource, injectEntityManager } from '@ditsmod/typeorm';
+import { controller, route } from '@holu/rest';
+import { injectDataSource, injectEntityManager } from '@holu/typeorm';
 import type { DataSource, EntityManager } from 'typeorm';
 
 @controller()

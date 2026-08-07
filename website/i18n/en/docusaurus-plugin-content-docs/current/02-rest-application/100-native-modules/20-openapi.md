@@ -2,21 +2,21 @@
 sidebar_position: 20
 ---
 
-# @ditsmod/openapi
+# @holu/openapi
 
-You can use the `@ditsmod/openapi` module to create [OpenAPI][0] documentation.
+You can use the `@holu/openapi` module to create [OpenAPI][0] documentation.
 
 ## Installation and Setup {#installation-and-setup}
 
 ```bash
-npm i @ditsmod/openapi
+npm i @holu/openapi
 ```
 
 To get `OpenapiModule` with default settings, simply import it into any module:
 
 ```ts {5}
-import { OpenapiModule } from '@ditsmod/openapi';
-import { restModule } from '@ditsmod/rest';
+import { OpenapiModule } from '@holu/openapi';
+import { restModule } from '@holu/rest';
 
 @restModule({
   imports: [{ absolutePath: '', module: OpenapiModule }],
@@ -30,8 +30,8 @@ In this case, the documentation will be generated for the entire application at 
 You can also use the static method `OpenapiModule.withOpts` to specify additional parameters for importing `OpenapiModule`:
 
 ```ts {11,14}
-import { restModule } from '@ditsmod/rest';
-import { OpenapiModule, SwaggerOAuthOptions } from '@ditsmod/openapi';
+import { restModule } from '@holu/rest';
+import { OpenapiModule, SwaggerOAuthOptions } from '@holu/openapi';
 import { oasObject } from './oas-object.js';
 
 const swaggerOAuthOptions: SwaggerOAuthOptions = {
@@ -56,14 +56,14 @@ import { XOasObject, openapi } from '@ts-stack/openapi-spec';
 
 export const oasObject: XOasObject = {
   openapi,
-  info: { title: 'Testing @ditsmod/openapi', version: '1.0.0' },
+  info: { title: 'Testing @holu/openapi', version: '1.0.0' },
   tags: [
     {
       name: 'NonOasRoutes',
       description:
         'Routes that used `@route()` decorator. If you want to change this description, ' +
         '[use tags](https://swagger.io/docs/specification/grouping-operations-with-tags/) ' +
-        'for `@oasRoute()` imported from @ditsmod/openapi.',
+        'for `@oasRoute()` imported from @holu/openapi.',
     },
     {
       name: 'withParameter',
@@ -96,8 +96,8 @@ export const oasObject: XOasObject = {
 To create individual routes, use the `oasRoute` decorator, in which the fourth or third parameter (if there are no guards) is the so-called [Operation Object][1]:
 
 ```ts {8-18}
-import { controller } from '@ditsmod/rest';
-import { oasRoute } from '@ditsmod/openapi';
+import { controller } from '@holu/rest';
+import { oasRoute } from '@holu/openapi';
 
 @controller()
 export class SomeController {
@@ -121,15 +121,15 @@ export class SomeController {
 }
 ```
 
-Ditsmod has good support for TypeScript models for OpenAPI v3.1.0, including Operation Object, but it is not necessary to manually write the entire Operation Object directly in the code for each route. It is better to use helpers that will generate the necessary code for you, and also reduce the number of errors due to even better TypeScript support. Ditsmod has several such helpers: `getParams()`, `getContent()`, `Parameters`, `Content`. They are all imported from the `@ditsmod/openapi` module.
+Holu has good support for TypeScript models for OpenAPI v3.1.0, including Operation Object, but it is not necessary to manually write the entire Operation Object directly in the code for each route. It is better to use helpers that will generate the necessary code for you, and also reduce the number of errors due to even better TypeScript support. Holu has several such helpers: `getParams()`, `getContent()`, `Parameters`, `Content`. They are all imported from the `@holu/openapi` module.
 
 ## Passing Operation Object parameters {#passing-operation-object-parameters}
 
 In the following example, with the helper `getParams()`, almost everything that we wrote manually for `parameters` in the previous example is writed:
 
 ```ts {8}
-import { controller } from '@ditsmod/rest';
-import { oasRoute, getParams } from '@ditsmod/openapi';
+import { controller } from '@holu/rest';
+import { oasRoute, getParams } from '@holu/openapi';
 
 @controller()
 export class SomeController {
@@ -150,7 +150,7 @@ The data type for the `username` parameter and its description are missing here.
 The following example shows a model with three parameters:
 
 ```ts
-import { property } from '@ditsmod/openapi';
+import { property } from '@holu/openapi';
 
 class Params {
   @property({ description: 'Username of the profile to get.' })
@@ -171,7 +171,7 @@ Note that in this case the `type` property is not specified in the metadata, as 
 The array type or `enum` can be passed as the second parameter to the `@property()` decorator:
 
 ```ts
-import { property } from '@ditsmod/openapi';
+import { property } from '@holu/openapi';
 
 enum NumberEnum {
   one,
@@ -197,7 +197,7 @@ class Params {
 References of some models to others are quite readable. In the following example, `Model2` has a reference to `Model1`:
 
 ```ts
-import { property } from '@ditsmod/openapi';
+import { property } from '@holu/openapi';
 
 export class Model1 {
   @property()
@@ -218,8 +218,8 @@ export class Model2 {
 The `getParams()` helper allows you to use models, and if you make a mistake in a parameter name, TypeScript will tell you about it:
 
 ```ts {10}
-import { controller } from '@ditsmod/rest';
-import { oasRoute, getParams } from '@ditsmod/openapi';
+import { controller } from '@holu/rest';
+import { oasRoute, getParams } from '@holu/openapi';
 
 import { Params } from './params.js';
 
@@ -240,8 +240,8 @@ Here `Params` is a class used as a parameter model.
 But the helper `getParams()` is not intended to be used simultaneously for mandatory and optional parameters. It also cannot pass a parameter description that differs from the parameter description in the parameter model. For such purposes, you can use another helper - `Parameters`:
 
 ```ts {10-13}
-import { controller } from '@ditsmod/rest';
-import { oasRoute, Parameters } from '@ditsmod/openapi';
+import { controller } from '@holu/rest';
+import { oasRoute, Parameters } from '@holu/openapi';
 
 import { Params } from './params.js';
 
@@ -265,7 +265,7 @@ export class SomeController {
 Data models are also used to describe the content of `requestBody`, but there is one slight difference compared to parameters. By default, all model properties are optional, and to mark a particular property as required, you need to use the `REQUIRED` constant:
 
 ```ts
-import { property, REQUIRED } from '@ditsmod/openapi';
+import { property, REQUIRED } from '@holu/openapi';
 
 class Model1 {
   @property()
@@ -292,8 +292,8 @@ class SomeController {
 To describe the content in `requestBody` and `responses`, there is also a helper `getContent()`:
 
 ```ts {12}
-import { controller } from '@ditsmod/rest';
-import { oasRoute, getContent } from '@ditsmod/openapi';
+import { controller } from '@holu/rest';
+import { oasRoute, getContent } from '@holu/openapi';
 
 import { SomeModel } from '#models/some.js';
 
@@ -315,9 +315,9 @@ export class SomeController {
 The `getContent()` helper accepts a shortened version of the data when describing a single `mediaType` variant. If you need to describe a larger number of `mediaType`, you can use the `Content` class:
 
 ```ts {11-19}
-import { HttpStatus } from '@ditsmod/core';
-import { controller } from '@ditsmod/rest';
-import { oasRoute, Content } from '@ditsmod/openapi';
+import { HttpStatus } from '@holu/core';
+import { controller } from '@holu/rest';
+import { oasRoute, Content } from '@holu/openapi';
 
 import { SomeModel } from '#models/some.js';
 
@@ -346,8 +346,8 @@ export class SomeController {
 Tags and parameters can be passed at the module level:
 
 ```ts
-import { OasOptions, Parameters } from '@ditsmod/openapi';
-import { restModule } from '@ditsmod/rest';
+import { OasOptions, Parameters } from '@holu/openapi';
+import { restModule } from '@holu/rest';
 
 import { Params } from './params.js';
 
@@ -372,11 +372,11 @@ The previous examples showed helpers that return parts of the [Operation Object]
 
 ## Special decorator for guards {#special-decorator-for-guards}
 
-The `@ditsmod/openapi` module has a special `oasGuard` decorator that allows you to attach OpenAPI metadata behind guards:
+The `@holu/openapi` module has a special `oasGuard` decorator that allows you to attach OpenAPI metadata behind guards:
 
 ```ts
-import { CanActivate } from '@ditsmod/rest';
-import { oasGuard } from '@ditsmod/openapi';
+import { CanActivate } from '@holu/rest';
+import { oasGuard } from '@holu/openapi';
 
 @oasGuard({
   tags: ['withBasicAuth'],
@@ -413,8 +413,8 @@ Where `securitySchemeObject` is of type [Security Scheme Object][5] and `respons
 This guards are used in exactly the same way as "normal" guards:
 
 ```ts
-import { controller } from '@ditsmod/rest';
-import { oasRoute } from '@ditsmod/openapi';
+import { controller } from '@holu/rest';
+import { oasRoute } from '@holu/openapi';
 
 @controller()
 export class SomeController {
@@ -430,6 +430,6 @@ export class SomeController {
 [1]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#operation-object
 [2]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#reference-object
 [3]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#schema-object
-[4]: https://github.com/ditsmod/realworld/blob/e8947f8767/packages/server/src/app/modules/routed/profiles/profiles.controller.ts#L24-L30
+[4]: https://github.com/holu/realworld/blob/e8947f8767/packages/server/src/app/modules/routed/profiles/profiles.controller.ts#L24-L30
 [5]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#security-scheme-object
 [6]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#responses-object

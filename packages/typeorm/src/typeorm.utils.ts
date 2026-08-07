@@ -1,5 +1,5 @@
-import type { AnyObj } from '@ditsmod/core';
-import { InjectionToken } from '@ditsmod/core';
+import type { AnyObj } from '@holu/core';
+import { InjectionToken } from '@holu/core';
 import { DataSource, EntityManager, EntitySchema } from 'typeorm';
 import type { Repository } from 'typeorm';
 
@@ -8,7 +8,7 @@ import { DEFAULT_DATA_SOURCE_NAME } from './constants.js';
 
 /**
  * Caches for `InjectionToken` instances to ensure stable identity.
- * Ditsmod DI matches providers to injection sites by token reference equality,
+ * Holu DI matches providers to injection sites by token reference equality,
  * so the same `InjectionToken` object must be returned for a given key.
  */
 const dataSourceTokens = new Map<string, InjectionToken<DataSource>>();

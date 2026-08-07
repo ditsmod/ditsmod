@@ -1,6 +1,6 @@
-import { featureModule, ProviderBuilder } from '@ditsmod/core';
-import { DispatcherExtension, RestRouteExtension } from '@ditsmod/rest';
-import { BodyParserExtension } from '@ditsmod/body-parser';
+import { featureModule, ProviderBuilder } from '@holu/core';
+import { DispatcherExtension, RestRouteExtension } from '@holu/rest';
+import { BodyParserExtension } from '@holu/body-parser';
 
 import { AjvService } from './ajv.service.js';
 import { AJV_OPTIONS } from './constants.js';

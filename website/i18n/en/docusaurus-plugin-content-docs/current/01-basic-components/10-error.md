@@ -5,13 +5,13 @@ sidebar_position: 10
 
 ## CustomError {#customerror}
 
-Ditsmod provides two built-in classes - `CustomError` and `HttpErrorHandler` - that can be used to throw and catch errors, respectively.
+Holu provides two built-in classes - `CustomError` and `HttpErrorHandler` - that can be used to throw and catch errors, respectively.
 
 The `CustomError` class can be composed to generate any error:
 
 ```ts {10}
-import { HttpStatus } from '@ditsmod/core';
-import { CustomError } from '@ditsmod/core/errors';
+import { HttpStatus } from '@holu/core';
+import { CustomError } from '@holu/core/errors';
 
 // ...
 
@@ -72,7 +72,7 @@ The `CustomError` class constructor can accept cause error as the second argumen
 It is recommended to use `CustomError` as a base class for creating any other error classes. For example, a new error `NormalizationFailure` is created as follows (the `DM_ERR_` prefix is automatically added to this error’s `code`):
 
 ```ts
-import { CustomError } from '@ditsmod/core/errors';
+import { CustomError } from '@holu/core/errors';
 /**
  * `Normalization of ${moduleName} failed`
  */
@@ -98,9 +98,9 @@ Any errors that occur while processing an HTTP request that you have not caught 
 You can create your own error handler by creating a class that implements the [HttpErrorHandler][101] interface:
 
 ```ts
-import { injectable, Logger, HttpStatus } from '@ditsmod/core';
-import { HttpErrorHandler, RequestContext } from '@ditsmod/rest';
-import { isCustomError } from '@ditsmod/core/errors';
+import { injectable, Logger, HttpStatus } from '@holu/core';
+import { HttpErrorHandler, RequestContext } from '@holu/rest';
+import { isCustomError } from '@holu/core/errors';
 
 @injectable()
 export class MyHttpErrorHandler implements HttpErrorHandler {
@@ -137,8 +137,8 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
 To add your new error handler centrally, you can do it directly in the root module:
 
 ```ts {6-7}
-import { rootModule } from '@ditsmod/core';
-import { HttpErrorHandler } from '@ditsmod/rest';
+import { rootModule } from '@holu/core';
+import { HttpErrorHandler } from '@holu/rest';
 import { MyHttpErrorHandler } from './my-http-error-handler.js';
 
 @rootModule({
@@ -154,7 +154,7 @@ Of course, if there are error handling specifics for a separate module or contro
 If you add such a handler to the metadata of a feature module, you probably don't need to export it. On the other hand, if you want to write a custom error handling module and still want to export `HttpErrorHandler` from it, be aware that importing it into any module will require [provider collisions][1] to be resolved. This occurs because a default error handler has already been added to each module in your application, and when you import the module with its new error handler, the two error handlers collide. This can be easily resolved:
 
 ```ts {8}
-import { restModule, HttpErrorHandler } from '@ditsmod/rest';
+import { restModule, HttpErrorHandler } from '@holu/rest';
 import { ErrorHandlerModule } from './error-handler.module.js';
 
 @restModule({
@@ -179,5 +179,5 @@ We remind you that provider collisions can only occur when importing modules. Th
 
 [1]: /basic-components/modules/#provider-collisions
 
-[100]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/services/default-http-error-handler.ts
-[101]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/services/http-error-handler.ts
+[100]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/services/default-http-error-handler.ts
+[101]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/services/http-error-handler.ts

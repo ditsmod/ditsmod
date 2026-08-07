@@ -1,6 +1,6 @@
-import type { Class, NormalizedModuleMeta } from '@ditsmod/core';
-import { isFeatureModule, Reflector, getDuplicates, getProxyForMixinMeta } from '@ditsmod/core';
-import { EmptyModuleMeta } from '@ditsmod/core/errors';
+import type { Class, NormalizedModuleMeta } from '@holu/core';
+import { isFeatureModule, Reflector, getDuplicates, getProxyForMixinMeta } from '@holu/core';
+import { EmptyModuleMeta } from '@holu/core/errors';
 
 import type { TrpcStaticOptions } from '#decorators/trpc-module-mixins.js';
 import { TrpcMixinMeta } from '#decorators/trpc-module-mixins.js';

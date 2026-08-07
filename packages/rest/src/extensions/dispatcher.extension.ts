@@ -19,7 +19,7 @@ import {
   ModuleManager,
   HttpMethod,
   getDebugClassName,
-} from '@ditsmod/core';
+} from '@holu/core';
 
 import { routeChannel } from '#diagnostics-channel';
 import { RouteExtensionMeta, PreparedRouteMeta } from '../types/types.js';
@@ -350,7 +350,7 @@ export class DispatcherExtension implements Extension<void> {
 
       httpMethods.forEach((httpMethod) => {
         this.log.printRoute(this, httpMethod, fullPath, countOfGuards);
-        routeChannel('ditsmod.route').publish({ moduleName, httpMethod, fullPath, countOfGuards });
+        routeChannel('holu.route').publish({ moduleName, httpMethod, fullPath, countOfGuards });
         this.requestDispatcher.assertSupportedMethods(httpMethod, fullPath);
         if (httpMethod == 'ALL') {
           router.all(`/${fullPath}`, handle);

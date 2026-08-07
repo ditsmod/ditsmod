@@ -1,4 +1,4 @@
-import { restRootModule } from '@ditsmod/rest';
+import { restRootModule } from '@holu/rest';
 
 import { AppController } from './app.controller.js';
 import { FirstModule } from './first/first.module.js';

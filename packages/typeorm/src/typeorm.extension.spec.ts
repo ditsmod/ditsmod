@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
-import type { Provider } from '@ditsmod/core';
-import { injectable, Injector } from '@ditsmod/core';
+import type { Provider } from '@holu/core';
+import { injectable, Injector } from '@holu/core';
 import type { DataSource } from 'typeorm';
 
 import { TYPEORM_OPTIONS, TYPEORM_ASYNC_OPTIONS } from './constants.js';

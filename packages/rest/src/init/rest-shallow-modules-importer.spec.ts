@@ -14,7 +14,7 @@ import {
   rootModule,
   SystemLogMediator,
   ShallowModulesImporter as ShallowModulesImporterBase,
-} from '@ditsmod/core';
+} from '@holu/core';
 
 import { controller } from '#types/controller.js';
 import { RestAppendOptions } from './rest-mixin-raw-meta.js';
@@ -22,7 +22,7 @@ import { mixinRest } from '#decorators/rest-module-mixins.js';
 import { RestShallowModulesImporter } from './rest-shallow-modules-importer.js';
 import { Level } from '#types/types.js';
 import { ModuleMustHaveControllers } from '#services/rest-errors.js';
-import { LevelCollisionNotFound } from '@ditsmod/core/errors';
+import { LevelCollisionNotFound } from '@holu/core/errors';
 
 @injectable()
 class MockShallowModulesImporter extends RestShallowModulesImporter {

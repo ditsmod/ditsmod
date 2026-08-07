@@ -1,4 +1,4 @@
-import { BaseAppOptions } from '@ditsmod/core';
+import { BaseAppOptions } from '@holu/core';
 
 import type { HttpModule } from '#init/http-module.js';
 import type { ServerOptions } from '#types/server-options.js';

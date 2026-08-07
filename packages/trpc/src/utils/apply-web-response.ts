@@ -2,7 +2,7 @@ import { type ServerResponse } from 'node:http';
 import type { RawResponse } from '#services/request.js';
 
 /**
- * Apply a Web Response to Ditsmod Response.
+ * Apply a Web Response to Holu Response.
  */
 export async function applyResponse(response: Response, rawRes: RawResponse) {
   applyHeaders(response, rawRes);
@@ -18,7 +18,7 @@ export async function applyResponse(response: Response, rawRes: RawResponse) {
 }
 
 /**
- * Apply a Web Response headers to Ditsmod Response headers.
+ * Apply a Web Response headers to Holu Response headers.
  */
 export function applyHeaders(response: Response, rawRes: RawResponse) {
   response.headers.forEach((value, key) => rawRes.appendHeader(key, value));

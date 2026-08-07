@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# @ditsmod/body-parser
+# @holu/body-parser
 
 In this module, integration is done with [@ts-stack/body-parser][4] and [@ts-stack/multer][5]. By default, the following data formats are supported:
 
@@ -12,7 +12,7 @@ In this module, integration is done with [@ts-stack/body-parser][4] and [@ts-sta
 4. `application/octet-stream`
 5. `multipart/form-data`
 
-The first four formats in this list are handled by the `@ts-stack/body-parser` package, while the last one is managed by `@ts-stack/multer`, which is used for file uploads. Since the configuration for file uploads can vary significantly from route to route, Ditsmod provides a service to simplify file handling instead of ready-made value.
+The first four formats in this list are handled by the `@ts-stack/body-parser` package, while the last one is managed by `@ts-stack/multer`, which is used for file uploads. Since the configuration for file uploads can vary significantly from route to route, Holu provides a service to simplify file handling instead of ready-made value.
 
 For parsing the first four formats, this module adds an interceptor to all routes that have HTTP methods specified in `bodyParserConfig.acceptMethods`, which by default are:
 
@@ -20,21 +20,21 @@ For parsing the first four formats, this module adds an interceptor to all route
 - `PUT`
 - `PATCH`
 
-A ready-made example of using `@ditsmod/body-parser` can be viewed in the [Ditsmod repository][1].
+A ready-made example of using `@holu/body-parser` can be viewed in the [Holu repository][1].
 
 ## Installation {#installation}
 
 ```bash
-npm i @ditsmod/body-parser
+npm i @holu/body-parser
 ```
 
 ## Importing {#importing}
 
-To enable `@ditsmod/body-parser` globally, you need to import and export `BodyParserModule` in the root module:
+To enable `@holu/body-parser` globally, you need to import and export `BodyParserModule` in the root module:
 
 ```ts
-import { restRootModule } from '@ditsmod/rest';
-import { BodyParserModule } from '@ditsmod/body-parser';
+import { restRootModule } from '@holu/rest';
+import { BodyParserModule } from '@holu/body-parser';
 
 @restRootModule({
   imports: [
@@ -49,8 +49,8 @@ export class AppModule {}
 In this case, the default settings will work. If you need to change some options, you can do it as follows:
 
 ```ts {4-8,12,15}
-import { restRootModule } from '@ditsmod/rest';
-import { BodyParserModule } from '@ditsmod/body-parser';
+import { restRootModule } from '@holu/rest';
+import { BodyParserModule } from '@holu/body-parser';
 
 const moduleWithBodyParserConfig = BodyParserModule.withOpts({
   acceptMethods: ['POST'],
@@ -71,8 +71,8 @@ export class AppModule {}
 Another option for passing the configuration:
 
 ```ts {10}
-import { restRootModule } from '@ditsmod/rest';
-import { BodyParserModule, BodyParserConfig } from '@ditsmod/body-parser';
+import { restRootModule } from '@holu/rest';
+import { BodyParserModule, BodyParserConfig } from '@holu/body-parser';
 
 @restRootModule({
   imports: [
@@ -94,9 +94,9 @@ Depending on whether the controller works [in route-scoped or request-scoped mod
 1. If the controller works in request-scoped mode, the result can be obtained using the `HTTP_BODY` token:
 
   ```ts {12}
-  import { ctx } from '@ditsmod/core';
-  import { controller, RequestContext, route } from '@ditsmod/rest';
-  import { HTTP_BODY } from '@ditsmod/body-parser';
+  import { ctx } from '@holu/core';
+  import { controller, RequestContext, route } from '@holu/rest';
+  import { HTTP_BODY } from '@holu/body-parser';
 
   interface Body {
     one: number;
@@ -113,7 +113,7 @@ Depending on whether the controller works [in route-scoped or request-scoped mod
 2. If the controller is in route-scoped mode, the result can be obtained from the context:
 
   ```ts {6}
-  import { controller, RequestContext, route } from '@ditsmod/rest';
+  import { controller, RequestContext, route } from '@holu/rest';
 
   @controller({ scope: 'route' })
   export class SomeController {
@@ -126,11 +126,11 @@ Depending on whether the controller works [in route-scoped or request-scoped mod
 
 ## Disabling the Request Body Parser {#disabling-the-request-body-parser}
 
-Of course, the first thing you can do to disable the request body parser is to avoid importing `@ditsmod/body-parser` into your module, either globally or locally. Additionally, you can disable the parser for a specific controller as follows:
+Of course, the first thing you can do to disable the request body parser is to avoid importing `@holu/body-parser` into your module, either globally or locally. Additionally, you can disable the parser for a specific controller as follows:
 
 ```ts {5}
-import { controller } from '@ditsmod/rest';
-import { BodyParserConfig } from '@ditsmod/body-parser';
+import { controller } from '@holu/rest';
+import { BodyParserConfig } from '@holu/body-parser';
 
 @controller({
   providersPerRou: [{ token: BodyParserConfig, useValue: { acceptMethods: [] } }],
@@ -150,8 +150,8 @@ Depending on whether the controller works [in request-scoped or route-scoped mod
 
   ```ts {9}
   import { createWriteStream } from 'node:fs';
-  import { controller, RequestContext, route } from '@ditsmod/rest';
-  import { MulterParsedForm, MulterParser } from '@ditsmod/body-parser';
+  import { controller, RequestContext, route } from '@holu/rest';
+  import { MulterParsedForm, MulterParser } from '@holu/body-parser';
 
   @controller()
   export class SomeController {
@@ -180,8 +180,8 @@ Depending on whether the controller works [in request-scoped or route-scoped mod
 
   ```ts {7,11}
   import { createWriteStream } from 'node:fs';
-  import { controller, RequestContext, route } from '@ditsmod/rest';
-  import { MulterParsedForm, RouteScopedMulterParser } from '@ditsmod/body-parser';
+  import { controller, RequestContext, route } from '@holu/rest';
+  import { MulterParsedForm, RouteScopedMulterParser } from '@holu/body-parser';
 
   @controller({ scope: 'route' })
   export class SomeController {
@@ -261,10 +261,10 @@ A maximum of two properties from these four can be filled in one parsing: the `t
 
 ### MulterExtendedOptions {#multerextendedoptions}
 
-In modules where `@ditsmod/body-parser` will be used for forms with data in `multipart/form-data` format, you can pass a provider with the token `MulterExtendedOptions` to DI. This class has two more options than the native `MulterOptions` class from `@ts-stack/multer`:
+In modules where `@holu/body-parser` will be used for forms with data in `multipart/form-data` format, you can pass a provider with the token `MulterExtendedOptions` to DI. This class has two more options than the native `MulterOptions` class from `@ts-stack/multer`:
 
 ```ts
-import { InputLogLevel, HttpStatus } from '@ditsmod/core';
+import { InputLogLevel, HttpStatus } from '@holu/core';
 import { MulterOptions } from '@ts-stack/multer';
 
 export class MulterExtendedOptions extends MulterOptions {
@@ -276,8 +276,8 @@ export class MulterExtendedOptions extends MulterOptions {
 It is recommended to pass the provider with this token at the module level so that it applies to both `MulterParser` and `RouteScopedMulterParser`:
 
 ```ts {4,12}
-import { restModule } from '@ditsmod/rest';
-import { BodyParserModule, MulterExtendedOptions } from '@ditsmod/body-parser';
+import { restModule } from '@holu/rest';
+import { BodyParserModule, MulterExtendedOptions } from '@holu/body-parser';
 
 const multerOptions: MulterExtendedOptions = { limits: { files: 20 }, errorLogLevel: 'debug' };
 
@@ -293,7 +293,7 @@ const multerOptions: MulterExtendedOptions = { limits: { files: 20 }, errorLogLe
 export class SomeModule {}
 ```
 
-[1]: https://github.com/ditsmod/ditsmod/tree/main/examples/06-body-parser
+[1]: https://github.com/holu/holu/tree/main/examples/06-body-parser
 [2]: https://www.npmjs.com/package/@ts-stack/multiparty
 [3]: /rest-application/controllers-and-services/#what-is-a-rest-controller
 [4]: https://github.com/ts-stack/body-parser/

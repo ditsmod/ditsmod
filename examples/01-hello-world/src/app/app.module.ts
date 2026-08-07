@@ -1,5 +1,5 @@
-import { LoggerConfig, ProviderBuilder } from '@ditsmod/core';
-import { controller, route, restRootModule } from '@ditsmod/rest';
+import { LoggerConfig, ProviderBuilder } from '@holu/core';
+import { controller, route, restRootModule } from '@holu/rest';
 
 @controller()
 export class RequestScopedController {

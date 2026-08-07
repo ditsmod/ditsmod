@@ -1,9 +1,9 @@
 import request from 'supertest';
 
-import { injectable, Logger, ctx, AnyObj, LoggerConfig, ProviderBuilder } from '@ditsmod/core';
-import type { HttpServer } from '@ditsmod/rest';
-import { controller, route, restRootModule, PATH_PARAMS } from '@ditsmod/rest';
-import { TestRestApplication } from '@ditsmod/rest-testing';
+import { injectable, Logger, ctx, AnyObj, LoggerConfig, ProviderBuilder } from '@holu/core';
+import type { HttpServer } from '@holu/rest';
+import { controller, route, restRootModule, PATH_PARAMS } from '@holu/rest';
+import { TestRestApplication } from '@holu/rest-testing';
 
 import { ScheduleModule, SchedulerRegistry, cron, interval, timeout } from '#src/index.js';
 

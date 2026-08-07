@@ -1,8 +1,8 @@
 import request from 'supertest';
-import { TestRestApplication } from '@ditsmod/rest-testing';
-import { ProviderBuilder, HttpStatus } from '@ditsmod/core';
-import type { HttpServer } from '@ditsmod/rest';
-import { BodyParserConfig } from '@ditsmod/body-parser';
+import { TestRestApplication } from '@holu/rest-testing';
+import { ProviderBuilder, HttpStatus } from '@holu/core';
+import type { HttpServer } from '@holu/rest';
+import { BodyParserConfig } from '@holu/body-parser';
 
 import { AppModule } from '#app/app.module.js';
 

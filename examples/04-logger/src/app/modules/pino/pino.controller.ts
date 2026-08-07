@@ -1,5 +1,5 @@
-import { inject, Logger } from '@ditsmod/core';
-import { controller, route, RequestContext } from '@ditsmod/rest';
+import { inject, Logger } from '@holu/core';
+import { controller, route, RequestContext } from '@holu/rest';
 import { BaseLogger as PinoLogger } from 'pino';
 
 @controller()

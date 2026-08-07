@@ -1,5 +1,5 @@
-import { injectable } from '@ditsmod/core';
-import { injectRepository, injectDataSource } from '@ditsmod/typeorm';
+import { injectable } from '@holu/core';
+import { injectRepository, injectDataSource } from '@holu/typeorm';
 import { Repository, DataSource } from 'typeorm';
 
 import { UserEntity } from './user.entity.js';

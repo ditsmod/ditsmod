@@ -2,8 +2,8 @@ import type * as http from 'node:http';
 import type * as http2 from 'node:http2';
 import type * as https from 'node:https';
 import type { AddressInfo } from 'node:net';
-import type { StaticModule } from '@ditsmod/core';
-import { SystemLogMediator, BaseApplication } from '@ditsmod/core';
+import type { StaticModule } from '@holu/core';
+import { SystemLogMediator, BaseApplication } from '@holu/core';
 
 import type { AppOptions } from '#types/app-options.js';
 import type { HttpServerModule, HttpsServerModule } from '#init/http-module.js';

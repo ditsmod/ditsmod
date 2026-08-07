@@ -17,7 +17,7 @@ interface CanActivate {
 For example, it can be done like this:
 
 ```ts {8-10}
-import { guard, RequestContext, CanActivate } from '@ditsmod/rest';
+import { guard, RequestContext, CanActivate } from '@holu/rest';
 import { AuthService } from './auth.service.js';
 
 @guard()
@@ -33,8 +33,8 @@ export class AuthGuard implements CanActivate {
 Or like this:
 
 ```ts {11-17}
-import { HttpStatus } from '@ditsmod/core';
-import { RequestContext, CanActivate, guard } from '@ditsmod/rest';
+import { HttpStatus } from '@holu/core';
+import { RequestContext, CanActivate, guard } from '@holu/rest';
 
 import { AuthService } from './auth.service.js';
 import { Permission } from './types.js';
@@ -59,16 +59,16 @@ It is recommended that guard files end with `*.guard.ts` and their class names e
 
 If `canActivate()` returns:
 
-- `true` or `Promise<true>`, means Ditsmod will process the corresponding route with this guard;
+- `true` or `Promise<true>`, means Holu will process the corresponding route with this guard;
 - `false` or `Promise<false>`, so the response to the request will contain a 401 status and the controller will not process the route;
-- an instance of [Response][5] or `Promise<Response>`, which in this context Ditsmod interprets as a response to an HTTP request.
+- an instance of [Response][5] or `Promise<Response>`, which in this context Holu interprets as a response to an HTTP request.
 
 ## Passing guards to injectors {#passing-guards-to-injectors}
 
 Guards can be passed in module or controller metadata:
 
 ```ts {5}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { AuthGuard } from 'auth.guard';
 
 @restModule({
@@ -84,7 +84,7 @@ In this case, the guard will work at the request level, for controllers in reque
 The guards are passed to the controllers in an array in the third parameter of the `route` decorator:
 
 ```ts {6}
-import { controller, RequestContext, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@holu/rest';
 import { AuthGuard } from './auth.guard.js';
 
 @controller()
@@ -103,7 +103,7 @@ The guard in the `canActivate()` method has two parameters. The arguments for th
 Let's consider such an example:
 
 ```ts {8}
-import { controller, RequestContext, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@holu/rest';
 
 import { PermissionsGuard } from './permissions.guard.js';
 import { Permission } from './permission.js';
@@ -120,8 +120,8 @@ export class SomeController {
 As you can see, in place of the third parameter in `route`, an array is passed in an array, where `PermissionsGuard` is specified in the first place, followed by arguments for it. In this case, `PermissionsGuard` will receive these arguments in its `canActivate()` method:
 
 ```ts {11}
-import { injectable, HttpStatus } from '@ditsmod/core';
-import { CanActivate, RequestContext } from '@ditsmod/rest';
+import { injectable, HttpStatus } from '@holu/core';
+import { CanActivate, RequestContext } from '@holu/rest';
 
 import { AuthService } from './auth.service.js';
 import { Permission } from './permission.js';
@@ -145,7 +145,7 @@ export class PermissionsGuard implements CanActivate {
 Because parameter guards must be passed as an array within an array, this makes readability and type safety worse. For such cases, it is better to create a helper using the `createGuardHelper()` factory:
 
 ```ts {5}
-import { createGuardHelper } from '@ditsmod/rest';
+import { createGuardHelper } from '@holu/rest';
 import { Permission } from './types.js';
 import { PermissionsGuard } from './permissions-guard.js';
 
@@ -157,7 +157,7 @@ In this example, `PermissionsGuard` is passed as an argument, which accepts para
 `requirePermissions()` can now be used to create routes:
 
 ```ts {8}
-import { controller, RequestContext, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@holu/rest';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';
@@ -176,7 +176,7 @@ export class SomeController {
 You can also centrally set guards at the module level:
 
 ```ts {10}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 import { OtherModule } from '../other/other.module.js';
 import { AuthModule } from '../auth/auth.module.js';
@@ -193,8 +193,8 @@ export class SomeModule {}
 
 In this case, `AuthGuard` will be automatically added to each route in `OtherModule`. Note that the providers for the specified guard must provide the `SomeModule`, which is why it imports the `AuthModule`.
 
-[1]: https://github.com/ditsmod/ditsmod/tree/main/examples/03-route-guards
-[2]: https://github.com/ditsmod/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
+[1]: https://github.com/holu/holu/tree/main/examples/03-route-guards
+[2]: https://github.com/holu/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
 [3]: /basic-components/dependency-injection#injector-and-providers
 [4]: /rest-application/controllers-and-services/#what-is-a-rest-controller
 [5]: https://developer.mozilla.org/en-US/docs/Web/API/Response

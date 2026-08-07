@@ -2,14 +2,14 @@
 sidebar_position: 2
 ---
 
-# @ditsmod/schedule
+# @holu/schedule
 
-Цей модуль забезпечує підтримку планування завдань (cron-задач, інтервалів та таймаутів) у застосунках Ditsmod.
+Цей модуль забезпечує підтримку планування завдань (cron-задач, інтервалів та таймаутів) у застосунках Holu.
 
 ## Встановлення {#installation}
 
 ```bash
-yarn add @ditsmod/schedule
+yarn add @holu/schedule
 ```
 
 ## Підключення ScheduleModule {#importing-schedulemodule}
@@ -17,8 +17,8 @@ yarn add @ditsmod/schedule
 Для активації планування імпортуйте `ScheduleModule` у ваш кореневий або фіче-модуль, а також зареєструйте клас із завданнями в `providersPerMod` (або `providersPerApp`):
 
 ```ts
-import { rootModule } from '@ditsmod/core';
-import { ScheduleModule } from '@ditsmod/schedule';
+import { rootModule } from '@holu/core';
+import { ScheduleModule } from '@holu/schedule';
 import { MyTasks } from './my-tasks.service.js';
 
 @rootModule({
@@ -33,8 +33,8 @@ export class AppModule {}
 Створіть сервіс та декоруйте його методи за допомогою `@cron`, `@interval` або `@timeout`:
 
 ```ts
-import { injectable, Logger } from '@ditsmod/core';
-import { cron, interval, timeout, CronExpression } from '@ditsmod/schedule';
+import { injectable, Logger } from '@holu/core';
+import { cron, interval, timeout, CronExpression } from '@holu/schedule';
 
 @injectable()
 export class MyTasks {
@@ -79,8 +79,8 @@ export class MyTasks {
 Ви можете впровадити `SchedulerRegistry` у свої сервіси або контролери для динамічного пошуку, запуску, зупинки чи видалення зареєстрованих завдань:
 
 ```ts
-import { controller, route } from '@ditsmod/rest';
-import { SchedulerRegistry } from '@ditsmod/schedule';
+import { controller, route } from '@holu/rest';
+import { SchedulerRegistry } from '@holu/schedule';
 
 @controller()
 export class ScheduleController {

@@ -1,13 +1,13 @@
 {
-  "name": "@ditsmod/cli",
+  "name": "@holu/cli",
   "type": "module",
   "version": "3.0.0-next.18",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ditsmod/ditsmod.git"
+    "url": "git+https://github.com/holu/holu.git"
   },
-  "homepage": "https://ditsmod.github.io/en/",
-  "description": "CLI tool for Ditsmod framework development",
+  "homepage": "https://holu.github.io/en/",
+  "description": "CLI tool for Holu framework development",
   "module": "dist/index.js",
   "exports": {
     "./package.json": {
@@ -19,8 +19,8 @@
     }
   },
   "bin": {
-    "ditsmod": "dist/ditsmod.js",
-    "dm": "dist/ditsmod.js"
+    "dm": "dist/holu.js",
+    "holu": "dist/holu.js"
   },
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
@@ -30,9 +30,9 @@
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps ../../scripts/run-jest.mjs"
   },
   "keywords": [
-    "ditsmod",
+    "holu",
     "cli",
-    "ditsmod-cli"
+    "holu-cli"
   ],
   "author": "",
   "license": "MIT",

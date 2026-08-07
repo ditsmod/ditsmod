@@ -1,5 +1,5 @@
-import { RequestContext, controller } from '@ditsmod/rest';
-import { oasRoute } from '@ditsmod/openapi';
+import { RequestContext, controller } from '@holu/rest';
+import { oasRoute } from '@holu/openapi';
 
 import { BearerGuard } from './bearer.guard.js';
 

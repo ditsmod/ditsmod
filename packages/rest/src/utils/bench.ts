@@ -1,4 +1,4 @@
-import { Injector, ModuleInfo } from '@ditsmod/core';
+import { Injector, ModuleInfo } from '@holu/core';
 
 import type { AnyFn } from '../types/types.js';
 import { Tree } from '../services/tree.js';
@@ -18,7 +18,7 @@ async function runBench() {
 
   const benchmarks: Lib[] = [
     { name: 'koa-tree-router', onRouteMethod: 'on', findRouteMethod: 'find' },
-    { name: '@ditsmod/rest', routerClass: 'Router', onRouteMethod: 'on', findRouteMethod: 'find' },
+    { name: '@holu/rest', routerClass: 'Router', onRouteMethod: 'on', findRouteMethod: 'find' },
     { name: 'find-my-way', onRouteMethod: 'on', findRouteMethod: 'find' },
     { name: 'trek-router', onRouteMethod: 'add', findRouteMethod: 'find' },
   ];
@@ -43,7 +43,7 @@ async function runBench() {
       const Router = lib.routerClass ? fullLib[lib.routerClass] : fullLib;
       let router: any;
 
-      if (lib.name == '@ditsmod/rest') {
+      if (lib.name == '@holu/rest') {
         const injector = Injector.resolveAndCreate([Tree, DefaultRouter, ModuleInfo], 'bench');
         router = injector.get(DefaultRouter);
       } else {

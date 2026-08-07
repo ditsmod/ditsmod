@@ -14,7 +14,7 @@ import {
   rootModule,
   SystemLogMediator,
   ShallowModuleImports,
-} from '@ditsmod/core';
+} from '@holu/core';
 
 import { ChainMaker } from './chain-maker.js';
 import { RequestScopedHttpBackend } from './request-scoped-http-backend.js';

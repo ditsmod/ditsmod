@@ -1,4 +1,4 @@
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 import { FirstModule } from '../first/first.module.js';
 import { SecondMultiProviderService } from './second-multi-provider.service.js';

@@ -4,15 +4,15 @@ sidebar_position: 9
 
 # LogMediator
 
-In Ditsmod application, you can substitute the default logger with your own logger, and this will allow you to record in your own way even those messages that are issued in `@ditsmod/core`. But changing the logger does not allow you to change the text of the messages themselves and the level of logging (trace, debug, info, warn, error). `LogMediator` (or its child class `SystemLogMediator`) is used for this. Of course, if you have direct access to the code where the logger writes a certain message, then you can change this message on the spot without `LogMediator`. And if the message is issued by the Ditsmod framework itself or its modules, `LogMediator` is essential.
+In Holu application, you can substitute the default logger with your own logger, and this will allow you to record in your own way even those messages that are issued in `@holu/core`. But changing the logger does not allow you to change the text of the messages themselves and the level of logging (trace, debug, info, warn, error). `LogMediator` (or its child class `SystemLogMediator`) is used for this. Of course, if you have direct access to the code where the logger writes a certain message, then you can change this message on the spot without `LogMediator`. And if the message is issued by the Holu framework itself or its modules, `LogMediator` is essential.
 
-If you want to write a module for a Ditsmod application to publish on, for example, npmjs.com, it is recommended that you use `LogMediator` instead of `Logger`, as users will be able to modify the messages that your module writes.
+If you want to write a module for a Holu application to publish on, for example, npmjs.com, it is recommended that you use `LogMediator` instead of `Logger`, as users will be able to modify the messages that your module writes.
 
-The Ditsmod repository has an example [11-override-core-log-messages][1] that demonstrates several uses of `LogMediator`. To try this example, you can first clone the repository and install the dependencies:
+The Holu repository has an example [11-override-core-log-messages][1] that demonstrates several uses of `LogMediator`. To try this example, you can first clone the repository and install the dependencies:
 
 ```bash
-git clone https://github.com/ditsmod/ditsmod.git
-cd ditsmod
+git clone https://github.com/holu/holu.git
+cd holu
 npm i
 cd examples/11-override-core-log-messages
 npm start
@@ -40,7 +40,7 @@ This feature has been available in TypeScript since version 4.3, it allows you t
 Now let's take a look at `MyLogMediator`:
 
 ```ts
-import { injectable, SystemLogMediator } from '@ditsmod/core';
+import { injectable, SystemLogMediator } from '@holu/core';
 
 @injectable()
 export class MyLogMediator extends SystemLogMediator {
@@ -62,7 +62,7 @@ The result can be seen if you run the application with the `npm start` command, 
 If you look at `AppModule`, you can see how `LogMediator` is substituted by `MyLogMediator`:
 
 ```ts {8-9}
-import { SystemLogMediator, rootModule } from '@ditsmod/core';
+import { SystemLogMediator, rootModule } from '@holu/core';
 
 import { MyLogMediator } from './my-log-mediator.js';
 
@@ -76,7 +76,7 @@ import { MyLogMediator } from './my-log-mediator.js';
 export class AppModule {}
 ```
 
-In this case, the first element of the array `providersPerApp` will allow using `MyLogMediator` in the Ditsmod core code, the second element - will allow requesting the instance of `MyLogMediator` in the constructors of controllers or services of your application.
+In this case, the first element of the array `providersPerApp` will allow using `MyLogMediator` in the Holu core code, the second element - will allow requesting the instance of `MyLogMediator` in the constructors of controllers or services of your application.
 
 Keep in mind that such an application-level substitution works without additional settings only in the root module. If you do this in a feature module, you will additionally have [to resolve the provider collision][100] in the root module (although this is quite simple).
 
@@ -87,7 +87,7 @@ As mentioned at the beginning, if you plan to publish your module to other users
 To change messages from an external service, `SomeLogMediator` has been extended in `OtherModule` and the method that works in `SomeService` has been overrided. After that, `SomeLogMediator` was substituted to `OtherLogMediator`:
 
 ```ts
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 import { SomeModule } from '../some/some.module.js';
 import { SomeLogMediator } from '../some/some-log-mediator.js';
@@ -105,6 +105,6 @@ export class OtherModule {}
 
 
 
-[1]: https://github.com/ditsmod/ditsmod/tree/main/examples/11-override-core-log-messages
+[1]: https://github.com/holu/holu/tree/main/examples/11-override-core-log-messages
 
 [100]: /basic-components/modules/#provider-collisions

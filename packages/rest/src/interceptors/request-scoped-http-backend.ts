@@ -1,4 +1,4 @@
-import { injectable, Injector, skipSelf } from '@ditsmod/core';
+import { injectable, Injector, skipSelf } from '@holu/core';
 
 import { RouteMeta } from '../types/route-data.js';
 import { HttpBackend } from './tokens-and-types.js';

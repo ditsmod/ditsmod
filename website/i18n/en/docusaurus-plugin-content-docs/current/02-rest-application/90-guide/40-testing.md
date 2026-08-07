@@ -12,13 +12,13 @@ One of the most popular frameworks for writing unit tests for JavaScript code is
 
 ## Unit testing {#unit-testing}
 
-A good knowledge of the [Ditsmod DI][1] architecture will help you easily write unit tests for Ditsmod applications, as one of the main advantages of DI is the ease of testing. First, you need to learn how to work with [injectors][2] and the [injector hierarchy][3].
+A good knowledge of the [Holu DI][1] architecture will help you easily write unit tests for Holu applications, as one of the main advantages of DI is the ease of testing. First, you need to learn how to work with [injectors][2] and the [injector hierarchy][3].
 
 Let's say you want to test `Service2` in this example:
 
 ```ts
 // service1.ts
-import { injectable } from '@ditsmod/core';
+import { injectable } from '@holu/core';
 
 class Service1 {
   saySomething() {
@@ -40,7 +40,7 @@ class Service2 {
 Since `Service2` depends on `Service1`, we need to isolate this service from interacting with `Service1`. Before we write the tests, let's recall how we can create an injector that can resolve class dependencies from our example:
 
 ```ts
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 
 import { Service1 } from './service1.js';
 import { Service2 } from './service2.js';
@@ -54,7 +54,7 @@ So, as an input to the `Injector.resolveAndCreate()` method, we pass an array of
 In this case, to create `Service2`, the injector will first create an instance of the `Service1` class. But in order to write tests specifically for `Service2`, we don't care if `Service1` is working properly, so instead of the real `Service1` class, we can simulate its operation using [mock functions][101]. This is how it will look like (without tests yet):
 
 ```ts {8}
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 import { jest } from '@jest/globals';
 
 import { Service1 } from './service1.js';
@@ -72,7 +72,7 @@ As you can see, in the highlighted line, instead of `Service1`, a value provider
 Now you can write a test using this technique of substituting providers:
 
 ```ts {8-9,16}
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 import { jest } from '@jest/globals';
 
 import { Service1 } from './service1.js';
@@ -114,8 +114,8 @@ Let's look at the situation when we make a mock for `EmailService`:
 
 ```ts {14,21}
 import request from 'supertest';
-import { HttpServer } from '@ditsmod/rest';
-import { TestRestApplication } from '@ditsmod/rest-testing';
+import { HttpServer } from '@holu/rest';
+import { TestRestApplication } from '@holu/rest-testing';
 import { jest } from '@jest/globals';
 
 import { AppModule } from '#app/app.module.js';
@@ -193,7 +193,7 @@ That is, this callback accepts a single argument - an object with the `groupData
 This method is intended for creating plugins that can dynamically add methods and properties to the `TestRestApplication` instance:
 
 ```ts
-import { TestRestApplication } from '@ditsmod/rest-testing';
+import { TestRestApplication } from '@holu/rest-testing';
 
 class Plugin1 extends TestRestApplication {
   method1() {
@@ -218,7 +218,7 @@ TestRestApplication.createTestApp(AppModule)
   .overrideModuleMeta([]);
 ```
 
-As you can see, after using `$use()`, the `TestRestApplication` instance can use plugin methods. [An example of using such a plugin in real life][103] can be viewed in the `@ditsmod/rest` module.
+As you can see, after using `$use()`, the `TestRestApplication` instance can use plugin methods. [An example of using such a plugin in real life][103] can be viewed in the `@holu/rest` module.
 
 
 ### `TestRestPlugin` {#testrestplugin}
@@ -226,9 +226,9 @@ As you can see, after using `$use()`, the `TestRestApplication` instance can use
 The `TestRestPlugin` class uses `testRestApplication.overrideExtensionMeta()` to override providers in the metadata added by the `RestRouteExtension` group:
 
 ```ts
-import { Provider } from '@ditsmod/core';
-import { RouteExtensionMeta, RestRouteExtension } from '@ditsmod/rest';
-import { TestRestApplication, ExtensionMetaOverrider } from '@ditsmod/rest-testing';
+import { Provider } from '@holu/core';
+import { RouteExtensionMeta, RestRouteExtension } from '@holu/rest';
+import { TestRestApplication, ExtensionMetaOverrider } from '@holu/rest-testing';
 
 export class TestRestPlugin extends TestRestApplication {
   overrideExtensionRestMeta(providersToOverride: Provider[]) {
@@ -244,12 +244,12 @@ export class TestRestPlugin extends TestRestApplication {
 }
 ```
 
-You can use this example to create plugins that will replace providers for other groups of extensions. You can find a complete example with `TestRestPlugin` [in the Ditsmod repository][104]. Basically, you will need this plugin in tests if you need to replace the providers that you have added in the controller metadata in your application:
+You can use this example to create plugins that will replace providers for other groups of extensions. You can find a complete example with `TestRestPlugin` [in the Holu repository][104]. Basically, you will need this plugin in tests if you need to replace the providers that you have added in the controller metadata in your application:
 
 ```ts {14-15}
-import { Provider } from '@ditsmod/core';
-import { TestRestApplication } from '@ditsmod/rest-testing';
-import { TestRestPlugin } from '@ditsmod/rest-testing';
+import { Provider } from '@holu/core';
+import { TestRestApplication } from '@holu/rest-testing';
+import { TestRestPlugin } from '@holu/rest-testing';
 
 import { AppModule } from './app.module.js';
 import { Service1, Service2 } from './services.js';
@@ -279,5 +279,5 @@ const server = await TestRestApplication.createTestApp(AppModule)
 [100]: https://jestjs.io/
 [101]: https://jestjs.io/docs/mock-functions
 [102]: https://github.com/ladjs/supertest
-[103]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/e2e/app1/app1-with-overriden-providers.spec.ts#L36
-[104]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest-testing/src/test-rest.plugin.ts
+[103]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/e2e/app1/app1-with-overriden-providers.spec.ts#L36
+[104]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest-testing/src/test-rest.plugin.ts

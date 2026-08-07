@@ -1,5 +1,5 @@
-import { Dictionary, ISO639 } from '@ditsmod/i18n';
-import { injectable } from '@ditsmod/core';
+import { Dictionary, ISO639 } from '@holu/i18n';
+import { injectable } from '@holu/core';
 
 @injectable()
 export class FirstDict implements Dictionary {

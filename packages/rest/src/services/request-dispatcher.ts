@@ -1,4 +1,4 @@
-import { HttpMethod, injectable, HttpStatus, SystemLogMediator } from '@ditsmod/core';
+import { HttpMethod, injectable, HttpStatus, SystemLogMediator } from '@holu/core';
 
 import { Router } from './router.js';
 import { RawRequest, RawResponse } from './request.js';

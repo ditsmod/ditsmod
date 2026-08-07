@@ -1,5 +1,5 @@
-import { HttpStatus } from '@ditsmod/core';
-import { RequestContext, CanActivate, guard } from '@ditsmod/rest';
+import { HttpStatus } from '@holu/core';
+import { RequestContext, CanActivate, guard } from '@holu/rest';
 
 const basicAuth = process.env.BASIC_AUTH;
 if (!basicAuth) {

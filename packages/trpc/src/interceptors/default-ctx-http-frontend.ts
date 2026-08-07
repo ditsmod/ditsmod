@@ -1,5 +1,5 @@
-import { injectable, HttpStatus } from '@ditsmod/core';
-import { CustomError } from '@ditsmod/core/errors';
+import { injectable, HttpStatus } from '@holu/core';
+import { CustomError } from '@holu/core/errors';
 
 import { TrpcHttpFrontend, TrpcHttpHandler } from './tokens-and-types.js';
 import { TrpcOpts } from '#types/types.js';

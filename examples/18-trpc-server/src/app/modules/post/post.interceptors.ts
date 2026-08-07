@@ -1,5 +1,5 @@
-import { injectable, Logger } from '@ditsmod/core';
-import { TrpcCanActivate, TrpcHttpInterceptor, TrpcHttpHandler, TrpcOpts, trpcGuard } from '@ditsmod/trpc';
+import { injectable, Logger } from '@holu/core';
+import { TrpcCanActivate, TrpcHttpInterceptor, TrpcHttpHandler, TrpcOpts, trpcGuard } from '@holu/trpc';
 
 @trpcGuard()
 export class Guard implements TrpcCanActivate {

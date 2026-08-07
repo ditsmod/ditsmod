@@ -1,5 +1,5 @@
 import 'reflect-metadata/lite';
-import { Reflector } from '@ditsmod/core/di';
+import { Reflector } from '@holu/core/di';
 
 import { cron } from './cron.decorator.js';
 import { interval } from './interval.decorator.js';

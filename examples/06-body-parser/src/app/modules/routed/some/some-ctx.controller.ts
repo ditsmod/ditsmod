@@ -1,6 +1,6 @@
 import { type ServerResponse } from 'node:http';
-import { RequestContext, controller, route } from '@ditsmod/rest';
-import { RouteScopedMulterParser } from '@ditsmod/body-parser';
+import { RequestContext, controller, route } from '@holu/rest';
+import { RouteScopedMulterParser } from '@holu/body-parser';
 
 import { saveFiles, sendHtmlForm } from './utils.js';
 

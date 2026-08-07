@@ -1,7 +1,7 @@
-import { HttpStatus, Context } from '@ditsmod/core';
-import { JwtService, VerifyErrors, JWT_PAYLOAD } from '@ditsmod/jwt';
-import { oasGuard } from '@ditsmod/openapi';
-import { CanActivate, RequestContext } from '@ditsmod/rest';
+import { HttpStatus, Context } from '@holu/core';
+import { JwtService, VerifyErrors, JWT_PAYLOAD } from '@holu/jwt';
+import { oasGuard } from '@holu/openapi';
+import { CanActivate, RequestContext } from '@holu/rest';
 
 /**
  * If user successfully passed this guard, you can use JWT payload by `JwtPayload` token.

@@ -1,6 +1,6 @@
-import { LoggerConfig, ProviderBuilder, injectable, Logger, ctx, AnyObj } from '@ditsmod/core';
-import { controller, route, restRootModule, PATH_PARAMS } from '@ditsmod/rest';
-import { ScheduleModule, SchedulerRegistry, cron, interval, timeout } from '@ditsmod/schedule';
+import { LoggerConfig, ProviderBuilder, injectable, Logger, ctx, AnyObj } from '@holu/core';
+import { controller, route, restRootModule, PATH_PARAMS } from '@holu/rest';
+import { ScheduleModule, SchedulerRegistry, cron, interval, timeout } from '@holu/schedule';
 
 @injectable()
 export class MyScheduledTasks {

@@ -1,6 +1,6 @@
-import { ctx } from '@ditsmod/core';
-import { controller, route, RequestContext } from '@ditsmod/rest';
-import { JWT_PAYLOAD } from '@ditsmod/jwt';
+import { ctx } from '@holu/core';
+import { controller, route, RequestContext } from '@holu/rest';
+import { JWT_PAYLOAD } from '@holu/jwt';
 
 import { BearerGuard } from './modules/services/auth/bearer.guard.js';
 import { MyJwtPayload } from './modules/services/auth/types.js';

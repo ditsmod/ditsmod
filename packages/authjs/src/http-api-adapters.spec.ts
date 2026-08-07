@@ -1,4 +1,4 @@
-import type { RequestContext } from '@ditsmod/rest';
+import type { RequestContext } from '@holu/rest';
 import { encodeUrlEncoded, toWebRequest } from './http-api-adapters.js';
 
 describe('http-api-adapters', () => {

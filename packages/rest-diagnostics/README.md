@@ -1,3 +1,3 @@
 # About the project
 
-Ditsmod module to support Node.js diagnostics channel.
+Holu module to support Node.js diagnostics channel.

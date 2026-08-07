@@ -1,5 +1,5 @@
-import { AnyObj, ctx } from '@ditsmod/core';
-import { controller, route, PATH_PARAMS, RequestContext } from '@ditsmod/rest';
+import { AnyObj, ctx } from '@holu/core';
+import { controller, route, PATH_PARAMS, RequestContext } from '@holu/rest';
 
 @controller()
 export class CommentsController {

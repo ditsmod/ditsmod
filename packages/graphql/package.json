@@ -1,14 +1,14 @@
 {
   "private": true,
-  "name": "@ditsmod/graphql",
+  "name": "@holu/graphql",
   "type": "module",
   "version": "3.0.0-next.18",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ditsmod/ditsmod.git"
+    "url": "git+https://github.com/holu/holu.git"
   },
-  "homepage": "https://ditsmod.github.io/en/",
-  "description": "Ditsmod module to support GraphQL",
+  "homepage": "https://holu.github.io/en/",
+  "description": "Holu module to support GraphQL",
   "module": "dist/index.js",
   "exports": {
     "./package.json": {
@@ -26,13 +26,13 @@
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps ../../scripts/run-jest.mjs"
   },
   "keywords": [
-    "ditsmod"
+    "holu"
   ],
   "author": "",
   "license": "MIT",
   "peerDependencies": {
     "@apollo/server": "^5.0.0",
-    "@ditsmod/core": "^3.0.0-next.18",
+    "@holu/core": "^3.0.0-next.18",
     "graphql": "^16.11.0"
   },
   "devDependencies": {

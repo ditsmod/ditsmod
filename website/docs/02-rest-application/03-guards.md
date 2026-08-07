@@ -17,7 +17,7 @@ interface CanActivate {
 Наприклад, це можна зробити так:
 
 ```ts {8-10}
-import { guard, RequestContext, CanActivate } from '@ditsmod/rest';
+import { guard, RequestContext, CanActivate } from '@holu/rest';
 import { AuthService } from './auth.service.js';
 
 @guard()
@@ -33,8 +33,8 @@ export class AuthGuard implements CanActivate {
 Або так:
 
 ```ts {11-17}
-import { HttpStatus } from '@ditsmod/core';
-import { RequestContext, CanActivate, guard } from '@ditsmod/rest';
+import { HttpStatus } from '@holu/core';
+import { RequestContext, CanActivate, guard } from '@holu/rest';
 
 import { AuthService } from './auth.service.js';
 import { Permission } from './types.js';
@@ -59,16 +59,16 @@ export class PermissionsGuard implements CanActivate {
 
 Якщо `canActivate()` повертає:
 
-- `true` чи `Promise<true>`, значить Ditsmod буде обробляти відповідний маршрут із цим ґардом;
+- `true` чи `Promise<true>`, значить Holu буде обробляти відповідний маршрут із цим ґардом;
 - `false` чи `Promise<false>`, значить відповідь на запит міститиме 401 статус і обробки маршруту з боку контролера не буде;
-- інстанс [Response][5] чи `Promise<Response>`, які в даному контексті Ditsmod інтерпретує як відповідь на HTTP-запит.
+- інстанс [Response][5] чи `Promise<Response>`, які в даному контексті Holu інтерпретує як відповідь на HTTP-запит.
 
 ## Передача ґардів до інжекторів {#passing-guards-to-injectors}
 
 Ґарди можна передавати у метадані модуля чи контролера:
 
 ```ts {5}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { AuthGuard } from 'auth.guard';
 
 @restModule({
@@ -84,7 +84,7 @@ export class SomeModule {}
 Ґарди передаються до контролерів в масиві у третьому параметрі декоратора `route`:
 
 ```ts {6}
-import { controller, RequestContext, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@holu/rest';
 import { AuthGuard } from './auth.guard.js';
 
 @controller()
@@ -103,7 +103,7 @@ export class SomeController {
 Давайте розглянемо такий приклад:
 
 ```ts {8}
-import { controller, RequestContext, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@holu/rest';
 
 import { PermissionsGuard } from './permissions.guard.js';
 import { Permission } from './permission.js';
@@ -120,8 +120,8 @@ export class SomeController {
 Як бачите, на місці третього параметра у `route` передається масив в масиві, де на першому місці вказано `PermissionsGuard`, а далі йдуть аргументи для нього. В такому разі `PermissionsGuard` отримає ці аргументи у своєму методі `canActivate()`:
 
 ```ts {11}
-import { injectable, HttpStatus } from '@ditsmod/core';
-import { CanActivate, RequestContext } from '@ditsmod/rest';
+import { injectable, HttpStatus } from '@holu/core';
+import { CanActivate, RequestContext } from '@holu/rest';
 
 import { AuthService } from './auth.service.js';
 import { Permission } from './permission.js';
@@ -145,7 +145,7 @@ export class PermissionsGuard implements CanActivate {
 Оскільки ґарди з параметрами повинні передаватись у вигляді масива в масиві, це ускладнює читабельність та погіршує безпечність типів. Для таких випадків краще створити хелпер за допомогою фабрики `createGuardHelper()`:
 
 ```ts {5}
-import { createGuardHelper } from '@ditsmod/rest';
+import { createGuardHelper } from '@holu/rest';
 import { Permission } from './types.js';
 import { PermissionsGuard } from './permissions-guard.js';
 
@@ -157,7 +157,7 @@ export const requirePermissions = createGuardHelper<Permission>(PermissionsGuard
 Тепер `requirePermissions()` можна використовувати для створення роутів:
 
 ```ts {8}
-import { controller, RequestContext, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@holu/rest';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';
@@ -176,7 +176,7 @@ export class SomeController {
 Можна також централізовано підключати ґарди на рівні модуля:
 
 ```ts {10}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 import { OtherModule } from '../other/other.module.js';
 import { AuthModule } from '../auth/auth.module.js';
@@ -193,8 +193,8 @@ export class SomeModule {}
 
 В такому разі `AuthGuard` буде автоматично додаватись до кожного маршруту в `OtherModule`. Майте на увазі, що провайдери для указаного ґарда повинен забезпечувати `SomeModule`, саме тому він імпортує `AuthModule`.
 
-[1]: https://github.com/ditsmod/ditsmod/tree/main/examples/03-route-guards
-[2]: https://github.com/ditsmod/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
+[1]: https://github.com/holu/holu/tree/main/examples/03-route-guards
+[2]: https://github.com/holu/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
 [3]: /basic-components/dependency-injection#injector-and-providers
 [4]: /rest-application/controllers-and-services/#what-is-a-rest-controller
 [5]: https://developer.mozilla.org/en-US/docs/Web/API/Response

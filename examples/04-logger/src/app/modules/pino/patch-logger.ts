@@ -6,7 +6,7 @@ import {
   factoryMethod,
   optional,
   BaseAppOptions,
-} from '@ditsmod/core';
+} from '@holu/core';
 import pino from 'pino';
 
 export class PatchLogger {

@@ -1,4 +1,4 @@
-import { Context, injectable, type AnyObj } from '@ditsmod/core';
+import { Context, injectable, type AnyObj } from '@holu/core';
 import { TLSSocket } from 'node:tls';
 import { randomUUID } from 'node:crypto';
 

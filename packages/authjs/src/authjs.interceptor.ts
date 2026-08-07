@@ -1,6 +1,6 @@
-import { HttpStatus, injectable } from '@ditsmod/core';
+import { HttpStatus, injectable } from '@holu/core';
 import { Auth, setEnvDefaults } from '@auth/core';
-import { RequestContext, HttpHandler, HttpInterceptor, applyHeaders, applyResponse } from '@ditsmod/rest';
+import { RequestContext, HttpHandler, HttpInterceptor, applyHeaders, applyResponse } from '@holu/rest';
 
 import { toWebRequest } from '#mod/http-api-adapters.js';
 import { AuthjsConfig } from './authjs.config.js';

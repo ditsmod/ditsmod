@@ -1,4 +1,4 @@
-import type { Class, HttpMethod, Provider } from '@ditsmod/core';
+import type { Class, HttpMethod, Provider } from '@holu/core';
 
 import type { RouteMeta } from './route-data.js';
 import type { HttpInterceptor } from '#interceptors/tokens-and-types.js';

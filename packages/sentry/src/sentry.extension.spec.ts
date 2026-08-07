@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-import { HTTP_INTERCEPTORS } from '@ditsmod/rest';
+import { HTTP_INTERCEPTORS } from '@holu/rest';
 
 import type { SentryExtension as SentryExtensionType } from './sentry.extension.js';
 

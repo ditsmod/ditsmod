@@ -1,5 +1,5 @@
-import { featureModule } from '@ditsmod/core';
-import { DispatcherExtension, RestRouteExtension } from '@ditsmod/rest';
+import { featureModule } from '@holu/core';
+import { DispatcherExtension, RestRouteExtension } from '@holu/rest';
 
 import { DictService } from './dict.service.js';
 import { I18nLogMediator } from './i18n-log-mediator.js';

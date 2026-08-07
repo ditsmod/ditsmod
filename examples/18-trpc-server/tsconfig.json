@@ -4,8 +4,8 @@
     "noEmit": true,
     "tsBuildInfoFile": "dist/ts.tsbuildinfo",
     "paths": {
-      "@ditsmod/core": ["../../packages/core/src/index.js"],
-      "@ditsmod/trpc": ["../../packages/trpc/src/index.js"],
+      "@holu/core": ["../../packages/core/src/index.js"],
+      "@holu/trpc": ["../../packages/trpc/src/index.js"],
       "#app/*": ["./src/app/*"],
       "#db/*": ["./src/app/modules/db/*"],
       "#auth/*": ["./src/app/modules/auth/*"],

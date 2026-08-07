@@ -1,5 +1,5 @@
 import type { ServerResponse } from 'node:http';
-import { injectable } from '@ditsmod/core';
+import { injectable } from '@holu/core';
 
 import { NullBodyResponse } from './null-body-response.js';
 import { RawResponse } from './request.js';

@@ -1,4 +1,4 @@
-import { injectable } from '@ditsmod/core';
+import { injectable } from '@holu/core';
 
 @injectable()
 export class OtherService {

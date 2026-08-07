@@ -1,7 +1,7 @@
-import { AnyObj, ctx } from '@ditsmod/core';
-import { HTTP_BODY } from '@ditsmod/body-parser';
-import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
-import { controller, PATH_PARAMS, RequestContext } from '@ditsmod/rest';
+import { AnyObj, ctx } from '@holu/core';
+import { HTTP_BODY } from '@holu/body-parser';
+import { getParams, getContent, oasRoute } from '@holu/openapi';
+import { controller, PATH_PARAMS, RequestContext } from '@holu/rest';
 
 import { Model1, Model2 } from './models.js';
 

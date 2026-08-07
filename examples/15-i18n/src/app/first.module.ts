@@ -1,5 +1,5 @@
-import { restModule } from '@ditsmod/rest';
-import { I18nProviders, I18nModule, I18N_TRANSLATIONS } from '@ditsmod/i18n';
+import { restModule } from '@holu/rest';
+import { I18nProviders, I18nModule, I18N_TRANSLATIONS } from '@holu/i18n';
 
 import { current } from './first/i18n/current/index.js';
 import { FirstService } from './first/first.service.js';

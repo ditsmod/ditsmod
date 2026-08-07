@@ -2,9 +2,9 @@
 sidebar_position: 21
 ---
 
-# @ditsmod/openapi-validation
+# @holu/openapi-validation
 
-Щоб забезпечити автоматичну валідацію в застосунках Ditsmod на основі метаданих для OpenAPI, можна скористатись модулем `@ditsmod/openapi-validation`. Під капотом цей модуль має інтеграцію з бібліотекою [ajv][1], яка безпосередньо виконує щойно згадану валідацію.
+Щоб забезпечити автоматичну валідацію в застосунках Holu на основі метаданих для OpenAPI, можна скористатись модулем `@holu/openapi-validation`. Під капотом цей модуль має інтеграцію з бібліотекою [ajv][1], яка безпосередньо виконує щойно згадану валідацію.
 
 На даний момент, автоматична валідація працює тільки для HTTP-запитів, що мають медіа-тип `application/json` і не посилаються на [Reference Object][3]. Автоматична валідація працює для параметрів у:
 - path
@@ -18,7 +18,7 @@ sidebar_position: 21
 Після того, як ви створите [OpenAPI-документацію][2], необхідно доставити два модулі для автоматичної валідації на її основі:
 
 ```bash
-npm i @ditsmod/openapi-validation @ditsmod/i18n
+npm i @holu/openapi-validation @holu/i18n
 ```
 
 ## Підключення валідації та встановлення опцій {#enable-validation-and-set-options}
@@ -26,9 +26,9 @@ npm i @ditsmod/openapi-validation @ditsmod/i18n
 Щоб підключити автоматичну валідацію у певному модулі, достатньо імпортувати туди `ValidationModule`. Також ви можете передати `ValidationOptions` та `AJV_OPTIONS`:
 
 ```ts
-import { ProviderBuilder, HttpStatus } from '@ditsmod/core';
-import { restModule } from '@ditsmod/rest';
-import { ValidationModule, ValidationOptions, AJV_OPTIONS } from '@ditsmod/openapi-validation';
+import { ProviderBuilder, HttpStatus } from '@holu/core';
+import { restModule } from '@holu/rest';
+import { ValidationModule, ValidationOptions, AJV_OPTIONS } from '@holu/openapi-validation';
 import { Options } from 'ajv';
 
 @restModule({
@@ -46,8 +46,8 @@ export class SomeModule {}
 Класи `ParametersInterceptor` та `RequestBodyInterceptor` відповідають за валідацію параметрів запиту та тіла запиту. Їх можна підмінити в масиві `providersPerReq` на рівні модуля чи контролера:
 
 ```ts
-import { restModule } from '@ditsmod/rest';
-import { ParametersInterceptor } from '@ditsmod/openapi-validation';
+import { restModule } from '@holu/rest';
+import { ParametersInterceptor } from '@holu/openapi-validation';
 
 import { MyInterceptor } from './my.interceptor.js';
 
@@ -67,4 +67,4 @@ export class SomeModule {}
 [1]: https://ajv.js.org/guide/getting-started.html
 [2]: /rest-application/native-modules/openapi
 [3]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#referenceObject
-[4]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/openapi-validation/src/parameters.interceptor.ts
+[4]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/openapi-validation/src/parameters.interceptor.ts

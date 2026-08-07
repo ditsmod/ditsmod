@@ -1,35 +1,35 @@
-# @ditsmod/cli
+# @holu/cli
 
-Command Line Interface (CLI) and development tools for the [Ditsmod](https://github.com/ditsmod/ditsmod) framework.
+Command Line Interface (CLI) and development tools for the [Holu](https://github.com/holu/holu) framework.
 
 Provides commands to generate new applications from official starter templates and run applications in development mode with incremental TypeScript watch compilation (with full support for TypeScript Project References / composite builds), graceful process restarts, and asset synchronization.
 
 ## Installation
 
-You can install `@ditsmod/cli` locally in your project:
+You can install `@holu/cli` locally in your project:
 
 ```bash
-npm i -D @ditsmod/cli
+npm i -D @holu/cli
 ```
 
 Or globally:
 
 ```bash
-npm i -g @ditsmod/cli
+npm i -g @holu/cli
 ```
 
-_Note:_ Binary aliases `ditsmod` and `dm` are available when installed.
+_Note:_ Binary aliases `holu` and `dm` are available when installed.
 
 ---
 
 ## Commands
 
-### `ditsmod new <directory>` / `dm new <directory>`
+### `holu new <directory>` / `dm new <directory>`
 
-Creates a new Ditsmod application in the specified directory using official starter templates.
+Creates a new Holu application in the specified directory using official starter templates.
 
 ```bash
-ditsmod new my-app
+holu new my-app
 ```
 
 #### Options:
@@ -51,12 +51,12 @@ dm new my-trpc-app -t trpc-monorepo --skip-install
 
 ---
 
-### `ditsmod start [entryFile]` / `dm start [entryFile]`
+### `holu start [entryFile]` / `dm start [entryFile]`
 
-Runs the Ditsmod application in development mode. Monitors TypeScript source files, incrementally compiles changes (including cross-package changes in monorepos via TypeScript Project References), and gracefully restarts the Node.js application process.
+Runs the Holu application in development mode. Monitors TypeScript source files, incrementally compiles changes (including cross-package changes in monorepos via TypeScript Project References), and gracefully restarts the Node.js application process.
 
 ```bash
-ditsmod start
+holu start
 ```
 
 #### Options:
@@ -86,10 +86,10 @@ dm start -- --port=8080 --host=0.0.0.0
 
 ## Programmatic API
 
-`@ditsmod/cli` exports its core building blocks for programmatic usage:
+`@holu/cli` exports its core building blocks for programmatic usage:
 
 ```ts
-import { WatchCompiler, ProcessManager, AssetWatcher, startCommand, newCommand } from '@ditsmod/cli';
+import { WatchCompiler, ProcessManager, AssetWatcher, startCommand, newCommand } from '@holu/cli';
 ```
 
 ## License

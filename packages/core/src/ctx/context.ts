@@ -12,7 +12,7 @@ import type { InjectionSymbol, createInjectionSymbol } from '#di/top/get-symbol.
  * ### Example
  * 
 ```ts
-import { Context, createInjectionSymbol, Injector } from '@ditsmod/core';
+import { Context, createInjectionSymbol, Injector } from '@holu/core';
 
 export interface InterfaceOfSomeValue {
   one: string;

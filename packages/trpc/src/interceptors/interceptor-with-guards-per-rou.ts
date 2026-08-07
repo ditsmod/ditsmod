@@ -1,4 +1,4 @@
-import { injectable, Injector, SystemLogMediator } from '@ditsmod/core';
+import { injectable, Injector, SystemLogMediator } from '@holu/core';
 import { TRPCError } from '@trpc/server';
 
 import { TrpcHttpHandler, TrpcHttpInterceptor } from './tokens-and-types.js';

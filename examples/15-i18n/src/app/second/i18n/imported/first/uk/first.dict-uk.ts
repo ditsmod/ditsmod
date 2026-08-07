@@ -1,5 +1,5 @@
-import { ISO639 } from '@ditsmod/i18n';
-import { injectable } from '@ditsmod/core';
+import { ISO639 } from '@holu/i18n';
+import { injectable } from '@holu/core';
 
 import { FirstDict } from '#dict/first/first.dict.js';
 

@@ -1,5 +1,5 @@
-import { restModule } from '@ditsmod/rest';
-import { JwtModule } from '@ditsmod/jwt';
+import { restModule } from '@holu/rest';
+import { JwtModule } from '@holu/jwt';
 
 import { openapiDynamicModule } from '#service/openapi/openapi.module.js';
 import { BearerGuard } from './second/bearer.guard.js';

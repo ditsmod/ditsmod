@@ -1,5 +1,5 @@
-import { Logger, featureModule, ProviderBuilder, LoggerConfig } from '@ditsmod/core';
-import { mixinRest } from '@ditsmod/rest';
+import { Logger, featureModule, ProviderBuilder, LoggerConfig } from '@holu/core';
+import { mixinRest } from '@holu/rest';
 
 import { PatchLogger } from './patch-logger.js';
 import { WinstonController } from './winston.controller.js';

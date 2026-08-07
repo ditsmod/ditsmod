@@ -1,4 +1,4 @@
-import { AppInitializer } from '@ditsmod/core';
+import { AppInitializer } from '@holu/core';
 
 import type { RequestListener } from '#services/request.js';
 import { RequestDispatcher } from '#services/request-dispatcher.js';

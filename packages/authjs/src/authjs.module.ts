@@ -1,6 +1,6 @@
-import { isProvider, DynamicModule, Provider } from '@ditsmod/core';
-import { RestRouteExtension, InterceptorExtension, restModule } from '@ditsmod/rest';
-import { BodyParserModule, BodyParserExtension } from '@ditsmod/body-parser';
+import { isProvider, DynamicModule, Provider } from '@holu/core';
+import { RestRouteExtension, InterceptorExtension, restModule } from '@holu/rest';
+import { BodyParserModule, BodyParserExtension } from '@holu/body-parser';
 
 import { AuthjsGuard } from '#mod/authjs.guard.js';
 import { AuthjsPerRouGuard } from './authjs-per-rou.guard.js';
@@ -9,7 +9,7 @@ import { AuthjsExtension } from './authjs.extension.js';
 import { AuthjsConfig } from './authjs.config.js';
 
 /**
- * Ditsmod module to support [Auth.js][1].
+ * Holu module to support [Auth.js][1].
  *
  * [1]: https://authjs.dev/
  */

@@ -1,4 +1,4 @@
-import { injectable } from '@ditsmod/core';
+import { injectable } from '@holu/core';
 
 import type { RawRequest, RawResponse } from './request.js';
 import type { PathParam } from './router.js';

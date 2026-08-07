@@ -1,4 +1,4 @@
-import { property } from '@ditsmod/openapi';
+import { property } from '@holu/openapi';
 
 export class Model1 {
   @property()

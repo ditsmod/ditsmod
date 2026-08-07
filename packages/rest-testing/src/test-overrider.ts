@@ -1,5 +1,5 @@
-import type { Provider } from '@ditsmod/core';
-import { getToken, getTokens } from '@ditsmod/core';
+import type { Provider } from '@holu/core';
+import { getToken, getTokens } from '@holu/core';
 
 export class TestOverrider {
   static overrideAllProviders(providersPerApp: Provider[], providerArrays: Provider[][], providersToOverride: Provider[]) {

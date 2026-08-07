@@ -1,5 +1,5 @@
-import { Logger, ProviderBuilder } from '@ditsmod/core';
-import { restModule } from '@ditsmod/rest';
+import { Logger, ProviderBuilder } from '@holu/core';
+import { restModule } from '@holu/rest';
 
 import { PatchLogger } from './pino/patch-logger.js';
 import { PinoController } from './pino/pino.controller.js';

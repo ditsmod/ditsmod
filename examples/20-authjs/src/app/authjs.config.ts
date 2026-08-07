@@ -1,6 +1,6 @@
-import { AuthjsConfig } from '@ditsmod/authjs';
-import credentials, { CredentialsConfig } from '@ditsmod/authjs/providers/credentials';
-import { factoryMethod, injectable } from '@ditsmod/core';
+import { AuthjsConfig } from '@holu/authjs';
+import credentials, { CredentialsConfig } from '@holu/authjs/providers/credentials';
+import { factoryMethod, injectable } from '@holu/core';
 
 @injectable()
 export class OverriddenAuthConfig extends AuthjsConfig {

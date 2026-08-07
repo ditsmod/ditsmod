@@ -14,7 +14,7 @@ import {
   DynamicModuleWithMixinOptions,
   ModRefId,
   ShallowModuleImports,
-} from '@ditsmod/core';
+} from '@holu/core';
 import { RestAppInitializer } from './rest-app-initializer.js';
 import { Router } from '../services/router.js';
 import { mixinRest } from '#decorators/rest-module-mixins.js';

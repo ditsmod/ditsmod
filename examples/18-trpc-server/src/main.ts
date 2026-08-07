@@ -1,4 +1,4 @@
-import { TrpcApplication } from '@ditsmod/trpc';
+import { TrpcApplication } from '@holu/trpc';
 import { AppModule } from '#app/app.module.js';
 
 const app = await TrpcApplication.create(AppModule, { bufferLogs: false, showExternalLogs: true });

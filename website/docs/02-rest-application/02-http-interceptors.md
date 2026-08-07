@@ -22,13 +22,13 @@ sidebar_position: 2
 
 Обробка HTTP-запиту має наступний робочий потік:
 
-1. Ditsmod створює інстанс [RequestDispatcher][7] на рівні застосунку.
+1. Holu створює інстанс [RequestDispatcher][7] на рівні застосунку.
 2. `RequestDispatcher` за допомогою роутера шукає обробника запиту відповідно до URI.
 3. Якщо обробника запиту не знайдено, `RequestDispatcher` видає помилку зі статусом 404.
-4. Якщо знайшовся обробник запиту, Ditsmod створює інстанс провайдера з токеном [HttpFrontend][2] на рівні запиту, ставить його першим у черзі інтерсепторів і автоматично викликає. By default, цей інтерсептор відповідає за встановлення значень для провайдерів з токенами `QUERY_PARAMS` та `PATH_PARAMS`.
+4. Якщо знайшовся обробник запиту, Holu створює інстанс провайдера з токеном [HttpFrontend][2] на рівні запиту, ставить його першим у черзі інтерсепторів і автоматично викликає. By default, цей інтерсептор відповідає за встановлення значень для провайдерів з токенами `QUERY_PARAMS` та `PATH_PARAMS`.
 5. Якщо в поточному маршруті є ґарди, то по-дефолту запускається `RequestScopedGuardedInterceptor` зразу після `HttpFrontend`.
 6. Наступними можуть запуститись інші інтерсептори, це залежать від того, чи запустить їх попередній у черзі інтерсептор.
-7. Якщо усі інтерсептори відпрацювали, Ditsmod запускає [HttpBackend][3], інстанс якого створюється на рівні запиту. By default, `HttpBackend` запускає безпосередньо метод контролера, що відповідає за обробку поточного запиту.
+7. Якщо усі інтерсептори відпрацювали, Holu запускає [HttpBackend][3], інстанс якого створюється на рівні запиту. By default, `HttpBackend` запускає безпосередньо метод контролера, що відповідає за обробку поточного запиту.
 
 Отже, приблизний порядок обробки запиту такий:
 
@@ -46,21 +46,21 @@ sidebar_position: 2
 
 Інтерсептор в режимі route-scoped працює дуже подібним чином до режиму request-scoped, але при цьому він не використовує інжектор на рівні запиту. Робочий потік за його участі відрізняється у пункті 4 та 7, оскільки інстанс інтерсептора в режимі route-scoped створюється на рівні роуту:
 
-1. Ditsmod створює інстанс [RequestDispatcher][7] на рівні застосунку.
+1. Holu створює інстанс [RequestDispatcher][7] на рівні застосунку.
 2. `RequestDispatcher` за допомогою роутера шукає обробника запиту відповідно до URI.
 3. Якщо обробника запиту не знайдено, `RequestDispatcher` видає помилку зі статусом 404.
-4. Якщо знайшовся обробник запиту, Ditsmod використовує інстанс провайдера з токеном [HttpFrontend][2] на рівні роуту, ставить його першим у черзі інтерсепторів і автоматично викликає. By default, цей інтерсептор відповідає за встановлення значень `pathParams` та `queryParams` для `RequestContext`.
+4. Якщо знайшовся обробник запиту, Holu використовує інстанс провайдера з токеном [HttpFrontend][2] на рівні роуту, ставить його першим у черзі інтерсепторів і автоматично викликає. By default, цей інтерсептор відповідає за встановлення значень `pathParams` та `queryParams` для `RequestContext`.
 5. Якщо в поточному маршруті є ґарди, то по-дефолту запускається `RouteScopedGuardedInterceptor` зразу після `HttpFrontend`.
 6. Наступними можуть запуститись інші інтерсептори, це залежать від того, чи запустить їх попередній у черзі інтерсептор.
-7. Якщо усі інтерсептори відпрацювали, Ditsmod запускає [HttpBackend][3], інстанс якого використовується на рівні роуту. By default, `HttpBackend` запускає безпосередньо метод контролера, що відповідає за обробку поточного запиту.
+7. Якщо усі інтерсептори відпрацювали, Holu запускає [HttpBackend][3], інстанс якого використовується на рівні роуту. By default, `HttpBackend` запускає безпосередньо метод контролера, що відповідає за обробку поточного запиту.
 
 ## Створення інтерсептора {#creating-an-interceptor}
 
 Кожен інтерсептор повинен бути класом, що впроваджує інтерфейс [HttpInterceptor][1], та має анотацію з декоратором `injectable`:
 
 ```ts
-import { injectable } from '@ditsmod/core';
-import { RequestContext, HttpHandler, HttpInterceptor } from '@ditsmod/rest';
+import { injectable } from '@holu/core';
+import { RequestContext, HttpHandler, HttpInterceptor } from '@holu/rest';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
@@ -77,7 +77,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
 Інтерсептор для режиму request-scoped передається в інжектор на рівні запиту за допомогою [мульти-провайдерів][107] з токеном `HTTP_INTERCEPTORS`:
 
 ```ts
-import { HTTP_INTERCEPTORS, restModule } from '@ditsmod/rest';
+import { HTTP_INTERCEPTORS, restModule } from '@holu/rest';
 import { MyHttpInterceptor } from './my-http-interceptor.js';
 
 @restModule({
@@ -90,7 +90,7 @@ export class SomeModule {}
 Передача інтерсептора для режиму route-scoped відбувається точно таким же чином, але на рівні роуту, модуля чи застосунку:
 
 ```ts
-import { HTTP_INTERCEPTORS, restModule } from '@ditsmod/rest';
+import { HTTP_INTERCEPTORS, restModule } from '@holu/rest';
 import { MyHttpInterceptor } from './my-http-interceptor.js';
 
 @restModule({
@@ -104,13 +104,13 @@ export class SomeModule {}
 
 В даному разі інтерсептори передаються в метадані модуля. Так само вони можуть передаватись у метадані контролера. Тобто інтерсептори можуть працювати або для усіх контролерів у модулі без виключень, або тільки для конкретного контролера. Якщо інтерсептори потрібно додати лише до окремих роутів у межах контролерів, це ви можете зробити за допомогою [розширень][108] (таким чином додаються [інтерсептори для парсингу тіла запиту][9]).
 
-[1]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/interceptors/tokens-and-types.ts#L14-L16
-[2]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/interceptors/default-http-frontend.ts
-[3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/interceptors/default-http-backend.ts
+[1]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/interceptors/tokens-and-types.ts#L14-L16
+[2]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/interceptors/default-http-frontend.ts
+[3]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/interceptors/default-http-backend.ts
 [5]: https://expressjs.com/en/guide/writing-middleware.html
-[7]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/services/request-dispatcher.ts
-[8]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/types/route-data.ts
-[9]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L54
+[7]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/services/request-dispatcher.ts
+[8]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/types/route-data.ts
+[9]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L54
 
 [106]: /basic-components/dependency-injection
 [107]: /basic-components/dependency-injection#multi-providers

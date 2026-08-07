@@ -1,4 +1,4 @@
-import { FactoryProvider, injectable, Extension, HttpMethod, Provider, Reflector, Class, ResolvedModuleMeta } from '@ditsmod/core';
+import { FactoryProvider, injectable, Extension, HttpMethod, Provider, Reflector, Class, ResolvedModuleMeta } from '@holu/core';
 import {
   AppOptions,
   ControllerMeta,
@@ -8,7 +8,7 @@ import {
   RestResolvedModuleMeta,
   RouteMeta,
   RestRouteExtension,
-} from '@ditsmod/rest';
+} from '@holu/rest';
 import { ReferenceObject, XOperationObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { isOasRoute, isReferenceObject } from '#utils/type-guards.js';

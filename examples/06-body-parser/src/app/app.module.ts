@@ -1,6 +1,6 @@
-import { LoggerConfig, ProviderBuilder } from '@ditsmod/core';
-import { restRootModule } from '@ditsmod/rest';
-import { BodyParserModule } from '@ditsmod/body-parser';
+import { LoggerConfig, ProviderBuilder } from '@holu/core';
+import { restRootModule } from '@holu/rest';
+import { BodyParserModule } from '@holu/body-parser';
 
 import { SomeModule } from './modules/routed/some.module.js';
 

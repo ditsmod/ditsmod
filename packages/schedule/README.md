@@ -1,11 +1,11 @@
-# @ditsmod/schedule
+# @holu/schedule
 
-This is a Ditsmod module that provides support for scheduling tasks: cron jobs, intervals, and timeouts. It leverages the robust `cron` npm library under the hood.
+This is a Holu module that provides support for scheduling tasks: cron jobs, intervals, and timeouts. It leverages the robust `cron` npm library under the hood.
 
 ## Installation
 
 ```bash
-yarn add @ditsmod/schedule
+yarn add @holu/schedule
 ```
 
 ## Setup
@@ -13,8 +13,8 @@ yarn add @ditsmod/schedule
 To enable scheduling, import the `ScheduleModule` in your root or feature module, and register the class containing your scheduled tasks in `providersPerMod` (or `providersPerApp`):
 
 ```ts
-import { restRootModule } from '@ditsmod/rest';
-import { ScheduleModule } from '@ditsmod/schedule';
+import { restRootModule } from '@holu/rest';
+import { ScheduleModule } from '@holu/schedule';
 import { MyTasks } from './my-tasks.service.js';
 
 @restRootModule({
@@ -29,8 +29,8 @@ export class AppModule {}
 Create a class and decorate its methods with `@cron`, `@interval`, or `@timeout`.
 
 ```ts
-import { injectable, Logger } from '@ditsmod/core';
-import { cron, interval, timeout, CronExpression } from '@ditsmod/schedule';
+import { injectable, Logger } from '@holu/core';
+import { cron, interval, timeout, CronExpression } from '@holu/schedule';
 
 @injectable()
 export class MyTasks {
@@ -85,8 +85,8 @@ export class MyTasks {
 You can inject `SchedulerRegistry` into your services or controllers to query, start, stop, or delete registered tasks dynamically:
 
 ```ts
-import { controller, route } from '@ditsmod/rest';
-import { SchedulerRegistry } from '@ditsmod/schedule';
+import { controller, route } from '@holu/rest';
+import { SchedulerRegistry } from '@holu/schedule';
 
 @controller()
 export class ScheduleController {

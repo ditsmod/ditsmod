@@ -1,7 +1,7 @@
 import type { ParameterObject, ReferenceObject, XParameterObject } from '@ts-stack/openapi-spec';
 
 import { OpenapiRouteExtension } from './openapi-routes.extension.js';
-import type { HttpMethod } from '@ditsmod/core';
+import type { HttpMethod } from '@holu/core';
 import { BOUND_TO_HTTP_METHOD, BOUND_TO_PATH_PARAM } from '#utils/parameters.js';
 
 describe('OpenapiRouteExtension', () => {

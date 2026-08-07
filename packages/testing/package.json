@@ -1,12 +1,12 @@
 {
-  "name": "@ditsmod/testing",
+  "name": "@holu/testing",
   "type": "module",
   "version": "3.0.0-next.18",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ditsmod/ditsmod.git"
+    "url": "git+https://github.com/holu/holu.git"
   },
-  "description": "This is a module for Ditsmod applications",
+  "description": "This is a module for Holu applications",
   "module": "dist/index.js",
   "imports": {
     "#app/*": "./dist/*"
@@ -28,13 +28,13 @@
     "rebuild": "cd ../.. && yarn clean && cd - && yarn build"
   },
   "keywords": [
-    "ditsmod"
+    "holu"
   ],
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-next.18",
-    "@ditsmod/rest": "^3.0.0-next.18"
+    "@holu/core": "^3.0.0-next.18",
+    "@holu/rest": "^3.0.0-next.18"
   },
   "devDependencies": {
     "jest": "^30.4.2",

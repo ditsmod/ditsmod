@@ -1,5 +1,5 @@
-import type { ModRefId, ProvidersByLevel } from '@ditsmod/core';
-import { AppInitializer, NormalizedModuleMeta } from '@ditsmod/core';
+import type { ModRefId, ProvidersByLevel } from '@holu/core';
+import { AppInitializer, NormalizedModuleMeta } from '@holu/core';
 import { initTRPC } from '@trpc/server';
 
 import type { RequestListener, TrpcRootModule } from '../types/types.js';

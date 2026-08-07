@@ -6,7 +6,7 @@ import {
   NormalizedModuleMeta,
   SystemLogMediator,
   ModRefId,
-} from '@ditsmod/core';
+} from '@holu/core';
 
 import { CanActivate, guard } from '../interceptors/guard.js';
 import { controller } from '../types/controller.js';

@@ -2,32 +2,32 @@
 sidebar_position: 1
 ---
 
-# @ditsmod/cli
+# @holu/cli
 
-This package provides a Command Line Interface (CLI) and development tools for Ditsmod applications.
+This package provides a Command Line Interface (CLI) and development tools for Holu applications.
 
 ## Installation {#installation}
 
 ```bash
-npm i -g @ditsmod/cli
+npm i -g @holu/cli
 ```
 
 Or run it directly without installation using `npx`:
 
 ```bash
-npx @ditsmod/cli <command>
+npx @holu/cli <command>
 ```
 
-_Note:_ Binary aliases `ditsmod` and `dm` are available when installed.
+_Note:_ Binary aliases `holu` and `dm` are available when installed.
 
 ## Commands {#commands}
 
-### `ditsmod new` {#ditsmod-new}
+### `holu new` {#holu-new}
 
-Creates a new Ditsmod application in the target directory using official starter templates.
+Creates a new Holu application in the target directory using official starter templates.
 
 ```bash
-ditsmod new my-app [options]
+holu new my-app [options]
 ```
 
 #### Options:
@@ -47,12 +47,12 @@ dm new my-rest-api -m yarn
 dm new my-trpc-app -t trpc-monorepo --skip-install
 ```
 
-### `ditsmod start` {#ditsmod-start}
+### `holu start` {#holu-start}
 
-Runs the Ditsmod application in development mode with incremental TypeScript watch compilation and graceful process restarts.
+Runs the Holu application in development mode with incremental TypeScript watch compilation and graceful process restarts.
 
 ```bash
-ditsmod start [entryFile] [options]
+holu start [entryFile] [options]
 ```
 
 #### Options:
@@ -77,8 +77,8 @@ dm start --env-file .env.local --watch-assets "src/**/*.json"
 
 ## Programmatic API {#programmatic-api}
 
-`@ditsmod/cli` exports its core classes and command helpers for programmatic usage:
+`@holu/cli` exports its core classes and command helpers for programmatic usage:
 
 ```ts
-import { WatchCompiler, ProcessManager, AssetWatcher, startCommand, newCommand } from '@ditsmod/cli';
+import { WatchCompiler, ProcessManager, AssetWatcher, startCommand, newCommand } from '@holu/cli';
 ```

@@ -1,4 +1,4 @@
-import { injectable, Injector, skipSelf } from '@ditsmod/core';
+import { injectable, Injector, skipSelf } from '@holu/core';
 
 import { TrpcHttpBackend } from './tokens-and-types.js';
 import { TrpcRouteMeta } from '#types/trpc-route-data.js';

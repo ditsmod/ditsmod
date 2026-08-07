@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { Logger, Injector } from '@ditsmod/core';
+import { Logger, Injector } from '@holu/core';
 
 // Mock Sentry
 const mockSpan = {
@@ -18,8 +18,8 @@ jest.unstable_mockModule('@sentry/node', () => {
 // Dynamically import code under test
 const { SentryRequestDispatcher } = await import('./sentry-request-dispatcher.js');
 const Sentry = (await import('@sentry/node')) as any;
-const { Router } = await import('@ditsmod/rest');
-const { SystemLogMediator } = await import('@ditsmod/core');
+const { Router } = await import('@holu/rest');
+const { SystemLogMediator } = await import('@holu/core');
 
 describe('SentryRequestDispatcher', () => {
   let dispatcher: any;

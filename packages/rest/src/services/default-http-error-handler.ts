@@ -1,5 +1,5 @@
-import { injectable, Logger, HttpStatus } from '@ditsmod/core';
-import { CustomError, isCustomError } from '@ditsmod/core/errors';
+import { injectable, Logger, HttpStatus } from '@holu/core';
+import { CustomError, isCustomError } from '@holu/core/errors';
 
 import { HttpErrorHandler } from './http-error-handler.js';
 import { RequestContext } from './request-context.js';

@@ -1,5 +1,5 @@
-import { DynamicModule } from '@ditsmod/core';
-import { DispatcherExtension, RestRouteExtension, restModule } from '@ditsmod/rest';
+import { DynamicModule } from '@holu/core';
+import { DispatcherExtension, RestRouteExtension, restModule } from '@holu/rest';
 import { BodyParserGroup } from '@ts-stack/body-parser';
 import { Multer } from '@ts-stack/multer';
 

@@ -8,7 +8,7 @@ import {
   ProviderBuilder,
   rootModule,
   SystemLogMediator,
-} from '@ditsmod/core';
+} from '@holu/core';
 
 import { mixinRest, restRootModule } from '#decorators/rest-module-mixins.js';
 import { controller } from '#types/controller.js';
@@ -16,7 +16,7 @@ import { CanActivate, NormalizedGuard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';
 import { RestAppendOptions } from './rest-mixin-raw-meta.js';
 import { RestModule } from './rest.module.js';
-import { NormalizationFailure, ReexportFailure } from '@ditsmod/core/errors';
+import { NormalizationFailure, ReexportFailure } from '@holu/core/errors';
 
 describe('rest ModuleNormalizer', () => {
   let moduleManager: ModuleManager;

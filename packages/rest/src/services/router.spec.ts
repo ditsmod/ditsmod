@@ -1,4 +1,4 @@
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 
 import { DefaultRouter } from './router.js';
 import type { AnyFn } from '../types/types.js';

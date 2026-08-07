@@ -1,5 +1,5 @@
-import { Extension, injectable, inject, PROVIDERS_PER_APP, Injector, isValueProvider } from '@ditsmod/core';
-import type { Provider, ValueProvider } from '@ditsmod/core';
+import { Extension, injectable, inject, PROVIDERS_PER_APP, Injector, isValueProvider } from '@holu/core';
+import type { Provider, ValueProvider } from '@holu/core';
 import { DataSource } from 'typeorm';
 import type { DataSourceOptions, EntityManager } from 'typeorm';
 
@@ -81,7 +81,7 @@ export class TypeormExtension implements Extension<void> {
   private async initDataSource(options: TypeormModuleOptions): Promise<void> {
     const name = options.name || DEFAULT_DATA_SOURCE_NAME;
 
-    // Separate Ditsmod-specific options from DataSourceOptions
+    // Separate Holu-specific options from DataSourceOptions
     const {
       name: _name,
       retryAttempts,

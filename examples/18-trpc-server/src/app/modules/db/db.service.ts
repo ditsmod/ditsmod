@@ -1,4 +1,4 @@
-import { injectable } from '@ditsmod/core';
+import { injectable } from '@holu/core';
 import { MessageService } from '#message/message.service.js';
 
 @injectable()

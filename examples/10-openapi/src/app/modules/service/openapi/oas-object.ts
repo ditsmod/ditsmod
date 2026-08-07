@@ -3,14 +3,14 @@ import { openapi } from '@ts-stack/openapi-spec';
 
 export const oasObject: XOasObject = {
   openapi,
-  info: { title: 'Testing @ditsmod/openapi', version: '1.0.0' },
+  info: { title: 'Testing @holu/openapi', version: '1.0.0' },
   tags: [
     {
       name: 'NonOasRoutes',
       description:
         'Routes that used `@route()` decorator. If you want to change this description, ' +
         '[use tags](https://swagger.io/docs/specification/grouping-operations-with-tags/) ' +
-        'for `@oasRoute()` imported from @ditsmod/openapi.',
+        'for `@oasRoute()` imported from @holu/openapi.',
     },
     {
       name: 'withParameter',

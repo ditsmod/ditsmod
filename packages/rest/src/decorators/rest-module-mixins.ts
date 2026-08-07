@@ -1,5 +1,5 @@
-import type { ModRefId, NormalizedModuleMeta, MixinDecorator, Provider, ForwardRefFn, StaticModule } from '@ditsmod/core';
-import { Reflector, ModuleMixin } from '@ditsmod/core';
+import type { ModRefId, NormalizedModuleMeta, MixinDecorator, Provider, ForwardRefFn, StaticModule } from '@holu/core';
+import { Reflector, ModuleMixin } from '@holu/core';
 
 import type { RestStaticOptions, RestDynamicOptions } from '#init/rest-mixin-raw-meta.js';
 import { RestModuleNormalizer } from '#init/rest-module-normalizer.js';

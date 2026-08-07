@@ -1,5 +1,5 @@
-import { injectable, Logger } from '@ditsmod/core';
-import { HttpHandler, HttpInterceptor, RequestContext } from '@ditsmod/rest';
+import { injectable, Logger } from '@holu/core';
+import { HttpHandler, HttpInterceptor, RequestContext } from '@holu/rest';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {

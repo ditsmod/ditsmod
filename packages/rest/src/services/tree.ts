@@ -1,4 +1,4 @@
-import { injectable, optional } from '@ditsmod/core';
+import { injectable, optional } from '@holu/core';
 
 import { AnyFn, RadixTreeNode, RouteType, RouteParam } from '../types/types.js';
 import {

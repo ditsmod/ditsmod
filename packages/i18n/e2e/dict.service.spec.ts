@@ -1,6 +1,6 @@
-import type { AnyObj} from '@ditsmod/core';
-import { Injector, ModuleInfo } from '@ditsmod/core';
-import { QUERY_PARAMS } from '@ditsmod/rest';
+import type { AnyObj} from '@holu/core';
+import { Injector, ModuleInfo } from '@holu/core';
+import { QUERY_PARAMS } from '@holu/rest';
 import { jest } from '@jest/globals';
 
 import { I18nOptions } from '#src/types/mix.js';

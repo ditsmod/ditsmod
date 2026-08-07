@@ -41,7 +41,7 @@ Once the application is running, you can test the following endpoints to see Sen
   curl http://localhost:3000/expected-error
   ```
 
-  Returns a 400 error. Because it throws a Ditsmod `CustomError` with status `400` and level `'warn'`, Sentry ignores this expected client error (unless `capture4xx` is explicitly set to `true` in `SentryOptions`).
+  Returns a 400 error. Because it throws a Holu `CustomError` with status `400` and level `'warn'`, Sentry ignores this expected client error (unless `capture4xx` is explicitly set to `true` in `SentryOptions`).
 
 - **Sentry Cron Monitor**:
 
@@ -59,6 +59,6 @@ Once the application is running, you can test the following endpoints to see Sen
 
 ## More Information
 
-For more details on `@ditsmod/sentry` configuration and options, see:
+For more details on `@holu/sentry` configuration and options, see:
 
-- [Sentry Module Documentation](https://ditsmod.github.io/en/native-modules/sentry/) (or the local [08-sentry.md](file:///srv/git/ditsmod/ditsmod/website/docs/02-rest-application/100-native-modules/08-sentry.md))
+- [Sentry Module Documentation](https://holu.github.io/en/native-modules/sentry/) (or the local [08-sentry.md](file:///srv/git/holu/holu/website/docs/02-rest-application/100-native-modules/08-sentry.md))

@@ -1,4 +1,4 @@
-import { injectable, InputLogLevel, LogMediator } from '@ditsmod/core';
+import { injectable, InputLogLevel, LogMediator } from '@holu/core';
 
 @injectable()
 export class AuthjsLogMediator extends LogMediator {

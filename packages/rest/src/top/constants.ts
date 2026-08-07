@@ -1,5 +1,5 @@
-import type { AnyObj } from '@ditsmod/core';
-import { createInjectionSymbol, InjectionToken } from '@ditsmod/core';
+import type { AnyObj } from '@holu/core';
+import { createInjectionSymbol, InjectionToken } from '@holu/core';
 
 import type { HttpInterceptor } from '#interceptors/tokens-and-types.js';
 import type { RawRequest, RawResponse } from '#services/request.js';
@@ -17,7 +17,7 @@ export const RAW_REQ = createInjectionSymbol<RawRequest>('RAW_REQ');
 export const RAW_RES = createInjectionSymbol<RawResponse>('RAW_RES');
 
 /**
- * DI token for path params that is returned by `@ditsmod/rest`.
+ * DI token for path params that is returned by `@holu/rest`.
  */
 export const RAW_PATH_PARAMS = createInjectionSymbol<PathParam[]>('RAW_PATH_PARAMS');
 export const PATH_PARAMS = createInjectionSymbol<AnyObj>('PATH_PARAMS');

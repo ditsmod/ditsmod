@@ -1,6 +1,6 @@
-import { LoggerConfig, ProviderBuilder } from '@ditsmod/core';
-import { restRootModule } from '@ditsmod/rest';
-import { CorsModule } from '@ditsmod/cors';
+import { LoggerConfig, ProviderBuilder } from '@holu/core';
+import { restRootModule } from '@holu/rest';
+import { CorsModule } from '@holu/cors';
 
 import { FirstController, SecondController } from './controllers.js';
 

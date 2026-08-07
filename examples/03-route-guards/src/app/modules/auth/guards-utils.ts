@@ -1,4 +1,4 @@
-import { createGuardHelper } from '@ditsmod/rest';
+import { createGuardHelper } from '@holu/rest';
 
 import { RequestScopedPermissionsGuard } from './permissions.guard.js';
 import type { Permission } from './types.js';

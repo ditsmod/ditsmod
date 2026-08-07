@@ -2,23 +2,23 @@
 sidebar_position: 5
 ---
 
-# @ditsmod/jwt
+# @holu/jwt
 
-The `@ditsmod/jwt` module integrates [jsonwebtoken][1] into a Ditsmod authentication application based on [JSON Web Token][2]. You can view a finished example of using this module in the [Ditsmod repository][3].
+The `@holu/jwt` module integrates [jsonwebtoken][1] into a Holu authentication application based on [JSON Web Token][2]. You can view a finished example of using this module in the [Holu repository][3].
 
 ## Installation and importing {#installation-and-importing}
 
 Installation:
 
 ```bash
-npm i @ditsmod/jwt
+npm i @holu/jwt
 ```
 
 Importing:
 
 ```ts {7,10}
-import { restModule } from '@ditsmod/rest';
-import { JwtModule } from '@ditsmod/jwt';
+import { restModule } from '@holu/rest';
+import { JwtModule } from '@holu/jwt';
 
 import { AuthController } from './auth.controller.js';
 import { BearerGuard } from './bearer.guard.js';
@@ -39,9 +39,9 @@ As you can see, you can pass certain options to `JwtModule` during import.
 Now within `AuthModule` you can use `JwtService`:
 
 ```ts {8,19-22}
-import { injectable, Context } from '@ditsmod/core';
-import { CanActivate, RequestContext } from '@ditsmod/rest';
-import { JwtService, VerifyErrors, JWT_PAYLOAD } from '@ditsmod/jwt';
+import { injectable, Context } from '@holu/core';
+import { CanActivate, RequestContext } from '@holu/rest';
+import { JwtService, VerifyErrors, JWT_PAYLOAD } from '@holu/jwt';
 
 @injectable()
 export class BearerGuard implements CanActivate {
@@ -77,5 +77,5 @@ You can read what the guards are in the [Guards][4] section.
 
 [1]: https://github.com/auth0/node-jsonwebtoken
 [2]: https://www.rfc-editor.org/rfc/rfc7519
-[3]: https://github.com/ditsmod/ditsmod/tree/main/examples/14-auth-jwt
+[3]: https://github.com/holu/holu/tree/main/examples/14-auth-jwt
 [4]: /rest-application/guards

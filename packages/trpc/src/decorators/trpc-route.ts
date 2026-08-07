@@ -1,5 +1,5 @@
-import type { Class } from '@ditsmod/core';
-import { Reflector } from '@ditsmod/core';
+import type { Class } from '@holu/core';
+import { Reflector } from '@holu/core';
 
 import type { GuardItem } from '#interceptors/trpc-guard.js';
 import type { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';

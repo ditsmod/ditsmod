@@ -25,13 +25,13 @@ export interface ResolvedProjectConfig {
 }
 
 /**
- * Registers the `ditsmod start [entryFile]` sub-command onto the given Commander program.
+ * Registers the `holu start [entryFile]` sub-command onto the given Commander program.
  */
 export function startCommand(program: Command): void {
   program
     .command('start [entryFile]')
     .usage('[options] [entryFile]\n       dm start [options] [entryFile]')
-    .description('Run Ditsmod application')
+    .description('Run Holu application')
     .option('-p, --project <path>', 'Path to TypeScript config file or project directory', 'tsconfig.build.json')
     .option('-e, --exec <binary>', 'Binary to run', 'node')
     .option('-d, --debug [hostport]', 'Run in debug mode (with --inspect flag)')
@@ -96,7 +96,7 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
   }
 
   compiler.on('error', (err: Error) => {
-    console.error('[ditsmod] Compiler error:', err.message);
+    console.error('[holu] Compiler error:', err.message);
   });
 
   // --- Graceful shutdown on Ctrl+C via AbortController ---
@@ -115,7 +115,7 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
 
   compiler.on('buildStart', () => {
     if (started) {
-      console.log('\n[ditsmod] File change detected. Compiling…\n');
+      console.log('\n[holu] File change detected. Compiling…\n');
     }
   });
 
@@ -136,13 +136,13 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
 
       if (opts.verbose && compilationResult.duration !== undefined) {
         const seconds = (compilationResult.duration / 1000).toFixed(2);
-        console.log(`\n[ditsmod] Compilation completed in ${seconds} s.`);
+        console.log(`\n[holu] Compilation completed in ${seconds} s.`);
       }
 
       if (!started) {
         started = true;
         const timestamp = new Date().toLocaleTimeString();
-        console.log(`[${timestamp}] [ditsmod] Starting application…\n`);
+        console.log(`[${timestamp}] [holu] Starting application…\n`);
         processManager.start(entryAbs, appArgs);
       } else {
         const restartApp = async () => {
@@ -151,11 +151,11 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
             process.stdout.write('\x1B[2J\x1B[3J\x1B[H');
           }
           const timestamp = new Date().toLocaleTimeString();
-          console.log(`[${timestamp}] [ditsmod] Restarting application…\n`);
+          console.log(`[${timestamp}] [holu] Restarting application…\n`);
           try {
             await processManager.restart(entryAbs, appArgs);
           } catch (err: any) {
-            console.error('[ditsmod] Error restarting application:', err?.message || err);
+            console.error('[holu] Error restarting application:', err?.message || err);
           }
         };
 
@@ -167,7 +167,7 @@ export async function runStart(entryFileArg: string | undefined, opts: StartComm
     }
   } catch (err: any) {
     if (err?.name !== 'AbortError') {
-      console.error('[ditsmod] Unexpected error in watch loop:', err);
+      console.error('[holu] Unexpected error in watch loop:', err);
     }
   } finally {
     if (restartTimer) clearTimeout(restartTimer);

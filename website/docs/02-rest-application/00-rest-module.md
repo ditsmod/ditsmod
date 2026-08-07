@@ -1,11 +1,11 @@
 ---
 sidebar_position: 0
-title: "@ditsmod/rest"
+title: "@holu/rest"
 ---
 
-# @ditsmod/rest
+# @holu/rest
 
-Як видно з назви, модуль `@ditsmod/rest` забезпечує підтримку [REST][0]. Він містить зокрема:
+Як видно з назви, модуль `@holu/rest` забезпечує підтримку [REST][0]. Він містить зокрема:
 
 - [mixin-декоратори][4] для кореневого модуля та модуля фіч - `restRootModule`, `restModule`;
 - розширення, які забезпечують створення REST-роутів - `RestRouteExtension`, `DispatcherExtension`;
@@ -36,20 +36,20 @@ interface PathParam {
 }
 ```
 
-Готовий приклад використання даного модуля можна знайти в прикладах [репозиторія Ditsmod][1].
+Готовий приклад використання даного модуля можна знайти в прикладах [репозиторія Holu][1].
 
 ## Встановлення та підключення {#installation-and-importing}
 
 Встановлення:
 
 ```bash
-npm i @ditsmod/rest
+npm i @holu/rest
 ```
 
 Підключення:
 
 ```ts
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 @restModule({
   // ..
@@ -59,10 +59,10 @@ export class AppModule {}
 
 ## Інтеграція кастомного роутера {#custom-router-integration}
 
-Якщо ви хочете інтегрувати кастомний роутер для застосунку Ditsmod, достатньо щоб ваш роутер імплементував вищезазначений інтерфейс `Router`, після чого його можна додавати в провайдери на рівні застосунку:
+Якщо ви хочете інтегрувати кастомний роутер для застосунку Holu, достатньо щоб ваш роутер імплементував вищезазначений інтерфейс `Router`, після чого його можна додавати в провайдери на рівні застосунку:
 
 ```ts
-import { restModule, Router } from '@ditsmod/rest';
+import { restModule, Router } from '@holu/rest';
 import { MyRouter } from './my-router.js';
 
 @restModule({
@@ -80,7 +80,7 @@ export class MyCustomRouterModule {}
 З даного модуля також експортується `DispatcherExtension`. Дане розширення використовує метадані, які повертає `RestRouteExtension`, щоб створювати обробники HTTP-запитів.
 
 [0]: https://uk.wikipedia.org/wiki/REST
-[1]: https://github.com/ditsmod/ditsmod/tree/main/examples/01-hello-world
-[2]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/types/types.ts#L22-L28
-[3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L46
+[1]: https://github.com/holu/holu/tree/main/examples/01-hello-world
+[2]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/types/types.ts#L22-L28
+[3]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L46
 [4]: /deep-dive/module-mixins/

@@ -4,9 +4,9 @@ sidebar_position: 3
 
 # Extensions
 
-## The purpose of Ditsmod extension {#the-purpose-of-ditsmod-extension}
+## The purpose of Holu extension {#the-purpose-of-holu-extension}
 
-Extensions start working when Ditsmod has collected static metadata from class-level decorators and exported/imported modules and providers exactly as specified in the collected static metadata of the module. Typically, an extension does its work before the HTTP request handlers are created. To modify or extend the application's functionality, an extension uses static metadata that is attached to specific decorators. On the other hand, an extension can also dynamically add metadata of the same type as the static metadata. Extensions can initialize asynchronously, and can depend on each other.
+Extensions start working when Holu has collected static metadata from class-level decorators and exported/imported modules and providers exactly as specified in the collected static metadata of the module. Typically, an extension does its work before the HTTP request handlers are created. To modify or extend the application's functionality, an extension uses static metadata that is attached to specific decorators. On the other hand, an extension can also dynamically add metadata of the same type as the static metadata. Extensions can initialize asynchronously, and can depend on each other.
 
 Figuratively speaking, a module + extension resemble a "cloud provider" that supplies only the infrastructure. That is, extensions operate strictly during the application initialization stage and do not participate directly in request processing. They merely create the conditions for components like controllers, services, guards, and interceptors, which handle requests after the preparatory stage is complete.
 
@@ -18,13 +18,13 @@ In most cases, multidimensional arrays of configuration data reflect the structu
 2. each module contains controllers or providers;
 3. each controller has one or more routes.
 
-A simple and practical example of how extensions work can be found in the [@ditsmod/body-parser][101] module, where an extension dynamically adds an HTTP interceptor for parsing the request body to each route that has the corresponding method (POST, PATCH, PUT). It does this once before the HTTP request handlers are created, so there is no need to check whether parsing is required on every request.
+A simple and practical example of how extensions work can be found in the [@holu/body-parser][101] module, where an extension dynamically adds an HTTP interceptor for parsing the request body to each route that has the corresponding method (POST, PATCH, PUT). It does this once before the HTTP request handlers are created, so there is no need to check whether parsing is required on every request.
 
-Another example. The [@ditsmod/rest][6] module allows setting routes using a custom `@route` decorator. Without the extension running, Ditsmod will ignore the metadata from this decorator. The extension from this module takes the configuration array mentioned above, finds metadata from the `@route` decorator there, and interprets it by adding other metadata that will be used by the target extension to set up routes.
+Another example. The [@holu/rest][6] module allows setting routes using a custom `@route` decorator. Without the extension running, Holu will ignore the metadata from this decorator. The extension from this module takes the configuration array mentioned above, finds metadata from the `@route` decorator there, and interprets it by adding other metadata that will be used by the target extension to set up routes.
 
-## What is "Ditsmod extension" {#what-is-ditsmod-extension}
+## What is "Holu extension" {#what-is-holu-extension}
 
-In Ditsmod, **extension** is a class that implements the `Extension` interface:
+In Holu, **extension** is a class that implements the `Extension` interface:
 
 ```ts
 interface Extension<T> {
@@ -48,12 +48,12 @@ interface Extension<T> {
 }
 ```
 
-Each of these methods acts as a hook that Ditsmod invokes automatically. In the documentation, you may occasionally encounter phrases like "the value returned by the extension"; in such cases, this refers to the value returned by the `stage1()` method of that extension. You can find a ready simple example in the [00-standalone-application][103] folder.
+Each of these methods acts as a hook that Holu invokes automatically. In the documentation, you may occasionally encounter phrases like "the value returned by the extension"; in such cases, this refers to the value returned by the `stage1()` method of that extension. You can find a ready simple example in the [00-standalone-application][103] folder.
 
 The implementation of this interface can be done, for example, as follows:
 
 ```ts
-import { injectable, Extension, Logger } from '@ditsmod/core';
+import { injectable, Extension, Logger } from '@holu/core';
 
 @injectable()
 export class SimpleExtension implements Extension<void> {
@@ -75,7 +75,7 @@ During `stage1()`, any extension can [dynamically add providers][7] to any [hier
 Extensions are passed in the module metadata, in the `extensions` property. Depending on the architectural style you choose, decorators such as `featureModule`, `restModule`, `trpcModule`, etc. can be used for this:
 
 ```ts {5}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { SimpleExtension } from './simple-extension.js';
 
 @restModule({
@@ -118,7 +118,7 @@ class ExtensionConfig {
 For example:
 
 ```ts {6-11}
-import { restModule, RestRouteExtension } from '@ditsmod/rest';
+import { restModule, RestRouteExtension } from '@holu/rest';
 import { SimpleExtension } from './simple-extension.js';
 
 @restModule({
@@ -165,7 +165,7 @@ During module normalization, this configuration is saved in `normalizedModuleMet
 1. **Directly in the extension constructor** by injecting `ResolvedModuleMeta`:
 
   ```ts
-  import { injectable, Extension, ResolvedModuleMeta } from '@ditsmod/core';
+  import { injectable, Extension, ResolvedModuleMeta } from '@holu/core';
 
   @injectable()
   export class MyExtension implements Extension<void> {
@@ -183,8 +183,8 @@ During module normalization, this configuration is saved in `normalizedModuleMet
 2. **From other extensions** via `ExtensionManager`:
 
   ```ts
-  import { injectable, Extension, ExtensionManager } from '@ditsmod/core';
-  import { RestRouteExtension } from '@ditsmod/rest';
+  import { injectable, Extension, ExtensionManager } from '@holu/core';
+  import { RestRouteExtension } from '@holu/rest';
 
   @injectable()
   export class MyExtension implements Extension<void> {
@@ -204,7 +204,7 @@ During module normalization, this configuration is saved in `normalizedModuleMet
 
 Any extension can belong to one or more groups. The concept of an **extension group** is analogous to the concept of a group of [interceptors][10]. Recall that a group of interceptors performs a specific type of work: it augments the handling of an HTTP request for a particular route in a controller. Similarly, each group of extensions is a separate type of work over certain metadata. As a rule, extensions in a given group return metadata that share the same base interface. Essentially, extension groups allow you to abstract away from specific extensions, making only the type of work performed within these groups important.
 
-For example, in `@ditsmod/rest` there is `RestRouteExtension`, which processes metadata collected from the `@route()` decorator. If an application needs OpenAPI documentation, you can additionally connect the `@ditsmod/openapi` module, where `OpenapiRouteExtension` is registered and works with the `@oasRoute()` decorator. In the metadata of the `@ditsmod/openapi` module, it is specified that `OpenapiRouteExtension` should be used in the same group as `RestRouteExtension`:
+For example, in `@holu/rest` there is `RestRouteExtension`, which processes metadata collected from the `@route()` decorator. If an application needs OpenAPI documentation, you can additionally connect the `@holu/openapi` module, where `OpenapiRouteExtension` is registered and works with the `@oasRoute()` decorator. In the metadata of the `@holu/openapi` module, it is specified that `OpenapiRouteExtension` should be used in the same group as `RestRouteExtension`:
 
 ```ts
 extensions: [
@@ -228,7 +228,7 @@ extensions: [
 
 As you can see, nothing is said here about `OpenapiRouteExtension`, and even when `OpenapiRouteExtension` was declared, it also did not specify that `OpenapiRouteExtension` must run before `DispatcherExtension`. It is enough that `groups: [RestRouteExtension]` was specified during the declaration of `OpenapiRouteExtension`, and this automatically places `OpenapiRouteExtension` in the queue after `RestRouteExtension`, but before `DispatcherExtension`.
 
-This feature is very convenient, as it sometimes allows you to integrate external Ditsmod modules (for example, from npmjs.com) into your application without any configuration, simply by importing them into the required module. Imported extensions that belong to certain groups will be executed in the correct order, even if they are imported from different external modules.
+This feature is very convenient, as it sometimes allows you to integrate external Holu modules (for example, from npmjs.com) into your application without any configuration, simply by importing them into the required module. Imported extensions that belong to certain groups will be executed in the correct order, even if they are imported from different external modules.
 
 Note that the `groups` property specifies extension classes that act as tokens for individual groups:
 
@@ -267,7 +267,7 @@ If a certain extension has a dependency on another extension, it is recommended 
 Suppose `Extension2` expects the results of the `stage1()` method from `Extension1`, so a dependency on `ExtensionManager` is specified in the constructor, and `this.extensionManager.stage1()` is called inside `extension2.stage1()`:
 
 ```ts {9}
-import { injectable, Extension, ExtensionManager } from '@ditsmod/core';
+import { injectable, Extension, ExtensionManager } from '@holu/core';
 import { Extension1 } from './extension1.js';
 
 @injectable()
@@ -314,12 +314,12 @@ The `groupData` property contains an array that aggregates data from the current
 groupData[0] === groupDebugMeta[0]?.payload; // true
 ```
 
-It is important to remember that a separate instance of a given extension is created for each module. For example, if `Extension2` is imported into three different modules, Ditsmod will process these three modules sequentially with three different instances of `Extension2`. In addition, if `Extension2` needs aggregated data, for example, from `Extension1` from four modules, but `Extension2` itself is imported only into three modules, this means that from one module `Extension2` may not receive the required data.
+It is important to remember that a separate instance of a given extension is created for each module. For example, if `Extension2` is imported into three different modules, Holu will process these three modules sequentially with three different instances of `Extension2`. In addition, if `Extension2` needs aggregated data, for example, from `Extension1` from four modules, but `Extension2` itself is imported only into three modules, this means that from one module `Extension2` may not receive the required data.
 
 In this case, you need to pass `this` as the second argument to `extensionManager.stage1`:
 
 ```ts {9}
-import { injectable, Extension, ExtensionManager } from '@ditsmod/core';
+import { injectable, Extension, ExtensionManager } from '@holu/core';
 import { Extension1 } from './extension1.js';
 
 @injectable()
@@ -378,13 +378,13 @@ That is, here `Extension1` and `Extension2` effectively act as tokens (or identi
 
 ## Dynamic addition of providers {#dynamic-addition-of-providers}
 
-If you are using `@ditsmod/rest`, any extension can declare a dependency on the `RestRouteExtension` to dynamically add providers at any level. This extension uses metadata with the `ResolvedModuleMetadata` interface and returns metadata with the `RouteExtensionMeta` interface.
+If you are using `@holu/rest`, any extension can declare a dependency on the `RestRouteExtension` to dynamically add providers at any level. This extension uses metadata with the `ResolvedModuleMetadata` interface and returns metadata with the `RouteExtensionMeta` interface.
 
 You can see how it is done in [BodyParserExtension][102]:
 
 ```ts {13,31,42}
-import { Extension, ExtensionManager, Injector, injectable, inject, PROVIDERS_PER_APP } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS, RestRouteExtension } from '@ditsmod/rest';
+import { Extension, ExtensionManager, Injector, injectable, inject, PROVIDERS_PER_APP } from '@holu/core';
+import { HTTP_INTERCEPTORS, RestRouteExtension } from '@holu/rest';
 // ...
 
 @injectable()
@@ -439,7 +439,7 @@ In this case, an HTTP interceptor is added to the controller's metadata within t
 The actual injectors containing providers collected from all extensions will be created later—in `DispatcherExtension`. This is precisely why the `BodyParserModule` metadata specifies that `BodyParserExtension` must run after `RestRouteExtension` but before `DispatcherExtension`:
 
 ```ts {7-8}
-import { RestRouteExtension, DispatcherExtension } from '@ditsmod/rest';
+import { RestRouteExtension, DispatcherExtension } from '@holu/rest';
 
 // ... Here BodyParserModule is declared
 extensions: [
@@ -460,7 +460,7 @@ If an extension asynchronously initializes an external resource (such as a datab
 Since the extension's own injector is temporary, the prepared resource instance is pushed into the appropriate provider hierarchy array (`providersPerApp`, `providersPerMod`, `providersPerRou`, or `providersPerReq`) via the `useValue` property during `stage1()` execution:
 
 ```ts
-import { injectable, inject, Extension, PROVIDERS_PER_APP, Provider } from '@ditsmod/core';
+import { injectable, inject, Extension, PROVIDERS_PER_APP, Provider } from '@holu/core';
 import { createDbConnection, DbClient } from './db-connection.js';
 
 @injectable()
@@ -480,10 +480,10 @@ After this, any service or controller in the application can inject `DbClient` v
 [4]: /basic-components/dependency-injection/#injector-and-providers
 [6]: /rest-application/native-modules/openapi
 [7]: #dynamic-addition-of-providers
-[8]: /basic-components/dependency-injection#hierarchy-of-injectors-in-the-ditsmod-application
+[8]: /basic-components/dependency-injection#hierarchy-of-injectors-in-the-holu-application
 [10]: /rest-application/http-interceptors/
 [11]: /basic-components/dependency-injection/#provider
 [100]: https://nodejs.org/api/repl.html
-[101]: https://github.com/ditsmod/ditsmod/tree/main/examples/06-body-parser
-[102]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L46
-[103]: https://github.com/ditsmod/ditsmod/tree/main/examples/00-standalone-application
+[101]: https://github.com/holu/holu/tree/main/examples/06-body-parser
+[102]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L46
+[103]: https://github.com/holu/holu/tree/main/examples/00-standalone-application

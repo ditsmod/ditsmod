@@ -1,5 +1,5 @@
-import { featureModule, getTokens } from '@ditsmod/core';
-import type { DynamicModule, Provider } from '@ditsmod/core';
+import { featureModule, getTokens } from '@holu/core';
+import type { DynamicModule, Provider } from '@holu/core';
 
 import { TYPEORM_OPTIONS, TYPEORM_ASYNC_OPTIONS, DEFAULT_DATA_SOURCE_NAME } from './constants.js';
 import { TypeormExtension } from './typeorm.extension.js';
@@ -11,7 +11,7 @@ import { DataSourceManager } from './data-source-manager.js';
 import { TypeormLogMediator } from './typeorm.log-mediator.js';
 
 /**
- * Ditsmod integration module for TypeORM (>= v1.0.0).
+ * Holu integration module for TypeORM (>= v1.0.0).
  *
  * ## Usage
  *
@@ -55,7 +55,7 @@ export class TypeormModule {
    *
    * For multiple databases, call `forRoot()` multiple times with distinct `name` values.
    *
-   * @param options TypeORM data source options combined with Ditsmod-specific settings
+   * @param options TypeORM data source options combined with Holu-specific settings
    *   (retry, autoLoadEntities, etc.).
    */
   static forRoot(options: TypeormModuleOptions = {}): DynamicModule<TypeormModule> {

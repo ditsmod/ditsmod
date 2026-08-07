@@ -1,5 +1,5 @@
-import { Injector } from '@ditsmod/core';
-import type { RequestContext } from '@ditsmod/rest';
+import { Injector } from '@holu/core';
+import type { RequestContext } from '@holu/rest';
 import type BunyanLogger from 'bunyan';
 import { jest } from '@jest/globals';
 

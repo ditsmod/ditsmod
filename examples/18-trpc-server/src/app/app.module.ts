@@ -1,5 +1,5 @@
-import { trpcRootModule, type SetAppRouterOptions, type TrpcCreateOptions, type TrpcRootModule } from '@ditsmod/trpc';
-import type { AppRouterHelper } from '@ditsmod/trpc/client';
+import { trpcRootModule, type SetAppRouterOptions, type TrpcCreateOptions, type TrpcRootModule } from '@holu/trpc';
+import type { AppRouterHelper } from '@holu/trpc/client';
 
 import { PostModule } from '#post/post.module.js';
 import { AuthModule } from '#auth/auth.module.js';

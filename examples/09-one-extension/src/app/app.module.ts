@@ -1,5 +1,5 @@
-import { LoggerConfig, ProviderBuilder } from '@ditsmod/core';
-import { DispatcherExtension, RestRouteExtension, restRootModule } from '@ditsmod/rest';
+import { LoggerConfig, ProviderBuilder } from '@holu/core';
+import { DispatcherExtension, RestRouteExtension, restRootModule } from '@holu/rest';
 
 import { HelloWorldController } from './hello-world.controller.js';
 import { MyExtension } from './my-extension.js';

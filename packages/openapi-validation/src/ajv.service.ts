@@ -1,7 +1,7 @@
-import { inject, injectable, optional } from '@ditsmod/core';
+import { inject, injectable, optional } from '@holu/core';
 import Ajv, { Options, ValidateFunction } from 'ajv';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
-import { REQUIRED } from '@ditsmod/openapi';
+import { REQUIRED } from '@holu/openapi';
 
 import { AJV_OPTIONS } from './constants.js';
 

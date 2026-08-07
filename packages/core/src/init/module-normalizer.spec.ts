@@ -968,28 +968,28 @@ describe('ModuleNormalizer', () => {
       expect(externalModuleNormalizer.normalize(InternalModule).isExternal).toBe(false);
     });
 
-    it('marks Ditsmod package modules as external when the root module is not declared inside ditsmod/packages', () => {
+    it('marks Holu package modules as external when the root module is not declared inside holu/packages', () => {
       const externalModuleNormalizer = new ExternalModuleNormalizer();
       class AppModule {}
-      class DitsmodModule {}
+      class HoluModule {}
 
       const dummyDecorator = () => {};
       const rootDec = new DecoratorMeta(dummyDecorator, new RootModuleOptions(), undefined, '/user-project/src');
       externalModuleNormalizer.customMeta.set(AppModule, [rootDec]);
 
-      const ditsmodModuleOptions = Object.assign(new FeatureModuleOptions(), {
-        providersPerApp: [{ token: 'ditsmod-token', useValue: 1 }],
+      const holuModuleOptions = Object.assign(new FeatureModuleOptions(), {
+        providersPerApp: [{ token: 'holu-token', useValue: 1 }],
       });
-      const ditsmodDec = new DecoratorMeta(
+      const holuDec = new DecoratorMeta(
         dummyDecorator,
-        ditsmodModuleOptions,
+        holuModuleOptions,
         undefined,
-        '/user-project/node_modules/ditsmod/packages/core',
+        '/user-project/node_modules/holu/packages/core',
       );
-      externalModuleNormalizer.customMeta.set(DitsmodModule, [ditsmodDec]);
+      externalModuleNormalizer.customMeta.set(HoluModule, [holuDec]);
 
       externalModuleNormalizer.normalize(AppModule);
-      expect(externalModuleNormalizer.normalize(DitsmodModule).isExternal).toBe(true);
+      expect(externalModuleNormalizer.normalize(HoluModule).isExternal).toBe(true);
     });
 
     it('sets inheritsMixins from moduleOptions when explicitly specified', () => {

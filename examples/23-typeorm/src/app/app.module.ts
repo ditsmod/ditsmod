@@ -1,5 +1,5 @@
-import { restRootModule } from '@ditsmod/rest';
-import { TypeormModule } from '@ditsmod/typeorm';
+import { restRootModule } from '@holu/rest';
+import { TypeormModule } from '@holu/typeorm';
 
 import { UserModule } from './modules/user/user.module.js';
 import { SystemModule } from './modules/system/system.module.js';

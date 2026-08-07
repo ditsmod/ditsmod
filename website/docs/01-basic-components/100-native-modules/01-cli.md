@@ -2,32 +2,32 @@
 sidebar_position: 1
 ---
 
-# @ditsmod/cli
+# @holu/cli
 
-Цей пакет надає інтерфейс командного рядка (CLI) та інструменти розробки для застосунків Ditsmod.
+Цей пакет надає інтерфейс командного рядка (CLI) та інструменти розробки для застосунків Holu.
 
 ## Встановлення {#installation}
 
 ```bash
-npm i -g @ditsmod/cli
+npm i -g @holu/cli
 ```
 
 Або запустіть його безпосередньо без встановлення за допомогою `npx`:
 
 ```bash
-npx @ditsmod/cli <command>
+npx @holu/cli <command>
 ```
 
-_Примітка:_ Бінарні аліаси `ditsmod` та `dm` доступні після встановлення пакета.
+_Примітка:_ Бінарні аліаси `holu` та `dm` доступні після встановлення пакета.
 
 ## Команди {#commands}
 
-### `ditsmod new` {#ditsmod-new}
+### `holu new` {#holu-new}
 
-Створює новий застосунок Ditsmod у цільовій директорії за допомогою офіційних шаблонів старту.
+Створює новий застосунок Holu у цільовій директорії за допомогою офіційних шаблонів старту.
 
 ```bash
-ditsmod new my-app [options]
+holu new my-app [options]
 ```
 
 #### Параметри:
@@ -47,12 +47,12 @@ dm new my-rest-api -m yarn
 dm new my-trpc-app -t trpc-monorepo --skip-install
 ```
 
-### `ditsmod start` {#ditsmod-start}
+### `holu start` {#holu-start}
 
-Запускає застосунок Ditsmod у режимі розробки з інкрементною компіляцією TypeScript та плавним перезапуском процесів.
+Запускає застосунок Holu у режимі розробки з інкрементною компіляцією TypeScript та плавним перезапуском процесів.
 
 ```bash
-ditsmod start [entryFile] [options]
+holu start [entryFile] [options]
 ```
 
 #### Параметри:
@@ -77,8 +77,8 @@ dm start --env-file .env.local --watch-assets "src/**/*.json"
 
 ## Програмний API {#programmatic-api}
 
-`@ditsmod/cli` експортує свої основні класи та допоміжні функції команд для програмного використання:
+`@holu/cli` експортує свої основні класи та допоміжні функції команд для програмного використання:
 
 ```ts
-import { WatchCompiler, ProcessManager, AssetWatcher, startCommand, newCommand } from '@ditsmod/cli';
+import { WatchCompiler, ProcessManager, AssetWatcher, startCommand, newCommand } from '@holu/cli';
 ```

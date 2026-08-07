@@ -1,5 +1,5 @@
-import { featureModule, DynamicModule } from '@ditsmod/core';
-import { RestRouteExtension } from '@ditsmod/rest';
+import { featureModule, DynamicModule } from '@holu/core';
+import { RestRouteExtension } from '@holu/rest';
 
 import { VersionsExtension } from './versions.extension.js';
 

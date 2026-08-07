@@ -1,4 +1,4 @@
-import { injectable } from '@ditsmod/core';
+import { injectable } from '@holu/core';
 
 import { RouteMeta } from '../types/route-data.js';
 import { RouteScopedHttpBackend } from './tokens-and-types.js';

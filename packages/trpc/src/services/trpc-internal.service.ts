@@ -1,4 +1,4 @@
-import { AnyFn, AnyObj, NormalizedModuleMeta, getModule, inject, injectable, ModRefId, ModuleManager, Context } from '@ditsmod/core';
+import { AnyFn, AnyObj, NormalizedModuleMeta, getModule, inject, injectable, ModRefId, ModuleManager, Context } from '@holu/core';
 
 import { TRPC_ROOT } from '#types/constants.js';
 import { TrpcRouterOpts, TrpcRootObject, ModuleWithTrpcRoutes, RouterOptions, TrpcRootModule } from '#types/types.js';

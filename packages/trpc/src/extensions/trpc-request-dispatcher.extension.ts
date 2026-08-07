@@ -15,7 +15,7 @@ import {
   ClassFactoryProvider,
   getToken,
   Context,
-} from '@ditsmod/core';
+} from '@holu/core';
 import { inspect } from 'node:util';
 import type { AnyMiddlewareFunction } from '@trpc/server';
 

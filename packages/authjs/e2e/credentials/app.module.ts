@@ -1,5 +1,5 @@
-import { ctx } from '@ditsmod/core';
-import { controller, route, RequestContext, restRootModule } from '@ditsmod/rest';
+import { ctx } from '@holu/core';
+import { controller, route, RequestContext, restRootModule } from '@holu/rest';
 
 import { AuthjsModule } from '#mod/authjs.module.js';
 import { AUTHJS_SESSION } from '#mod/constants.js';

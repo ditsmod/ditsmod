@@ -1,5 +1,5 @@
-import type { AnyFn, AnyObj, NormalizedModuleMeta, ModRefId, Override, Provider } from '@ditsmod/core';
-import { BaseAppOptions, AppModuleMixins, InjectionToken, createInjectionSymbol } from '@ditsmod/core';
+import type { AnyFn, AnyObj, NormalizedModuleMeta, ModRefId, Override, Provider } from '@holu/core';
+import { BaseAppOptions, AppModuleMixins, InjectionToken, createInjectionSymbol } from '@holu/core';
 import type { AnyRouter } from '@trpc/server';
 import type { initTRPC } from '@trpc/server';
 import type { CreateHTTPHandlerOptions } from '@trpc/server/adapters/standalone';
@@ -42,7 +42,7 @@ export interface TrpcRootModule {
    */
   setTrpcCreateOptions?(): TrpcCreateOptions;
   /**
-   * For the root application module (AppModule), this method is automatically invoked by `@ditsmod/trpc`.
+   * For the root application module (AppModule), this method is automatically invoked by `@holu/trpc`.
    */
   setAppRouterOptions(): SetAppRouterOptions;
 }

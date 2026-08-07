@@ -1,5 +1,5 @@
-import type { DictGroup} from '@ditsmod/i18n';
-import { getDictGroup } from '@ditsmod/i18n';
+import type { DictGroup} from '@holu/i18n';
+import { getDictGroup } from '@holu/i18n';
 
 import { SecondDict } from '#app/second/i18n/current/_base-en/second.dict.js';
 import { CommonDictUk } from './uk/second.dict-uk.js';

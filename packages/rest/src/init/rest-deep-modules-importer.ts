@@ -1,4 +1,4 @@
-import type { ModRefId, Provider, ModuleManager, SystemLogMediator, DeepModulesImporter, ShallowModuleImports } from '@ditsmod/core';
+import type { ModRefId, Provider, ModuleManager, SystemLogMediator, DeepModulesImporter, ShallowModuleImports } from '@holu/core';
 
 import type { DeepModulesImporterConfig, RestResolvedModuleMeta, RestShallowModuleImports } from './types.js';
 

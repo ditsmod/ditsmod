@@ -1,5 +1,5 @@
-import { RequestContext, controller, route } from '@ditsmod/rest';
-import { RequestContextWithSession, SessionCookie } from '@ditsmod/session-cookie';
+import { RequestContext, controller, route } from '@holu/rest';
+import { RequestContextWithSession, SessionCookie } from '@holu/session-cookie';
 
 @controller()
 export class HelloWorldController {

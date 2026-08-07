@@ -1,6 +1,6 @@
-import { Extension, ExtensionManager, HttpMethod, injectable, Injector, ExtensionGroupMeta } from '@ditsmod/core';
-import { ChainError } from '@ditsmod/core/errors';
-import { RouteExtensionMeta, RestRouteExtension } from '@ditsmod/rest';
+import { Extension, ExtensionManager, HttpMethod, injectable, Injector, ExtensionGroupMeta } from '@holu/core';
+import { ChainError } from '@holu/core/errors';
+import { RouteExtensionMeta, RestRouteExtension } from '@holu/rest';
 import { LoggerInstance } from '@auth/core/types';
 
 import { AuthjsConfig } from '#mod/authjs.config.js';

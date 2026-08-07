@@ -1,13 +1,13 @@
 {
-  "name": "@ditsmod/openapi",
+  "name": "@holu/openapi",
   "type": "module",
   "version": "3.0.0-next.18",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ditsmod/ditsmod.git",
+    "url": "https://github.com/holu/holu.git",
     "directory": "packages/openapi"
   },
-  "description": "This is module for Ditsmod framework to support OpenAPI",
+  "description": "This is module for Holu framework to support OpenAPI",
   "module": "dist/index.js",
   "imports": {
     "#types/*": "./dist/types/*",
@@ -39,7 +39,7 @@
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps ../../scripts/run-jest.mjs"
   },
   "keywords": [
-    "ditsmod"
+    "holu"
   ],
   "author": "",
   "license": "MIT",
@@ -61,8 +61,8 @@
     "yaml-loader": "^0.9.0"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-next.18",
-    "@ditsmod/rest": "^3.0.0-next.18"
+    "@holu/core": "^3.0.0-next.18",
+    "@holu/rest": "^3.0.0-next.18"
   },
   "publishConfig": {
     "access": "public"

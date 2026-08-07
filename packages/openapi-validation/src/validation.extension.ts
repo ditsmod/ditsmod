@@ -1,6 +1,6 @@
-import { Extension, ExtensionManager, injectable, optional } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS, RestRouteExtension } from '@ditsmod/rest';
-import { isReferenceObject } from '@ditsmod/openapi';
+import { Extension, ExtensionManager, injectable, optional } from '@holu/core';
+import { HTTP_INTERCEPTORS, RestRouteExtension } from '@holu/rest';
+import { isReferenceObject } from '@holu/openapi';
 
 import { ValidationRouteMeta } from './types.js';
 import { ParametersInterceptor } from './parameters.interceptor.js';

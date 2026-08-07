@@ -1,4 +1,4 @@
-import { RestApplication } from '@ditsmod/rest';
+import { RestApplication } from '@holu/rest';
 import { AppModule } from './app/app.module.js';
 
 const app = await RestApplication.create(AppModule, { bufferLogs: true, logLevel: 'info' });

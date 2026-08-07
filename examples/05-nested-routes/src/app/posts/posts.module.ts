@@ -1,4 +1,4 @@
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 import { CommentsModule } from './comments/comments.module.js';
 import { PostsController } from './posts.controller.js';

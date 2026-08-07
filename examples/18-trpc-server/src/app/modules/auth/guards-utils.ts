@@ -1,4 +1,4 @@
-import { createGuardHelper } from '@ditsmod/trpc';
+import { createGuardHelper } from '@holu/trpc';
 
 import { PermissionsGuard } from './permissions.guard.js';
 import type { Permission } from './types.js';

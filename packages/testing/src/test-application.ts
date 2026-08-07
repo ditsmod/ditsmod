@@ -1,7 +1,7 @@
-import type { StaticModule, ProviderBuilder, ExtensionClass, Class, UnionToIntersection, ModRefId, Provider } from '@ditsmod/core';
-import { SystemLogMediator } from '@ditsmod/core';
-import type { AppOptions } from '@ditsmod/rest';
-import { RestApplication } from '@ditsmod/rest';
+import type { StaticModule, ProviderBuilder, ExtensionClass, Class, UnionToIntersection, ModRefId, Provider } from '@holu/core';
+import { SystemLogMediator } from '@holu/core';
+import type { AppOptions } from '@holu/rest';
+import { RestApplication } from '@holu/rest';
 
 import type { ExtensionMetaOverrider } from './types.js';
 import { TestAppInitializer } from './test-app-initializer.js';
@@ -90,7 +90,7 @@ export class TestRestApplication extends RestApplication {
  * This method allows you to dynamically extend this class using plugins:
  * 
  * ```ts
-import { TestRestApplication } from '@ditsmod/testing';
+import { TestRestApplication } from '@holu/testing';
 
 class Plugin1 extends TestRestApplication {
   method1() {

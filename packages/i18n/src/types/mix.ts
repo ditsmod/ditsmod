@@ -1,5 +1,5 @@
-import type { Class } from '@ditsmod/core';
-import { InjectionToken } from '@ditsmod/core';
+import type { Class } from '@holu/core';
+import { InjectionToken } from '@holu/core';
 import type { ISO639 } from './iso-639.js';
 
 export interface Dictionary {

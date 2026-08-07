@@ -1,6 +1,6 @@
-import { AnyObj, ctx, injectable, Injector, optional, Logger } from '@ditsmod/core';
-import { DictService, I18nLogMediator, I18nOptions, ISO639 } from '@ditsmod/i18n';
-import { QUERY_PARAMS, RAW_REQ, RawRequest } from '@ditsmod/rest';
+import { AnyObj, ctx, injectable, Injector, optional, Logger } from '@holu/core';
+import { DictService, I18nLogMediator, I18nOptions, ISO639 } from '@holu/i18n';
+import { QUERY_PARAMS, RAW_REQ, RawRequest } from '@holu/rest';
 
 @injectable()
 export class MyDictService extends DictService {

@@ -1,7 +1,7 @@
 import { createReadStream } from 'node:fs';
 import { readFile } from 'node:fs/promises';
-import { ctx, HttpStatus } from '@ditsmod/core';
-import { controller, RequestContext } from '@ditsmod/rest';
+import { ctx, HttpStatus } from '@holu/core';
+import { controller, RequestContext } from '@holu/rest';
 
 import { webpackDist } from './swagger-ui/constants.js';
 import { oasRoute } from './decorators/oas-route.js';

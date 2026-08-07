@@ -3,7 +3,7 @@
     "outDir": "dist",
     "types": ["node", "jest"],
     "paths": {
-      "@ditsmod/core": ["../core/src/index.js"],
+      "@holu/core": ["../core/src/index.js"],
       "#decorators/*": ["./src/decorators/*"],
       "#errors": ["./src/errors.js"],
       "#init/*": ["./src/init/*"],

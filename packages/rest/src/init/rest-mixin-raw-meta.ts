@@ -1,4 +1,4 @@
-import type { AnyObj, StaticModule, Class, AnyFn, StaticMixinOptions, DynamicModuleOptions, ForwardRefFn } from '@ditsmod/core';
+import type { AnyObj, StaticModule, Class, AnyFn, StaticMixinOptions, DynamicModuleOptions, ForwardRefFn } from '@holu/core';
 import type { GuardItem } from '#interceptors/guard.js';
 
 /**

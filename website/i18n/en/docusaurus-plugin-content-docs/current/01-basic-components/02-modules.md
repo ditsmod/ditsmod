@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Modules
 
-One of the key elements of the Ditsmod architecture is its modules. But what exactly makes a modular architecture so advantageous? — Modularity allows you to compose various autonomous elements and assemble a scalable application from them. Thanks to the autonomy of modules, large projects are easier to develop, test, deploy, and maintain. Modularity also simplifies the transition to a microservices architecture if, in the future, you decide that your Ditsmod application requires horizontal scaling.
+One of the key elements of the Holu architecture is its modules. But what exactly makes a modular architecture so advantageous? — Modularity allows you to compose various autonomous elements and assemble a scalable application from them. Thanks to the autonomy of modules, large projects are easier to develop, test, deploy, and maintain. Modularity also simplifies the transition to a microservices architecture if, in the future, you decide that your Holu application requires horizontal scaling.
 
 A modular architecture makes it possible to isolate **several code files** within a single module that may have different roles but a **shared specialization**. A module can be compared to an orchestra, where there are different instruments, but all of them create a shared piece of music. On the other hand, the need to isolate different modules arises because they may have different specializations and, as a result, may interfere with one another. Continuing the analogy with people, if you place police officers and musicians, or brokers and translators, in the same office, they will most likely interfere with each other. That is why **narrow specialization** is important for a module.
 
@@ -23,10 +23,10 @@ There are two types of modules:
 
 ## Root module {#root-module}
 
-Other modules are attached to the root module; it is the only one for the entire application, and its class is recommended to be named `AppModule`. A TypeScript class becomes a Ditsmod root module by using one of the decorators such as `rootModule`, `restRootModule`, `trpcRootModule`, etc., depending on the architectural style you are using. For example, if you are using REST, the root module is declared as follows:
+Other modules are attached to the root module; it is the only one for the entire application, and its class is recommended to be named `AppModule`. A TypeScript class becomes a Holu root module by using one of the decorators such as `rootModule`, `restRootModule`, `trpcRootModule`, etc., depending on the architectural style you are using. For example, if you are using REST, the root module is declared as follows:
 
 ```ts
-import { restRootModule } from '@ditsmod/rest';
+import { restRootModule } from '@holu/rest';
 
 @restRootModule()
 export class AppModule {}
@@ -35,7 +35,7 @@ export class AppModule {}
 In general, an object with the following properties can be passed to the `restRootModule` decorator:
 
 ```ts
-import { restRootModule } from '@ditsmod/rest';
+import { restRootModule } from '@holu/rest';
 
 @restRootModule({
   imports: [], // Imported modules
@@ -58,10 +58,10 @@ export class AppModule {}
 
 ## Feature module {#feature-module}
 
-A TypeScript class becomes a Ditsmod feature module thanks to one of the following decorators: `featureModule`, `restModule`, `trpcModule`, etc., depending on the architectural style you are using. For example, if you are using REST, the feature module is declared as follows:
+A TypeScript class becomes a Holu feature module thanks to one of the following decorators: `featureModule`, `restModule`, `trpcModule`, etc., depending on the architectural style you are using. For example, if you are using REST, the feature module is declared as follows:
 
 ```ts
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 @restModule()
 export class SomeModule {}
@@ -78,7 +78,7 @@ The module where you declare certain [providers][1] is called the **host module*
 In order for a consumer module to use providers from a host module, the corresponding provider [tokens][1] must first be exported from the host module. This is done in the metadata that is passed to the decorator of the feature module or root module. For example, if you are using REST, this is done as follows:
 
 ```ts {14}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 import { Service1 } from './service1.js';
 import { Service2 } from './service2.js';
@@ -96,7 +96,7 @@ function useFactory(s2: Service2) {
 export class Module1 {}
 ```
 
-In this example, taking into account the exported tokens, Ditsmod will look for exported providers in the `providersPerReq` array. It makes no sense to export the providers that are passed to `providersPerApp`, since this array will be used to form the [injector][1] at the application level. That is, the providers from the `providersPerApp` array will be available for any module, at any level, and without exporting.
+In this example, taking into account the exported tokens, Holu will look for exported providers in the `providersPerReq` array. It makes no sense to export the providers that are passed to `providersPerApp`, since this array will be used to form the [injector][1] at the application level. That is, the providers from the `providersPerApp` array will be available for any module, at any level, and without exporting.
 
 Since you only need to export provider tokens from the host module, not the providers themselves, you cannot directly pass providers in the form of an object to the `exports` property.
 
@@ -113,8 +113,8 @@ By exporting tokens from a host module, you are declaring that the corresponding
 Exporting providers from the root module means that these providers will be automatically added to every module declared in your application. At the same time, these providers will not be added to external modules, i.e., modules that you install using package managers like npm, yarn, etc. For example, if you are using REST, this is done as follows:
 
 ```ts {10}
-import { restRootModule } from '@ditsmod/rest';
-import { BodyParserModule } from '@ditsmod/body-parser';
+import { restRootModule } from '@holu/rest';
+import { BodyParserModule } from '@holu/body-parser';
 
 import { Service1 } from './service1.js';
 import { Module1 } from './module1.js';
@@ -132,8 +132,8 @@ In this case, `Service1` will not be added to `BodyParserModule` (because it is 
 Sometimes there is a need to add an entire array of providers, and to export their tokens, there is a helper `getTokens()`:
 
 ```ts {9}
-import { restRootModule } from '@ditsmod/rest';
-import { getTokens } from '@ditsmod/core';
+import { restRootModule } from '@holu/rest';
+import { getTokens } from '@holu/core';
 import { defaultProviders } from './default-providers.js';
 
 @restRootModule({
@@ -150,7 +150,7 @@ Here, `defaultProviders` is an array of providers, and if you tried to export th
 You cannot import a single provider into a module, but you can import an entire module with all the providers and [extensions][2] exported from it. For example, if you are using REST, this is done as follows:
 
 ```ts {6}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { Module1 } from './module1.js';
 
 @restModule({
@@ -161,10 +161,10 @@ import { Module1 } from './module1.js';
 export class Module2 {}
 ```
 
-For example, if `Service1` is exported from the `Module1`, then this service can now be used in the `Module2`. However, if `Module1` has controllers, they will be ignored in this import form. For Ditsmod to take into account controllers from an imported module, the module must be imported with a prefix passed in `path`:
+For example, if `Service1` is exported from the `Module1`, then this service can now be used in the `Module2`. However, if `Module1` has controllers, they will be ignored in this import form. For Holu to take into account controllers from an imported module, the module must be imported with a prefix passed in `path`:
 
 ```ts {6}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { Module1 } from './module1.js';
 
 @restModule({
@@ -175,7 +175,7 @@ import { Module1 } from './module1.js';
 export class Module2 {}
 ```
 
-Although `path` is an empty string here, for Ditsmod, the presence of `path` means:
+Although `path` is an empty string here, for Holu, the presence of `path` means:
 
 1. to consider controllers from the imported module as well;
 2. to use `path` as a prefix for all controllers imported from `Module1`.
@@ -221,7 +221,7 @@ interface DynamicModule {
 To reduce the length of the code when importing an object of this type, it is sometimes advisable to write a static method in the importing module. To see this clearly, let's take the previous example again:
 
 ```ts {6}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { Module1 } from './module1.js';
 
 @restModule({
@@ -263,7 +263,7 @@ Static methods make it easier to pass module parameters.
 In order for TypeScript to control exactly what the static import method returns, it is recommended to use the `DynamicModule` interface:
 
 ```ts
-import { DynamicModule } from '@ditsmod/core';
+import { DynamicModule } from '@holu/core';
 // ...
 export class Module1 {
   static withOpts(someParams: SomeParams): DynamicModule<Module1> {
@@ -305,10 +305,10 @@ So it can be argued that classes are imported, not their instances.
 
 ### Appending of the module {#appending-of-the-module}
 
-If you are using `@ditsmod/rest` and you don't need to import providers and [extensions][2] into the current module, but just append the external module to the path prefix of the current module, you can use the `appends` array:
+If you are using `@holu/rest` and you don't need to import providers and [extensions][2] into the current module, but just append the external module to the path prefix of the current module, you can use the `appends` array:
 
 ```ts {5}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { Module1 } from './module1.js';
 
 @restModule({
@@ -345,7 +345,7 @@ interface AppendsWithOpts<T extends AnyObj = AnyObj> {
 In addition to importing a specific module, the same module can be simultaneously exported:
 
 ```ts
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { Module1 } from './module1.js';
 
 @restModule({
@@ -360,8 +360,8 @@ What is the meaning of this? - Now if you import `Module2` into some other modul
 Pay attention! If during re-export you import an object with `DynamicModule` interface, the same object must also be exported:
 
 ```ts
-import { DynamicModule } from '@ditsmod/core';
-import { restModule, RestDynamicOptions } from '@ditsmod/rest';
+import { DynamicModule } from '@holu/core';
+import { restModule, RestDynamicOptions } from '@holu/rest';
 
 import { Module1 } from './module1.js';
 
@@ -381,7 +381,7 @@ Provider collisions occur when different providers with the same token are impor
 Let's take a closer look at a specific example. Imagine you have `Module3`, where you import `Module2` and `Module1`. You made these imports because you need `Service2` and `Service1` from these modules, respectively. You review the results of these services operations, but for some reason, `Service1` does not behave as expected. You start debugging and discover that `Service1` is exported from both `Module2` and `Module1`. You expected `Service1` to be exported only from `Module1`, but in reality, the version exported by `Module2` is being used:
 
 ```ts {8,14,19}
-import { restModule, restRootModule } from '@ditsmod/rest';
+import { restModule, restRootModule } from '@holu/rest';
 
 class Service1 {}
 class Service2 {}
@@ -404,7 +404,7 @@ class Module2 {}
 class Module3 {}
 ```
 
-To prevent this, if you import two or more modules that export non-identical providers with the same token, Ditsmod will throw an error similar to this:
+To prevent this, if you import two or more modules that export non-identical providers with the same token, Holu will throw an error similar to this:
 
 > Error: Importing providers to Module3 failed: exports from Module1, Module2 causes collision with Service1. You should add Service1 to resolvedCollisionsPerMod in this module. For example: resolvedCollisionsPerMod: [ [Service1, Module1] ].
 
@@ -421,7 +421,7 @@ And because both of these modules are imported into `Module3`, a "provider colli
 If `Module3` is declared in your application (it is not imported from `node_modules`), the collision is resolved by adding to `resolvedCollisionsPer*` an array of two elements, with the provider's token in the first place and the module from which the provider needs to be taken in the second place:
 
 ```ts {20}
-import { restModule, restRootModule } from '@ditsmod/rest';
+import { restModule, restRootModule } from '@holu/rest';
 
 class Service1 {}
 class Service2 {}

@@ -1,5 +1,5 @@
-import { RequestContext, controller, route } from '@ditsmod/rest';
-import { CorsService } from '@ditsmod/cors';
+import { RequestContext, controller, route } from '@holu/rest';
+import { CorsService } from '@holu/cors';
 
 @controller()
 export class FirstController {

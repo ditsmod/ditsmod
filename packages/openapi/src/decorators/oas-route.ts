@@ -1,6 +1,6 @@
-import type { Class, HttpMethod } from '@ditsmod/core';
-import { Reflector } from '@ditsmod/core';
-import type { GuardItem, HttpInterceptor } from '@ditsmod/rest';
+import type { Class, HttpMethod } from '@holu/core';
+import { Reflector } from '@holu/core';
+import type { GuardItem, HttpInterceptor } from '@holu/rest';
 import type { XOperationObject } from '@ts-stack/openapi-spec';
 
 /**

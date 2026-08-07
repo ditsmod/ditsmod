@@ -1,5 +1,5 @@
 import { parse } from 'querystring';
-import { AnyObj, injectable, Context } from '@ditsmod/core';
+import { AnyObj, injectable, Context } from '@holu/core';
 
 import { RouteScopedHttpFrontend } from './route-scoped-http-frontend.js';
 import { RequestContext } from '#services/request-context.js';

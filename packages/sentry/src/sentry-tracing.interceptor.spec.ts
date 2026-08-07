@@ -14,7 +14,7 @@ jest.unstable_mockModule('@sentry/core', async () => {
   };
 });
 
-import type { HttpHandler, BaseRequestContext } from '@ditsmod/rest';
+import type { HttpHandler, BaseRequestContext } from '@holu/rest';
 
 // Import dynamically after mock is set up
 const { SentryTracingInterceptor } = await import('./sentry-tracing.interceptor.js');

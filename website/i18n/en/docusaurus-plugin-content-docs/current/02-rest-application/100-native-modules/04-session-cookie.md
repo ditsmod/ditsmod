@@ -2,23 +2,23 @@
 sidebar_position: 4
 ---
 
-# @ditsmod/session-cookie
+# @holu/session-cookie
 
-The `@ditsmod/session-cookie` module simplifies working with the session cookie. A ready-made example of using this module can be found in the [Ditsmod repository][1].
+The `@holu/session-cookie` module simplifies working with the session cookie. A ready-made example of using this module can be found in the [Holu repository][1].
 
 ## Installation, importing and usage {#installation-importing-and-usage}
 
 Installation:
 
 ```bash
-npm i @ditsmod/session-cookie
+npm i @holu/session-cookie
 ```
 
 Importing:
 
 ```ts
-import { restModule } from '@ditsmod/rest';
-import { SessionCookieModule } from '@ditsmod/session-cookie';
+import { restModule } from '@holu/rest';
+import { SessionCookieModule } from '@holu/session-cookie';
 
 const sessionDynamicModule = SessionCookieModule.withOpts({
   cookieName: 'custom-session-name',
@@ -38,8 +38,8 @@ export class AppModule {}
 Usage:
 
 ```ts
-import { controller, RequestContext, route } from '@ditsmod/rest';
-import { SessionCookie } from '@ditsmod/session-cookie';
+import { controller, RequestContext, route } from '@holu/rest';
+import { SessionCookie } from '@holu/session-cookie';
 
 @controller()
 export class HelloWorldController {
@@ -60,4 +60,4 @@ export class HelloWorldController {
 
 
 
-[1]: https://github.com/ditsmod/ditsmod/tree/main/examples/19-session-cookie
+[1]: https://github.com/holu/holu/tree/main/examples/19-session-cookie

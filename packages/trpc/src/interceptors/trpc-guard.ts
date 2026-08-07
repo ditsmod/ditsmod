@@ -1,4 +1,4 @@
-import type { Class, NormalizedModuleMeta } from '@ditsmod/core';
+import type { Class, NormalizedModuleMeta } from '@holu/core';
 import type { TrpcMixinMeta } from '#decorators/trpc-module-mixins.js';
 import type { TrpcOpts } from '#types/types.js';
 

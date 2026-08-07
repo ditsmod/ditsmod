@@ -4,11 +4,11 @@ import { channel, subscribe, unsubscribe, hasSubscribers, tracingChannel } from 
 export { TracingChannelCollection, TracingChannelSubscribers } from 'node:diagnostics_channel';
 
 interface ChannelMap {
-  'ditsmod.route': { moduleName: string; httpMethod: string; fullPath: string; countOfGuards: number };
+  'holu.route': { moduleName: string; httpMethod: string; fullPath: string; countOfGuards: number };
 }
 
 interface TracingChannelMap {
-  // 'ditsmod.request.handler': { tmp: any };
+  // 'holu.request.handler': { tmp: any };
 }
 
 type Channels = keyof ChannelMap;

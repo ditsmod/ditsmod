@@ -1,4 +1,4 @@
-import { RequestContext, controller, route } from '@ditsmod/rest';
+import { RequestContext, controller, route } from '@holu/rest';
 
 import { MyService } from './my.service.js';
 

@@ -1,7 +1,7 @@
 import supertest from 'supertest';
-import { HttpStatus } from '@ditsmod/core';
-import { TestRestApplication } from '@ditsmod/rest-testing';
-import type { HttpServer } from '@ditsmod/rest';
+import { HttpStatus } from '@holu/core';
+import { TestRestApplication } from '@holu/rest-testing';
+import type { HttpServer } from '@holu/rest';
 
 import { AppModule } from './app.module.js';
 

@@ -15,7 +15,7 @@ import {
   ModRefId,
   ForwardRefFn,
   AllModuleMixins,
-} from '@ditsmod/core';
+} from '@holu/core';
 import {
   UnknownExport,
   ForbiddenNormalizedExport,
@@ -23,7 +23,7 @@ import {
   EmptyModuleMeta,
   NormalizationFailure,
   MissingRootDecorator,
-} from '@ditsmod/core/errors';
+} from '@holu/core/errors';
 
 import { controller } from '../types/controller.js';
 import { mixinRest, restRootModule } from '#decorators/rest-module-mixins.js';

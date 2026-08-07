@@ -1,4 +1,4 @@
-import { injectable } from '@ditsmod/core';
+import { injectable } from '@holu/core';
 
 import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';
 import { RequestContext } from '#services/request-context.js';

@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## Що робить REST-роутер {#what-does-a-rest-router-do}
 
-Роутер має мапінг між URL та відповідним обробником запиту. Наприклад, коли користувач вашого вебсайту з браузера запитує адресу `/some-path` чи `/other-path`, чи `/path-with/:parameter` і т.д. - таким чином він повідомляє Ditsmod-застосунок, що хоче отримати певний ресурс, або хоче здійснити певну зміну на сайті. Щоб Ditsmod-застосунок знав, що саме треба робити в даних випадках, у його коді потрібно прописувати відповідні обробники запитів. Тобто, якщо запитують `/some-path`, значить треба виконати певну функцію; якщо запитують `/other-path`, значить треба виконати іншу функцію і т.д. Коли прописують подібну відповідність між адресою та її обробником - це і є процес створення мапінгу між URL та відповідним обробником запиту.
+Роутер має мапінг між URL та відповідним обробником запиту. Наприклад, коли користувач вашого вебсайту з браузера запитує адресу `/some-path` чи `/other-path`, чи `/path-with/:parameter` і т.д. - таким чином він повідомляє Holu-застосунок, що хоче отримати певний ресурс, або хоче здійснити певну зміну на сайті. Щоб Holu-застосунок знав, що саме треба робити в даних випадках, у його коді потрібно прописувати відповідні обробники запитів. Тобто, якщо запитують `/some-path`, значить треба виконати певну функцію; якщо запитують `/other-path`, значить треба виконати іншу функцію і т.д. Коли прописують подібну відповідність між адресою та її обробником - це і є процес створення мапінгу між URL та відповідним обробником запиту.
 
 Хоча вам не прийдеться вручну писати цей мапінг, але для загального уявлення роботи роутера, у дуже спрощеному вигляді його можна уявити так:
 
@@ -24,7 +24,7 @@ routes.set('/path-with/:parameter', function () {
 // ...
 ```
 
-Зразу після того, як Node.js отримує HTTP-запит і передає його в Ditsmod, URL запиту розбивається на дві частини, які розділяються знаком питання (якщо він є). Перша частина завжди містить так званий _path_, а друга частина - _query-параметри_, якщо URL містить знак питання.
+Зразу після того, як Node.js отримує HTTP-запит і передає його в Holu, URL запиту розбивається на дві частини, які розділяються знаком питання (якщо він є). Перша частина завжди містить так званий _path_, а друга частина - _query-параметри_, якщо URL містить знак питання.
 
 Задача роутера полягає в тому, щоб знайти обробник HTTP-запиту по _path_. У дуже спрощеному вигляді цей процес можна уявити так:
 
@@ -43,10 +43,10 @@ if (handle) {
 
 ## Що являє собою REST-контролер {#what-is-a-rest-controller}
 
-Мапінг між URL та обробником запиту формується на основі метаданих, які закріпляються за методами контролерів. TypeScript клас стає контролером Ditsmod завдяки декоратору `controller`:
+Мапінг між URL та обробником запиту формується на основі метаданих, які закріпляються за методами контролерів. TypeScript клас стає контролером Holu завдяки декоратору `controller`:
 
 ```ts {3}
-import { controller, route } from '@ditsmod/rest';
+import { controller, route } from '@holu/rest';
 
 @controller()
 export class SomeController {
@@ -65,9 +65,9 @@ export class SomeController {
 2. назву HTTP-методу (`GET`, `POST`, `PATCH` і т.д.);
 3. URL до якого буде прив'язуватись виклик метода класу (опціонально).
 
-Комбінація другого та третього пункту повинна бути унікальною на весь застосунок. Тобто, якщо ви один раз визначили що `GET` + `/hello` будуть прив'язані до певного методу контролера, то другий раз ця сама комбінація не повинна повторюватись. В противному разі, модуль `@ditsmod/rest` кине помилку з відповідним повідомленням.
+Комбінація другого та третього пункту повинна бути унікальною на весь застосунок. Тобто, якщо ви один раз визначили що `GET` + `/hello` будуть прив'язані до певного методу контролера, то другий раз ця сама комбінація не повинна повторюватись. В противному разі, модуль `@holu/rest` кине помилку з відповідним повідомленням.
 
-Ditsmod забезпечує роботу контролерів у двох альтернативних режимах, які відрізняються механізмом передачі аргументів у метод контролера:
+Holu забезпечує роботу контролерів у двох альтернативних режимах, які відрізняються механізмом передачі аргументів у метод контролера:
 
 1. **Request-scoped контролер** (по-дефолту). Метод контролера може отримувати довільну кількість аргументів від [DI-інжектора][3]. Серед цих аргументів може бути HTTP-запит.
 2. **Route-scoped контролер**. Метод контролера отримує єдиний аргумент - контекст запиту, який зокрема містить HTTP-запит.
@@ -76,10 +76,10 @@ Ditsmod забезпечує роботу контролерів у двох а�
 
 ### Request-scoped контролер {#request-scoped-controller}
 
-По-дефолту, Ditsmod працює з контролером у request-scoped режимі. Це означає, по-перше, що для кожного HTTP-запиту буде створюватись окремий інстанс контролеру. По-друге, будь-який метод контролера, який має декоратор `route`, буде отримувати довільну кількість аргументів від [DI-інжектора][3]. В наступному прикладі створено єдиний маршрут, що приймає `GET` запит за адресою `/hello`:
+По-дефолту, Holu працює з контролером у request-scoped режимі. Це означає, по-перше, що для кожного HTTP-запиту буде створюватись окремий інстанс контролеру. По-друге, будь-який метод контролера, який має декоратор `route`, буде отримувати довільну кількість аргументів від [DI-інжектора][3]. В наступному прикладі створено єдиний маршрут, що приймає `GET` запит за адресою `/hello`:
 
 ```ts {7}
-import { controller, route, RequestContext } from '@ditsmod/rest';
+import { controller, route, RequestContext } from '@holu/rest';
 import { Service1 } from './service-1';
 import { Service2 } from './service-2';
 
@@ -103,7 +103,7 @@ export class HelloWorldController {
 Хоча в попередньому прикладі залежності декларувались у `method1`, але аналогічним чином ми можемо зробити це і в конструкторі:
 
 ```ts {7}
-import { controller, RequestContext, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@holu/rest';
 import { Service1 } from './service-1';
 import { Service2 } from './service-2';
 
@@ -128,13 +128,13 @@ export class HelloWorldController {
 
 #### Параметри в роутінгу {#routing-parameters}
 
-Щоб передати path-параметри для роутера, необхідно використовувати двокрапку перед іменем параметра. Наприклад, в URL `some-url/:param1/:param2` передано два path-параметри. Якщо для роутінгу ви використовуєте модуль `@ditsmod/rest`, лише path-параметри визначають роути, а query-параметри не беруться до уваги.
+Щоб передати path-параметри для роутера, необхідно використовувати двокрапку перед іменем параметра. Наприклад, в URL `some-url/:param1/:param2` передано два path-параметри. Якщо для роутінгу ви використовуєте модуль `@holu/rest`, лише path-параметри визначають роути, а query-параметри не беруться до уваги.
 
 Щоб отримати path-параметри чи query-параметри, доведеться скористатись декоратором `ctx` та токенами `PATH_PARAMS` і `QUERY_PARAMS`:
 
 ```ts {8-9}
-import { ctx, AnyObj } from '@ditsmod/core';
-import { controller, route, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/rest';
+import { ctx, AnyObj } from '@holu/core';
+import { controller, route, PATH_PARAMS, QUERY_PARAMS } from '@holu/rest';
 
 @controller()
 export class SomeController {
@@ -155,8 +155,8 @@ export class SomeController {
 Рідні Node.js об'єкти запиту та відповіді можна отримати за токенами відповідно - `RAW_REQ` та `RAW_RES`:
 
 ```ts {7-8}
-import { ctx } from '@ditsmod/core';
-import { controller, route, RAW_REQ, RAW_RES, RawRequest, RawResponse } from '@ditsmod/rest';
+import { ctx } from '@holu/core';
+import { controller, route, RAW_REQ, RAW_RES, RawRequest, RawResponse } from '@holu/rest';
 
 @controller()
 export class HelloWorldController {
@@ -176,10 +176,10 @@ export class HelloWorldController {
 
 ### Route-scoped контролер {#route-scoped-controller}
 
-Щоб контролер працював в режимі route-scoped, в його метаданих потрібно вказати `{ scope: 'route' }`. Через те, що інстанс контролера у цьому режимі створюється єдиний раз, ви не зможете запитувати у його конструкторі інстанси класів, які створюються за кожним запитом. Наприклад, якщо в конструкторі ви запросите інстанс класу `RequestContext`, Ditsmod кине помилку:
+Щоб контролер працював в режимі route-scoped, в його метаданих потрібно вказати `{ scope: 'route' }`. Через те, що інстанс контролера у цьому режимі створюється єдиний раз, ви не зможете запитувати у його конструкторі інстанси класів, які створюються за кожним запитом. Наприклад, якщо в конструкторі ви запросите інстанс класу `RequestContext`, Holu кине помилку:
 
 ```ts {3,5}
-import { RequestContext, controller, route } from '@ditsmod/rest';
+import { RequestContext, controller, route } from '@holu/rest';
 
 @controller({ scope: 'route' })
 export class HelloWorldController {
@@ -195,7 +195,7 @@ export class HelloWorldController {
 Робочий варіант буде таким:
 
 ```ts {3,6}
-import { controller, RequestContext, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@holu/rest';
 
 @controller({ scope: 'route' })
 export class HelloWorldController {
@@ -229,17 +229,17 @@ export class HelloWorldController {
 Будь-який контролер повинен прив'язуватись лише до поточного модуля, де він був оголошений, тобто до хост-модуля. Така прив'язка робиться через масив `controllers`:
 
 ```ts {4}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { SomeController } from './some.controller.js';
 
 @restModule({ controllers: [SomeController] })
 export class SomeModule {}
 ```
 
-Після прив'язки контролерів до хост-модуля, щоб Ditsmod брав їх до уваги у зовнішньому модулі, хост-модуль потрібно або прикріпити, або імпортувати у формі об'єкта, що має інтерфейс [DynamicModule][2]. В наступному прикладі показано і прикріплення, і повний імпорт хост-модуля (це зроблено лише щоб продемонструвати можливість, на практиці немає сенсу робити одночасне прикріплення з імпортом):
+Після прив'язки контролерів до хост-модуля, щоб Holu брав їх до уваги у зовнішньому модулі, хост-модуль потрібно або прикріпити, або імпортувати у формі об'єкта, що має інтерфейс [DynamicModule][2]. В наступному прикладі показано і прикріплення, і повний імпорт хост-модуля (це зроблено лише щоб продемонструвати можливість, на практиці немає сенсу робити одночасне прикріплення з імпортом):
 
 ```ts {5,7}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { SomeModule } from './some.module.js';
 
 @restModule({
@@ -250,10 +250,10 @@ import { SomeModule } from './some.module.js';
 export class OtherModule {}
 ```
 
-Якщо модуль імпортується без властивості `path`, Ditsmod буде імпортувати лише його [провайдери][3] та [розширення][9]:
+Якщо модуль імпортується без властивості `path`, Holu буде імпортувати лише його [провайдери][3] та [розширення][9]:
 
 ```ts {5}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { SomeModule } from './some.module.js';
 
 @restModule({
@@ -277,10 +277,10 @@ export class OtherModule {}
 - парцювати з базами даних, з поштою;
 - і т.п.
 
-Будь-який TypeScript клас може бути сервісом Ditsmod, але якщо ви хочете щоб [DI][7] вирішував залежність, яку ви вказуєте в конструкторах даних класів, перед ними необхідно прописувати декоратор `injectable`:
+Будь-який TypeScript клас може бути сервісом Holu, але якщо ви хочете щоб [DI][7] вирішував залежність, яку ви вказуєте в конструкторах даних класів, перед ними необхідно прописувати декоратор `injectable`:
 
 ```ts {4,6}
-import { injectable } from '@ditsmod/core';
+import { injectable } from '@holu/core';
 import { FirstService } from './first.service.js';
 
 @injectable()
@@ -300,7 +300,7 @@ export class SecondService {
 Щоб можна було користуватись новоствореними класами сервісів, їх потрібно передати у метадані **поточного** модуля чи контролера. Передати сервіси у метадані модуля можна наступним чином:
 
 ```ts {8-9}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
@@ -317,7 +317,7 @@ export class SomeModule {}
 Аналогічно сервіси передаються у метадані контролера:
 
 ```ts {8-9}
-import { controller, RequestContext, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@holu/rest';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
@@ -343,7 +343,7 @@ export class SomeController {
 На відміну від контролера, інжектор певного сервіса може бути на будь-якому рівні: на рівні застосунку, модуля, роуту, чи запиту. На практиці це означає, що провайдер для даного сервіса передається в один (або в декілька) масивів `providersPer*`. Наприклад, в наступному прикладі `SomeService` передається в інжектор на рівні роуту, а `OtherService` - на рівні модуля:
 
 ```ts {5-6}
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 // ...
 
 const providersPerApp = [];
@@ -393,7 +393,7 @@ class controller1 {
 На одну залежність, в реєстр DI потрібно передавати один або декілька [провайдерів][3]. Частіше за все, провайдери передаються в реєстр DI через метадані модулів, хоча інколи вони передаються через метадані контролерів, або навіть напряму в [інжектори][3]. В наступному прикладі `SomeService` передається в масив `providersPerMod`:
 
 ```ts {6}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { SomeService } from './some.service.js';
 
 @restModule({
@@ -407,7 +407,7 @@ export class SomeModule {}
 Після такої передачі, споживачі провайдерів можуть використовувати `SomeService` в межах `SomeModule`. І тепер давайте додатково з цим же токеном передамо інший провайдер, але на цей раз у метадані контролера:
 
 ```ts {8}
-import { controller } from '@ditsmod/rest';
+import { controller } from '@holu/rest';
 
 import { SomeService } from './some.service.js';
 import { OtherService } from './other.service.js';
@@ -428,7 +428,7 @@ export class SomeController {
 Аналогічну підміну можна робити на рівні застосунку та на рівні модуля. Це інколи може знадобитись, наприклад коли ви хочете мати дефолтні значення конфігурації на рівні застосунку, але кастомні значення цієї конфігурації на рівні конкретного модуля. В такому разі передамо спочатку дефолтний конфіг в кореневому модулі:
 
 ```ts {6}
-import { rootModule } from '@ditsmod/core';
+import { rootModule } from '@holu/core';
 import { ConfigService } from './config.service.js';
 
 @rootModule({
@@ -442,7 +442,7 @@ export class AppModule {}
 І вже у певному модулі підмінюємо `ConfigService` на довільне значення:
 
 ```ts {6}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { ConfigService } from './config.service.js';
 
 @restModule({
@@ -458,7 +458,7 @@ export class SomeModule {}
 Різні провайдери з одним і тим самим токеном можна додавати багато разів в метадані модуля чи контролера, але DI вибере той із провайдерів, що додано останнім (виключення з цього правила є, але це стосується лише мульти-провайдерів):
 
 ```ts
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 @restModule({
   providersPerMod: [
@@ -475,7 +475,7 @@ export class SomeModule {}
 Окрім цього, різні провайдери з одним і тим самим токеном можна передавати одночасно на декількох різних рівнях ієрархії, але DI завжди буде вибирати найближчі інжектори (тобто, якщо значення для провайдера запитується на рівні запиту, то спочатку буде проглядатись інжектор на рівні запиту, і лише якщо там немає потрібного провайдера, DI буде підніматись до батьківських інжекторів):
 
 ```ts
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 @restModule({
   providersPerMod: [{ token: 'token1', useValue: 'value1' }],
@@ -493,7 +493,7 @@ export class SomeModule {}
 [2]: /basic-components/modules/#DynamicModule
 [3]: /basic-components/dependency-injection/#injector-and-providers
 [5]: /rest-application/native-modules/body-parser/#retrieving-the-request-body
-[6]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/services/request-dispatcher.ts
+[6]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/services/request-dispatcher.ts
 [7]: /basic-components/dependency-injection/
 [9]: /basic-components/extensions/
 [10]: #request-scoped-controller

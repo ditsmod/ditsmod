@@ -1,6 +1,6 @@
-import { injectable } from '@ditsmod/core';
-import { CustomError } from '@ditsmod/core/errors';
-import { HTTP_BODY } from '@ditsmod/body-parser';
+import { injectable } from '@holu/core';
+import { CustomError } from '@holu/core/errors';
+import { HTTP_BODY } from '@holu/body-parser';
 
 import { ValidationRouteMeta } from './types.js';
 import { ValidationInterceptor } from './validation.interceptor.js';

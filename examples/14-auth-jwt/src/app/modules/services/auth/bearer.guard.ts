@@ -1,6 +1,6 @@
-import { Context } from '@ditsmod/core';
-import { CanActivate, guard, RequestContext } from '@ditsmod/rest';
-import { JwtService, JWT_PAYLOAD, VerifyErrors } from '@ditsmod/jwt';
+import { Context } from '@holu/core';
+import { CanActivate, guard, RequestContext } from '@holu/rest';
+import { JwtService, JWT_PAYLOAD, VerifyErrors } from '@holu/jwt';
 
 @guard()
 export class BearerGuard implements CanActivate {

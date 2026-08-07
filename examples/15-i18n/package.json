@@ -10,7 +10,7 @@
     "#dict/second/*": "./dist/app/second/i18n/current/_base-en/*"
   },
   "scripts": {
-    "start": "ditsmod start",
+    "start": "holu start",
     "test": "yarn build-test && yarn esm-jest",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
     "build-test": "tsc -b tsconfig.e2e.json",
@@ -18,7 +18,7 @@
     "clean": "rm -r dist*"
   },
   "devDependencies": {
-    "@ditsmod/cli": "^3.0.0-next.18",
+    "@holu/cli": "^3.0.0-next.18",
     "jest": "^30.4.2",
     "typescript-7": "npm:typescript@^7.0.2"
   }

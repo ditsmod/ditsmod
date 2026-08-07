@@ -3,8 +3,8 @@
 If you haven't prepared the examples repository yet, you can do so:
 
 ```bash
-git clone https://github.com/ditsmod/ditsmod.git
-cd ditsmod
+git clone https://github.com/holu/holu.git
+cd holu
 npm i
 ```
 
@@ -26,4 +26,4 @@ curl -i 0.0.0.0:3000
 curl -i 0.0.0.0:3000/resource/123
 ```
 
-For more info see the [docs](https://ditsmod.github.io/en/rest-application/native-modules/openapi/).
+For more info see the [docs](https://holu.github.io/en/rest-application/native-modules/openapi/).

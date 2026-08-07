@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import type * as AuthCore from '@auth/core';
-import type * as DitsmodRest from '@ditsmod/rest';
-import type { HttpHandler, RequestContext } from '@ditsmod/rest';
+import type * as HoluRest from '@holu/rest';
+import type { HttpHandler, RequestContext } from '@holu/rest';
 import { AuthjsConfig } from './authjs.config.js';
 
 let mockAuthResponse: Response;
@@ -16,8 +16,8 @@ jest.unstable_mockModule('@auth/core', async () => {
   };
 });
 
-jest.unstable_mockModule('@ditsmod/rest', async () => {
-  const mod = await jest.requireActual<typeof DitsmodRest>('@ditsmod/rest');
+jest.unstable_mockModule('@holu/rest', async () => {
+  const mod = await jest.requireActual<typeof HoluRest>('@holu/rest');
   return {
     ...mod,
     applyResponse: applyResponseSpy,

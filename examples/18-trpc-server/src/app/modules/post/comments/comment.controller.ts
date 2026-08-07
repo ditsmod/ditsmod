@@ -1,4 +1,4 @@
-import { trpcController, TrpcRouteService, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, TrpcRouteService, trpcRoute } from '@holu/trpc';
 import { z } from 'zod';
 
 import { DbService } from '#db/db.service.js';

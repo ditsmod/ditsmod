@@ -1,6 +1,6 @@
-import { ctx } from '@ditsmod/core';
-import { controller, route, RequestContext } from '@ditsmod/rest';
-import { HTTP_BODY } from '@ditsmod/body-parser';
+import { ctx } from '@holu/core';
+import { controller, route, RequestContext } from '@holu/rest';
+import { HTTP_BODY } from '@holu/body-parser';
 
 import { UserService } from './user.service.js';
 import { UserEntity } from './user.entity.js';

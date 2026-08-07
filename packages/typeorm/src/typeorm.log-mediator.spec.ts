@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import type { ModuleInfo } from '@ditsmod/core';
+import type { ModuleInfo } from '@holu/core';
 
 import { TypeormLogMediator } from './typeorm.log-mediator.js';
 

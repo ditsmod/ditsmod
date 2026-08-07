@@ -1,6 +1,6 @@
-import { AnyObj, ctx } from '@ditsmod/core';
-import { controller, route, PATH_PARAMS, RequestContext } from '@ditsmod/rest';
-import { JwtService } from '@ditsmod/jwt';
+import { AnyObj, ctx } from '@holu/core';
+import { controller, route, PATH_PARAMS, RequestContext } from '@holu/rest';
+import { JwtService } from '@holu/jwt';
 
 @controller()
 export class AuthController {

@@ -1,5 +1,5 @@
-import { featureModule, DynamicModule } from '@ditsmod/core';
-import { mixinRest } from '@ditsmod/rest';
+import { featureModule, DynamicModule } from '@holu/core';
+import { mixinRest } from '@holu/rest';
 
 import { JwtService } from './jwt.service.js';
 import { JwtServiceOptions } from './models/jwt-service-options.js';

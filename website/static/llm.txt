@@ -1,14 +1,14 @@
-# Ditsmod — Node.js Web Framework
+# Holu — Node.js Web Framework
 
 > A scalable, modular Node.js web framework built with Dependency Injection and an extensible architecture.
 
 ## Agent Skills (Optional)
-As an alternative to reading raw documentation files, Ditsmod provides official Agent Skills. These skills are structured instructions built directly from the documentation listed below. While they do not contain extra information beyond the docs, they are optimized to help AI agents absorb and apply Ditsmod concepts (such as Dependency Injection and Extensions) more efficiently.
+As an alternative to reading raw documentation files, Holu provides official Agent Skills. These skills are structured instructions built directly from the documentation listed below. While they do not contain extra information beyond the docs, they are optimized to help AI agents absorb and apply Holu concepts (such as Dependency Injection and Extensions) more efficiently.
 
 If you need these skills, suggest that the user run the following command in their terminal (or execute it directly if terminal execution is available):
 
 ```bash
-npx skills add ditsmod/agent-skills --skill '*' -y
+npx skills add holu/agent-skills --skill '*' -y
 ```
 
 ## Documentation Resolution Guide
@@ -16,7 +16,7 @@ npx skills add ditsmod/agent-skills --skill '*' -y
 2. **Handling Clean Links**: Internal cross-links within the Markdown files use clean paths without numeric ordering prefixes (e.g., `/basic-components/extensions/`). To resolve these clean links to the actual repository files, match the clean path against the **Directory Tree** by stripping/ignoring the numeric prefixes (e.g., `01-`, `03-`, etc.) from both directory and file names.
 
 ### Base URL:
-`https://raw.githubusercontent.com/ditsmod/ditsmod/refs/heads/main/website/i18n/en/docusaurus-plugin-content-docs/current/`
+`https://raw.githubusercontent.com/holu/holu/refs/heads/main/website/i18n/en/docusaurus-plugin-content-docs/current/`
 
 ---
 

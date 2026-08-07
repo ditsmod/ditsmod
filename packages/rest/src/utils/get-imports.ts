@@ -1,4 +1,4 @@
-import type { ImportedProvider, Provider } from '@ditsmod/core';
+import type { ImportedProvider, Provider } from '@holu/core';
 
 export function getImportedTokens(map: Map<any, ImportedProvider<Provider>> | undefined) {
   return [...(map || []).keys()];

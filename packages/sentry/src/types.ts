@@ -1,4 +1,4 @@
-import type { RouteMeta } from '@ditsmod/rest';
+import type { RouteMeta } from '@holu/rest';
 
 export interface SentryRouteMeta extends RouteMeta {
   fullPath?: string;

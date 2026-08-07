@@ -1,4 +1,4 @@
-import { injectable, Injector, HttpStatus, SystemLogMediator } from '@ditsmod/core';
+import { injectable, Injector, HttpStatus, SystemLogMediator } from '@holu/core';
 
 import { RouteMeta } from '../types/route-data.js';
 import { HttpHandler, HttpInterceptor } from './tokens-and-types.js';

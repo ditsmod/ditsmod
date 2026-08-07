@@ -9,7 +9,7 @@ sidebar_position: 90
 Використовуючи клас `Reflector` (не плутайте зі стандартним [Reflect][1]), ви можете створити кастомний декоратор на будь-якому рівні:
 
 ```ts
-import { Reflector } from '@ditsmod/core/di';
+import { Reflector } from '@holu/core/di';
 
 const classLevel = Reflector.makeClassDecorator();
 const propertyLevel = Reflector.makePropDecorator();
@@ -31,7 +31,7 @@ console.log(metadata);
 В даному прикладі показано, як створювати фабрики декораторів на рівні класу, властивостей та параметрів. Оскільки тут не передано трансформерів, фабрика просто повертає вхідні дані у вигляді масиву. В наступному прикладі для фабрики декораторів ми надамо простий трансформер, який повертає єдиний аргумент без змін:
 
 ```ts {3}
-import { Reflector } from '@ditsmod/core/di';
+import { Reflector } from '@holu/core/di';
 
 const classLevel = Reflector.makeClassDecorator((obj: any) => obj);
 
@@ -47,7 +47,7 @@ console.log(metadata?.constructor.decorators[0].value); // Print { one: 1, two: 
 Рефлектор зберігає метадані всього ланцюжку наслідувань класів:
 
 ```ts {21}
-import { Reflector } from '@ditsmod/core/di';
+import { Reflector } from '@holu/core/di';
 
 const classLevel = Reflector.makeClassDecorator((val?: string) => val);
 
@@ -93,6 +93,6 @@ interface InjectTransformResult {
 }
 ```
 
-Цей приклад показує, як Ditsmod оголошує типи для декоратора параметрів `inject`. Складність типів виникає через те, що функція-трансформер має кілька сигнатур, а TypeScript наразі не вміє виводити більше однієї сигнатури.
+Цей приклад показує, як Holu оголошує типи для декоратора параметрів `inject`. Складність типів виникає через те, що функція-трансформер має кілька сигнатур, а TypeScript наразі не вміє виводити більше однієї сигнатури.
 
 [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect

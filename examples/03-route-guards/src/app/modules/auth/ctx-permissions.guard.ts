@@ -1,5 +1,5 @@
-import { HttpStatus } from '@ditsmod/core';
-import { RequestContext, CanActivate, guard } from '@ditsmod/rest';
+import { HttpStatus } from '@holu/core';
+import { RequestContext, CanActivate, guard } from '@holu/rest';
 
 import { Permission } from './types.js';
 import { RouteScopedAuthService } from './ctx-auth.service.js';

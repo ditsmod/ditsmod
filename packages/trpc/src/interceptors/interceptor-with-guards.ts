@@ -7,7 +7,7 @@ import {
   skipSelf,
   HttpStatus,
   SystemLogMediator,
-} from '@ditsmod/core';
+} from '@holu/core';
 import { TRPCError } from '@trpc/server';
 
 import { RAW_REQ, RAW_RES } from '#types/types.js';

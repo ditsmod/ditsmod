@@ -2,30 +2,30 @@
 sidebar_position: 8
 ---
 
-# @ditsmod/sentry
+# @holu/sentry
 
-Цей модуль забезпечує інтеграцію з [Sentry](https://sentry.io) для застосунків Ditsmod.
+Цей модуль забезпечує інтеграцію з [Sentry](https://sentry.io) для застосунків Holu.
 Він дозволяє перехоплювати помилки, відстежувати продуктивність, профілювати методи та моніторити cron-завдання.
 
 ## Встановлення {#installation}
 
 ```bash
-npm i @ditsmod/sentry @sentry/node
+npm i @holu/sentry @sentry/node
 ```
 
 ## Ініціалізація Sentry {#initializing-sentry}
 
-Sentry необхідно ініціалізувати на самому початку файлу точки входу (`main.ts`) перед запуском застосунку Ditsmod:
+Sentry необхідно ініціалізувати на самому початку файлу точки входу (`main.ts`) перед запуском застосунку Holu:
 
 ```ts
-import { init } from '@ditsmod/sentry';
+import { init } from '@holu/sentry';
 
 init({
   dsn: 'YOUR_SENTRY_DSN',
   tracesSampleRate: 1.0,
 });
 
-import { RestApplication } from '@ditsmod/rest';
+import { RestApplication } from '@holu/rest';
 import { AppModule } from './app/app.module.js';
 
 const app = await RestApplication.create(AppModule);
@@ -37,9 +37,9 @@ app.server.listen(3000, '0.0.0.0');
 Імпортуйте `SentryModule` у ваш `AppModule` та вирішіть колізію `HttpErrorHandler`, оскільки `RestModule` і `SentryModule` обоє експортують цей провайдер:
 
 ```ts
-import { ProviderBuilder } from '@ditsmod/core';
-import { restRootModule, HttpErrorHandler } from '@ditsmod/rest';
-import { SentryModule, SentryOptions } from '@ditsmod/sentry';
+import { ProviderBuilder } from '@holu/core';
+import { restRootModule, HttpErrorHandler } from '@holu/rest';
+import { SentryModule, SentryOptions } from '@holu/sentry';
 
 @restRootModule({
   imports: [SentryModule],
@@ -56,7 +56,7 @@ export class AppModule {}
 ### SentryHttpErrorHandler {#sentry-http-error-handler}
 
 Автоматично перехоплює всі непередбачувані помилки сервера (коди статусів `>= 500` або загальні необроблені виключення).
-Він інтегрується з `ErrorInfo` від Ditsmod, додаючи коди помилок, рівень важливості та внутрішні повідомлення розробника як теги або extras.
+Він інтегрується з `ErrorInfo` від Holu, додаючи коди помилок, рівень важливості та внутрішні повідомлення розробника як теги або extras.
 Додаткове перехоплення помилок 4xx можна увімкнути, встановивши `capture4xx: true` в `SentryOptions`.
 
 ### Відстеження продуктивності {#performance-tracing}

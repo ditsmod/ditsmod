@@ -1,4 +1,4 @@
-import { Reflector } from '@ditsmod/core/di';
+import { Reflector } from '@holu/core/di';
 
 export const timeout = Reflector.makePropDecorator((nameOrTimeout: string | number, timeout?: number) => {
   const [name, ms] = typeof nameOrTimeout === 'string' ? [nameOrTimeout, timeout!] : [undefined, nameOrTimeout];

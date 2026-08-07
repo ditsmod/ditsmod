@@ -1,5 +1,5 @@
-import { Extension, ExtensionManager, injectable } from '@ditsmod/core';
-import { RestRouteExtension } from '@ditsmod/rest';
+import { Extension, ExtensionManager, injectable } from '@holu/core';
+import { RestRouteExtension } from '@holu/rest';
 
 @injectable()
 export class VersionsExtension implements Extension<void> {

@@ -1,5 +1,5 @@
-import { injectable } from '@ditsmod/core';
-import { DictService } from '@ditsmod/i18n';
+import { injectable } from '@holu/core';
+import { DictService } from '@holu/i18n';
 
 import { FirstDict } from '#dict/first/first.dict.js';
 

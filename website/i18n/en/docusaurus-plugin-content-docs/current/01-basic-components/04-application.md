@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # Application
 
-Ditsmod allows you to write applications using different architectural styles:
+Holu allows you to write applications using different architectural styles:
 
 - [REST][1]
 - [REST testing][2]
@@ -14,12 +14,12 @@ Ditsmod allows you to write applications using different architectural styles:
 - **Microservices**
 - ...
 
-[Ditsmod provides an API][4] that allows adding support for the required architecture. Such packages are more than ordinary feature modules, since they also include an **application class** and an **application initializer class**, where the application configuration, the application build sequence, etc. are defined. As a rule, each of these packages has its own specifics regarding the metadata of their modules. In addition, if the application's web server has its own specifics of operation for different **Runtimes** (Node, Bun, Deno, etc.), Ditsmod allows taking this into account precisely at the stage of initializing the application class.
+[Holu provides an API][4] that allows adding support for the required architecture. Such packages are more than ordinary feature modules, since they also include an **application class** and an **application initializer class**, where the application configuration, the application build sequence, etc. are defined. As a rule, each of these packages has its own specifics regarding the metadata of their modules. In addition, if the application's web server has its own specifics of operation for different **Runtimes** (Node, Bun, Deno, etc.), Holu allows taking this into account precisely at the stage of initializing the application class.
 
 An instance of the **application class** is typically created in the `main.ts` file, and the application starts working from there. For example, an instance of a REST application class is created as follows:
 
 ```ts {4} title="src/main.ts"
-import { RestApplication } from '@ditsmod/rest';
+import { RestApplication } from '@holu/rest';
 import { AppModule } from './app/app.module.js';
 
 const app = await RestApplication.create(AppModule);
@@ -33,14 +33,14 @@ app.server.listen(3000, '0.0.0.0');
 
 ## Graceful Shutdown {#graceful-shutdown}
 
-Ditsmod supports graceful shutdown, allowing the application to close HTTP connections, stop accepting new requests, wait for active requests to finish, and run cleanup tasks in singleton services before exiting.
+Holu supports graceful shutdown, allowing the application to close HTTP connections, stop accepting new requests, wait for active requests to finish, and run cleanup tasks in singleton services before exiting.
 
 ### Enabling Shutdown Hooks {#enabling-shutdown-hooks}
 
 To enable graceful shutdown, call `enableShutdownHooks()` on the application instance. You can optionally pass an array of system signals (e.g., `SIGTERM`, `SIGINT`).
 
 ```ts {5} title="src/main.ts"
-import { RestApplication } from '@ditsmod/rest';
+import { RestApplication } from '@holu/rest';
 import { AppModule } from './app/app.module.js';
 
 const app = await RestApplication.create(AppModule);
@@ -60,7 +60,7 @@ Services registered as singletons (e.g., `providersPerApp` or `providersPerMod`)
 Both hooks receive the triggered system signal as a parameter and can return `void` or `Promise<void>`.
 
 ```ts title="src/app/my.service.ts"
-import { BeforeShutdown, OnShutdown, injectable } from '@ditsmod/core';
+import { BeforeShutdown, OnShutdown, injectable } from '@holu/core';
 
 @injectable()
 export class MyService implements BeforeShutdown, OnShutdown {
@@ -77,7 +77,7 @@ export class MyService implements BeforeShutdown, OnShutdown {
 
 ### Connection Draining (REST) {#connection-draining}
 
-In `@ditsmod/rest`, when a shutdown signal is received:
+In `@holu/rest`, when a shutdown signal is received:
 1. The server stops accepting new connections immediately (`server.close()`).
 2. All idle keep-alive connections are immediately closed.
 3. Active connections are allowed to finish their current requests.
@@ -86,8 +86,8 @@ In `@ditsmod/rest`, when a shutdown signal is received:
 You can configure `shutdownTimeout` (in milliseconds) via `AppOptions` in your root module:
 
 ```ts
-import { AppOptions } from '@ditsmod/core';
-import { RestModule } from '@ditsmod/rest';
+import { AppOptions } from '@holu/core';
+import { RestModule } from '@holu/rest';
 
 @rootModule({
   imports: [RestModule],

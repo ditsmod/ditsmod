@@ -13,8 +13,8 @@ import type {
   ShallowModuleImports,
   SystemLogMediator,
   ForwardRefFn,
-} from '@ditsmod/core';
-import { Reflector, ModuleMixin, BaseNormalizedModuleMeta, AppModuleMixins } from '@ditsmod/core';
+} from '@holu/core';
+import { Reflector, ModuleMixin, BaseNormalizedModuleMeta, AppModuleMixins } from '@holu/core';
 
 import { TrpcModule } from '../trpc.module.js';
 import { TrpcModuleNormalizer } from '#init/trpc-module-normalizer.js';

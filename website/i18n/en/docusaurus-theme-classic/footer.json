@@ -13,15 +13,15 @@
   },
   "link.item.label.Stack Overflow": {
     "message": "Stack Overflow",
-    "description": "The label of footer link with label=Stack Overflow linking to https://stackoverflow.com/questions/tagged/ditsmod"
+    "description": "The label of footer link with label=Stack Overflow linking to https://stackoverflow.com/questions/tagged/holu"
   },
   "link.item.label.Twitter": {
     "message": "Twitter",
-    "description": "The label of footer link with label=Twitter linking to https://twitter.com/ditsmod"
+    "description": "The label of footer link with label=Twitter linking to https://twitter.com/holu"
   },
   "link.item.label.GitHub": {
     "message": "GitHub",
-    "description": "The label of footer link with label=GitHub linking to https://github.com/ditsmod/ditsmod"
+    "description": "The label of footer link with label=GitHub linking to https://github.com/holu/holu"
   },
   "copyright": {
     "message": "Built with Docusaurus.",

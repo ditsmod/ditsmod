@@ -1,4 +1,4 @@
-import type { AnyObj, Class, DecoratorMeta, ModRefId } from '@ditsmod/core';
+import type { AnyObj, Class, DecoratorMeta, ModRefId } from '@holu/core';
 
 import { route } from '#decorators/route.js';
 import type { HttpInterceptor } from '#interceptors/tokens-and-types.js';

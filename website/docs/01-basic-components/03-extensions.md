@@ -4,9 +4,9 @@ sidebar_position: 3
 
 # Розширення
 
-## Що робить розширення Ditsmod {#the-purpose-of-ditsmod-extension}
+## Що робить розширення Holu {#the-purpose-of-holu-extension}
 
-Розширення починають працювати, коли Ditsmod зібрав статичні метадані з декораторів на рівні класу, та експортував/імпортував модулі і провайдери саме так, як це було прописано в зібраних статичних метаданих модуля. Як правило, розширення виконує свою роботу перед створенням обробників HTTP-запитів. Щоб змінити або розширити роботу застосунку, розширення використовує статичні метадані, що закріплені за певними декораторами. З іншого боку, розширення може ще й динамічно додавати метадані такого самого типу, як і ці статичні метадані. Розширення можуть ініціалізуватись асинхронно, і можуть залежати один від одного.
+Розширення починають працювати, коли Holu зібрав статичні метадані з декораторів на рівні класу, та експортував/імпортував модулі і провайдери саме так, як це було прописано в зібраних статичних метаданих модуля. Як правило, розширення виконує свою роботу перед створенням обробників HTTP-запитів. Щоб змінити або розширити роботу застосунку, розширення використовує статичні метадані, що закріплені за певними декораторами. З іншого боку, розширення може ще й динамічно додавати метадані такого самого типу, як і ці статичні метадані. Розширення можуть ініціалізуватись асинхронно, і можуть залежати один від одного.
 
 Образно кажучи, модуль + розширення нагадують «хмарного провайдера», що надає лише інфраструктуру. Тобто розширення працюють виключно на етапі ініціалізації застосунку і не беруть участі в безпосередній обробці запитів. Вони лише створюють умови для роботи таких компонентів, як контролери, сервіси, ґарди та інтерсептори, які вже обробляють запити після завершення підготовчого етапу.
 
@@ -18,13 +18,13 @@ sidebar_position: 3
 2. у кожному модулі є контролери або провайдери;
 3. кожен контролер має один або більше роутів.
 
-Простий і практичний приклад роботи розширень можна знайти в модулі [@ditsmod/body-parser][101], де працює розширення, що динамічно додає HTTP-інтерсептор для парсингу тіла запиту до кожного роута, що має відповідний метод (POST, PATCH, PUT). Воно це робить один раз перед створенням обробників HTTP-запитів, тому за кожним запитом вже немає необхідності тестувати потребу такого парсингу.
+Простий і практичний приклад роботи розширень можна знайти в модулі [@holu/body-parser][101], де працює розширення, що динамічно додає HTTP-інтерсептор для парсингу тіла запиту до кожного роута, що має відповідний метод (POST, PATCH, PUT). Воно це робить один раз перед створенням обробників HTTP-запитів, тому за кожним запитом вже немає необхідності тестувати потребу такого парсингу.
 
-Інший приклад. Модуль [@ditsmod/rest][6] дозволяє встановлювати роути за допомогою власного декоратора `@route`. Без роботи розширення, Ditsmod буде ігнорувати метадані з цього декоратора. Розширення з цього модуля отримує згаданий вище конфігураційний масив, знаходить там метадані з декоратора `@route`, й інтерпретує їх додаючи інші метадані, які будуть використовуватись цільовим розширенням для встановлення роутів.
+Інший приклад. Модуль [@holu/rest][6] дозволяє встановлювати роути за допомогою власного декоратора `@route`. Без роботи розширення, Holu буде ігнорувати метадані з цього декоратора. Розширення з цього модуля отримує згаданий вище конфігураційний масив, знаходить там метадані з декоратора `@route`, й інтерпретує їх додаючи інші метадані, які будуть використовуватись цільовим розширенням для встановлення роутів.
 
-## Що таке "розширення Ditsmod" {#what-is-ditsmod-extension}
+## Що таке "розширення Holu" {#what-is-holu-extension}
 
-У Ditsmod **розширенням** називається клас, що впроваджує інтерфейс `Extension`:
+У Holu **розширенням** називається клас, що впроваджує інтерфейс `Extension`:
 
 ```ts
 interface Extension<T> {
@@ -48,12 +48,12 @@ interface Extension<T> {
 }
 ```
 
-Кожен із указаних методів виступає в ролі хука, які Ditsmod викликає автоматично. В документації інколи ви можете зустрічати фрази, типу "значення, що повертає розширення"; в таких випадках мається на увазі значення, що повертає метод `stage1()` даного розширення. Готовий простий приклад ви можете проглянути у теці [00-standalone-application][103].
+Кожен із указаних методів виступає в ролі хука, які Holu викликає автоматично. В документації інколи ви можете зустрічати фрази, типу "значення, що повертає розширення"; в таких випадках мається на увазі значення, що повертає метод `stage1()` даного розширення. Готовий простий приклад ви можете проглянути у теці [00-standalone-application][103].
 
 Імплементацію даного інтерфейсу можна зробити, наприклад, так:
 
 ```ts
-import { injectable, Extension, Logger } from '@ditsmod/core';
+import { injectable, Extension, Logger } from '@holu/core';
 
 @injectable()
 export class SimpleExtension implements Extension<void> {
@@ -75,7 +75,7 @@ export class SimpleExtension implements Extension<void> {
 Розширення передаються у метадані модуля, у властивість `extensions`. В залежності від вибраного вами архітектурного стилю, для цього можуть використовуватись такі декоратори як `featureModule`, `restModule`, `trpcModule` і т.д.:
 
 ```ts {5}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { SimpleExtension } from './simple-extension.js';
 
 @restModule({
@@ -118,7 +118,7 @@ class ExtensionConfig {
 Наприклад:
 
 ```ts {6-11}
-import { restModule, RestRouteExtension } from '@ditsmod/rest';
+import { restModule, RestRouteExtension } from '@holu/rest';
 import { SimpleExtension } from './simple-extension.js';
 
 @restModule({
@@ -165,7 +165,7 @@ extensions: [
 1. **Прямо в конструкторі розширення**, інжектувавши `ResolvedModuleMeta`:
 
   ```ts
-  import { injectable, Extension, ResolvedModuleMeta } from '@ditsmod/core';
+  import { injectable, Extension, ResolvedModuleMeta } from '@holu/core';
 
   @injectable()
   export class MyExtension implements Extension<void> {
@@ -183,8 +183,8 @@ extensions: [
 2. **З інших розширень** через `ExtensionManager`:
 
   ```ts
-  import { injectable, Extension, ExtensionManager } from '@ditsmod/core';
-  import { RestRouteExtension } from '@ditsmod/rest';
+  import { injectable, Extension, ExtensionManager } from '@holu/core';
+  import { RestRouteExtension } from '@holu/rest';
 
   @injectable()
   export class MyExtension implements Extension<void> {
@@ -204,7 +204,7 @@ extensions: [
 
 Будь-яке розширення може входити в одну або декілька груп. Концепція **групи розширень** аналогічна до концепції групи [інтерсепторів][10]. Давайте згадаємо, що група інтерсепторів виконує конкретний вид робіт: доповнює обробку HTTP-запиту для певного роута в контролері. Аналогічно, кожна група розширень - це окремий вид робіт над певними метаданими. Як правило, розширення в певній групі повертають метадані, що мають однаковий базовий інтерфейс. По суті, групи розширень дозволяють абстрагуватись від конкретних розширень, роблячи важливими лише вид роботи, що виконується у даних групах.
 
-Наприклад, у `@ditsmod/rest` є `RestRouteExtension`, що обробляє метадані, зібрані з декоратора `@route()`. Якщо в якомусь застосунку потрібна документація OpenAPI - можна додатково підключити модуль `@ditsmod/openapi`, де зареєстровано `OpenapiRouteExtension`, що працює з декоратором `@oasRoute()`. В метаданих модуля `@ditsmod/openapi` вказано, що `OpenapiRouteExtension` потрібно використовувати в одній групі з `RestRouteExtension`:
+Наприклад, у `@holu/rest` є `RestRouteExtension`, що обробляє метадані, зібрані з декоратора `@route()`. Якщо в якомусь застосунку потрібна документація OpenAPI - можна додатково підключити модуль `@holu/openapi`, де зареєстровано `OpenapiRouteExtension`, що працює з декоратором `@oasRoute()`. В метаданих модуля `@holu/openapi` вказано, що `OpenapiRouteExtension` потрібно використовувати в одній групі з `RestRouteExtension`:
 
 ```ts
 extensions: [
@@ -228,7 +228,7 @@ extensions: [
 
 Як бачите, тут нічого не сказано про `OpenapiRouteExtension`, і навіть коли оголошували `OpenapiRouteExtension` - там теж не було сказано, що `OpenapiRouteExtension` повинно працювати перед `DispatcherExtension`. Достатньо щоб під час оголошення `OpenapiRouteExtension` було вказано `groups: [RestRouteExtension]`, і це вже автоматично ставить у чергу `OpenapiRouteExtension` після `RestRouteExtension`, але перед `DispatcherExtension`.
 
-Ця фіча є дуже зручною, оскільки вона інколи дозволяє інтегрувати зовнішні модулі Ditsmod (наприклад, з npmjs.com) у ваш застосунок без жодних налаштувань, просто імпортуючи їх у потрібний модуль. Імпортовані розширення, що входять до певних груп, будуть запускатись у правильній послідовності, навіть якщо вони імпортовані з різних зовнішніх модулів.
+Ця фіча є дуже зручною, оскільки вона інколи дозволяє інтегрувати зовнішні модулі Holu (наприклад, з npmjs.com) у ваш застосунок без жодних налаштувань, просто імпортуючи їх у потрібний модуль. Імпортовані розширення, що входять до певних груп, будуть запускатись у правильній послідовності, навіть якщо вони імпортовані з різних зовнішніх модулів.
 
 Зверніть увагу, що у властивості `groups` вказуються класи розширень, які виступають у ролі токенів окремих груп:
 
@@ -267,7 +267,7 @@ extensions: [
 Припустимо `Extension2` очікує результати роботи методу `stage1()` від `Extension1`, тому в конструкторі вказується залежність від `ExtensionManager`, а у `extension2.stage1()` викликається `this.extensionManager.stage1()`:
 
 ```ts {9}
-import { injectable, Extension, ExtensionManager } from '@ditsmod/core';
+import { injectable, Extension, ExtensionManager } from '@holu/core';
 import { Extension1 } from './extension1.js';
 
 @injectable()
@@ -314,12 +314,12 @@ interface ExtensionDebugMeta<T = any> {
 groupData[0] === groupDebugMeta[0]?.payload; // true
 ```
 
-Важливо пам'ятати, що для кожного модуля створюється окремий інстанс певного розширення. Наприклад, якщо `Extension2` імпортовано у три різні модулі, то Ditsmod буде послідовно обробляти ці три модулі із трьома різними інстансами `Extension2`. Окрім цього, якщо `Extension2` потребує підсумкові дані, наприклад, від `Extension1` із чотирьох модулів, а саме `Extension2` імпортовано лише у три модулі, це означає, що з одного модуля `Extension2` може і не отримати необхідних даних.
+Важливо пам'ятати, що для кожного модуля створюється окремий інстанс певного розширення. Наприклад, якщо `Extension2` імпортовано у три різні модулі, то Holu буде послідовно обробляти ці три модулі із трьома різними інстансами `Extension2`. Окрім цього, якщо `Extension2` потребує підсумкові дані, наприклад, від `Extension1` із чотирьох модулів, а саме `Extension2` імпортовано лише у три модулі, це означає, що з одного модуля `Extension2` може і не отримати необхідних даних.
 
 В такому випадку потрібно передавати `this` у якості другого аргументу до `extensionManager.stage1`:
 
 ```ts {9}
-import { injectable, Extension, ExtensionManager } from '@ditsmod/core';
+import { injectable, Extension, ExtensionManager } from '@holu/core';
 import { Extension1 } from './extension1.js';
 
 @injectable()
@@ -378,13 +378,13 @@ await this.extensionManager.stage1(Extension3); // Повертаються да
 
 ## Динамічне додавання провайдерів {#dynamic-addition-of-providers}
 
-Якщо ви використовуєте `@ditsmod/rest`, будь-яке розширення може вказати залежність від `RestRouteExtension`, щоб динамічно додавати провайдери на будь-якому рівні. Це розширення використовує метадані з інтерфейсом `ResolvedModuleMetadata` і повертає метадані з інтерфейсом `RouteExtensionMeta`.
+Якщо ви використовуєте `@holu/rest`, будь-яке розширення може вказати залежність від `RestRouteExtension`, щоб динамічно додавати провайдери на будь-якому рівні. Це розширення використовує метадані з інтерфейсом `ResolvedModuleMetadata` і повертає метадані з інтерфейсом `RouteExtensionMeta`.
 
 Можна проглянути як це зроблено у [BodyParserExtension][102]:
 
 ```ts {13,31,42}
-import { Extension, ExtensionManager, Injector, injectable, inject, PROVIDERS_PER_APP } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS, RestRouteExtension } from '@ditsmod/rest';
+import { Extension, ExtensionManager, Injector, injectable, inject, PROVIDERS_PER_APP } from '@holu/core';
+import { HTTP_INTERCEPTORS, RestRouteExtension } from '@holu/rest';
 // ...
 
 @injectable()
@@ -439,7 +439,7 @@ export class BodyParserExtension implements Extension<void> {
 А інжектори, що містять провайдери, зібрані від усіх розширень, будуть створені згодом - у `DispatcherExtension`. Саме тому у метаданих `BodyParserModule` прописано, що `BodyParserExtension` повинно працювати після `RestRouteExtension`, але перед `DispatcherExtension`:
 
 ```ts {7-8}
-import { RestRouteExtension, DispatcherExtension } from '@ditsmod/rest';
+import { RestRouteExtension, DispatcherExtension } from '@holu/rest';
 
 // ... Тут оголошується BodyParserModule
 extensions: [
@@ -460,7 +460,7 @@ extensions: [
 Оскільки інжектор самого розширення є тимчасовим, підготовлений екземпляр ресурсу додається на відповідний рівень ієрархії провайдерів (`providersPerApp`, `providersPerMod`, `providersPerRou` або `providersPerReq`) через властивість `useValue` під час виконання `stage1()`:
 
 ```ts
-import { injectable, inject, Extension, PROVIDERS_PER_APP, Provider } from '@ditsmod/core';
+import { injectable, inject, Extension, PROVIDERS_PER_APP, Provider } from '@holu/core';
 import { createDbConnection, DbClient } from './db-connection.js';
 
 @injectable()
@@ -480,10 +480,10 @@ export class DbExtension implements Extension<void> {
 [4]: /basic-components/dependency-injection/#injector-and-providers
 [6]: /rest-application/native-modules/openapi
 [7]: #dynamic-addition-of-providers
-[8]: /basic-components/dependency-injection#hierarchy-of-injectors-in-the-ditsmod-application
+[8]: /basic-components/dependency-injection#hierarchy-of-injectors-in-the-holu-application
 [10]: /rest-application/http-interceptors/
 [11]: /basic-components/dependency-injection/#provider
 [100]: https://nodejs.org/api/repl.html
-[101]: https://github.com/ditsmod/ditsmod/tree/main/examples/06-body-parser
-[102]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L46
-[103]: https://github.com/ditsmod/ditsmod/tree/main/examples/00-standalone-application
+[101]: https://github.com/holu/holu/tree/main/examples/06-body-parser
+[102]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L46
+[103]: https://github.com/holu/holu/tree/main/examples/00-standalone-application

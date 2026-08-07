@@ -4,7 +4,7 @@ import type { NodeClient, NodeOptions } from '@sentry/node';
 import { getDefaultIntegrations as getDefaultNodeIntegrations, init as nodeInit } from '@sentry/node';
 
 /**
- * Initializes the Ditsmod Sentry SDK
+ * Initializes the Holu Sentry SDK
  */
 export function init(options: NodeOptions | undefined = {}): NodeClient | undefined {
   const opts: NodeOptions = {
@@ -12,12 +12,12 @@ export function init(options: NodeOptions | undefined = {}): NodeClient | undefi
     ...options,
   };
 
-  applySdkMetadata(opts, 'ditsmod', ['ditsmod', 'node']);
+  applySdkMetadata(opts, 'holu', ['holu', 'node']);
 
   return nodeInit(opts);
 }
 
-/** Get the default integrations for the Ditsmod Sentry SDK. */
+/** Get the default integrations for the Holu Sentry SDK. */
 export function getDefaultIntegrations(options: NodeOptions): Integration[] | undefined {
   return getDefaultNodeIntegrations(options);
 }

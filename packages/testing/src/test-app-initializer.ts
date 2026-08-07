@@ -7,9 +7,9 @@ import type {
   ModRefId,
   Provider,
   ProviderBuilder,
-} from '@ditsmod/core';
-import { InternalExtensionManager, resolveForwardRef } from '@ditsmod/core';
-import { RestAppInitializer } from '@ditsmod/rest';
+} from '@holu/core';
+import { InternalExtensionManager, resolveForwardRef } from '@holu/core';
+import { RestAppInitializer } from '@holu/rest';
 
 import { TestOverrider } from './test-overrider.js';
 import type { OverriderConfig } from './types.js';

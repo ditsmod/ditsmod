@@ -1,6 +1,6 @@
-# Contributing to Ditsmod
+# Contributing to Holu
 
-Thank you for your interest in contributing to Ditsmod! 🎉  
+Thank you for your interest in contributing to Holu! 🎉  
 Every contribution — whether it's a bug report, a documentation fix, or a new feature — is greatly appreciated.
 
 ---
@@ -25,9 +25,9 @@ Please be respectful and constructive in all interactions. This project follows 
 
 ## Ways to Contribute
 
-- **Report bugs** – Open a [GitHub Issue](https://github.com/ditsmod/ditsmod/issues) with a clear description and reproduction steps.
+- **Report bugs** – Open a [GitHub Issue](https://github.com/holu/holu/issues) with a clear description and reproduction steps.
 - **Suggest features** – Open an issue tagged `enhancement` to discuss ideas before implementing.
-- **Fix bugs or add features** – Pick up an existing [open issue](https://github.com/ditsmod/ditsmod/issues) (look for `good first issue` or `help wanted` labels).
+- **Fix bugs or add features** – Pick up an existing [open issue](https://github.com/holu/holu/issues) (look for `good first issue` or `help wanted` labels).
 - **Improve documentation** – Docs live in `website/i18n/en/docusaurus-plugin-content-docs/current/`.
 
 > [!NOTE]
@@ -47,8 +47,8 @@ Please be respectful and constructive in all interactions. This project follows 
 
 ```bash
 # 1. Fork and clone the repository
-git clone https://github.com/<your-username>/ditsmod.git
-cd ditsmod
+git clone https://github.com/<your-username>/holu.git
+cd holu
 
 # 2. Enable Corepack and install the correct Yarn version
 corepack enable
@@ -72,7 +72,7 @@ This monorepo uses **Yarn workspaces**. The key directories are:
 
 | Directory      | Purpose                                                          |
 | -------------- | ---------------------------------------------------------------- |
-| `packages/`    | Publishable npm packages (e.g. `@ditsmod/core`, `@ditsmod/rest`) |
+| `packages/`    | Publishable npm packages (e.g. `@holu/core`, `@holu/rest`) |
 | `examples/`    | Runnable example applications                                    |
 | `experiments/` | Experimental work, not part of the public API                    |
 | `website/`     | Docusaurus documentation site                                    |
@@ -152,10 +152,10 @@ Common types from Conventional Commits:
 
 The scope is **mandatory** (commits without a scope will be rejected). The scope must be in parentheses and be one of the following:
 
-- **Packages under `packages/`**: Use the package folder name directly (omitting the `@ditsmod/` prefix). For example:
-  - `core` (for `@ditsmod/core`)
-  - `authjs` (for `@ditsmod/authjs`)
-  - `body-parser` (for `@ditsmod/body-parser`)
+- **Packages under `packages/`**: Use the package folder name directly (omitting the `@holu/` prefix). For example:
+  - `core` (for `@holu/core`)
+  - `authjs` (for `@holu/authjs`)
+  - `body-parser` (for `@holu/body-parser`)
   - etc.
 - **`website`**: Changes to the documentation website (`website/`).
 - **`examples`**: Changes to the runnable applications under `examples/`.

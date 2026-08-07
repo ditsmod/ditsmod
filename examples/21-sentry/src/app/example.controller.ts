@@ -1,6 +1,6 @@
-import { CustomError } from '@ditsmod/core/errors';
-import { controller, route, RequestContext } from '@ditsmod/rest';
-import { sentryCron, sentryTraced, sentryExceptionCaptured } from '@ditsmod/sentry';
+import { CustomError } from '@holu/core/errors';
+import { controller, route, RequestContext } from '@holu/rest';
+import { sentryCron, sentryTraced, sentryExceptionCaptured } from '@holu/sentry';
 
 @controller()
 export class ExampleController {

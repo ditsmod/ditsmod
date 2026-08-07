@@ -7,7 +7,7 @@ import type {
   SystemLogMediator,
   DeepModulesImporter,
   ShallowModuleImports,
-} from '@ditsmod/core';
+} from '@holu/core';
 
 import type { ModuleScopedGuard } from '#interceptors/guard.js';
 import type { RestModRefId, RestMixinMeta } from '#init/rest-mixin-meta.js';

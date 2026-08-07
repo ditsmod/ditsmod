@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
-import type { Injector } from '@ditsmod/core';
-import type { RequestContext } from '@ditsmod/rest';
+import type { Injector } from '@holu/core';
+import type { RequestContext } from '@holu/rest';
 import { AuthjsConfig } from './authjs.config.js';
 
 import type * as AuthjsPerRouGuardType from './authjs-per-rou.guard.js';

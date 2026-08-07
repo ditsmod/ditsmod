@@ -1,9 +1,9 @@
 {
   "private": true,
-  "name": "ditsmod",
+  "name": "holu",
   "type": "module",
   "version": "1.0.0",
-  "description": "monorepo for ditsmod projects",
+  "description": "monorepo for holu projects",
   "engines": {
     "node": ">= 24.0.0"
   },
@@ -38,18 +38,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ditsmod/ditsmod.git"
+    "url": "git+https://github.com/holu/holu.git"
   },
   "keywords": [
-    "ditsmod",
+    "holu",
     "monorepo"
   ],
   "author": "Костя Третяк",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ditsmod/ditsmod/issues"
+    "url": "https://github.com/holu/holu/issues"
   },
-  "homepage": "https://github.com/ditsmod/ditsmod#readme",
+  "homepage": "https://github.com/holu/holu#readme",
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.2.0",

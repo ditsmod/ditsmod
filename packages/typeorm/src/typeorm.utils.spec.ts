@@ -1,4 +1,4 @@
-import { InjectionToken } from '@ditsmod/core';
+import { InjectionToken } from '@holu/core';
 import { DataSource, EntityManager, EntitySchema } from 'typeorm';
 
 import { getDataSourceToken, getEntityManagerToken, getRepositoryToken } from './typeorm.utils.js';

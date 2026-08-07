@@ -1,20 +1,20 @@
-# Ditsmod Framework — Agent Rules
+# Holu Framework — Agent Rules
 
-This file provides rules and context for AI agents working inside the **Ditsmod framework monorepo** (specifically on the framework core and packages).
+This file provides rules and context for AI agents working inside the **Holu framework monorepo** (specifically on the framework core and packages).
 
 > [!NOTE]
 > `@ts-stack/*` packages are always published with their source files in the `src` folder, so agents can utilize them if needed.
 
 ## Repository Overview
 
-Ditsmod is a Node.js web framework written in TypeScript (ESM). Its name reflects its three pillars:
+Holu is a Node.js web framework written in TypeScript (ESM). Its name reflects its three pillars:
 **DI** (Dependency Injection) + **TS** (TypeScript) + **Mod** (Modularity).
 
 This is a **Yarn workspaces monorepo**. Key top-level directories:
 
 | Directory      | Purpose                                                              |
 | -------------- | -------------------------------------------------------------------- |
-| `packages/`    | All publishable npm packages (e.g. `@ditsmod/core`, `@ditsmod/rest`) |
+| `packages/`    | All publishable npm packages (e.g. `@holu/core`, `@holu/rest`) |
 | `examples/`    | Runnable example applications demonstrating framework features       |
 | `experiments/` | Experimental / in-progress work, not yet part of the public API      |
 | `website/`     | Docusaurus documentation site                                        |
@@ -48,11 +48,11 @@ Run `yarn docs-en` to preview changes locally.
 
 - **Running Prettier**: The agent must run Prettier to auto-format every new or modified file with the `.ts` extension before finishing changes (e.g., `yarn prettier --write path/to/file.ts`).
 - **Running ESLint**: After completing any code changes, the agent must run ESLint. To avoid running it for the entire project (which can cause memory issues), run it only for the modified packages (e.g., `yarn lint packages/cli` from the project root) or specifically for the modified files.
-- **Running Tests**: **DO NOT run tests if you only modified comments or documentation files.** Run tests only if there are functional code changes. To run unit tests for a specific package, the agent should run them using the package workspace (e.g., `yarn workspace @ditsmod/cli test` or `yarn --cwd packages/cli test`). Avoid running `yarn test packages/<package-name>` from the root of the project, as this compiles tests for the entire monorepo and can fail due to compilation errors in other packages. If you only modify tests in a specific file, run only that test file (e.g., `yarn workspace @ditsmod/core test dist/init/module-manager.spec.js` instead of running all tests in the package).
+- **Running Tests**: **DO NOT run tests if you only modified comments or documentation files.** Run tests only if there are functional code changes. To run unit tests for a specific package, the agent should run them using the package workspace (e.g., `yarn workspace @holu/cli test` or `yarn --cwd packages/cli test`). Avoid running `yarn test packages/<package-name>` from the root of the project, as this compiles tests for the entire monorepo and can fail due to compilation errors in other packages. If you only modify tests in a specific file, run only that test file (e.g., `yarn workspace @holu/core test dist/init/module-manager.spec.js` instead of running all tests in the package).
 
 ## Code style
 
-- **Internal Package Imports**: Never map the current package's own name (e.g., mapping `@ditsmod/schedule` inside the `schedule` package) in `tsconfig.json` `paths` to reference local files. Self-mapping is not allowed; package-name mapping is reserved exclusively for external packages. To import files from the current package (e.g., inside E2E tests), use Node.js subpath imports (like `#src/*` or specific aliases) that resolve to `./src/*` in `tsconfig.json` and `./dist/*` in `package.json`'s `imports` block.
+- **Internal Package Imports**: Never map the current package's own name (e.g., mapping `@holu/schedule` inside the `schedule` package) in `tsconfig.json` `paths` to reference local files. Self-mapping is not allowed; package-name mapping is reserved exclusively for external packages. To import files from the current package (e.g., inside E2E tests), use Node.js subpath imports (like `#src/*` or specific aliases) that resolve to `./src/*` in `tsconfig.json` and `./dist/*` in `package.json`'s `imports` block.
 - Do not use barrel files (e.g., `index.ts` files intended to simplify symbol imports), as they increase the likelihood of circular dependencies.
 - Do not add horizontal lines (`---`) in Markdown files.
 

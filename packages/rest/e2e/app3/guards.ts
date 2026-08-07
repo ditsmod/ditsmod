@@ -1,4 +1,4 @@
-import { ctx } from '@ditsmod/core';
+import { ctx } from '@holu/core';
 
 import { CanActivate } from '#interceptors/guard.js';
 import { QUERY_PARAMS } from '#top/constants.js';

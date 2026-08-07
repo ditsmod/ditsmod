@@ -1,5 +1,5 @@
-import { ctx, injectable, optional } from '@ditsmod/core';
-import { RawRequest, RawResponse, RAW_REQ, RAW_RES } from '@ditsmod/rest';
+import { ctx, injectable, optional } from '@holu/core';
+import { RawRequest, RawResponse, RAW_REQ, RAW_RES } from '@holu/rest';
 import { Cookies, CookieOptions } from '@ts-stack/cookies';
 import { CorsOptions, cors, mergeOptions } from '@ts-stack/cors';
 

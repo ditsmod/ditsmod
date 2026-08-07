@@ -2,25 +2,25 @@
 sidebar_position: 6
 ---
 
-# @ditsmod/cors
+# @holu/cors
 
-Якщо ваш застосунок потребує використання HTTP-методу [OPTIONS][1] чи механізмів [CORS][2] або [preflight CORS][3], можна використовувати модуль `@ditsmod/cors`.
+Якщо ваш застосунок потребує використання HTTP-методу [OPTIONS][1] чи механізмів [CORS][2] або [preflight CORS][3], можна використовувати модуль `@holu/cors`.
 
 ## Встановлення {#install}
 
 ```bash
-npm i @ditsmod/cors
+npm i @holu/cors
 ```
 
 ## Робота з дефолтними налаштуваннями {#work-with-default-settings}
 
-Готовий приклад з `@ditsmod/cors` можна проглянути [в репозиторії Ditsmod][4].
+Готовий приклад з `@holu/cors` можна проглянути [в репозиторії Holu][4].
 
 Модуль може працювати з дефолтними налаштуваннями зразу після імпорту:
 
 ```ts
-import { restRootModule } from '@ditsmod/rest';
-import { CorsModule } from '@ditsmod/cors';
+import { restRootModule } from '@holu/rest';
+import { CorsModule } from '@holu/cors';
 
 @restRootModule({
   imports: [
@@ -62,8 +62,8 @@ curl -i localhost:3000/credentials
 Якщо ви хочете змінити дефолтні налаштування, при імпорті можете передати деякі опції, які будуть братись до уваги на рівні модуля:
 
 ```ts
-import { restRootModule } from '@ditsmod/rest';
-import { CorsModule } from '@ditsmod/cors';
+import { restRootModule } from '@holu/rest';
+import { CorsModule } from '@holu/cors';
 
 @restRootModule({
   imports: [
@@ -78,9 +78,9 @@ export class SomeModule {}
 Також є можливість передати CORS-опції на рівні роуту:
 
 ```ts
-import { ProviderBuilder } from '@ditsmod/core';
-import { CorsModule, CorsOptions } from '@ditsmod/cors';
-import { restRootModule } from '@ditsmod/rest';
+import { ProviderBuilder } from '@holu/core';
+import { CorsModule, CorsOptions } from '@holu/cors';
+import { restRootModule } from '@holu/rest';
 
 @restRootModule({
   imports: [
@@ -99,8 +99,8 @@ export class SomeModule {}
 Коли вам потрібно щоб CORS HTTP-відповідь містила куки, і ці куки приймались веб-браузерами, можна скористатись `CorsService`:
 
 ```ts
-import { controller, RequestContext, route } from '@ditsmod/rest';
-import { CorsService } from '@ditsmod/cors';
+import { controller, RequestContext, route } from '@holu/rest';
+import { CorsService } from '@holu/cors';
 
 @controller()
 export class SomeController {
@@ -122,4 +122,4 @@ export class SomeController {
 [1]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS
 [2]: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
 [3]: https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request
-[4]: https://github.com/ditsmod/ditsmod/tree/main/examples/17-cors
+[4]: https://github.com/holu/holu/tree/main/examples/17-cors

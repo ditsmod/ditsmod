@@ -5,7 +5,7 @@ export const oasObject: XOasObject = {
   openapi,
   // Here works the servers that are described using this OpenAPI documentation.
   servers: [{ url: 'http://0.0.0.0:3000' }],
-  info: { title: 'Testing @ditsmod/openapi-validation', version: '1.0.0' },
+  info: { title: 'Testing @holu/openapi-validation', version: '1.0.0' },
   components: {
     responses: {
       UnauthorizedError: {

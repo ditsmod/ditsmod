@@ -1,4 +1,4 @@
-import { TrpcCanActivate, trpcGuard, TrpcOpts } from '@ditsmod/trpc';
+import { TrpcCanActivate, trpcGuard, TrpcOpts } from '@holu/trpc';
 import { TRPCError } from '@trpc/server';
 
 import { AuthService } from './auth.service.js';

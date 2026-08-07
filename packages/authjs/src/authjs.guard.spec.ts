@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
-import { Context } from '@ditsmod/core';
-import type { RequestContext } from '@ditsmod/rest';
+import { Context } from '@holu/core';
+import type { RequestContext } from '@holu/rest';
 import { AuthjsConfig } from './authjs.config.js';
 import { AUTHJS_SESSION } from './constants.js';
 
@@ -17,13 +17,13 @@ const { AuthjsGuard } = await import('./authjs.guard.js');
 describe('AuthjsGuard', () => {
   let guard: AuthjsGuardType.AuthjsGuard;
   let config: AuthjsConfig;
-  let ditsmodCtx: Context;
+  let holuCtx: Context;
   let reqCtx: RequestContext;
 
   beforeEach(() => {
     config = new AuthjsConfig();
-    ditsmodCtx = new Context();
-    guard = new AuthjsGuard(config, ditsmodCtx);
+    holuCtx = new Context();
+    guard = new AuthjsGuard(config, holuCtx);
     reqCtx = {
       protocol: 'http',
       rawReq: { headers: {} },
@@ -37,10 +37,10 @@ describe('AuthjsGuard', () => {
 
     expect(result).toBe(false);
     expect(reqCtx.auth).toBeUndefined();
-    expect(ditsmodCtx.get(AUTHJS_SESSION)).toBeUndefined();
+    expect(holuCtx.get(AUTHJS_SESSION)).toBeUndefined();
   });
 
-  it('sets session on ctx and ditsmodCtx and returns true when session exists', async () => {
+  it('sets session on ctx and holuCtx and returns true when session exists', async () => {
     const fakeSession = { user: { name: 'John' }, expires: '2030-01-01' };
     mockSessionResult = fakeSession;
 
@@ -48,6 +48,6 @@ describe('AuthjsGuard', () => {
 
     expect(result).toBe(true);
     expect(reqCtx.auth).toEqual(fakeSession);
-    expect(ditsmodCtx.get(AUTHJS_SESSION)).toEqual(fakeSession);
+    expect(holuCtx.get(AUTHJS_SESSION)).toEqual(fakeSession);
   });
 });

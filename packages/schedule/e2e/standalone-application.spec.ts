@@ -1,4 +1,4 @@
-import { injectable, Logger, LoggerConfig, ProviderBuilder, rootModule, StandaloneApplication } from '@ditsmod/core';
+import { injectable, Logger, LoggerConfig, ProviderBuilder, rootModule, StandaloneApplication } from '@holu/core';
 import { ScheduleModule, cron, interval, timeout } from '#src/index.js';
 
 @injectable()

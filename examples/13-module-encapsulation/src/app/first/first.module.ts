@@ -1,5 +1,5 @@
-import { BodyParserModule } from '@ditsmod/body-parser';
-import { restModule } from '@ditsmod/rest';
+import { BodyParserModule } from '@holu/body-parser';
+import { restModule } from '@holu/rest';
 
 import { FirstController } from './first.controler.js';
 import { FirstPerRouService } from './first-per-rou.service.js';

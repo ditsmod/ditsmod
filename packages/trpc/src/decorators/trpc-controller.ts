@@ -1,5 +1,5 @@
-import type { Provider, ProviderBuilder } from '@ditsmod/core';
-import { Reflector } from '@ditsmod/core';
+import type { Provider, ProviderBuilder } from '@holu/core';
+import { Reflector } from '@holu/core';
 
 /**
  * Metadata accepted by the default request-scoped trpcController.

@@ -1,4 +1,4 @@
-import { rootModule } from '@ditsmod/core';
+import { rootModule } from '@holu/core';
 
 import { route } from '#decorators/route.js';
 import { RestModule } from '#init/rest.module.js';

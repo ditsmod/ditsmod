@@ -1,4 +1,4 @@
-import type { AnyObj, DecoratorMeta } from '@ditsmod/core';
+import type { AnyObj, DecoratorMeta } from '@holu/core';
 import type { ReferenceObject } from '@ts-stack/openapi-spec';
 
 import type { PropertyDecoratorItem } from '#decorators/property.js';

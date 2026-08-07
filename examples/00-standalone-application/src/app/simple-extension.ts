@@ -1,4 +1,4 @@
-import { injectable, Extension, Logger } from '@ditsmod/core';
+import { injectable, Extension, Logger } from '@holu/core';
 
 @injectable()
 export class SimpleExtension implements Extension {

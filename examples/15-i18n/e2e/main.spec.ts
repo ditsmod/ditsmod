@@ -1,6 +1,6 @@
 import request from 'supertest';
-import { TestRestApplication } from '@ditsmod/rest-testing';
-import type { HttpServer } from '@ditsmod/rest';
+import { TestRestApplication } from '@holu/rest-testing';
+import type { HttpServer } from '@holu/rest';
 
 import { AppModule } from '#app/app.module.js';
 

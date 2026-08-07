@@ -11,7 +11,7 @@ import {
   ModuleManager,
   LoggerConfig,
   BaseAppOptions,
-} from '@ditsmod/core';
+} from '@holu/core';
 
 import { RestApplication } from './rest-application.js';
 import { AppOptions } from '../types/app-options.js';

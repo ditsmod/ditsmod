@@ -2,30 +2,30 @@
 sidebar_position: 8
 ---
 
-# @ditsmod/sentry
+# @holu/sentry
 
-This module provides integration with [Sentry](https://sentry.io) for Ditsmod applications.
+This module provides integration with [Sentry](https://sentry.io) for Holu applications.
 It enables error capturing, performance tracing, custom method profiling, and cron monitoring.
 
 ## Installation {#installation}
 
 ```bash
-npm i @ditsmod/sentry @sentry/node
+npm i @holu/sentry @sentry/node
 ```
 
 ## Initializing Sentry {#initializing-sentry}
 
-Sentry must be initialized at the very top of your entry point file (`main.ts`) before bootstrapping the Ditsmod application:
+Sentry must be initialized at the very top of your entry point file (`main.ts`) before bootstrapping the Holu application:
 
 ```ts
-import { init } from '@ditsmod/sentry';
+import { init } from '@holu/sentry';
 
 init({
   dsn: 'YOUR_SENTRY_DSN',
   tracesSampleRate: 1.0,
 });
 
-import { RestApplication } from '@ditsmod/rest';
+import { RestApplication } from '@holu/rest';
 import { AppModule } from './app/app.module.js';
 
 const app = await RestApplication.create(AppModule);
@@ -37,9 +37,9 @@ app.server.listen(3000, '0.0.0.0');
 Import `SentryModule` in your `AppModule` and resolve the `HttpErrorHandler` collision because both `RestModule` and `SentryModule` export error handler providers:
 
 ```ts
-import { ProviderBuilder } from '@ditsmod/core';
-import { restRootModule, HttpErrorHandler } from '@ditsmod/rest';
-import { SentryModule, SentryOptions } from '@ditsmod/sentry';
+import { ProviderBuilder } from '@holu/core';
+import { restRootModule, HttpErrorHandler } from '@holu/rest';
+import { SentryModule, SentryOptions } from '@holu/sentry';
 
 @restRootModule({
   imports: [SentryModule],
@@ -56,7 +56,7 @@ export class AppModule {}
 ### SentryHttpErrorHandler {#sentry-http-error-handler}
 
 Automatically captures all unexpected server exceptions (status code `>= 500` or generic uncaught errors).
-It integrates with Ditsmod `ErrorInfo` to attach custom error codes, severity levels, and private developer messages as tags or extras.
+It integrates with Holu `ErrorInfo` to attach custom error codes, severity levels, and private developer messages as tags or extras.
 Optional 4xx capturing can be enabled by setting `capture4xx: true` in `SentryOptions`.
 
 ### Performance Tracing {#performance-tracing}

@@ -1,11 +1,11 @@
-import type { Class } from '@ditsmod/core';
+import type { Class } from '@holu/core';
 import type { DataSource, DataSourceOptions, EntitySchema } from 'typeorm';
 
 export type EntityClassOrSchema<T = any> = Class<T> | EntitySchema<T>;
 
 export type TypeormModuleOptions = {
   /**
-   * Ditsmod-level datasource identifier for multi-database support.
+   * Holu-level datasource identifier for multi-database support.
    * Defaults to 'default'.
    */
   name?: string;
@@ -82,7 +82,7 @@ export type TypeormModuleAsyncOptions = {
   name?: string;
   /**
    * An `@injectable()` class implementing `TypeormOptionsFactory`.
-   * The class is instantiated by Ditsmod's DI, so its constructor
+   * The class is instantiated by Holu's DI, so its constructor
    * dependencies are resolved automatically from `providersPerApp`.
    *
    * Cannot be used together with `useFactory`.

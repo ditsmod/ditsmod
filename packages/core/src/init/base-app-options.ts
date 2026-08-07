@@ -9,7 +9,7 @@ import type { ModuleNormalizer } from '#init/module-normalizer.js';
  * to [create your logger using a `FactoryProvider`][1], where you override the logger methods to set
  * the `OutputLogLevel` based on `baseAppOptions.level`.
  *
- * [1]: https://github.com/ditsmod/ditsmod/blob/main/examples/04-logger/src/app/modules/pino/patch-logger.ts
+ * [1]: https://github.com/holu/holu/blob/main/examples/04-logger/src/app/modules/pino/patch-logger.ts
  */
 export class BaseAppOptions {
   /**

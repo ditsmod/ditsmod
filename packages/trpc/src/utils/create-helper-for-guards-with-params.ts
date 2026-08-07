@@ -1,4 +1,4 @@
-import type { Class } from '@ditsmod/core';
+import type { Class } from '@holu/core';
 import type { TrpcCanActivate } from '#interceptors/trpc-guard.js';
 
 /**
@@ -7,7 +7,7 @@ import type { TrpcCanActivate } from '#interceptors/trpc-guard.js';
  * ### An example of creating a helper
  * 
 ```ts
-import { createGuardHelper } from '@ditsmod/trpc';
+import { createGuardHelper } from '@holu/trpc';
 
 import { Permission } from './types.js';
 
@@ -17,7 +17,7 @@ export const requirePermissions = createGuardHelper<Permission>(PermissionsGuard
  * ### Usage
  * 
 ```ts
-import { trpcController, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, trpcRoute } from '@holu/trpc';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';

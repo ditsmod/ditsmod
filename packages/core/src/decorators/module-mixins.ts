@@ -158,7 +158,7 @@ export interface MixinDynamicOptionsMap {
 /**
  * Use this interface to type module mixin decorators.
  *
- * Mixin decorators allow you to add custom metadata to Ditsmod modules. This metadata is then
+ * Mixin decorators allow you to add custom metadata to Holu modules. This metadata is then
  * processed by extensions during the application initialization phase.
  *
  * Type parameters:
@@ -166,12 +166,12 @@ export interface MixinDynamicOptionsMap {
  * - `DynamicMixinOptions`: Options passed when applying the mixin dynamically.
  * - `NormalizedMixinMeta`: The normalized metadata type resulting from `ModuleMixin.normalize()`.
  *
- * For a complete guide, see the [Mixin Decorators documentation](http://ditsmod.github.io/en/deep-dive/module-mixins/).
+ * For a complete guide, see the [Mixin Decorators documentation](http://holu.github.io/en/deep-dive/module-mixins/).
  *
  * ### Example
  *
  * ```ts
- * import { makeClassDecorator, MixinDecorator } from '@ditsmod/core';
+ * import { makeClassDecorator, MixinDecorator } from '@holu/core';
  *
  * export const myMixin: MixinDecorator<StaticOpts, DynamicOpts, NormalizedMeta> = makeClassDecorator(getModuleMixin);
  * ```

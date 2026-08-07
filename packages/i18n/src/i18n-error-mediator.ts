@@ -1,4 +1,4 @@
-import { CustomError } from '@ditsmod/core/errors';
+import { CustomError } from '@holu/core/errors';
 import type { ISO639 } from './types/iso-639.js';
 
 export const i18nErrors = {

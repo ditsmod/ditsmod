@@ -1,8 +1,8 @@
 import { jest } from '@jest/globals';
 
-import { Logger, Injector, HttpStatus } from '@ditsmod/core';
-import { CustomError } from '@ditsmod/core/errors';
-import type { RawResponse } from '@ditsmod/rest';
+import { Logger, Injector, HttpStatus } from '@holu/core';
+import { CustomError } from '@holu/core/errors';
+import type { RawResponse } from '@holu/rest';
 
 import type { SentryHttpErrorHandler } from './sentry.http-error-handler.js';
 
@@ -22,7 +22,7 @@ jest.unstable_mockModule('@sentry/node', () => {
 // Dynamically import code under test and other modules using the mock
 const { SentryHttpErrorHandler: ErrorHandler } = await import('./sentry.http-error-handler.js');
 const Sentry = (await import('@sentry/node')) as any;
-const { RequestContext } = await import('@ditsmod/rest');
+const { RequestContext } = await import('@holu/rest');
 const { SentryOptions } = await import('./types.js');
 
 describe('SentryHttpErrorHandler', () => {
@@ -62,7 +62,7 @@ describe('SentryHttpErrorHandler', () => {
     expect(Sentry.captureException).toHaveBeenCalledWith(err, {
       mechanism: {
         handled: false,
-        type: 'auto.http.ditsmod.error_handler',
+        type: 'auto.http.holu.error_handler',
       },
     });
     expect(rawRes.end).toHaveBeenCalled();

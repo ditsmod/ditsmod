@@ -1,12 +1,12 @@
 {
-  "name": "@ditsmod/i18n",
+  "name": "@holu/i18n",
   "type": "module",
   "version": "3.0.0-next.18",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ditsmod/ditsmod.git"
+    "url": "git+https://github.com/holu/holu.git"
   },
-  "description": "Ditsmod module to integration with i18n (internalization)",
+  "description": "Holu module to integration with i18n (internalization)",
   "module": "dist/index.js",
   "scripts": {
     "test": "yarn build-test && yarn esm-jest",
@@ -33,13 +33,13 @@
     }
   },
   "keywords": [
-    "ditsmod"
+    "holu"
   ],
   "author": "Костя Третяк",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-next.18",
-    "@ditsmod/rest": "^3.0.0-next.18"
+    "@holu/core": "^3.0.0-next.18",
+    "@holu/rest": "^3.0.0-next.18"
   },
   "devDependencies": {
     "jest": "^30.4.2",

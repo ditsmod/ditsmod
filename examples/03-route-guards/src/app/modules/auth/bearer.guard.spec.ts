@@ -1,5 +1,5 @@
-import { Context } from '@ditsmod/core';
-import type { RequestContext } from '@ditsmod/rest';
+import { Context } from '@holu/core';
+import type { RequestContext } from '@holu/rest';
 
 import { RequestScopedBearerGuard } from './bearer.guard.js';
 import { AuthService } from './auth.service.js';

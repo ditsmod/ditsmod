@@ -1,4 +1,4 @@
-import { createInjectionSymbol } from '@ditsmod/core';
+import { createInjectionSymbol } from '@holu/core';
 
 export const enum Permission {
   canActivateSomeResource = 1,

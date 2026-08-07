@@ -1,4 +1,4 @@
-import { rootModule } from '@ditsmod/core';
+import { rootModule } from '@holu/core';
 
 import { Controller1 } from './controllers.js';
 import { ServicePerApp, ServicePerMod, ServicePerReq, ServicePerRou } from './services.js';

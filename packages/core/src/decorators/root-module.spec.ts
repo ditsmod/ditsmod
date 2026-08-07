@@ -9,7 +9,7 @@ describe('RootModule decorator', () => {
     const metadata = Reflector.getClassLevelMeta(Module1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].decorator).toBe(rootModule);
-    expect(metadata[0].declaredInDir).toContain('ditsmod/packages/core/dist/decorators');
+    expect(metadata[0].declaredInDir).toContain('holu/packages/core/dist/decorators');
   });
 
   it('decorator with some data', () => {

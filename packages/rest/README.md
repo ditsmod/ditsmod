@@ -1,3 +1,3 @@
-## @ditsmod/rest
+## @holu/rest
 
-Module for [Ditsmod](https://ditsmod.github.io/en/) applications.
+Module for [Holu](https://holu.github.io/en/) applications.

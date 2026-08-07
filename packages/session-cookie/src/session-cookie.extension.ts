@@ -1,5 +1,5 @@
-import { Extension, ExtensionManager, injectable } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS, RestRouteExtension } from '@ditsmod/rest';
+import { Extension, ExtensionManager, injectable } from '@holu/core';
+import { HTTP_INTERCEPTORS, RestRouteExtension } from '@holu/rest';
 
 import { SessionCookieInterceptor } from './session-cookie.interceptor.js';
 

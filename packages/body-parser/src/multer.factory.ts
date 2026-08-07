@@ -1,4 +1,4 @@
-import { injectable, factoryMethod, optional } from '@ditsmod/core';
+import { injectable, factoryMethod, optional } from '@holu/core';
 import { Multer } from '@ts-stack/multer';
 
 import { MulterExtendedOptions } from './multer-extended-options.js';

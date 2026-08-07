@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "ditsmod start",
+    "start": "holu start",
     "clean": "rm -r dist*",
     "test": "yarn build-test && yarn esm-jest",
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps $(yarn bin jest)",
@@ -17,7 +17,7 @@
     "#app/*": "./dist/app/*"
   },
   "devDependencies": {
-    "@ditsmod/cli": "^3.0.0-next.17",
+    "@holu/cli": "^3.0.0-next.17",
     "jest": "^30.4.2",
     "mysql2": "^3.23.1",
     "typeorm": "^1.1.0",

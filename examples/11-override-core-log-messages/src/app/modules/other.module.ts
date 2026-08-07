@@ -1,5 +1,5 @@
-import { ProviderBuilder } from '@ditsmod/core';
-import { restModule } from '@ditsmod/rest';
+import { ProviderBuilder } from '@holu/core';
+import { restModule } from '@holu/rest';
 
 import { SomeModule } from './some.module.js';
 import { SomeLogMediator } from './some/some-log-mediator.js';

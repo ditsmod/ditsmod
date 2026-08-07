@@ -1,5 +1,5 @@
-import { featureModule, DynamicModule, ProviderBuilder } from '@ditsmod/core';
-import { mixinRest, DispatcherExtension, RestRouteExtension } from '@ditsmod/rest';
+import { featureModule, DynamicModule, ProviderBuilder } from '@holu/core';
+import { mixinRest, DispatcherExtension, RestRouteExtension } from '@holu/rest';
 import { CorsOptions } from '@ts-stack/cors';
 
 import { CorsExtension } from './cors.extension.js';

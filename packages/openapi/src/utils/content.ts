@@ -1,5 +1,5 @@
-import type { AnyObj , Class } from '@ditsmod/core';
-import { Reflector } from '@ditsmod/core';
+import type { AnyObj , Class } from '@holu/core';
+import { Reflector } from '@holu/core';
 import type { SchemaObject, SchemaObjectType, XEncodingObject, XMediaTypeObject, XSchemaObject } from '@ts-stack/openapi-spec';
 
 import { REQUIRED } from '#constants';

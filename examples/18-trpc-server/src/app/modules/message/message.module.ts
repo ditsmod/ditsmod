@@ -1,5 +1,5 @@
-import { RouterOf } from '@ditsmod/trpc/client';
-import { trpcModule, ModuleWithTrpcRoutes } from '@ditsmod/trpc';
+import { RouterOf } from '@holu/trpc/client';
+import { trpcModule, ModuleWithTrpcRoutes } from '@holu/trpc';
 
 import { DbModule } from '#db/db.module.js';
 import { MessageController } from '#message/message.controller.js';

@@ -1,6 +1,6 @@
 import type { XOasObject } from '@ts-stack/openapi-spec';
 import type { SwaggerOAuthOptions } from '../swagger-ui/o-auth-options.js';
-import { createInjectionSymbol } from '@ditsmod/core';
+import { createInjectionSymbol } from '@holu/core';
 
 /**
  * Internaly used options.

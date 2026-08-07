@@ -1,6 +1,6 @@
-import type { ModRefId, Provider } from '@ditsmod/core';
-import { NormalizedModuleMeta, ProviderBuilder } from '@ditsmod/core';
-import { RestMixinMeta, mixinRest } from '@ditsmod/rest';
+import type { ModRefId, Provider } from '@holu/core';
+import { NormalizedModuleMeta, ProviderBuilder } from '@holu/core';
+import { RestMixinMeta, mixinRest } from '@holu/rest';
 
 import { TestAppInitializer } from '#app/test-app-initializer.js';
 

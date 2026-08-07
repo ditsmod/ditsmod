@@ -1,5 +1,5 @@
 import * as http from 'http';
-import { HttpMethod, injectable, Injector } from '@ditsmod/core';
+import { HttpMethod, injectable, Injector } from '@holu/core';
 
 import { Tree } from './tree.js';
 import { MethodTree, AnyFn } from '../types/types.js';

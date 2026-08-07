@@ -1,5 +1,5 @@
-import { RouterOf } from '@ditsmod/trpc/client';
-import { ModuleWithTrpcRoutes, trpcModule } from '@ditsmod/trpc';
+import { RouterOf } from '@holu/trpc/client';
+import { ModuleWithTrpcRoutes, trpcModule } from '@holu/trpc';
 
 import { AuthController } from '#auth/auth.controller.js';
 import { AuthService } from './auth.service.js';

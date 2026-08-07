@@ -1,5 +1,5 @@
-import { CanActivate, NormalizedGuard, RequestContext } from '@ditsmod/rest';
-import { PerAppService, HttpStatus, Injector } from '@ditsmod/core';
+import { CanActivate, NormalizedGuard, RequestContext } from '@holu/rest';
+import { PerAppService, HttpStatus, Injector } from '@holu/core';
 import {
   ComponentsObject,
   OperationObject,

@@ -1,4 +1,4 @@
-import { ContextModule, featureModule } from '@ditsmod/core';
+import { ContextModule, featureModule } from '@holu/core';
 
 import { TrpcRouteExtension } from './extensions/trpc-route.extension.js';
 import { TrpcRequestDispatcherExtension } from './extensions/trpc-request-dispatcher.extension.js';

@@ -2,25 +2,25 @@
 sidebar_position: 1
 ---
 
-# @ditsmod/trpc
+# @holu/trpc
 
-Модуль `@ditsmod/trpc` забезпечує інтеграцію з [@trpc/server][1]. Готовий приклад застосунку з `@ditsmod/trpc` можна [проглянути у репозиторії Ditsmod][2]. Там ви можете знайти приклади застосування ґардів та інтерсепторів.
+Модуль `@holu/trpc` забезпечує інтеграцію з [@trpc/server][1]. Готовий приклад застосунку з `@holu/trpc` можна [проглянути у репозиторії Holu][2]. Там ви можете знайти приклади застосування ґардів та інтерсепторів.
 
 ## Швидкий старт {#quick-start}
 
 Ви також можете скористатись моно-репозиторієм, в якому є мінімальний код для швидкого старту:
 
 ```bash
-git clone --depth 1 https://github.com/ditsmod/trpc-monorepo-starter.git
+git clone --depth 1 https://github.com/holu/trpc-monorepo-starter.git
 ```
 
 ## Як формуються типи для клієнта на рівні модуля {#how-client-types-are-formed-at-the-module-level}
 
-Ditsmod намагається бути прозорим для `@trpc/client` надаючи можливість TypeScript виводити типи зі статичного коду, без необхідності додаткової компіляції для клієнта. Кожен модуль, що надає конфігурацію для tRPC-роутера, повинен це робити у методі `getRouterConfig()`:
+Holu намагається бути прозорим для `@trpc/client` надаючи можливість TypeScript виводити типи зі статичного коду, без необхідності додаткової компіляції для клієнта. Кожен модуль, що надає конфігурацію для tRPC-роутера, повинен це робити у методі `getRouterConfig()`:
 
 ```ts {8,16-21}
-import { ModuleWithTrpcRoutes, trpcRootModule } from '@ditsmod/trpc';
-import { RouterOf } from '@ditsmod/trpc/client';
+import { ModuleWithTrpcRoutes, trpcRootModule } from '@holu/trpc';
+import { RouterOf } from '@holu/trpc/client';
 
 import { CommentModule } from './comments/comment.module.js';
 import { PostController } from './post.controller.js';
@@ -56,8 +56,8 @@ export class PostModule implements ModuleWithTrpcRoutes {
 Також ви можете централізовано виводити єдиний тип для змердженого tRPC-роутера на рівні застосунку, але це рекомендується робити лише у випадку, якщо у вас немає планів створювати складні моделі, аналізуючи які TypeScript буде "помирати". Щоб централізовано вивести єдиний роутер на увесь застосунок, треба скористатись `AppRouterHelper`:
 
 ```ts {8-9,12}
-import { trpcRootModule, type SetAppRouterOptions, type TrpcCreateOptions, type TrpcRootModule } from '@ditsmod/trpc';
-import type { AppRouterHelper } from '@ditsmod/trpc/client';
+import { trpcRootModule, type SetAppRouterOptions, type TrpcCreateOptions, type TrpcRootModule } from '@holu/trpc';
+import type { AppRouterHelper } from '@holu/trpc/client';
 
 import { PostModule } from '#post/post.module.js';
 import { AuthModule } from '#auth/auth.module.js';
@@ -86,14 +86,14 @@ export class AppModule implements TrpcRootModule {
 
 Зверніть увагу, що у `AppRouterHelper` передається не просто масив імпортованих модулів, а цей масив ще й позначено за допомогою `as const` - це важлива умова, без якої `AppRouterHelper` працюватиме некоректно.
 
-Також зверніть увагу на інтерфейс `TrpcRootModule`, який вимагає обов'язкового впровадження методу `setAppRouterOptions()`, також опціонально можна імплементувати `setTrpcCreateOptions()`. Коли ваш метод `setAppRouterOptions()` повертає конфіг для роутера, ви не зможете передати опцію `createContext`, оскільки Ditsmod автоматично створює контекст у вигляді об'єкту `{ req, res }` щоб гарантувати доступність цих змінних в контексті. Звичайно ж, в процедурах ви можете додавати будь-які інші властивості контекста.
+Також зверніть увагу на інтерфейс `TrpcRootModule`, який вимагає обов'язкового впровадження методу `setAppRouterOptions()`, також опціонально можна імплементувати `setTrpcCreateOptions()`. Коли ваш метод `setAppRouterOptions()` повертає конфіг для роутера, ви не зможете передати опцію `createContext`, оскільки Holu автоматично створює контекст у вигляді об'єкту `{ req, res }` щоб гарантувати доступність цих змінних в контексті. Звичайно ж, в процедурах ви можете додавати будь-які інші властивості контекста.
 
 ## Як формуються типи для клієнта на рівні метода контролера {#how-client-types-are-formed-at-the-controller-method-level}
 
 Кожен метод контролера, що створює роут, повинен мати декоратор `trpcRoute` та повинен поверти tRPC-процедуру:
 
 ```ts {8-10}
-import { trpcController, TrpcRouteService, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, TrpcRouteService, trpcRoute } from '@holu/trpc';
 import { z } from 'zod';
 
 @trpcController()
@@ -124,7 +124,7 @@ export class PostController {
 У випадку, якщо вам потрібно буде використовувати ґарди чи інтерсептори, вам достатньо їх додати відповідно у перший та другий масив у декораторі `trpcRoute`:
 
 ```ts {9}
-import { trpcController, TrpcRouteService, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, TrpcRouteService, trpcRoute } from '@holu/trpc';
 import { z } from 'zod';
 
 import { BearerGuard } from '../auth/bearer.guard.js';
@@ -185,8 +185,8 @@ export class PostController {
 ### Крок перший {#step-one}
 
 ```ts
-import { injectable, factoryMethod } from '@ditsmod/core';
-import { opts, TrpcOpts } from '@ditsmod/trpc';
+import { injectable, factoryMethod } from '@holu/core';
+import { opts, TrpcOpts } from '@holu/trpc';
 
 import { DbService } from '#db/db.service.js';
 import { InputPost } from '#models/post.js';
@@ -202,15 +202,15 @@ export class PostService {
 }
 ```
 
-Зверніть увагу, що на рівні методу даний провайдер має декоратор, причому не важливо який саме, головне, щоб він створювався за допомогою відповідних Ditsmod-хелперів.
+Зверніть увагу, що на рівні методу даний провайдер має декоратор, причому не важливо який саме, головне, щоб він створювався за допомогою відповідних Holu-хелперів.
 
 ### Крок другий {#step-two}
 
 Найпростіше передати `ClassFactoryProvider` до DI - за допомогою хелпера `ProviderBuilder`:
 
 ```ts {6}
-import { trpcController } from '@ditsmod/trpc';
-import { ProviderBuilder } from '@ditsmod/core';
+import { trpcController } from '@holu/trpc';
+import { ProviderBuilder } from '@holu/core';
 import { PostService } from '#post/post.service.js';
 // ...
 @trpcController({
@@ -238,7 +238,7 @@ export class PostController {
 Після того, як провайдери передані до DI, їх можна використовувати у наступній формі:
 
 ```ts {7}
-import { TrpcRouteService, trpcRoute } from '@ditsmod/trpc';
+import { TrpcRouteService, trpcRoute } from '@holu/trpc';
 import { PostService } from '#post/post.service.js';
 //...
 export class PostController {
@@ -252,6 +252,6 @@ export class PostController {
 Тобто, метод `routeService.diQuery()` приймає метод сервіса, що працюватиме на рівні HTTP-запиту, а DI у реєстрі шукає провайдера з таким токеном, і повертає його значення. В такому разі, під час кожного запиту буде створюватись інстанс `PostService` та викликатись його метод `method1`.
 
 [1]: https://trpc.io/docs/quickstart
-[2]: https://github.com/ditsmod/ditsmod/tree/main/examples/18-trpc-server
+[2]: https://github.com/holu/holu/tree/main/examples/18-trpc-server
 [3]: https://github.com/trpc/trpc/discussions/2448
 [4]: /basic-components/dependency-injection/#injector-and-providers

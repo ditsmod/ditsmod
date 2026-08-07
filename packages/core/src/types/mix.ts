@@ -10,7 +10,7 @@ import type { ResolvedProvider } from '#di/top/resolved-provider.js';
  * by plugins using the `$use()` method.
  * 
 ```ts
-import { Class, UnionToIntersection } from '@ditsmod/core';
+import { Class, UnionToIntersection } from '@holu/core';
 
 class Base {
   $use<T extends Class<Base>[]>(...Plugins: T) {

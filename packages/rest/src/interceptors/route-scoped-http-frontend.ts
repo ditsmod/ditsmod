@@ -1,6 +1,6 @@
 import { parse } from 'node:querystring';
-import { AnyObj, HttpMethod, injectable, HttpStatus } from '@ditsmod/core';
-import { CustomError } from '@ditsmod/core/errors';
+import { AnyObj, HttpMethod, injectable, HttpStatus } from '@holu/core';
+import { CustomError } from '@holu/core/errors';
 
 import { HttpFrontend, HttpHandler } from './tokens-and-types.js';
 import type { RouteContext } from '#services/route-context.js';

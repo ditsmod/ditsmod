@@ -1,4 +1,4 @@
-import { Provider, injectable, Class } from '@ditsmod/core';
+import { Provider, injectable, Class } from '@holu/core';
 
 import { I18nLogMediator } from './i18n-log-mediator.js';
 import { Dictionary, Translations } from './types/mix.js';

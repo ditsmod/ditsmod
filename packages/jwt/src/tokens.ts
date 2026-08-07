@@ -1,4 +1,4 @@
-import { createInjectionSymbol } from '@ditsmod/core';
+import { createInjectionSymbol } from '@holu/core';
 
 /**
  * This class is used ad DI token to get jwt payload.

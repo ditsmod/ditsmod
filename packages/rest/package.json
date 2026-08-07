@@ -1,10 +1,10 @@
 {
-  "name": "@ditsmod/rest",
+  "name": "@holu/rest",
   "type": "module",
   "version": "3.0.0-next.18",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
-  "homepage": "https://ditsmod.github.io/en/",
-  "description": "Rest module for Ditsmod applications",
+  "homepage": "https://holu.github.io/en/",
+  "description": "Rest module for Holu applications",
   "module": "dist/index.js",
   "exports": {
     "./package.json": {
@@ -37,7 +37,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ditsmod/ditsmod.git"
+    "url": "git+https://github.com/holu/holu.git"
   },
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
@@ -51,7 +51,7 @@
     "rebuild": "cd ../.. && yarn clean && cd - && yarn build"
   },
   "keywords": [
-    "ditsmod",
+    "holu",
     "router",
     "rest",
     "typescript"
@@ -64,7 +64,7 @@
     "typescript-7": "npm:typescript@^7.0.2"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-next.18"
+    "@holu/core": "^3.0.0-next.18"
   },
   "gitHead": "eaf8f20b4e75e38c7a51fd1c3174b691cea756fa",
   "publishConfig": {

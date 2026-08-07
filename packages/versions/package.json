@@ -1,13 +1,13 @@
 {
   "private": true,
-  "name": "@ditsmod/versions",
+  "name": "@holu/versions",
   "type": "module",
   "version": "3.0.0-next.18",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ditsmod/ditsmod.git"
+    "url": "git+https://github.com/holu/holu.git"
   },
-  "description": "Ditsmod module to support API versions",
+  "description": "Holu module to support API versions",
   "module": "dist/index.js",
   "exports": {
     "./package.json": {
@@ -25,13 +25,13 @@
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps ../../scripts/run-jest.mjs"
   },
   "keywords": [
-    "ditsmod"
+    "holu"
   ],
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-next.18",
-    "@ditsmod/rest": "^3.0.0-next.18"
+    "@holu/core": "^3.0.0-next.18",
+    "@holu/rest": "^3.0.0-next.18"
   },
   "devDependencies": {
     "jest": "^30.4.2",

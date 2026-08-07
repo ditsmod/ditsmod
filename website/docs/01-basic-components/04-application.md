@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # Застосунок
 
-Ditsmod дозволяє писати застосунки з різними архітектурними стилями:
+Holu дозволяє писати застосунки з різними архітектурними стилями:
 
 - [REST][1]
 - [REST testing][2]
@@ -14,12 +14,12 @@ Ditsmod дозволяє писати застосунки з різними а�
 - **Microservices**
 - ...
 
-[Ditsmod надає API][4], що дозволяє додати підтримку необхідної архітектури. Такі пакети - більше, ніж звичайні модулі фіч, оскільки вони мають ще й **клас застосунку** та **клас ініціалізатора застосунку**, в яких прописано конфіг застосунку, послідовність збірки застосунку і т.д. Як правило, кожен із таких пакетів має свої особливості щодо метаданих їхніх модулів. Окрім цього, якщо вебсервер застосунку має свої особливості роботи для різних **Runtimes** (Node, Bun, Deno і т.п.), Ditsmod дозволяє це враховувати саме на етапі ініціалізації класу застосунку.
+[Holu надає API][4], що дозволяє додати підтримку необхідної архітектури. Такі пакети - більше, ніж звичайні модулі фіч, оскільки вони мають ще й **клас застосунку** та **клас ініціалізатора застосунку**, в яких прописано конфіг застосунку, послідовність збірки застосунку і т.д. Як правило, кожен із таких пакетів має свої особливості щодо метаданих їхніх модулів. Окрім цього, якщо вебсервер застосунку має свої особливості роботи для різних **Runtimes** (Node, Bun, Deno і т.п.), Holu дозволяє це враховувати саме на етапі ініціалізації класу застосунку.
 
 Інстанс **класу застосунку**, як правило, створюється у файлі `main.ts`, і з нього починається робота застосунку. Наприклад, наступним чином створюється інстанс класу REST-застосунку:
 
 ```ts {4} title="src/main.ts"
-import { RestApplication } from '@ditsmod/rest';
+import { RestApplication } from '@holu/rest';
 import { AppModule } from './app/app.module.js';
 
 const app = await RestApplication.create(AppModule);
@@ -28,14 +28,14 @@ app.server.listen(3000, '0.0.0.0');
 
 ## Граційне завершення роботи {#graceful-shutdown}
 
-Ditsmod підтримує граційне завершення роботи (Graceful Shutdown), що дозволяє застосунку припинити прийом нових HTTP-запитів, дочекатися завершення обробки активних запитів, виконати завдання з очищення ресурсів у синглтон-сервісах і вийти без втрати даних.
+Holu підтримує граційне завершення роботи (Graceful Shutdown), що дозволяє застосунку припинити прийом нових HTTP-запитів, дочекатися завершення обробки активних запитів, виконати завдання з очищення ресурсів у синглтон-сервісах і вийти без втрати даних.
 
 ### Увімкнення перехоплення сигналів {#enabling-shutdown-hooks}
 
 Щоб активувати граційне завершення роботи, викличте метод `enableShutdownHooks()` на інстансі застосунку. Ви можете передати туди необов'язковий масив системних сигналів (наприклад, `SIGTERM`, `SIGINT`).
 
 ```ts {5} title="src/main.ts"
-import { RestApplication } from '@ditsmod/rest';
+import { RestApplication } from '@holu/rest';
 import { AppModule } from './app/app.module.js';
 
 const app = await RestApplication.create(AppModule);
@@ -55,7 +55,7 @@ app.server.listen(3000, '0.0.0.0');
 Обидва хуки отримують як параметр системний сигнал, що спричинив завершення роботи, і можуть повертати `void` або `Promise<void>`.
 
 ```ts title="src/app/my.service.ts"
-import { BeforeShutdown, OnShutdown, injectable } from '@ditsmod/core';
+import { BeforeShutdown, OnShutdown, injectable } from '@holu/core';
 
 @injectable()
 export class MyService implements BeforeShutdown, OnShutdown {
@@ -72,7 +72,7 @@ export class MyService implements BeforeShutdown, OnShutdown {
 
 ### Очищення з'єднань (REST) {#connection-draining}
 
-У пакеті `@ditsmod/rest` при отриманні сигналу завершення:
+У пакеті `@holu/rest` при отриманні сигналу завершення:
 1. Вебсервер негайно перестає приймати нові TCP-з'єднання (`server.close()`).
 2. Усі неактивні keep-alive з'єднання відразу закриваються.
 3. Активним з'єднанням дається час на завершення обробки поточних запитів.
@@ -81,8 +81,8 @@ export class MyService implements BeforeShutdown, OnShutdown {
 Ви можете налаштувати тайм-аут завершення з'єднань `shutdownTimeout` (у мілісекундах) через `AppOptions` у вашому кореневому модулі:
 
 ```ts
-import { AppOptions } from '@ditsmod/core';
-import { RestModule } from '@ditsmod/rest';
+import { AppOptions } from '@holu/core';
+import { RestModule } from '@holu/rest';
 
 @rootModule({
   imports: [RestModule],

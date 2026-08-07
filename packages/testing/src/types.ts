@@ -6,7 +6,7 @@ import type {
   Extension,
   Class,
   ForwardRefFn,
-} from '@ditsmod/core';
+} from '@holu/core';
 
 import type { TestRestApplication } from './test-application.js';
 

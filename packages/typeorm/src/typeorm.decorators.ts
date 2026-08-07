@@ -1,4 +1,4 @@
-import { inject } from '@ditsmod/core';
+import { inject } from '@holu/core';
 
 import type { EntityClassOrSchema } from './types.js';
 import { getRepositoryToken, getDataSourceToken, getEntityManagerToken } from './typeorm.utils.js';

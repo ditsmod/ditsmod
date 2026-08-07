@@ -1,4 +1,4 @@
-import type { Class, ResolvedGuard, ModuleScopedResolvedGuard, ResolvedProvider } from '@ditsmod/core';
+import type { Class, ResolvedGuard, ModuleScopedResolvedGuard, ResolvedProvider } from '@holu/core';
 import type { BaseRequestContext } from '#services/base-request-context.js';
 
 /**

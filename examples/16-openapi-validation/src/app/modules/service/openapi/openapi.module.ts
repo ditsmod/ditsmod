@@ -1,4 +1,4 @@
-import { OpenapiModule, OasOptions } from '@ditsmod/openapi';
+import { OpenapiModule, OasOptions } from '@holu/openapi';
 
 import { oasObject } from './oas-object.js';
 import { oasOptions } from './oas-options.js';

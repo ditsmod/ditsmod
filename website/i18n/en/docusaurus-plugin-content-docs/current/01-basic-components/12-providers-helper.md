@@ -7,8 +7,8 @@ sidebar_position: 12
 This class simplifies the addition of providers to DI while simultaneously controlling their types. Since this class implements the so-called [Iteration protocols][1], it facilitates the conversion of itself into an array (note the spread operator):
 
 ```ts {9}
-import { ProviderBuilder } from '@ditsmod/core';
-import { restModule } from '@ditsmod/rest';
+import { ProviderBuilder } from '@holu/core';
+import { restModule } from '@holu/rest';
 // ...
 @restModule({
   // ...
@@ -23,11 +23,11 @@ import { restModule } from '@ditsmod/rest';
 export class SomeModule {}
 ```
 
-Starting from v2.55, Ditsmod allows passing an instance of `ProviderBuilder` directly into the `providersPer*` properties of the module or controller metadata:
+Starting from v2.55, Holu allows passing an instance of `ProviderBuilder` directly into the `providersPer*` properties of the module or controller metadata:
 
 ```ts
-import { ProviderBuilder } from '@ditsmod/core';
-import { restModule } from '@ditsmod/rest';
+import { ProviderBuilder } from '@holu/core';
+import { restModule } from '@holu/rest';
 // ...
 @restModule({
   // ...
@@ -45,8 +45,8 @@ The `providers.passThrough()` method allows providers to be passed without type 
 In addition, `ProviderBuilder` has a special method `$if()`, which allows providers to be passed only if it receives a truthy value:
 
 ```ts {8}
-import { ProviderBuilder } from '@ditsmod/core';
-import { restModule } from '@ditsmod/rest';
+import { ProviderBuilder } from '@holu/core';
+import { restModule } from '@holu/rest';
 // ...
 @restModule({
   // ...

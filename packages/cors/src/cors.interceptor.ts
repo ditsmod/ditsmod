@@ -1,5 +1,5 @@
-import { injectable } from '@ditsmod/core';
-import { RequestContext, HttpHandler, HttpInterceptor } from '@ditsmod/rest';
+import { injectable } from '@holu/core';
+import { RequestContext, HttpHandler, HttpInterceptor } from '@holu/rest';
 import { cors, CorsOptions } from '@ts-stack/cors';
 
 @injectable()

@@ -1,4 +1,4 @@
-import { inject, injectable, optional } from '@ditsmod/core';
+import { inject, injectable, optional } from '@holu/core';
 
 import { TrpcHttpBackend, TrpcHttpInterceptor, TrpcHttpHandler, TrpcHttpInterceptorHandler } from './tokens-and-types.js';
 import { TRPC_HTTP_INTERCEPTORS } from '#types/types.js';

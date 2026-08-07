@@ -1,4 +1,4 @@
-import type { ClassProvider } from '@ditsmod/core';
+import type { ClassProvider } from '@holu/core';
 import { AuthjsModule } from './authjs.module.js';
 import { AuthjsConfig } from './authjs.config.js';
 

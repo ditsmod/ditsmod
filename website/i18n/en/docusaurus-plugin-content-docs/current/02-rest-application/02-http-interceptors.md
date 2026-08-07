@@ -22,13 +22,13 @@ Interceptors can be centrally enabled or disabled without modifying the code of 
 
 HTTP request processing has the following workflow:
 
-1. Ditsmod creates an instance of [RequestDispatcher][7] at the application level.
+1. Holu creates an instance of [RequestDispatcher][7] at the application level.
 2. `RequestDispatcher` uses the router to search for the request handler according to the URI.
 3. If the request handler is not found, `RequestDispatcher` issues a 404 error.
-4. If a request handler is found, Ditsmod creates a provider instance with the [HttpFrontend][2] token at the request level, places it first in the queue of interceptors, and automatically calls it. By default, this interceptor is responsible for setting values for providers with `QUERY_PARAMS` and `PATH_PARAMS` tokens.
+4. If a request handler is found, Holu creates a provider instance with the [HttpFrontend][2] token at the request level, places it first in the queue of interceptors, and automatically calls it. By default, this interceptor is responsible for setting values for providers with `QUERY_PARAMS` and `PATH_PARAMS` tokens.
 5. If there are guards in the current route, then by default `RequestScopedGuardedInterceptor` is run immediately after `HttpFrontend`.
 6. Other interceptors may be launched next, depending on whether the previous interceptor in the queue will launch them.
-7. If all interceptors have worked, Ditsmod starts [HttpBackend][3], which is instantiated at the request level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
+7. If all interceptors have worked, Holu starts [HttpBackend][3], which is instantiated at the request level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
 
 So, the approximate order of processing the request is as follows:
 
@@ -46,21 +46,21 @@ In addition, because `RequestDispatcher`, `HttpFrontend`, `RequestScopedGuardedI
 
 A route-scoped interceptor operates very similarly to an request-scoped interceptor but does not utilize the request-level injector. The workflow involving it differs at points 4 and 7, as the instance of a route-scoped interceptor is created at the route level:
 
-1. Ditsmod creates an instance of [RequestDispatcher][7] at the application level.
+1. Holu creates an instance of [RequestDispatcher][7] at the application level.
 2. `RequestDispatcher` uses the router to search for the request handler according to the URI.
 3. If the request handler is not found, `RequestDispatcher` issues a 404 error.
-4. If a request handler is found, Ditsmod uses a provider instance with the [HttpFrontend][2] token at the route level, places it first in the interceptor queue, and automatically invokes it. By default, this interceptor is responsible for setting `pathParams` and `queryParams` values for `RequestContext`.
+4. If a request handler is found, Holu uses a provider instance with the [HttpFrontend][2] token at the route level, places it first in the interceptor queue, and automatically invokes it. By default, this interceptor is responsible for setting `pathParams` and `queryParams` values for `RequestContext`.
 5. If there are guards in the current route, then by default `RouteScopedGuardedInterceptor` is run immediately after `HttpFrontend`.
 6. Other interceptors may be launched next, depending on whether the previous interceptor in the queue will launch them.
-7. If all interceptors have worked, Ditsmod starts [HttpBackend][3], the instance of which is used at the route level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
+7. If all interceptors have worked, Holu starts [HttpBackend][3], the instance of which is used at the route level. By default, `HttpBackend` runs directly the controller method responsible for processing the current request.
 
 ## Creating an interceptor {#creating-an-interceptor}
 
 Each interceptor should be a class implementing the [HttpInterceptor][1] interface and annotated with the `injectable` decorator:
 
 ```ts
-import { injectable } from '@ditsmod/core';
-import { RequestContext, HttpHandler, HttpInterceptor } from '@ditsmod/rest';
+import { injectable } from '@holu/core';
+import { RequestContext, HttpHandler, HttpInterceptor } from '@holu/rest';
 
 @injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
@@ -77,7 +77,7 @@ As you can see, the `intercept()` method has two parameters: the first one recei
 The interceptor for request-scoped mode is passed to the injector at the request level using [multi-providers][107] with the `HTTP_INTERCEPTORS` token:
 
 ```ts
-import { HTTP_INTERCEPTORS, restModule } from '@ditsmod/rest';
+import { HTTP_INTERCEPTORS, restModule } from '@holu/rest';
 import { MyHttpInterceptor } from './my-http-interceptor.js';
 
 @restModule({
@@ -90,7 +90,7 @@ export class SomeModule {}
 Passing an interceptor for route-scoped mode happens in exactly the same way, but at the route, module, or application level:
 
 ```ts
-import { HTTP_INTERCEPTORS, restModule } from '@ditsmod/rest';
+import { HTTP_INTERCEPTORS, restModule } from '@holu/rest';
 import { MyHttpInterceptor } from './my-http-interceptor.js';
 
 @restModule({
@@ -104,13 +104,13 @@ In this case, the interceptor is passed at the application level, but keep in mi
 
 In this case, the interceptors are passed in the module's metadata. They can also be passed in the controller metadata. This means that interceptors can either work for all controllers in the module without exception, or only for a specific controller. If you only need to add interceptors to individual routes within controllers, you can do so with [extensions][108] (this is how [interceptors for parsing the request body][9] are added).
 
-[1]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/interceptors/tokens-and-types.ts#L14-L16
-[2]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/interceptors/default-http-frontend.ts
-[3]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/interceptors/default-http-backend.ts
+[1]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/interceptors/tokens-and-types.ts#L14-L16
+[2]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/interceptors/default-http-frontend.ts
+[3]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/interceptors/default-http-backend.ts
 [5]: https://expressjs.com/en/guide/writing-middleware.html
-[7]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/services/request-dispatcher.ts
-[8]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/types/route-data.ts
-[9]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L54
+[7]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/services/request-dispatcher.ts
+[8]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/types/route-data.ts
+[9]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L54
 
 [106]: /basic-components/dependency-injection
 [107]: /basic-components/dependency-injection#multi-providers

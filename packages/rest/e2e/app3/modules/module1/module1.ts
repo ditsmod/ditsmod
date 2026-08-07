@@ -1,4 +1,4 @@
-import { restRootModule } from '@ditsmod/rest';
+import { restRootModule } from '@holu/rest';
 
 import { Controller1, Controller2 } from './controllers.js';
 import { Guard, GuardPerRou } from '../../guards.js';

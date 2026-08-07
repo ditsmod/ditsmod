@@ -1,6 +1,6 @@
 import { Cookies } from '@ts-stack/cookies';
-import { AnyFn, ctx, injectable, optional } from '@ditsmod/core';
-import { RawRequest, RawResponse, RAW_REQ, RAW_RES } from '@ditsmod/rest';
+import { AnyFn, ctx, injectable, optional } from '@holu/core';
+import { RawRequest, RawResponse, RAW_REQ, RAW_RES } from '@holu/rest';
 
 import { SessionCookieOptions } from './types.js';
 

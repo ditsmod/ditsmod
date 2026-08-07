@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 
-import type { ExtensionManager, Injector } from '@ditsmod/core';
-import { RestRouteExtension } from '@ditsmod/rest';
+import type { ExtensionManager, Injector } from '@holu/core';
+import { RestRouteExtension } from '@holu/rest';
 import { AuthjsExtension } from './authjs.extension.js';
 import type { AuthjsLogMediator } from './authjs-log-mediator.js';
 import { AuthjsInterceptor } from './authjs.interceptor.js';

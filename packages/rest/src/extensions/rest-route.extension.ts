@@ -1,5 +1,5 @@
 import { inspect } from 'node:util';
-import { injectable, Extension, Provider, Reflector, Class, HttpMethod, ResolvedModuleMeta } from '@ditsmod/core';
+import { injectable, Extension, Provider, Reflector, Class, HttpMethod, ResolvedModuleMeta } from '@holu/core';
 
 import { RouteExtensionMeta } from '#types/types.js';
 import { isControllerDecorator, isRoute } from '#types/type.guards.js';

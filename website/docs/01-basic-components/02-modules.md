@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Модулі
 
-Одним з головних елементів архітектури Ditsmod - є його модулі. Але чим хороша саме модульна архітектура? - Модульність дозволяє компонувати різні автономні елементи і складати з них масштабований застосунок. Саме завдяки автономності модулів, великі проекти простіше розробляти, тестувати, деплоїти та обслуговувати. Також модульність спрощує перехід на мікросервісну архітектуру, якщо в майбутньому ви приймете рішення, що ваш Ditsmod-застосунок потребує горизонтального масштабування.
+Одним з головних елементів архітектури Holu - є його модулі. Але чим хороша саме модульна архітектура? - Модульність дозволяє компонувати різні автономні елементи і складати з них масштабований застосунок. Саме завдяки автономності модулів, великі проекти простіше розробляти, тестувати, деплоїти та обслуговувати. Також модульність спрощує перехід на мікросервісну архітектуру, якщо в майбутньому ви приймете рішення, що ваш Holu-застосунок потребує горизонтального масштабування.
 
 Модульна архітектура дозволяє ізолювати в одному модулі **декілька файлів коду**, що можуть мати різні ролі, але **спільну спеціалізацію**. Модуль можна порівняти з оркестром, в якому є різні інструменти, але усі вони створюють спільну музику. З іншого боку, потреба в ізоляції різних модулів виникає через те, що вони можуть мати різну спеціалізацію і через це - можуть заважати один-одному. Продовжуючи аналогію з людьми, якщо в одому кабінеті розмістити поліцію та музикантів, або брокерів і перекладачів, швидше за все, вони заважатимуть один-одному. Саме тому для модуля важлива **вузька спеціалізація**.
 
@@ -23,10 +23,10 @@ sidebar_position: 2
 
 ## Кореневий модуль {#root-module}
 
-До кореневого модуля підв'язуються інші модулі, він є єдиним на увесь застосунок, а його клас рекомендовано називати `AppModule`. TypeScript клас стає кореневим модулем Ditsmod завдяки одному з таких декораторів як `rootModule`, `restRootModule`, `trpcRootModule` і т.д., в залежності від архітектурного стилю, який ви використовуєте. Наприклад, якщо ви використовуєте REST, кореневий модуль оголошується наступним чином:
+До кореневого модуля підв'язуються інші модулі, він є єдиним на увесь застосунок, а його клас рекомендовано називати `AppModule`. TypeScript клас стає кореневим модулем Holu завдяки одному з таких декораторів як `rootModule`, `restRootModule`, `trpcRootModule` і т.д., в залежності від архітектурного стилю, який ви використовуєте. Наприклад, якщо ви використовуєте REST, кореневий модуль оголошується наступним чином:
 
 ```ts
-import { restRootModule } from '@ditsmod/rest';
+import { restRootModule } from '@holu/rest';
 
 @restRootModule()
 export class AppModule {}
@@ -35,7 +35,7 @@ export class AppModule {}
 Загалом, в декоратор `restRootModule` можна передавати об'єкт з такими властивостями:
 
 ```ts
-import { restRootModule } from '@ditsmod/rest';
+import { restRootModule } from '@holu/rest';
 
 @restRootModule({
   imports: [], // Імпорт модулів
@@ -58,10 +58,10 @@ export class AppModule {}
 
 ## Модуль фіч {#feature-module}
 
-TypeScript клас стає feature модулем Ditsmod завдяки одному з таких декораторів як `featureModule`, `restModule`, `trpcModule` і т.д., в залежності від архітектурного стилю, який ви використовуєте. Наприклад, якщо ви використовуєте REST, модуль фіч оголошується наступним чином:
+TypeScript клас стає feature модулем Holu завдяки одному з таких декораторів як `featureModule`, `restModule`, `trpcModule` і т.д., в залежності від архітектурного стилю, який ви використовуєте. Наприклад, якщо ви використовуєте REST, модуль фіч оголошується наступним чином:
 
 ```ts
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 @restModule()
 export class SomeModule {}
@@ -78,7 +78,7 @@ export class SomeModule {}
 Для того, щоб модуль-споживач міг використовувати провайдери з модуля-хоста, спочатку необхідно експортувати відповідні [токени][1] провайдерів з модуля-хоста. Робиться це у метаданих, які передаються у декоратор модуля фіч чи кореневого модуля. Наприклад, якщо ви використовуєте REST, це робиться наступним чином:
 
 ```ts {14}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 import { Service1 } from './service1.js';
 import { Service2 } from './service2.js';
@@ -96,7 +96,7 @@ function useFactory(s2: Service2) {
 export class Module1 {}
 ```
 
-В даному прикладі, беручи до уваги експортовані токени, Ditsmod буде шукати експортовані провайдери в масиві `providersPerReq`. Експортувати провайдери, що передаються у `providersPerApp`, не має сенсу, оскільки з цього масиву буде сформовано [інжектор][1] на рівні застосунку. Тобто провайдери з масиву `providersPerApp` будуть доступними для будь-якого модуля, на будь-якому рівні, і без експорту.
+В даному прикладі, беручи до уваги експортовані токени, Holu буде шукати експортовані провайдери в масиві `providersPerReq`. Експортувати провайдери, що передаються у `providersPerApp`, не має сенсу, оскільки з цього масиву буде сформовано [інжектор][1] на рівні застосунку. Тобто провайдери з масиву `providersPerApp` будуть доступними для будь-якого модуля, на будь-якому рівні, і без експорту.
 
 Оскільки з модуля-хоста вам потрібно експортувати лише токени провайдерів, а не самі провайдери, у властивість `exports` не можна безпосередньо передавати провайдери у формі об'єкта.
 
@@ -113,8 +113,8 @@ export class Module1 {}
 Експорт провайдерів з кореневого модуля означає, що ці провайдери будуть автоматично додаватись до кожного модуля, який оголошено у вашому застосунку. Разом з тим, ці провайдери не будуть додаватись до зовнішніх модулів, тобто до тих модулів, що ви ставите за допомогою пакетних менеджерів, типу npm, yarn і т.д. Наприклад, якщо ви використовуєте REST, це робиться наступним чином:
 
 ```ts {10}
-import { restRootModule } from '@ditsmod/rest';
-import { BodyParserModule } from '@ditsmod/body-parser';
+import { restRootModule } from '@holu/rest';
+import { BodyParserModule } from '@holu/body-parser';
 
 import { Service1 } from './service1.js';
 import { Module1 } from './module1.js';
@@ -132,8 +132,8 @@ export class AppModule {}
 Інколи є потреба додавати цілий масив провайдерів, і щоб експортувати їхні токени, є хелпер `getTokens()`:
 
 ```ts {9}
-import { restRootModule } from '@ditsmod/rest';
-import { getTokens } from '@ditsmod/core';
+import { restRootModule } from '@holu/rest';
+import { getTokens } from '@holu/core';
 import { defaultProviders } from './default-providers.js';
 
 @restRootModule({
@@ -150,7 +150,7 @@ export class AppModule {}
 Імпортувати окремий провайдер в модуль не можна, але можна імпортувати цілий модуль з усіма провайдерами та [розширеннями][2], що експортуються з нього. Наприклад, якщо ви використовуєте REST, це робиться наступним чином:
 
 ```ts {6}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { Module1 } from './module1.js';
 
 @restModule({
@@ -161,10 +161,10 @@ import { Module1 } from './module1.js';
 export class Module2 {}
 ```
 
-Якщо з `Module1` експортується, наприклад, `Service1`, то тепер цей сервіс можна використовувати у `Module2`. Разом з тим, якщо `Module1` має контролери, у такій формі імпорту вони будуть ігноруватись. Щоб Ditsmod брав до уваги контролери з імпортованого модуля, цей модуль потрібно імпортувати з префіксом, що передається у `path`:
+Якщо з `Module1` експортується, наприклад, `Service1`, то тепер цей сервіс можна використовувати у `Module2`. Разом з тим, якщо `Module1` має контролери, у такій формі імпорту вони будуть ігноруватись. Щоб Holu брав до уваги контролери з імпортованого модуля, цей модуль потрібно імпортувати з префіксом, що передається у `path`:
 
 ```ts {6}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { Module1 } from './module1.js';
 
 @restModule({
@@ -175,7 +175,7 @@ import { Module1 } from './module1.js';
 export class Module2 {}
 ```
 
-Хоча тут `path` має порожній рядок, але для Ditsmod наявність `path` означає:
+Хоча тут `path` має порожній рядок, але для Holu наявність `path` означає:
 
 1. що потрібно брати до уваги також і контролери з імпортованого модуля;
 2. використовувати `path` у якості префіксу для усіх контролерів, що імпортуються з `Module1`.
@@ -221,7 +221,7 @@ interface DynamicModule {
 Щоб скоротити довжину запису при імпорті об'єкту з цим типом, інколи доцільно написати статичний метод у модулі, який імпортується. Щоб наочно побачити це, давайте візьмемо знову попередній приклад:
 
 ```ts {6}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { Module1 } from './module1.js';
 
 @restModule({
@@ -263,7 +263,7 @@ export class Module2 {}
 Щоб TypeScript контролював, що саме повертає статичний метод для імпорту, рекомендується використовувати інтерфейс `DynamicModule`:
 
 ```ts
-import { DynamicModule } from '@ditsmod/core';
+import { DynamicModule } from '@holu/core';
 // ...
 export class Module1 {
   static withOpts(someParams: SomeParams): DynamicModule<Module1> {
@@ -305,10 +305,10 @@ export class Module2 {}
 
 ### Долучення модуля {#appending-of-the-module}
 
-Якщо ви використовуєте `@ditsmod/rest` і вам не потрібно імпортувати провайдери та [розширення][2] в поточний модуль, а потрібно всього лиш долучати зовнішній модуль до path-префікса поточного модуля, можна скористатись масивом `appends`:
+Якщо ви використовуєте `@holu/rest` і вам не потрібно імпортувати провайдери та [розширення][2] в поточний модуль, а потрібно всього лиш долучати зовнішній модуль до path-префікса поточного модуля, можна скористатись масивом `appends`:
 
 ```ts {5}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { Module1 } from './module1.js';
 
 @restModule({
@@ -345,7 +345,7 @@ interface AppendsWithOpts<T extends AnyObj = AnyObj> {
 Окрім імпорту певного модуля, цей же модуль можна одночасно й експортувати:
 
 ```ts
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { Module1 } from './module1.js';
 
 @restModule({
@@ -360,8 +360,8 @@ export class Module2 {}
 Зверніть увагу! Якщо під час реекспорту ви імпортуєте об'єкт з інтерфейсом `DynamicModule`, цей же об'єкт потрібно й експортувати:
 
 ```ts
-import { DynamicModule } from '@ditsmod/core';
-import { restModule, RestDynamicOptions } from '@ditsmod/rest';
+import { DynamicModule } from '@holu/core';
+import { restModule, RestDynamicOptions } from '@holu/rest';
 
 import { Module1 } from './module1.js';
 
@@ -381,7 +381,7 @@ export class Module2 {}
 Давайте розбиремо конкретний приклад. Уявіть, що у вас є `Module3`, куди ви імпортували `Module2` та `Module1`. Ви зробили такий імпорт, бо вам потрібні відповідно `Service2` та `Service1` із цих модулів. Ви проглядаєте результат роботи даних сервісів, але по якійсь причині `Service1` працює не так як очікується. Ви починаєте дебажити і виявляється, що `Service1` експортується з обох модулів: `Module2` та `Module1`. Ви очікували, що `Service1` експортуватиметься лише з `Module1`, але насправді спрацювала та версія, що експортується з `Module2`:
 
 ```ts {8,14,19}
-import { restModule, restRootModule } from '@ditsmod/rest';
+import { restModule, restRootModule } from '@holu/rest';
 
 class Service1 {}
 class Service2 {}
@@ -404,7 +404,7 @@ class Module2 {}
 class Module3 {}
 ```
 
-Щоб цього не сталось, якщо ви імпортуєте два або більше модулі, в яких експортуються неідентичні провайдери з однаковим токеном, Ditsmod кидатиме приблизно таку помилку:
+Щоб цього не сталось, якщо ви імпортуєте два або більше модулі, в яких експортуються неідентичні провайдери з однаковим токеном, Holu кидатиме приблизно таку помилку:
 
 > Error: Importing providers to Module3 failed: exports from Module1, Module2 causes collision with Service1. You should add Service1 to resolvedCollisionsPerMod in this module. For example: resolvedCollisionsPerMod: [ [Service1, Module1] ].
 
@@ -421,7 +421,7 @@ class Module3 {}
 Якщо `Module3` оголошено у вашому застосунку (тобто не імпортовано з `node_modules`), колізія вирішується шляхом додавання до `resolvedCollisionsPer*` масиву з двох елементів, де на першому місці йде токен провайдера, а на другому - модуль, з якого потрібно брати відповідний провайдер:
 
 ```ts {20}
-import { restModule, restRootModule } from '@ditsmod/rest';
+import { restModule, restRootModule } from '@holu/rest';
 
 class Service1 {}
 class Service2 {}

@@ -1,4 +1,4 @@
-import { featureModule } from '@ditsmod/core';
+import { featureModule } from '@holu/core';
 
 import { SomeLogMediator } from './some/some-log-mediator.js';
 import { SomeService } from './some/some.service.js';

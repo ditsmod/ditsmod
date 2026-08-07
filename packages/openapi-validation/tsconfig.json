@@ -3,9 +3,9 @@
     "outDir": "dist",
     "types": ["node", "jest"],
       "paths": {
-      "@ditsmod/core": ["../core/src/index.js"],
-      "@ditsmod/body-parser": ["../body-parser/src/index.js"],
-      "@ditsmod/openapi": ["../openapi/src/index.js"]
+      "@holu/core": ["../core/src/index.js"],
+      "@holu/body-parser": ["../body-parser/src/index.js"],
+      "@holu/openapi": ["../openapi/src/index.js"]
     },
     "module": "nodenext",
     "moduleResolution": "nodenext",

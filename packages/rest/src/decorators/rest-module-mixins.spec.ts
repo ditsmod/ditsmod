@@ -1,4 +1,4 @@
-import { Reflector } from '@ditsmod/core';
+import { Reflector } from '@holu/core';
 import { mixinRest, restRootModule } from './rest-module-mixins.js';
 
 describe('restRootModule decorator', () => {
@@ -9,6 +9,6 @@ describe('restRootModule decorator', () => {
     const metadata = Reflector.getClassLevelMeta(Module1)!;
     expect(metadata.length).toBe(1);
     expect(metadata[0].decoratorId).toBe(mixinRest);
-    expect(metadata[0].declaredInDir).toContain('ditsmod/packages/rest/dist/decorators');
+    expect(metadata[0].declaredInDir).toContain('holu/packages/rest/dist/decorators');
   });
 });

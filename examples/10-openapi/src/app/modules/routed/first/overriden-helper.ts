@@ -1,4 +1,4 @@
-import { Content, mediaTypeName, ContentOptions, property } from '@ditsmod/openapi';
+import { Content, mediaTypeName, ContentOptions, property } from '@holu/openapi';
 
 /**
  * This class uses template to putting type model to `content`.

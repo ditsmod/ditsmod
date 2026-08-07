@@ -1,6 +1,6 @@
 import 'reflect-metadata/lite';
 
-/** == External imports that used for exports from `@ditsmod/core/di` == **/
+/** == External imports that used for exports from `@holu/core/di` == **/
 
 export { Reflector } from '#di/reflector.js';
 export { ParentParams } from '#di/parent-params.js';

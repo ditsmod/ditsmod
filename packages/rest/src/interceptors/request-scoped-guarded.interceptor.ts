@@ -7,7 +7,7 @@ import {
   skipSelf,
   HttpStatus,
   SystemLogMediator,
-} from '@ditsmod/core';
+} from '@holu/core';
 
 import { CanActivate } from './guard.js';
 import { RouteMeta } from '../types/route-data.js';

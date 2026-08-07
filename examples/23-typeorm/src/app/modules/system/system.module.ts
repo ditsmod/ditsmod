@@ -1,4 +1,4 @@
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { SystemController } from './system.controller.js';
 
 @restModule({

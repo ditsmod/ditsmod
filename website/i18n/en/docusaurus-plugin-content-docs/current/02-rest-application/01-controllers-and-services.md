@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## What does a REST router do? {#what-does-a-rest-router-do}
 
-A router maps URLs to the appropriate request handler. For example, when users request URLs like `/some-path`, `/other-path`, or `/path-with/:parameter` from their browser, they are informing the Ditsmod application that they want to access a specific resource or perform an action on the website. To enable the Ditsmod application to respond appropriately in these cases, you need to define the corresponding request handlers in the code. So, if `/some-path` is requested, a specific function is executed; if `/other-path` is requested, a different function is triggered, and so on. This process of defining the relationship between a URL and its handler is known as URL-to-handler mapping.
+A router maps URLs to the appropriate request handler. For example, when users request URLs like `/some-path`, `/other-path`, or `/path-with/:parameter` from their browser, they are informing the Holu application that they want to access a specific resource or perform an action on the website. To enable the Holu application to respond appropriately in these cases, you need to define the corresponding request handlers in the code. So, if `/some-path` is requested, a specific function is executed; if `/other-path` is requested, a different function is triggered, and so on. This process of defining the relationship between a URL and its handler is known as URL-to-handler mapping.
 
 Although you won't have to manually write this mapping, for a general understanding of how a router works, it can be simplified like this:
 
@@ -24,7 +24,7 @@ routes.set('/path-with/:parameter', function () {
 // ...
 ```
 
-Right after Node.js receives an HTTP request and passes it to Ditsmod, the request URL is split into two parts separated by a question mark (if present). The first part always contains the so-called _path_, while the second part contains the _query parameters_, if the URL included a question mark.
+Right after Node.js receives an HTTP request and passes it to Holu, the request URL is split into two parts separated by a question mark (if present). The first part always contains the so-called _path_, while the second part contains the _query parameters_, if the URL included a question mark.
 
 The router's task is to find the HTTP request handler by _path_. In a very simplified form, this process can be imagined as follows:
 
@@ -43,10 +43,10 @@ In most cases, the request handler calls the controller method.
 
 ## What is a REST controller {#what-is-a-rest-controller}
 
-The mapping between the URL and the request handler is based on the metadata attached to the controller methods. A TypeScript class becomes a Ditsmod controller thanks to the `controller` decorator:
+The mapping between the URL and the request handler is based on the metadata attached to the controller methods. A TypeScript class becomes a Holu controller thanks to the `controller` decorator:
 
 ```ts {3}
-import { controller, route } from '@ditsmod/rest';
+import { controller, route } from '@holu/rest';
 
 @controller()
 export class SomeController {
@@ -65,9 +65,9 @@ As can be seen from the previous example, any REST controller must have:
 2. The HTTP method name (`GET`, `POST`, `PATCH`, etc.).
 3. The URL to which the class method call will be bound (optionally).
 
-The combination of the second and third points must be unique across the entire application. In other words, if you define that `GET` + `/hello` is bound to a specific controller method, this combination must not be reused. Otherwise, the `@ditsmod/rest` module will throw an error with an appropriate message.
+The combination of the second and third points must be unique across the entire application. In other words, if you define that `GET` + `/hello` is bound to a specific controller method, this combination must not be reused. Otherwise, the `@holu/rest` module will throw an error with an appropriate message.
 
-Ditsmod provides controllers in two alternative modes, which differ in the mechanism for passing arguments to the controller method:
+Holu provides controllers in two alternative modes, which differ in the mechanism for passing arguments to the controller method:
 
 1. **Request-scoped controller** (default). A controller method can receive any number of arguments from the [DI injector][3]. These arguments can include an HTTP request.
 2. **Route-scoped controller**. The controller method receives a single argument - the request context, which includes the HTTP request.
@@ -76,10 +76,10 @@ The first mode is more convenient and safer when working within the context of t
 
 ### Request-scoped controller {#request-scoped-controller}
 
-By default, Ditsmod works with the controller in request-scoped mode. This means, first, that a separate controller instance will be created for each HTTP request. Second, any controller method that has a `route` decorator will receive an arbitrary number of arguments from the [DI injector][3]. The following example creates a single route that accepts a `GET` request at `/hello`:
+By default, Holu works with the controller in request-scoped mode. This means, first, that a separate controller instance will be created for each HTTP request. Second, any controller method that has a `route` decorator will receive an arbitrary number of arguments from the [DI injector][3]. The following example creates a single route that accepts a `GET` request at `/hello`:
 
 ```ts {7}
-import { controller, route, RequestContext } from '@ditsmod/rest';
+import { controller, route, RequestContext } from '@holu/rest';
 import { Service1 } from './service-1';
 import { Service2 } from './service-2';
 
@@ -103,7 +103,7 @@ What we see here:
 Although in the previous example the dependencies were declared in `method1`, we can do this in a similar way in the constructor:
 
 ```ts {7}
-import { controller, RequestContext, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@holu/rest';
 import { Service1 } from './service-1';
 import { Service2 } from './service-2';
 
@@ -128,13 +128,13 @@ The access modifier in the constructor can be any of the following: `private`, `
 
 #### Routing parameters {#routing-parameters}
 
-To pass path parameters to the router, you need to use a colon before the parameter name. For example, the URL `some-url/:param1/:param2` includes two path parameters. If you are using the `@ditsmod/rest` module for routing, only path parameters determine the routes, while query parameters are not taken into account.
+To pass path parameters to the router, you need to use a colon before the parameter name. For example, the URL `some-url/:param1/:param2` includes two path parameters. If you are using the `@holu/rest` module for routing, only path parameters determine the routes, while query parameters are not taken into account.
 
 To access path or query parameters, you need to use the `ctx` decorator along with the `PATH_PARAMS` and `QUERY_PARAMS` tokens:
 
 ```ts {8-9}
-import { ctx, AnyObj } from '@ditsmod/core';
-import { controller, route, PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/rest';
+import { ctx, AnyObj } from '@holu/core';
+import { controller, route, PATH_PARAMS, QUERY_PARAMS } from '@holu/rest';
 
 @controller()
 export class SomeController {
@@ -155,8 +155,8 @@ As you can see from the previous example, responses to HTTP requests can also be
 Native Node.js request and response objects can be obtained by tokens, respectively - `RAW_REQ` and `RAW_RES`:
 
 ```ts {7-8}
-import { ctx } from '@ditsmod/core';
-import { controller, route, RAW_REQ, RAW_RES, RawRequest, RawResponse } from '@ditsmod/rest';
+import { ctx } from '@holu/core';
+import { controller, route, RAW_REQ, RAW_RES, RawRequest, RawResponse } from '@holu/rest';
 
 @controller()
 export class HelloWorldController {
@@ -176,10 +176,10 @@ You may also be interested in [how to get the HTTP request body][5].
 
 ### Route-scoped controller {#route-scoped-controller}
 
-To make a controller operate in the route-scoped mode, you need to specify `{ scope: 'route' }` in its metadata. Because the controller is instantiated in this mode only once, you will not be able to query in its constructor for class instances that are instantiated on each request. For example, if you request an instance of the `RequestContext` class in the constructor, Ditsmod will throw an error:
+To make a controller operate in the route-scoped mode, you need to specify `{ scope: 'route' }` in its metadata. Because the controller is instantiated in this mode only once, you will not be able to query in its constructor for class instances that are instantiated on each request. For example, if you request an instance of the `RequestContext` class in the constructor, Holu will throw an error:
 
 ```ts {3,5}
-import { RequestContext, controller, route } from '@ditsmod/rest';
+import { RequestContext, controller, route } from '@holu/rest';
 
 @controller({ scope: 'route' })
 export class HelloWorldController {
@@ -195,7 +195,7 @@ export class HelloWorldController {
 The working case will be as follows:
 
 ```ts {3,6}
-import { controller, RequestContext, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@holu/rest';
 
 @controller({ scope: 'route' })
 export class HelloWorldController {
@@ -229,17 +229,17 @@ If a controller is [in route-scoped mode][11], its own injector is located at th
 Any controller should only be bound to the current module where it was declared, i.e. the host module. This binding is done via the `controllers` array:
 
 ```ts {4}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { SomeController } from './some.controller.js';
 
 @restModule({ controllers: [SomeController] })
 export class SomeModule {}
 ```
 
-After binding controllers to the host module, in order for Ditsmod to recognize them in an external module, the host module must either be appended or imported as an object that implements the [DynamicModule][2] interface. The following example shows both appending and fully importing the host module (this is done only to demonstrate the possibility; in practice, there is no reason to do both at the same time):
+After binding controllers to the host module, in order for Holu to recognize them in an external module, the host module must either be appended or imported as an object that implements the [DynamicModule][2] interface. The following example shows both appending and fully importing the host module (this is done only to demonstrate the possibility; in practice, there is no reason to do both at the same time):
 
 ```ts {5,7}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { SomeModule } from './some.module.js';
 
 @restModule({
@@ -250,10 +250,10 @@ import { SomeModule } from './some.module.js';
 export class OtherModule {}
 ```
 
-If the module is imported without the `path` property, Ditsmod will only import [providers][3] and [extensions][9] from it:
+If the module is imported without the `path` property, Holu will only import [providers][3] and [extensions][9] from it:
 
 ```ts {5}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { SomeModule } from './some.module.js';
 
 @restModule({
@@ -277,10 +277,10 @@ What services can do:
 - work with databases, with email;
 - etc.
 
-Any TypeScript class can be a Ditsmod service, but if you want [DI][7] to resolve the dependency you specify in the constructors of these classes, you must specify the `injectable` decorator before them:
+Any TypeScript class can be a Holu service, but if you want [DI][7] to resolve the dependency you specify in the constructors of these classes, you must specify the `injectable` decorator before them:
 
 ```ts {4,6}
-import { injectable } from '@ditsmod/core';
+import { injectable } from '@holu/core';
 import { FirstService } from './first.service.js';
 
 @injectable()
@@ -300,7 +300,7 @@ As you can see, the rules for getting a class instance in the constructor are th
 To be able to use the newly created service classes, they must be passed in the metadata of the **current** module or controller. You can pass the services in the module metadata as follows:
 
 ```ts {8-9}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
@@ -317,7 +317,7 @@ export class SomeModule {}
 Similarly, the services is passed in the controller metadata:
 
 ```ts {8-9}
-import { controller, RequestContext, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@holu/rest';
 
 import { FirstService } from './first.service.js';
 import { SecondService } from './second.service.js';
@@ -343,7 +343,7 @@ In the last two examples, the services is passed to the `providersPerReq` array,
 Unlike a controller, the injector of a given service can be at any level: at the application level, module level, route level, or request level. In practice, this means that the provider for a given service is passed into one (or several) `providersPer*` arrays. For example, in the following example `SomeService` is passed into the injector at the route level, and `OtherService` — into the module level:
 
 ```ts {5-6}
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 // ...
 
 const providersPerApp = [];
@@ -393,7 +393,7 @@ This rule applies to the `injector.get()` method, but not to `injector.pull()` o
 For a single dependency, one or more [providers][3] must be passed to the DI registry. Usually providers are passed to the DI registry via module metadata, although sometimes they are passed via controller metadata or even directly to [injectors][3]. In the following example `SomeService` is passed into the `providersPerMod` array:
 
 ```ts {6}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { SomeService } from './some.service.js';
 
 @restModule({
@@ -407,7 +407,7 @@ export class SomeModule {}
 After such a transfer, consumers of providers can use `SomeService` within `SomeModule`. And now let's additionally pass another provider with the same token, but this time in the controller metadata:
 
 ```ts {8}
-import { controller } from '@ditsmod/rest';
+import { controller } from '@holu/rest';
 
 import { SomeService } from './some.service.js';
 import { OtherService } from './other.service.js';
@@ -428,7 +428,7 @@ Pay attention to the highlighted line. Thus we tell DI: "If this controller has 
 You can perform a similar substitution at the application or module level. This can sometimes be useful, for example when you want to have default configuration values at the application level but custom values for that configuration at a specific module level. In that case, first pass the default configuration in the root module:
 
 ```ts {6}
-import { rootModule } from '@ditsmod/core';
+import { rootModule } from '@holu/core';
 import { ConfigService } from './config.service.js';
 
 @rootModule({
@@ -442,7 +442,7 @@ export class AppModule {}
 And then in some module substitute `ConfigService` with an arbitrary value:
 
 ```ts {6}
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 import { ConfigService } from './config.service.js';
 
 @restModule({
@@ -458,7 +458,7 @@ export class SomeModule {}
 Different providers with the same token can be added many times in module or controller metadata, but DI will choose the provider that was added last (exceptions to this rule apply only for multi-providers):
 
 ```ts
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 @restModule({
   providersPerMod: [
@@ -475,7 +475,7 @@ In this case, within `SomeModule` the `token1` will return `value3` at the modul
 Additionally, different providers with the same token can be provided at multiple different hierarchy levels simultaneously, but DI will always choose the nearest injector (i.e., if a provider value is requested at the request level, the injector at the request level will be inspected first, and only if the required provider is not found there will DI ascend to parent injectors):
 
 ```ts
-import { restModule } from '@ditsmod/rest';
+import { restModule } from '@holu/rest';
 
 @restModule({
   providersPerMod: [{ token: 'token1', useValue: 'value1' }],
@@ -493,7 +493,7 @@ Also, if you import a provider from an external module and you have a provider w
 [2]: /basic-components/modules/#DynamicModule
 [3]: /basic-components/dependency-injection/#injector-and-providers
 [5]: /rest-application/native-modules/body-parser#retrieving-the-request-body
-[6]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/services/request-dispatcher.ts
+[6]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/services/request-dispatcher.ts
 [7]: /basic-components/dependency-injection/
 [9]: /basic-components/extensions/
 [10]: #request-scoped-controller

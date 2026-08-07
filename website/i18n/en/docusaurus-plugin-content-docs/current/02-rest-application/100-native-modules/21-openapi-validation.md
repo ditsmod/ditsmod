@@ -2,9 +2,9 @@
 sidebar_position: 21
 ---
 
-# @ditsmod/openapi-validation
+# @holu/openapi-validation
 
-To provide automatic metadata-based validation in Ditsmod applications for OpenAPI, you can use the `@ditsmod/openapi-validation` module. Under the hood, this module has an integration with the [ajv][1] library, which directly performs the validation just mentioned.
+To provide automatic metadata-based validation in Holu applications for OpenAPI, you can use the `@holu/openapi-validation` module. Under the hood, this module has an integration with the [ajv][1] library, which directly performs the validation just mentioned.
 
 Currently, automatic validation only works for HTTP requests that have a media type of `application/json` and do not refer to [Reference Object][3]. Automatic validation works for parameters in:
 - path
@@ -18,7 +18,7 @@ Currently, automatic validation only works for HTTP requests that have a media t
 After you create [OpenAPI documentation][2], you need to import two modules for automatic validation based on it:
 
 ```bash
-npm i @ditsmod/openapi-validation @ditsmod/i18n
+npm i @holu/openapi-validation @holu/i18n
 ```
 
 ## Enable validation and set options {#enable-validation-and-set-options}
@@ -26,9 +26,9 @@ npm i @ditsmod/openapi-validation @ditsmod/i18n
 To enable automatic validation in a specific module, it is enough to import `ValidationModule` there. You can also pass `ValidationOptions` and `AJV_OPTIONS`:
 
 ```ts
-import { ProviderBuilder, HttpStatus } from '@ditsmod/core';
-import { restModule } from '@ditsmod/rest';
-import { ValidationModule, ValidationOptions, AJV_OPTIONS } from '@ditsmod/openapi-validation';
+import { ProviderBuilder, HttpStatus } from '@holu/core';
+import { restModule } from '@holu/rest';
+import { ValidationModule, ValidationOptions, AJV_OPTIONS } from '@holu/openapi-validation';
 import { Options } from 'ajv';
 
 @restModule({
@@ -46,8 +46,8 @@ export class SomeModule {}
 The `ParametersInterceptor` and `RequestBodyInterceptor` classes are responsible for validating the request body and request parameters. They can be substituted in the `providersPerReq` array at the module or controller level:
 
 ```ts
-import { restModule } from '@ditsmod/rest';
-import { ParametersInterceptor } from '@ditsmod/openapi-validation';
+import { restModule } from '@holu/rest';
+import { ParametersInterceptor } from '@holu/openapi-validation';
 
 import { MyInterceptor } from './my.interceptor.js';
 
@@ -67,4 +67,4 @@ Before writing your interceptor for validation, you can first review how is writ
 [1]: https://ajv.js.org/guide/getting-started.html
 [2]: /rest-application/native-modules/openapi
 [3]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#referenceObject
-[4]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/openapi-validation/src/parameters.interceptor.ts
+[4]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/openapi-validation/src/parameters.interceptor.ts

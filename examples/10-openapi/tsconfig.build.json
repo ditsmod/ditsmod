@@ -5,7 +5,7 @@
     "rootDir": "src",
     "tsBuildInfoFile": "dist/build.tsbuildinfo",
     "paths": {
-      "@ditsmod/core": ["../../packages/core/src/index.js"],
+      "@holu/core": ["../../packages/core/src/index.js"],
     }
   },
   "include": ["src"],

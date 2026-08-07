@@ -53,7 +53,7 @@ import {
   BaseNormalizedModuleMeta,
   NormalizedModuleMeta,
   RootModuleOptions,
-} from '@ditsmod/core';
+} from '@holu/core';
 // ...
 
 /**
@@ -105,7 +105,7 @@ const mixinSome: MixinDecorator<MyStaticMixinOptions, DynamicMixinOptions, MyNor
 export class SomeModule {}
 ```
 
-[Готовий приклад створення mixin-декоратора][2] можна знайти в тестах репозиторія Ditsmod. Окрім цього, можна проглянути на більш складний, але і більш повний приклади [створення mixin-декораторів (restRootModule, restModule та mixinRest)][3], які знаходяться у модулі `@ditsmod/rest`.
+[Готовий приклад створення mixin-декоратора][2] можна знайти в тестах репозиторія Holu. Окрім цього, можна проглянути на більш складний, але і більш повний приклади [створення mixin-декораторів (restRootModule, restModule та mixinRest)][3], які знаходяться у модулі `@holu/rest`.
 
 ## Взаємодія з кореневим модулем та модулем фіч {#interaction-with-root-and-feature-modules}
 
@@ -118,7 +118,7 @@ export class SomeModule {}
 
 ## Групування mixin-декораторів через `decoratorId` {#grouping-mixin-decorators}
 
-При створенні декоратора-замінника (з роллю `'root'` або `'feature'`) за допомогою `Reflector.makeClassDecorator()`, ви **обов'язково** повинні передати базовий декоратор-модифікатор (наприклад, `mixinRest` або `mixinSome`) як третій аргумент. Цей третій аргумент працює як `decoratorId`. Він вказує Ditsmod, що ці декоратори належать до однієї групи, дозволяючи фреймворку правильно збирати, нормалізувати та пов'язувати метадані з відповідним контекстом групи під час ініціалізації.
+При створенні декоратора-замінника (з роллю `'root'` або `'feature'`) за допомогою `Reflector.makeClassDecorator()`, ви **обов'язково** повинні передати базовий декоратор-модифікатор (наприклад, `mixinRest` або `mixinSome`) як третій аргумент. Цей третій аргумент працює як `decoratorId`. Він вказує Holu, що ці декоратори належать до однієї групи, дозволяючи фреймворку правильно збирати, нормалізувати та пов'язувати метадані з відповідним контекстом групи під час ініціалізації.
 
 ## Кастомізація ModuleMixin {#customizing-inithooks}
 
@@ -138,7 +138,7 @@ export class SomeModule {}
 Ось приклад:
 
 ```ts {12}
-import { featureModule, ModuleMixin, Reflector } from '@ditsmod/core';
+import { featureModule, ModuleMixin, Reflector } from '@holu/core';
 
 // 1. Стандартний модуль, що містить реальну логіку/провайдери
 @featureModule({
@@ -182,5 +182,5 @@ export class MyFeatureModule {}
 3. Це забезпечує коректну обробку кастомних опцій (таких як REST префікси маршрутів та гарди), навіть при імпорті стандартних модулів фіч, які не мають кастомних анотацій mixin-декораторів.
 
 [1]: /basic-components/modules/#DynamicModule
-[2]: https://github.com/ditsmod/ditsmod/blob/main/packages/core/src/init/module-normalizer.spec.ts
-[3]: https://github.com/ditsmod/ditsmod/blob/main/packages/rest/src/decorators/rest-module-mixins.ts
+[2]: https://github.com/holu/holu/blob/main/packages/core/src/init/module-normalizer.spec.ts
+[3]: https://github.com/holu/holu/blob/main/packages/rest/src/decorators/rest-module-mixins.ts

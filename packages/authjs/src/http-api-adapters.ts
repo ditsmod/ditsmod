@@ -1,5 +1,5 @@
-import type { AnyObj } from '@ditsmod/core';
-import type { RequestContext } from '@ditsmod/rest';
+import type { AnyObj } from '@holu/core';
+import type { RequestContext } from '@holu/rest';
 
 function getHeaderValue(val: string | string[] | undefined): string | undefined {
   if (!val) {
@@ -10,7 +10,7 @@ function getHeaderValue(val: string | string[] | undefined): string | undefined 
 }
 
 /**
- * Adapts Ditsmod Request to a Web Request, returning the Web Request.
+ * Adapts Holu Request to a Web Request, returning the Web Request.
  */
 export function toWebRequest(ctx: RequestContext, alternativeUrl?: string) {
   const host =
@@ -46,7 +46,7 @@ export function toWebRequest(ctx: RequestContext, alternativeUrl?: string) {
 }
 
 /**
- * Encodes Ditsmod Request body based on the content type header.
+ * Encodes Holu Request body based on the content type header.
  */
 function encodeRequestBody(ctx: RequestContext): BodyInit | null | undefined {
   const contentType = ctx.rawReq.headers['content-type'];

@@ -1,5 +1,5 @@
-import { injectable, Context } from '@ditsmod/core';
-import { RequestContext, HttpHandler, HttpInterceptor } from '@ditsmod/rest';
+import { injectable, Context } from '@holu/core';
+import { RequestContext, HttpHandler, HttpInterceptor } from '@holu/rest';
 import { BodyParserGroup } from '@ts-stack/body-parser';
 
 import { HTTP_BODY } from './body-parser-config.js';

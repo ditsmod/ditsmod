@@ -1,6 +1,6 @@
 import supertest from 'supertest';
-import { controller, route, applyResponse, RequestContext, HttpServer, restRootModule } from '@ditsmod/rest';
-import { TestRestApplication } from '@ditsmod/rest-testing';
+import { controller, route, applyResponse, RequestContext, HttpServer, restRootModule } from '@holu/rest';
+import { TestRestApplication } from '@holu/rest-testing';
 
 let webResponse: Response = new Response();
 

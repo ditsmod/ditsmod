@@ -1,5 +1,5 @@
-import type { ModRefId, StaticModule } from '@ditsmod/core';
-import { getModule } from '@ditsmod/core';
+import type { ModRefId, StaticModule } from '@holu/core';
+import { getModule } from '@holu/core';
 
 import type { Http2SecureServerOptions, ServerOptions } from '#types/server-options.js';
 import type { ModuleWithTrpcRoutes } from '#types/types.js';

@@ -1,4 +1,4 @@
-import { RestApplication } from '@ditsmod/rest';
+import { RestApplication } from '@holu/rest';
 import { AppModule } from './app/app.module.js';
 
 const authSecret = process.env.AUTH_SECRET;

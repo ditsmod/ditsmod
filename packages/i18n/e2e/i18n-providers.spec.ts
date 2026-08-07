@@ -1,4 +1,4 @@
-import { ProviderBuilder } from '@ditsmod/core';
+import { ProviderBuilder } from '@holu/core';
 
 import { I18nProviders } from '#src/i18n-providers.js';
 import { CommonDict } from './current/index.js';

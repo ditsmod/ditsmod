@@ -2,7 +2,7 @@
 sidebar_position: 99
 ---
 
-# Ditsmod coding style guide
+# Holu coding style guide
 
 Here is the recommended format in the form of a pair "file name" - "class name":
 
@@ -24,8 +24,8 @@ It is recommended to call the root module - `AppModule`.
 When importing, it is recommended not to mix import from local files and import from `node_modules`. At the top are imports from `node_modules`, and then retreating one line are local imports:
 
 ```ts
-import { injectable, HttpStatus } from '@ditsmod/core';
-import { CanActivate } from '@ditsmod/rest';
+import { injectable, HttpStatus } from '@holu/core';
+import { CanActivate } from '@holu/rest';
 
 import { AuthService } from './auth.service.js';
 import { Permission } from './permission.js';

@@ -1,5 +1,5 @@
-import { injectable, factoryMethod } from '@ditsmod/core';
-import { opts, TrpcOpts } from '@ditsmod/trpc';
+import { injectable, factoryMethod } from '@holu/core';
+import { opts, TrpcOpts } from '@holu/trpc';
 
 import { DbService } from '#db/db.service.js';
 

@@ -1,6 +1,6 @@
 import { BodyParserGroup } from '@ts-stack/body-parser';
-import { injectable } from '@ditsmod/core';
-import { RequestContext, HttpHandler, HttpInterceptor } from '@ditsmod/rest';
+import { injectable } from '@holu/core';
+import { RequestContext, HttpHandler, HttpInterceptor } from '@holu/rest';
 
 @injectable()
 export class RouteScopedBodyParserInterceptor implements HttpInterceptor {

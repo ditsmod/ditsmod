@@ -5,9 +5,9 @@
     "outDir": "dist",
     "tsBuildInfoFile": "dist/build.tsbuildinfo",
     "paths": {
-      "@ditsmod/core": ["../core/src"],
-      "@ditsmod/body-parser": ["../body-parser/src"],
-      "@ditsmod/openapi": ["../openapi/src"]
+      "@holu/core": ["../core/src"],
+      "@holu/body-parser": ["../body-parser/src"],
+      "@holu/openapi": ["../openapi/src"]
     }
   },
   "include": ["src"],

@@ -3,12 +3,12 @@
     "message": "Home",
     "description": "The title in the navbar"
   },
-  "item.label.Документація Ditsmod": {
-    "message": "Documentation of Ditsmod",
+  "item.label.Документація Holu": {
+    "message": "Documentation of Holu",
     "description": "Navbar item with label Документація"
   },
   "logo.alt": {
-    "message": "Ditsmod Logo",
+    "message": "Holu Logo",
     "description": "The alt text of navbar logo"
   }
 }

@@ -1,4 +1,4 @@
-import { controller, RequestContext, route } from '@ditsmod/rest';
+import { controller, RequestContext, route } from '@holu/rest';
 
 @controller()
 export class Controller1 {

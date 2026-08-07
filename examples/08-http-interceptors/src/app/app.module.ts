@@ -1,5 +1,5 @@
-import { LoggerConfig, ProviderBuilder } from '@ditsmod/core';
-import { restRootModule, HTTP_INTERCEPTORS } from '@ditsmod/rest';
+import { LoggerConfig, ProviderBuilder } from '@holu/core';
+import { restRootModule, HTTP_INTERCEPTORS } from '@holu/rest';
 
 import { HelloWorldController, HelloWorldController2 } from './hello-world.controller.js';
 import { MyHttpInterceptor } from './my-http-interceptor.js';

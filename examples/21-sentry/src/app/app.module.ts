@@ -1,6 +1,6 @@
-import { ProviderBuilder } from '@ditsmod/core';
-import { restRootModule, HttpErrorHandler, RequestDispatcher } from '@ditsmod/rest';
-import { SentryModule, SentryOptions } from '@ditsmod/sentry';
+import { ProviderBuilder } from '@holu/core';
+import { restRootModule, HttpErrorHandler, RequestDispatcher } from '@holu/rest';
+import { SentryModule, SentryOptions } from '@holu/sentry';
 
 import { ExampleController } from './example.controller.js';
 

@@ -1,4 +1,4 @@
-import { featureModule } from '@ditsmod/core';
+import { featureModule } from '@holu/core';
 
 import { ScheduleExtension } from './schedule.extension.js';
 import { SchedulerOrchestrator } from './scheduler.orchestrator.js';

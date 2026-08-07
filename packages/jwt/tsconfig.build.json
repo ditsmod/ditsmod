@@ -5,7 +5,7 @@
     "outDir": "dist",
     "tsBuildInfoFile": "dist/build.tsbuildinfo",
     "paths": {
-      "@ditsmod/core": ["../core/src"]
+      "@holu/core": ["../core/src"]
     }
   },
   "include": [

@@ -1,4 +1,4 @@
-import { injectable, factoryMethod, optional } from '@ditsmod/core';
+import { injectable, factoryMethod, optional } from '@holu/core';
 import { BodyParserGroup } from '@ts-stack/body-parser';
 
 import { BodyParserConfig } from './body-parser-config.js';

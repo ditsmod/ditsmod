@@ -1,4 +1,4 @@
-import { Reflector } from '@ditsmod/core';
+import { Reflector } from '@holu/core';
 import type { XResponsesObject, XSecuritySchemeObject } from '@ts-stack/openapi-spec';
 
 export interface OasGuardMeta {

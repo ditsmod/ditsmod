@@ -1,4 +1,4 @@
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 import { createHTTPHandler } from '@trpc/server/adapters/standalone';
 import { RequestListener, TrpcRouterOpts } from '#types/types.js';
 

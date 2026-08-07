@@ -1,6 +1,6 @@
 # TypeORM Example
 
-Demonstrates how to integrate TypeORM into a Ditsmod REST application using `@ditsmod/typeorm`.
+Demonstrates how to integrate TypeORM into a Holu REST application using `@holu/typeorm`.
 
 ## Features Demonstrated
 

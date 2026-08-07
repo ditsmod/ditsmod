@@ -1,5 +1,5 @@
 import { inspect } from 'node:util';
-import { Extension, ExtensionManager, injectable } from '@ditsmod/core';
+import { Extension, ExtensionManager, injectable } from '@holu/core';
 
 import { HTTP_INTERCEPTORS } from '../top/constants.js';
 import { isInterceptor } from '#types/type.guards.js';

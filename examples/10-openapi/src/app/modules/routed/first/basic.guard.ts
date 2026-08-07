@@ -1,6 +1,6 @@
-import { HttpStatus } from '@ditsmod/core';
-import { oasGuard } from '@ditsmod/openapi';
-import { CanActivate, RequestContext } from '@ditsmod/rest';
+import { HttpStatus } from '@holu/core';
+import { oasGuard } from '@holu/openapi';
+import { CanActivate, RequestContext } from '@holu/rest';
 
 @oasGuard({
   tags: ['withBasicAuth'],

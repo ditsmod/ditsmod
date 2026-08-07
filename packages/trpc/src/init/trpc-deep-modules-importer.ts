@@ -6,8 +6,8 @@ import type {
   DeepModulesImporter,
   ShallowModuleImports,
   NormalizedModuleMeta,
-} from '@ditsmod/core';
-import { ModuleInfo } from '@ditsmod/core';
+} from '@holu/core';
+import { ModuleInfo } from '@holu/core';
 
 import type { DeepModulesImporterConfig, TrpcMixinMeta } from '#decorators/trpc-module-mixins.js';
 import type { TrpcShallowModuleImports } from '#decorators/trpc-module-mixins.js';

@@ -1,6 +1,6 @@
 import type { SchemaObjectType, XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
-import type { AnyObj, HttpMethod, DecoratorMeta } from '@ditsmod/core';
-import { type Class, Reflector, isDecoratorMeta } from '@ditsmod/core';
+import type { AnyObj, HttpMethod, DecoratorMeta } from '@holu/core';
+import { type Class, Reflector, isDecoratorMeta } from '@holu/core';
 import { YouCanNotSetThisAction } from '#errors';
 
 type RequiredParamsIn = 'query' | 'header' | 'path' | 'cookie';

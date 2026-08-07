@@ -1,6 +1,6 @@
-import type { Provider, ProviderBuilder } from '@ditsmod/core';
-import type { RouteExtensionMeta } from '@ditsmod/rest';
-import { RestRouteExtension } from '@ditsmod/rest';
+import type { Provider, ProviderBuilder } from '@holu/core';
+import type { RouteExtensionMeta } from '@holu/rest';
+import { RestRouteExtension } from '@holu/rest';
 
 import { TestRestApplication } from './test-application.js';
 import type { ExtensionMetaOverrider } from './types.js';

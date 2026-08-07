@@ -1,4 +1,4 @@
-import { DecoratorMeta, Reflector } from '@ditsmod/core';
+import { DecoratorMeta, Reflector } from '@holu/core';
 
 import { property } from './property.js';
 

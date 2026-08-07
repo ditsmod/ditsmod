@@ -1,8 +1,8 @@
 import { getClient } from '@sentry/core';
 
-import { injectable, Logger, ExtensionManager } from '@ditsmod/core';
-import type { Extension } from '@ditsmod/core';
-import { RestRouteExtension, HTTP_INTERCEPTORS } from '@ditsmod/rest';
+import { injectable, Logger, ExtensionManager } from '@holu/core';
+import type { Extension } from '@holu/core';
+import { RestRouteExtension, HTTP_INTERCEPTORS } from '@holu/rest';
 
 import { SentryTracingInterceptor } from './sentry-tracing.interceptor.js';
 import type { SentryRouteMeta } from './types.js';

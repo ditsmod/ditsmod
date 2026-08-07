@@ -1,7 +1,7 @@
 import { type ServerResponse } from 'node:http';
-import { ctx } from '@ditsmod/core';
-import { controller, route, RAW_RES, RawResponse, RequestContext } from '@ditsmod/rest';
-import { HTTP_BODY, MulterParser } from '@ditsmod/body-parser';
+import { ctx } from '@holu/core';
+import { controller, route, RAW_RES, RawResponse, RequestContext } from '@holu/rest';
+import { HTTP_BODY, MulterParser } from '@holu/body-parser';
 
 import { saveFiles, sendHtmlForm } from './utils.js';
 

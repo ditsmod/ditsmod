@@ -141,7 +141,7 @@ export class ModuleNormalizer {
         // Case when CallsiteUtils.getCallerDir() works correctly.
         this.normalizedModuleMeta.isExternal =
           !declaredInDir.startsWith(this.rootDeclaredInDir) ||
-          (!this.rootDeclaredInDir.includes('ditsmod/packages') && declaredInDir.includes('ditsmod/packages'));
+          (!this.rootDeclaredInDir.includes('holu/packages') && declaredInDir.includes('holu/packages'));
       }
     } else if (isRootModule(staticModuleOptions) && this.normalizedModuleMeta.declaredInDir !== '.') {
       this.rootDeclaredInDir = this.normalizedModuleMeta.declaredInDir;

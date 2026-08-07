@@ -1,6 +1,6 @@
-import { AnyObj, ctx, HttpStatus } from '@ditsmod/core';
-import { controller, route, PATH_PARAMS, RequestContext } from '@ditsmod/rest';
-import { getParams, getContent, oasRoute } from '@ditsmod/openapi';
+import { AnyObj, ctx, HttpStatus } from '@holu/core';
+import { controller, route, PATH_PARAMS, RequestContext } from '@holu/rest';
+import { getParams, getContent, oasRoute } from '@holu/openapi';
 
 import { BasicGuard } from './basic.guard.js';
 import { Model2 } from './models.js';
@@ -20,7 +20,7 @@ export class FirstController {
 
   @oasRoute('GET', 'resource/:resourceId', {
     tags: ['withParameter'],
-    description: 'This route uses `getParams()` and `getContent()` helpers from @ditsmod/openapi',
+    description: 'This route uses `getParams()` and `getContent()` helpers from @holu/openapi',
     parameters: getParams('path', true, Model2, 'resourceId'),
     responses: {
       [HttpStatus.OK]: {

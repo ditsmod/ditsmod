@@ -1,8 +1,8 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import { ProviderBuilder, LoggerConfig } from '@ditsmod/core';
-import { controller, route, restRootModule, restModule, HttpServer } from '@ditsmod/rest';
-import { TestRestApplication } from '@ditsmod/rest-testing';
+import { ProviderBuilder, LoggerConfig } from '@holu/core';
+import { controller, route, restRootModule, restModule, HttpServer } from '@holu/rest';
+import { TestRestApplication } from '@holu/rest-testing';
 import { DataSource, Repository, EntityManager } from 'typeorm';
 
 import { TypeormModule, injectRepository, injectDataSource, injectEntityManager } from '#src/index.js';

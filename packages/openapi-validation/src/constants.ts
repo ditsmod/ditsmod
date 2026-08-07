@@ -1,4 +1,4 @@
-import { InjectionToken } from '@ditsmod/core';
+import { InjectionToken } from '@holu/core';
 import type { Options } from 'ajv';
 
 /**

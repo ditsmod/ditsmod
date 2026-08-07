@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import supertest from 'supertest';
-import { route, RequestContext, controller, HttpServer, restRootModule } from '@ditsmod/rest';
-import { TestRestApplication } from '@ditsmod/rest-testing';
+import { route, RequestContext, controller, HttpServer, restRootModule } from '@holu/rest';
+import { TestRestApplication } from '@holu/rest-testing';
 
 import type * as HttpApiAdapters from '#mod/http-api-adapters.js';
 

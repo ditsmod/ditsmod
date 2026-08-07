@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## Prerequisites {#prerequisites}
 
-In the following examples of this section, it is assumed that you have cloned the [ditsmod/rest-starter][101] repository. This will allow you to get a basic configuration for the application and experiment in the `src/app` folder of that repository.
+In the following examples of this section, it is assumed that you have cloned the [holu/rest-starter][101] repository. This will allow you to get a basic configuration for the application and experiment in the `src/app` folder of that repository.
 
 Additionally, if you don't yet know what exactly reflector does and what "dependency resolution" is, we recommend that you first read the previous section [Decorators and Reflector][108].
 
@@ -27,7 +27,7 @@ In the [previous section][108], we saw how a dependency of one class on another 
 Let's look at the following example, which slightly expands on the last example from the [Decorators and Reflector][108] section:
 
 ```ts {15-19}
-import { Injector, injectable } from '@ditsmod/core';
+import { Injector, injectable } from '@holu/core';
 
 class Service1 {}
 
@@ -94,7 +94,7 @@ As expected, when we pass an empty array instead of a provider array, and then r
 To better understand what providers can look like, let’s pass the injector an array of providers in the following form:
 
 ```ts {9-12}
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 
 class Service1 {}
 class Service2 {}
@@ -143,7 +143,7 @@ The only exception to this rule is [multi-providers][4], which return all provid
 If a class is used as the constructor parameter type, it can also be used as a token:
 
 ```ts {7}
-import { injectable } from '@ditsmod/core';
+import { injectable } from '@holu/core';
 
 class Service1 {}
 
@@ -162,7 +162,7 @@ A dependency can be declared in either a short or a long form. In the last examp
 There is also a **long form** of declaring a dependency using the `inject` decorator, which allows you to use an alternative token:
 
 ```ts {10}
-import { injectable, inject } from '@ditsmod/core';
+import { injectable, inject } from '@holu/core';
 
 interface InterfaceOfItem {
   one: string;
@@ -182,13 +182,13 @@ A token can be a reference to a class, object, or function; you can also use str
 
 ```ts {5,14}
 // tokens.ts
-import { InjectionToken } from '@ditsmod/core';
+import { InjectionToken } from '@holu/core';
 import { InterfaceOfItem } from './types.js';
 
 const SOME_TOKEN = new InjectionToken<InterfaceOfItem[]>('SOME_TOKEN');
 
 // service1.ts
-import { injectable, inject } from '@ditsmod/core';
+import { injectable, inject } from '@holu/core';
 import { InterfaceOfItem } from './types.js';
 import { SOME_TOKEN } from './tokens.js';
 
@@ -204,7 +204,7 @@ export class Service1 {
 Formally, the provider type is represented by the following declaration:
 
 ```ts
-import { Class } from '@ditsmod/core';
+import { Class } from '@holu/core';
 
 type Provider = Class<any> |
 { token: any, useValue?: any, multi?: boolean } |
@@ -216,10 +216,10 @@ type Provider = Class<any> |
 
 *_note that the token for a provider with the `useFactory` property is optional, because DI can use the function or the method of the specified class as a token._
 
-Provider types can be imported from `@ditsmod/core`:
+Provider types can be imported from `@holu/core`:
 
 ```ts
-import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@ditsmod/core';
+import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@holu/core';
 ```
 
 More details about each of these types:
@@ -241,7 +241,7 @@ More details about each of these types:
    * **ClassFactoryProvider** (recommended, due to its better encapsulation) implies that a [tuple][11] is passed to `useFactory`, where the first element must be a class and the second element must be a method of that class which should return some value for the given token. For example, if the class is:
 
      ```ts
-     import { factoryMethod } from '@ditsmod/core';
+     import { factoryMethod } from '@holu/core';
 
      export class ClassWithFactory {
        @factoryMethod()
@@ -282,7 +282,7 @@ More details about each of these types:
    You are telling DI: “When provider consumers request the `Service2` token, the value for the `Service1` token should be used”. In other words, this directive creates an alias `Service2` that points to `Service1`. Therefore, a `TokenProvider` is not self-sufficient, unlike other provider types, and it must ultimately point to another provider type — a `TypeProvider`, `ValueProvider`, `ClassProvider`, or `FactoryProvider`:
 
    ```ts {4}
-   import { Injector } from '@ditsmod/core';
+   import { Injector } from '@holu/core';
 
    const injector = Injector.resolveAndCreate([
      { token: 'token1', useValue: 'some value for token1' }, // <-- non TokenProvider
@@ -295,7 +295,7 @@ More details about each of these types:
    Here, when creating the injector, a `TokenProvider` is passed that points to a `ValueProvider`, which is why this code will work. If you don’t do this, DI will throw an error:
 
    ```ts
-   import { Injector } from '@ditsmod/core';
+   import { Injector } from '@holu/core';
 
    const injector = Injector.resolveAndCreate([
      { token: 'token1', useToken: 'token2' },
@@ -310,7 +310,7 @@ More details about each of these types:
    On the other hand, your `TokenProvider` may point to another `TokenProvider` as an intermediate value, but ultimately a `TokenProvider` must always point to a provider of a different type:
 
    ```ts {4}
-   import { Injector } from '@ditsmod/core';
+   import { Injector } from '@holu/core';
 
    const injector = Injector.resolveAndCreate([
      { token: 'token1', useValue: 'some value for token1' }, // <-- non TokenProvider
@@ -327,10 +327,10 @@ Now that you are familiar with the concept of a **provider**, it can be clarifie
 
 ### Special token `ParentParams` {#parent-params}
 
-Ditsmod has a special token `ParentParams`, which DI takes as a placeholder, where it substitutes an array of arguments for the parent constructor:
+Holu has a special token `ParentParams`, which DI takes as a placeholder, where it substitutes an array of arguments for the parent constructor:
 
 ```ts {19,24}
-import { ParentParams, Injector, injectable } from '@ditsmod/core/di';
+import { ParentParams, Injector, injectable } from '@holu/core/di';
 
 class ParentParam1 {}
 class ParentParam2 {}
@@ -374,7 +374,7 @@ As an alternative, you can use the following approach, which does not require a 
 Alternative #1:
 
 ```ts {6}
-import { ParentParams, Injector, injectable, inject } from '@ditsmod/core/di';
+import { ParentParams, Injector, injectable, inject } from '@holu/core/di';
 // ...
 @injectable()
 class Child extends Parent {
@@ -412,7 +412,7 @@ Let’s consider the following situation. Imagine that you need to create a defa
 Let's look at the following example. For simplicity, decorators are not used at all here, because none of the classes has dependencies:
 
 ```ts {8-9}
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 
 class Service1 {}
 class Service2 {}
@@ -464,7 +464,7 @@ The dependency chain of providers can be quite complex, and the injector hierarc
 Let us start with a simple example:
 
 ```ts {14,18}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 
 class Config {
   one: any;
@@ -502,7 +502,7 @@ What do we see here:
 Now let us violate the rule that states that a dependency must not be placed at lower levels of the hierarchy. Thus, `Service` will be at a higher level (in the parent injector), while `Config` will be at a lower level (in the child injector):
 
 ```ts {14,18}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 
 class Config {
   one: any;
@@ -545,12 +545,12 @@ child.get(Service);
 // Resolution path: [Service in injector2 >> injector1] -> [Config in injector1]
 ```
 
-The `Resolution path` starts with searching for `Service` in `injector2` and then continues in `injector1`. Since this error was caused by the expression `child.get(Service)`, one can infer that `injector2` is the automatic name assigned by Ditsmod to the child injector. Accordingly, `injector1` is the parent injector. Remember that the highest injector in the hierarchy will always have the automatic name `injector1`, and the lower an injector is in the hierarchy, the larger the number at the end of its name `injectorN` will be.
+The `Resolution path` starts with searching for `Service` in `injector2` and then continues in `injector1`. Since this error was caused by the expression `child.get(Service)`, one can infer that `injector2` is the automatic name assigned by Holu to the child injector. Accordingly, `injector1` is the parent injector. Remember that the highest injector in the hierarchy will always have the automatic name `injector1`, and the lower an injector is in the hierarchy, the larger the number at the end of its name `injectorN` will be.
 
 But is it possible to explicitly specify injector names (or hierarchy levels)? Yes, it is possible by passing a second argument when creating an injector. Moreover, it is even recommended to always do this:
 
 ```ts {15,20}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 
 class Config {
   one: any;
@@ -590,7 +590,7 @@ By analyzing the error message, one can infer that the problem can be solved in 
 Let us use the second option:
 
 ```ts {16}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 
 class Config {
   one: any;
@@ -630,7 +630,7 @@ It is useful to think about this on your own first, to better solidify this beha
 A bit unexpected, right? Some might have thought that the child injector would use the local version of `Config` (that is, `{ one: 11, two: 22 }`) to create the instance of `Service`. Can you guess what can be done so that when requesting `Service` from the child injector, DI resolves its dependency using the local version of the provider with the `Config` token? Yes, when creating the child injector, we can also pass `Service` to it in the providers array:
 
 ```ts {19}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 
 class Config {
   one: any;
@@ -666,7 +666,7 @@ This method makes sense to use only in a child injector when it lacks a certain 
 For example, when `Service` depends on `Config`, and `Service` exists only in the parent injector, while `Config` exists both in the parent and in the child injector:
 
 ```ts {14-15,18}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 
 class Config {
   one: any;
@@ -694,7 +694,7 @@ As you can see, if you use `child.get(Service)` in this case, `Service` will be 
 But if the requested provider exists in the child injector, then `child.pull(Service)` will work identically to `child.get(Service)` (with the addition that the provider's value is added to the injector's cache):
 
 ```ts {15-16}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 
 class Config {
   one: any;
@@ -714,7 +714,7 @@ const child = parent.resolveAndCreateChild([
 child.get(Service).config; // { one: 11, two: 22 }
 ```
 
-### Hierarchy of injectors in the Ditsmod application {#hierarchy-of-injectors-in-the-ditsmod-application}
+### Hierarchy of injectors in the Holu application {#hierarchy-of-injectors-in-the-holu-application}
 
 Later in the documentation, you will encounter the following object properties that are passed through module metadata:
 
@@ -723,10 +723,10 @@ Later in the documentation, you will encounter the following object properties t
 * `providersPerRou` - providers at the route level;
 * `providersPerReq` - providers at the HTTP-request level.
 
-Using these arrays, Ditsmod forms different injectors that are related by a hierarchical connection. Such a hierarchy can be simulated as follows:
+Using these arrays, Holu forms different injectors that are related by a hierarchical connection. Such a hierarchy can be simulated as follows:
 
 ```ts
-import { Injector, Provider } from '@ditsmod/core';
+import { Injector, Provider } from '@holu/core';
 
 const providersPerApp: Provider[] = [];
 const providersPerMod: Provider[] = [];
@@ -741,10 +741,10 @@ const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
 injectorPerApp === injectorPerMod.parent; // true
 ```
 
-Under the hood, Ditsmod performs a similar procedure many times for different modules, routes, and HTTP requests. Using this example, let’s reinforce our understanding of the dependency chain at different levels of the injector hierarchy, and once again use the familiar `Service` class that depends on `Config`:
+Under the hood, Holu performs a similar procedure many times for different modules, routes, and HTTP requests. Using this example, let’s reinforce our understanding of the dependency chain at different levels of the injector hierarchy, and once again use the familiar `Service` class that depends on `Config`:
 
 ```ts {16,23}
-import { injectable, Injector, Provider } from '@ditsmod/core';
+import { injectable, Injector, Provider } from '@holu/core';
 
 class Config {
   one: any;
@@ -797,7 +797,7 @@ It follows that this error was caused by violating the rule of placing dependenc
 You will rarely need the injector of a service or controller itself, but you can obtain it in a constructor just like any other provider value:
 
 ```ts {6}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 import { FirstService } from './first.service.js';
 
 @injectable()
@@ -817,7 +817,7 @@ Keep in mind that in this way you get the injector that created the instance of 
 This kind of providers exist only in the object form and differ from regular DI providers by having the `multi: true` property. Such providers are appropriate when you need to pass several providers with the same token to DI at once so that DI returns the same number of values for these providers in a single array:
 
 ```ts
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 import { LOCAL } from './tokens.js';
 
 const injector = Injector.resolveAndCreate([
@@ -828,12 +828,12 @@ const injector = Injector.resolveAndCreate([
 const locals = injector.get(LOCAL); // ['uk', 'en']
 ```
 
-Essentially, multi-providers allow creating groups of providers that share the same token. This capability is used in `@ditsmod/rest`, for example, to create groups of `HTTP_INTERCEPTORS`.
+Essentially, multi-providers allow creating groups of providers that share the same token. This capability is used in `@holu/rest`, for example, to create groups of `HTTP_INTERCEPTORS`.
 
 It is not allowed for the same token to be both a regular provider and a multi-provider in the same injector:
 
 ```ts {5-6}
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 import { LOCAL } from './tokens.js';
 
 const injector = Injector.resolveAndCreate([
@@ -847,7 +847,7 @@ const locals = injector.get(LOCAL); // Error: Cannot mix multi providers and reg
 Child injectors can return values of multi-providers from the parent injector only if, during their creation, they were not passed providers with the same tokens:
 
 ```ts
-import { InjectionToken, Injector } from '@ditsmod/core';
+import { InjectionToken, Injector } from '@holu/core';
 
 const LOCAL = new InjectionToken('LOCAL');
 
@@ -864,7 +864,7 @@ const locals = child.get(LOCAL); // ['uk', 'en']
 If both the child and the parent injector have multi-providers with the same token, the child injector will return only the values from its own array:
 
 ```ts
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 import { LOCAL } from './tokens.js';
 
 const parent = Injector.resolveAndCreate([
@@ -888,8 +888,8 @@ To make it possible to substitute a specific multi-provider, you can do the foll
 3. next in the providers array add a provider that substitutes that class.
 
 ```ts
-import { Injector } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS } from '@ditsmod/rest';
+import { Injector } from '@holu/core';
+import { HTTP_INTERCEPTORS } from '@holu/rest';
 
 import { DefaultInterceptor } from './default.interceptor.js';
 import { MyInterceptor } from './my.interceptor.js';
@@ -912,7 +912,7 @@ When building an application, there is sometimes a need to pass data not directl
 That service is `Context`. Its methods can traverse up the injector hierarchy to retrieve a value associated with a specified key:
 
 ```ts
-import { Injector, Context } from '@ditsmod/core';
+import { Injector, Context } from '@holu/core';
 
 const parent = Injector.resolveAndCreate([Context], 'parent level');
 const child = parent.resolveAndCreateChild([Context], 'child level');
@@ -931,12 +931,12 @@ This example demonstrates:
 2. Retrieving `Context` instances from both injectors and setting key-value pairs.
 3. Finally, retrieving both values from the child context. This demonstrates that a child context can also access values stored in its parent context.
 
-The `Context` service is used by [interceptors][105], [guards][106], request handlers, controllers, and services in `@ditsmod/rest` when controllers operate in [request-scoped][3] mode. For example, an interceptor first parses the request body. Then, instead of storing this information directly in the request object and passing it from function to function, it stores it centrally in `Context`. From there, it can be retrieved by controllers or any services at the same or lower levels of the injector hierarchy.
+The `Context` service is used by [interceptors][105], [guards][106], request handlers, controllers, and services in `@holu/rest` when controllers operate in [request-scoped][3] mode. For example, an interceptor first parses the request body. Then, instead of storing this information directly in the request object and passing it from function to function, it stores it centrally in `Context`. From there, it can be retrieved by controllers or any services at the same or lower levels of the injector hierarchy.
 
 Using the `Context` service in class method parameters is especially simple and convenient:
 
 ```ts {4}
-import { Injector, Context, ctx, contextProviders } from '@ditsmod/core';
+import { Injector, Context, ctx, contextProviders } from '@holu/core';
 
 class Service1 {
   method1(@ctx('key1') param1: any, @ctx('key2') param2: any) {
@@ -955,7 +955,7 @@ context.set('key2', 'value2');
 injector.get('token1'); // { param1: 'value1', param2: 'value2' }
 ```
 
-This example illustrates a situation where a value is stored in `Context` in one part of the program and consumed elsewhere—in class method parameters. The same mechanism can be used to obtain context values in controller parameters (if you are using `@ditsmod/rest`). Note that the `contextProviders` array is added to the providers list. It contains all the providers required for this mechanism to work. In real applications, if you use `@ditsmod/rest`, `ContextModule` is already re-exported with all the necessary providers.
+This example illustrates a situation where a value is stored in `Context` in one part of the program and consumed elsewhere—in class method parameters. The same mechanism can be used to obtain context values in controller parameters (if you are using `@holu/rest`). Note that the `contextProviders` array is added to the providers list. It contains all the providers required for this mechanism to work. In real applications, if you use `@holu/rest`, `ContextModule` is already re-exported with all the necessary providers.
 
 You can find real-world examples of setting context values here:
 
@@ -967,7 +967,7 @@ You can find real-world examples of setting context values here:
 Use the `createInjectionSymbol<T>()` function for keys in the `Context` service to enable the type parameter associated with the specified key:
 
 ```ts {8,13}
-import { Context, createInjectionSymbol, Injector } from '@ditsmod/core';
+import { Context, createInjectionSymbol, Injector } from '@holu/core';
 
 export interface InterfaceOfSomeValue {
   one: string;
@@ -993,7 +993,7 @@ These decorators are used to manage the behavior of the injector when looking up
 As [previously mentioned][2], the `inject` decorator allows you to specify an alternative token in method parameters, enabling you to pass any type of dependency:
 
 ```ts
-import { injectable, inject } from '@ditsmod/core';
+import { injectable, inject } from '@holu/core';
 import { InterfaceOfItem } from './types.js';
 import { SOME_TOKEN } from './tokens.js';
 
@@ -1007,7 +1007,7 @@ export class Service1 {
 In addition to this, contextual data can also be passed as the second argument to `inject`:
 
 ```ts {11}
-import { injectable, inject, input, Injector } from '@ditsmod/core';
+import { injectable, inject, input, Injector } from '@holu/core';
 
 @injectable()
 class Dependency1 {
@@ -1031,7 +1031,7 @@ Here it is shown that `Service1` depends on `Dependency1`, and in the constructo
 You can obtain "input" data in any provider where a dependency can be specified. By the way, using the decorator like this - `@input` - is a shortened version of `@inject(input)`:
 
 ```ts {5,20}
-import { injectable, inject, Injector, input, type FunctionFactoryProvider } from '@ditsmod/core';
+import { injectable, inject, Injector, input, type FunctionFactoryProvider } from '@holu/core';
 
 @injectable()
 class Service2 {
@@ -1072,7 +1072,7 @@ Note that when a second argument is passed to `@inject()`, the injector does not
 Sometimes you may need to mark a dependency in the constructor as optional. Let's look at the following example where a question mark is placed after the `firstService` property, indicating to TypeScript that this property is optional:
 
 ```ts {6}
-import { injectable } from '@ditsmod/core';
+import { injectable } from '@holu/core';
 import { FirstService } from './first.service.js';
 
 @injectable()
@@ -1085,7 +1085,7 @@ export class SecondService {
 However, since DI works in JavaScript code rather than in TypeScript, it will ignore this optionality and will throw an error if there is no provider with the `FirstService` token. For this code to work you need to use the `optional` decorator:
 
 ```ts {6}
-import { injectable, optional } from '@ditsmod/core';
+import { injectable, optional } from '@holu/core';
 import { FirstService } from './first.service.js';
 
 @injectable()
@@ -1102,7 +1102,7 @@ Since JavaScript has no notion of an “optional property”, this can only be i
 The `fromSelf` and `skipSelf` decorators make sense when there is some hierarchy of injectors. The `fromSelf` decorator is used very rarely.
 
 ```ts {7}
-import { injectable, fromSelf, Injector } from '@ditsmod/core';
+import { injectable, fromSelf, Injector } from '@holu/core';
 
 class Service1 {}
 
@@ -1131,7 +1131,7 @@ But when creating the child injector, `Service1` was not passed to it, so when r
 The `skipSelf` decorator is used more often than `fromSelf`, but still rarely.
 
 ```ts {7}
-import { injectable, skipSelf, Injector } from '@ditsmod/core';
+import { injectable, skipSelf, Injector } from '@holu/core';
 
 class Service1 {}
 
@@ -1161,8 +1161,8 @@ When creating the child injector, it was not passed `Service1`, but it can refer
 [4]: #multi-providers
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
 [15]: https://en.wikipedia.org/wiki/Singleton_pattern
-[16]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/body-parser/src/body-parser.interceptor.ts#L16
-[17]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L25
+[16]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/body-parser/src/body-parser.interceptor.ts#L16
+[17]: https://github.com/holu/holu/blob/3.0.0-next.15/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L25
 
 [101]: ../../#installation
 [102]: #injector-and-providers

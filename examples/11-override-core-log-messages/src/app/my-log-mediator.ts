@@ -1,4 +1,4 @@
-import { injectable, SystemLogMediator } from '@ditsmod/core';
+import { injectable, SystemLogMediator } from '@holu/core';
 
 @injectable()
 export class MyLogMediator extends SystemLogMediator {

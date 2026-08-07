@@ -1,4 +1,4 @@
-import { OasExtensionRouteMeta } from '@ditsmod/openapi';
+import { OasExtensionRouteMeta } from '@holu/openapi';
 import type { XParameterObject, XSchemaObject } from '@ts-stack/openapi-spec';
 
 import type { ValidationOptions } from './validation-options.js';

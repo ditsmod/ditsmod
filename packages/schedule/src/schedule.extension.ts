@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 
-import { Extension, injectable, ResolvedModuleMeta, Provider, Injector, Logger, getProviderTarget, Reflector } from '@ditsmod/core';
+import { Extension, injectable, ResolvedModuleMeta, Provider, Injector, Logger, getProviderTarget, Reflector } from '@holu/core';
 
 import { cron } from './cron.decorator.js';
 import { interval } from './interval.decorator.js';

@@ -1,4 +1,4 @@
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 
 import { MyService } from './my.service.js';
 import { OtherService } from './other.service.js';

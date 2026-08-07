@@ -1,5 +1,5 @@
-import type { InjectTransformResult } from '@ditsmod/core';
-import { ctx, inject, Reflector } from '@ditsmod/core';
+import type { InjectTransformResult } from '@holu/core';
+import { ctx, inject, Reflector } from '@holu/core';
 import { TRPC_OPTS } from '#types/constants.js';
 
 /**

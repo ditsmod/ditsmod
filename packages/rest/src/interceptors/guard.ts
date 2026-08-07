@@ -1,5 +1,5 @@
-import type { Class, NormalizedModuleMeta } from '@ditsmod/core';
-import { Reflector } from '@ditsmod/core';
+import type { Class, NormalizedModuleMeta } from '@holu/core';
+import { Reflector } from '@holu/core';
 import type { RequestContext } from '#services/request-context.js';
 import type { RestMixinMeta } from '#init/rest-mixin-meta.js';
 

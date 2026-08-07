@@ -1,3 +1,3 @@
 ## About the project
 
-Core module of [Ditsmod](https://ditsmod.github.io/en/).
+Core module of [Holu](https://holu.github.io/en/).

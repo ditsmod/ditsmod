@@ -49,11 +49,11 @@ export class SystemLogMediator extends LogMediator {
   }
 
   /**
-   * `debug: Starting Ditsmod application...`
+   * `debug: Starting Holu application...`
    */
-  startingDitsmod(self: object) {
+  startingHolu(self: object) {
     const className = self.constructor.name;
-    const msg = `${className}: Starting Ditsmod application...`;
+    const msg = `${className}: Starting Holu application...`;
     this.setLog('debug', msg);
   }
 
@@ -344,8 +344,8 @@ export class SystemLogMediator extends LogMediator {
           return `${clr.red}${line}${clr.reset}`;
         }
         if (
-          line.includes('@ditsmod/') ||
-          line.includes('ditsmod/packages') ||
+          line.includes('@holu/') ||
+          line.includes('holu/packages') ||
           line.includes('Array.') ||
           line.includes('node:internal')
         ) {

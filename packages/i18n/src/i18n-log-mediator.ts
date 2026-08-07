@@ -1,4 +1,4 @@
-import { injectable, LogMediator } from '@ditsmod/core';
+import { injectable, LogMediator } from '@holu/core';
 
 import { ISO639 } from './types/iso-639.js';
 

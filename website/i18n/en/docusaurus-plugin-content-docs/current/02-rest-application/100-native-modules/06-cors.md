@@ -2,25 +2,25 @@
 sidebar_position: 6
 ---
 
-# @ditsmod/cors
+# @holu/cors
 
-If your application needs to use the [OPTIONS][1] HTTP method or the [CORS][2] or [CORS preflight][3] mechanisms, you can use the `@ditsmod/cors` module.
+If your application needs to use the [OPTIONS][1] HTTP method or the [CORS][2] or [CORS preflight][3] mechanisms, you can use the `@holu/cors` module.
 
 ## Install {#install}
 
 ```bash
-npm i @ditsmod/cors
+npm i @holu/cors
 ```
 
 ## Work with default settings {#work-with-default-settings}
 
-A finished example from `@ditsmod/cors` can be viewed [in the Ditsmod repository][4].
+A finished example from `@holu/cors` can be viewed [in the Holu repository][4].
 
 The module can work with default settings immediately after import:
 
 ```ts
-import { restRootModule } from '@ditsmod/rest';
-import { CorsModule } from '@ditsmod/cors';
+import { restRootModule } from '@holu/rest';
+import { CorsModule } from '@holu/cors';
 
 @restRootModule({
   imports: [
@@ -62,8 +62,8 @@ curl -i localhost:3000/credentials
 If you want to change the default settings, during import you can pass some options that will be taken into account at the module level:
 
 ```ts
-import { restRootModule } from '@ditsmod/rest';
-import { CorsModule } from '@ditsmod/cors';
+import { restRootModule } from '@holu/rest';
+import { CorsModule } from '@holu/cors';
 
 @restRootModule({
   imports: [
@@ -78,9 +78,9 @@ export class SomeModule {}
 It is also possible to pass CORS options at the route level:
 
 ```ts
-import { ProviderBuilder } from '@ditsmod/core';
-import { CorsModule, CorsOptions } from '@ditsmod/cors';
-import { restRootModule } from '@ditsmod/rest';
+import { ProviderBuilder } from '@holu/core';
+import { CorsModule, CorsOptions } from '@holu/cors';
+import { restRootModule } from '@holu/rest';
 
 @restRootModule({
   imports: [
@@ -99,8 +99,8 @@ export class SomeModule {}
 When you need the CORS HTTP response to contain cookies, and for those cookies to be accepted by web browsers, you can use `CorsService`:
 
 ```ts
-import { controller, RequestContext, route } from '@ditsmod/rest';
-import { CorsService } from '@ditsmod/cors';
+import { controller, RequestContext, route } from '@holu/rest';
+import { CorsService } from '@holu/cors';
 
 @controller()
 export class SomeController {
@@ -122,4 +122,4 @@ As you can see, the cookie is set using the `setCookie()` method. In this case, 
 [1]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS
 [2]: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
 [3]: https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request
-[4]: https://github.com/ditsmod/ditsmod/tree/main/examples/17-cors
+[4]: https://github.com/holu/holu/tree/main/examples/17-cors

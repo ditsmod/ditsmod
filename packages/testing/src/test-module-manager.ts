@@ -1,5 +1,5 @@
-import type { ModRefId, NormalizedModuleMeta } from '@ditsmod/core';
-import { getModule, MutableModuleManager } from '@ditsmod/core';
+import type { ModRefId, NormalizedModuleMeta } from '@holu/core';
+import { getModule, MutableModuleManager } from '@holu/core';
 
 export class TestModuleManager extends MutableModuleManager {
   protected externalModules = new Set<ModRefId>();

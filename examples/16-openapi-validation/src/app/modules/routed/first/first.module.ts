@@ -1,7 +1,7 @@
-import { MixinDynamicOptionsMap, DynamicModuleWithMixinOptions } from '@ditsmod/core';
-import { ValidationModule } from '@ditsmod/openapi-validation';
-import { BodyParserModule } from '@ditsmod/body-parser';
-import { mixinRest, restModule } from '@ditsmod/rest';
+import { MixinDynamicOptionsMap, DynamicModuleWithMixinOptions } from '@holu/core';
+import { ValidationModule } from '@holu/openapi-validation';
+import { BodyParserModule } from '@holu/body-parser';
+import { mixinRest, restModule } from '@holu/rest';
 
 import { FirstController } from './first.controller.js';
 

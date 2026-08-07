@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import { ProviderBuilder } from '@ditsmod/core';
-import { TestRestApplication, TestRestPlugin } from '@ditsmod/rest-testing';
+import { ProviderBuilder } from '@holu/core';
+import { TestRestApplication, TestRestPlugin } from '@holu/rest-testing';
 
 import { AppModule } from './app.module.js';
 import {
@@ -13,7 +13,7 @@ import {
   ServicePerReq2,
 } from './services.js';
 
-describe('@ditsmod/rest/e2e', () => {
+describe('@holu/rest/e2e', () => {
   const message = 'any-string';
   const implementation = () => message;
   const methodPerApp = jest.fn(implementation);

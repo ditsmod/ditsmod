@@ -1,4 +1,4 @@
-import type { Class, ResolvedGuard, ModuleScopedResolvedGuard, ResolvedProvider } from '@ditsmod/core';
+import type { Class, ResolvedGuard, ModuleScopedResolvedGuard, ResolvedProvider } from '@holu/core';
 import type { TrpcRouteExtension } from '../extensions/trpc-route.extension.js';
 
 /**

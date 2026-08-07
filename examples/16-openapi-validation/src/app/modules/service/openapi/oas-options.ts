@@ -1,4 +1,4 @@
-import type { OasOptions } from '@ditsmod/openapi';
+import type { OasOptions } from '@holu/openapi';
 
 export const oasOptions: OasOptions = {
   yamlSchemaOptions: {

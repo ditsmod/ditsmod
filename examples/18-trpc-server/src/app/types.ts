@@ -1,4 +1,4 @@
-import type { TrpcRootObject } from '@ditsmod/trpc';
+import type { TrpcRootObject } from '@holu/trpc';
 import type { NodeHTTPRequest, NodeHTTPResponse } from '@trpc/server/adapters/node-http';
 
 export type TrpcContext = {

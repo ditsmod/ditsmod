@@ -1,4 +1,4 @@
-import { BaseAppOptions, Logger, LoggerConfig, OutputLogLevel, factoryMethod, optional } from '@ditsmod/core';
+import { BaseAppOptions, Logger, LoggerConfig, OutputLogLevel, factoryMethod, optional } from '@holu/core';
 import { createLogger, addColors, format, transports } from 'winston';
 
 export class PatchLogger {

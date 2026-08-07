@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## Підготовка {#prerequisites}
 
-В наступних прикладах даного розділу припускається, що ви клонували репозиторій [ditsmod/rest-starter][101]. Це дасть вам змогу отримати базову конфігурацію для застосунку та експериментувати у теці `src/app` даного репозиторію.
+В наступних прикладах даного розділу припускається, що ви клонували репозиторій [holu/rest-starter][101]. Це дасть вам змогу отримати базову конфігурацію для застосунку та експериментувати у теці `src/app` даного репозиторію.
 
 Окрім цього, якщо ви ще не знаєте, що саме робить рефлектор і що таке "вирішення залежностей", рекомендуємо вам спочатку прочитати попередній розділ [Декоратори та рефлектор][108].
 
@@ -27,7 +27,7 @@ sidebar_position: 1
 Давайте розглянемо наступний приклад, який трохи розширює останній приклад з розділу [Декоратори та рефлектор][108]:
 
 ```ts {15-19}
-import { Injector, injectable } from '@ditsmod/core';
+import { Injector, injectable } from '@holu/core';
 
 class Service1 {}
 
@@ -94,7 +94,7 @@ const service3 = injector.get(Service3); // Error: No provider for Service3!
 Щоб краще зрозуміти якими можуть бути провайдери, давайте передамо інжектору масив провайдерів в наступній формі:
 
 ```ts {9-12}
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 
 class Service1 {}
 class Service2 {}
@@ -143,7 +143,7 @@ injector.get('token1'); // 'value3'
 Якщо у якості типу параметра конструктора використовується клас, його одночасно можна використовувати у якості токена:
 
 ```ts {7}
-import { injectable } from '@ditsmod/core';
+import { injectable } from '@holu/core';
 
 class Service1 {}
 
@@ -162,7 +162,7 @@ class Service2 {
 А ще існує **довга форма** декларування залежності за допомогою декоратора `inject`, вона дозволяє використовувати альтернативний токен:
 
 ```ts {10}
-import { injectable, inject } from '@ditsmod/core';
+import { injectable, inject } from '@holu/core';
 
 interface InterfaceOfItem {
   one: string;
@@ -182,13 +182,13 @@ export class Service1 {
 
 ```ts {5,14}
 // tokens.ts
-import { InjectionToken } from '@ditsmod/core';
+import { InjectionToken } from '@holu/core';
 import { InterfaceOfItem } from './types.js';
 
 const SOME_TOKEN = new InjectionToken<InterfaceOfItem[]>('SOME_TOKEN');
 
 // service1.ts
-import { injectable, inject } from '@ditsmod/core';
+import { injectable, inject } from '@holu/core';
 import { InterfaceOfItem } from './types.js';
 import { SOME_TOKEN } from './tokens.js';
 
@@ -204,7 +204,7 @@ export class Service1 {
 Формально, тип провайдера представляє собою таку декларацію:
 
 ```ts
-import { Class } from '@ditsmod/core';
+import { Class } from '@holu/core';
 
 type Provider = Class<any> |
 { token: any, useValue?: any, multi?: boolean } |
@@ -216,10 +216,10 @@ type Provider = Class<any> |
 
 *_зверніть увагу, що токен для провайдера з властивістю `useFactory` є опціональним, оскільки DI може використати функцію чи метод вказаного класу у якості токена._
 
-Типи провайдерів можна імпортувати з `@ditsmod/core`:
+Типи провайдерів можна імпортувати з `@holu/core`:
 
 ```ts
-import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@ditsmod/core';
+import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@holu/core';
 ```
 
 Більш детально про кожен із цих типів:
@@ -241,7 +241,7 @@ import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@d
     - **ClassFactoryProvider** (рекомендовано, через свою кращу інкапсуляцію) передбачає, що до `useFactory` передається [tuple][11], де на першому місці повинен бути клас, а на другому місці - метод цього класу, який повинен повернути якесь значення для вказаного токена. Наприклад, якщо клас буде таким:
 
       ```ts
-      import { factoryMethod } from '@ditsmod/core';
+      import { factoryMethod } from '@holu/core';
 
       export class ClassWithFactory {
         @factoryMethod()
@@ -282,7 +282,7 @@ import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@d
     Таким чином ви говорите DI: "Коли споживачі провайдерів запитують токен `Service2`, потрібно використати значення для токена `Service1`". Іншими словами, ця директива робить аліас `Service2`, який вказує на `Service1`. Отже, `TokenProvider` не є самодостатнім, на відміну від інших типів провайдерів, і в кінцевому підсумку він завжди повинен вказувати на інші типи провайдерів - на `TypeProvider`, `ValueProvider`, `ClassProvider` чи `FactoryProvider`:
 
     ```ts {4}
-    import { Injector } from '@ditsmod/core';
+    import { Injector } from '@holu/core';
 
     const injector = Injector.resolveAndCreate([
       { token: 'token1', useValue: 'some value for token1' }, // <-- non TokenProvider
@@ -295,7 +295,7 @@ import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@d
     Тут під час створення інжектора передається `TokenProvider`, який вказує на `ValueProvider`, тому цей код працюватиме. Якщо ж ви цього не зробите, то DI кидатиме помилку:
 
     ```ts
-    import { Injector } from '@ditsmod/core';
+    import { Injector } from '@holu/core';
 
     const injector = Injector.resolveAndCreate([
       { token: 'token1', useToken: 'token2' },
@@ -310,7 +310,7 @@ import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@d
     З іншого боку, ваш `TokenProvider` може вказувати на той же тип - `TokenProvider` - у якості проміжного значення, але в кінцевому підсумку `TokenProvider` завжди повинен вказувати на провайдер іншого типу:
 
     ```ts {4}
-    import { Injector } from '@ditsmod/core';
+    import { Injector } from '@holu/core';
 
     const injector = Injector.resolveAndCreate([
       { token: 'token1', useValue: 'some value for token1' }, // <-- non TokenProvider
@@ -327,10 +327,10 @@ import { ValueProvider, ClassProvider, FactoryProvider, TokenProvider } from '@d
 
 ### Спеціальний токен `ParentParams` {#parent-params}
 
-Ditsmod має спеціальний токен `ParentParams`, який DI сприймає як placeholder, куди він підставляє масив аргументів для батьківського конструктора:
+Holu має спеціальний токен `ParentParams`, який DI сприймає як placeholder, куди він підставляє масив аргументів для батьківського конструктора:
 
 ```ts {19,24}
-import { ParentParams, Injector, injectable } from '@ditsmod/core/di';
+import { ParentParams, Injector, injectable } from '@holu/core/di';
 
 class ParentParam1 {}
 class ParentParam2 {}
@@ -374,7 +374,7 @@ console.log(injector.get(Child));
 Альтернатива #1:
 
 ```ts {6}
-import { ParentParams, Injector, injectable, inject } from '@ditsmod/core/di';
+import { ParentParams, Injector, injectable, inject } from '@holu/core/di';
 // ...
 @injectable()
 class Child extends Parent {
@@ -412,7 +412,7 @@ DI надає можливість створювати ще й ієрархію
 Давайте розглянемо наступний приклад. Для спрощення, тут взагалі не використовуються декоратори, оскільки жоден клас не має залежностей:
 
 ```ts {8-9}
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 
 class Service1 {}
 class Service2 {}
@@ -464,7 +464,7 @@ parent.get(Service2) === child.get(Service2); // false
 Давайте почнемо з простого прикладу:
 
 ```ts {14,18}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 
 class Config {
   one: any;
@@ -502,7 +502,7 @@ parent.get(Service); // Error: No provider for Service!
 Тепер давайте порушимо правило, яке говорить, що залежність не можна передавати на нижні рівні ієрархії. Отже, `Service` у нас буде на вищому рівні (в батьківському інжекторі), а `Config` - на нижньому рівні (в дочірньому інжекторі):
 
 ```ts {14,18}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 
 class Config {
   one: any;
@@ -545,12 +545,12 @@ child.get(Service);
 // Resolution path: [Service in injector2 >> injector1] -> [Config in injector1]
 ```
 
-`Resolution path` починається з пошуку `Service` в `injector2`, а потім продовжується в `injector1`. Оскільки цю помилку спричинив вираз `child.get(Service)`, можна догадатись, що `injector2` - це автоматичне ім'я, яке Ditsmod надав дочірньому інжектору. Відповідно - `injector1` - це батьківський інжектор. Пам'ятайте, що найвищій в ієрархії інжектор завжди матиме автоматичне ім'я `injector1`, і чим нижчий інжектор в ієрархії, тим більший номер буде в кінці його імені `injectorN`.
+`Resolution path` починається з пошуку `Service` в `injector2`, а потім продовжується в `injector1`. Оскільки цю помилку спричинив вираз `child.get(Service)`, можна догадатись, що `injector2` - це автоматичне ім'я, яке Holu надав дочірньому інжектору. Відповідно - `injector1` - це батьківський інжектор. Пам'ятайте, що найвищій в ієрархії інжектор завжди матиме автоматичне ім'я `injector1`, і чим нижчий інжектор в ієрархії, тим більший номер буде в кінці його імені `injectorN`.
 
 Але чи можна явно вказувати імена (чи рівні в ієрархії) інжекторів? - Так, можна, передаючи другий аргумент під час створення інжектора. Більше того, це навіть рекомендується робити завжди:
 
 ```ts {15,20}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 
 class Config {
   one: any;
@@ -590,7 +590,7 @@ child.get(Service);
 Давайте скористаємось другим варіантом:
 
 ```ts {16}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 
 class Config {
   one: any;
@@ -630,7 +630,7 @@ child.get(Service);
 Трохи неочікувано, правда ж? Мабуть дехто подумав, що дочірній інжектор для створення інстансу `Service` буде використовувати локальну версію `Config` (тобто `{ one: 11, two: 22 }`). Здогадуєтесь, що можна зробити, щоб при запиті `Service` у дочірнього інжектора, DI вирішував його залежність з використанням локальної версії провайдера з токеном `Config`? - Так, при створенні дочірнього інжектора, в масиві провайдерів ми можемо передати йому також `Service`:
 
 ```ts {19}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 
 class Config {
   one: any;
@@ -666,7 +666,7 @@ child.get(Service).config; // { one: 11, two: 22 }
 Наприклад, коли `Service` залежить від `Config`, причому `Service` є тільки у батьківському інжекторі, а `Config` є як у батьківському, так і у дочірньому інжекторі:
 
 ```ts {14-15,18}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 
 class Config {
   one: any;
@@ -694,7 +694,7 @@ child.pull(Service).config; // pulls Service in current injector: { one: 11, two
 Але якщо запитуваний провайдер є у дочірньому інжекторі, то вираз `child.pull(Service)` буде працювати ідентично до виразу `child.get(Service)` (з додаванням значення провайдера у кеш інжектора):
 
 ```ts {15-16}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 
 class Config {
   one: any;
@@ -714,7 +714,7 @@ const child = parent.resolveAndCreateChild([
 child.get(Service).config; // { one: 11, two: 22 }
 ```
 
-### Ієрархія інжекторів в застосунку Ditsmod {#hierarchy-of-injectors-in-the-ditsmod-application}
+### Ієрархія інжекторів в застосунку Holu {#hierarchy-of-injectors-in-the-holu-application}
 
 Пізніше в документації ви зустрічатимете наступні властивості об'єкта, які передаються через метадані модуля:
 
@@ -723,10 +723,10 @@ child.get(Service).config; // { one: 11, two: 22 }
 - `providersPerRou` - провайдери на рівні роута;
 - `providersPerReq` - провайдери на рівні HTTP-запиту.
 
-Використовуючи ці масиви, Ditsmod формує різні інжектори, що пов'язані між собою ієрархічним зв'язком. Таку ієрархію можна зімітувати наступним чином:
+Використовуючи ці масиви, Holu формує різні інжектори, що пов'язані між собою ієрархічним зв'язком. Таку ієрархію можна зімітувати наступним чином:
 
 ```ts
-import { Injector, Provider } from '@ditsmod/core';
+import { Injector, Provider } from '@holu/core';
 
 const providersPerApp: Provider[] = [];
 const providersPerMod: Provider[] = [];
@@ -741,10 +741,10 @@ const injectorPerReq = injectorPerRou.resolveAndCreateChild(providersPerReq);
 injectorPerApp === injectorPerMod.parent; // true
 ```
 
-Під капотом, Ditsmod робить аналогічну процедуру багато разів для різних модулів, роутів та HTTP-запитів. Використовуючи цей приклад, давайте закріпимо знання про ланцюжок залежностей на різних рівнях ієрархії інжекторів, і знову скористаємось знайомим класом `Service`, який залежить від `Config`:
+Під капотом, Holu робить аналогічну процедуру багато разів для різних модулів, роутів та HTTP-запитів. Використовуючи цей приклад, давайте закріпимо знання про ланцюжок залежностей на різних рівнях ієрархії інжекторів, і знову скористаємось знайомим класом `Service`, який залежить від `Config`:
 
 ```ts {16,23}
-import { injectable, Injector, Provider } from '@ditsmod/core';
+import { injectable, Injector, Provider } from '@holu/core';
 
 class Config {
   one: any;
@@ -797,7 +797,7 @@ injectorPerReq.get(Service);
 Безпосередньо сам інжектор сервіса чи контролера вам рідко може знадобиться, але ви його можете отримати у конструкторі як і значення будь-якого іншого провайдера:
 
 ```ts {6}
-import { injectable, Injector } from '@ditsmod/core';
+import { injectable, Injector } from '@holu/core';
 import { FirstService } from './first.service.js';
 
 @injectable()
@@ -817,7 +817,7 @@ export class SecondService {
 Цей вид провайдерів існує тільки у вигляді об'єкта, і він відрізняється від звичайних DI-провайдерів наявністю властивості `multi: true`. Такі провайдери доцільно використовувати, коли є потреба у передачі до DI зразу декількох провайдерів з однаковим токеном, щоб DI повернув таку саму кількість значень для цих провайдерів в одному масиві:
 
 ```ts
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 import { LOCAL } from './tokens.js';
 
 const injector = Injector.resolveAndCreate([
@@ -828,12 +828,12 @@ const injector = Injector.resolveAndCreate([
 const locals = injector.get(LOCAL); // ['uk', 'en']
 ```
 
-По-суті, мульти-провайдери дозволяють створювати групи провайдерів, що мають спільний токен. Ця можливість зокрема використовується у `@ditsmod/rest` для створення групи `HTTP_INTERCEPTORS`.
+По-суті, мульти-провайдери дозволяють створювати групи провайдерів, що мають спільний токен. Ця можливість зокрема використовується у `@holu/rest` для створення групи `HTTP_INTERCEPTORS`.
 
 Не допускається щоб в одному інжекторі однаковий токен мали і звичайні, і мульти-провайдери:
 
 ```ts {5-6}
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 import { LOCAL } from './tokens.js';
 
 const injector = Injector.resolveAndCreate([
@@ -847,7 +847,7 @@ const locals = injector.get(LOCAL); // Error: Cannot mix multi providers and reg
 Дочірні інжектори можуть повертати значення мульти-провайдерів батьківського інжектора, лише якщо при їх створенні їм не передавались провайдери з такими самими токенами:
 
 ```ts
-import { InjectionToken, Injector } from '@ditsmod/core';
+import { InjectionToken, Injector } from '@holu/core';
 
 const LOCAL = new InjectionToken('LOCAL');
 
@@ -864,7 +864,7 @@ const locals = child.get(LOCAL); // ['uk', 'en']
 Якщо ж і в дочірнього, і в батьківського інжектора є мульти-провайдери з однаковим токеном, дочірній інжектор повертатиме значення лише зі свого масиву:
 
 ```ts
-import { Injector } from '@ditsmod/core';
+import { Injector } from '@holu/core';
 import { LOCAL } from './tokens.js';
 
 const parent = Injector.resolveAndCreate([
@@ -888,8 +888,8 @@ const locals = child.get(LOCAL); // ['аа']
 3. наступним в масив провайдерів потрібно передати провайдер для підміни даного класу.
 
 ```ts
-import { Injector } from '@ditsmod/core';
-import { HTTP_INTERCEPTORS } from '@ditsmod/rest';
+import { Injector } from '@holu/core';
+import { HTTP_INTERCEPTORS } from '@holu/rest';
 
 import { DefaultInterceptor } from './default.interceptor.js';
 import { MyInterceptor } from './my.interceptor.js';
@@ -912,7 +912,7 @@ const locals = injector.get(HTTP_INTERCEPTORS); // [MyInterceptor]
 Саме таким сервісом є `Context`, його методи вміють підніматись вгору по ієрархії інжекторів щоб отримати певне значення для вказаного ключа:
 
 ```ts
-import { Injector, Context } from '@ditsmod/core';
+import { Injector, Context } from '@holu/core';
 
 const parent = Injector.resolveAndCreate([Context], 'parent level');
 const child = parent.resolveAndCreateChild([Context], 'child level');
@@ -931,12 +931,12 @@ childCtx.getInScope('key2', child); // value2
 2. Потім показано як отримують інстанси `Context` з обох інжекторів, і встановлюють пари "ключ-значення".
 3. І в самому кінці показано, як отримують ці обидва значення у дочірньому контексті. Тобто тут продемонстровано, що з дочірнього контексту можна також отриматит значення і батьківського контексту.
 
-Сервіс `Context` використовують [інтерсептори][105], [ґарди][106], обробники-запитів, контролери та сервіси у `@ditsmod/rest`, коли контролери працюють у [request-scoped][3] режимі. Наприклад, інтерсептор спочатку парсить тіло запиту. Потім, замість того, щоб цю інформацію зберігати прямо в об'єкті запиту і передавати від функції до функції, він її зберігає централізовано у `Context`, звідки її можуть витягувати контролери чи будь-які сервіси, що знаходяться на тому ж рівні ієрархії інжекторів, або на нижніх рівнях.
+Сервіс `Context` використовують [інтерсептори][105], [ґарди][106], обробники-запитів, контролери та сервіси у `@holu/rest`, коли контролери працюють у [request-scoped][3] режимі. Наприклад, інтерсептор спочатку парсить тіло запиту. Потім, замість того, щоб цю інформацію зберігати прямо в об'єкті запиту і передавати від функції до функції, він її зберігає централізовано у `Context`, звідки її можуть витягувати контролери чи будь-які сервіси, що знаходяться на тому ж рівні ієрархії інжекторів, або на нижніх рівнях.
 
 Особливо просто і зручно користуватись сервісом `Context` у параметрах методів класів:
 
 ```ts {4}
-import { Injector, Context, ctx, contextProviders } from '@ditsmod/core';
+import { Injector, Context, ctx, contextProviders } from '@holu/core';
 
 class Service1 {
   method1(@ctx('key1') param1: any, @ctx('key2') param2: any) {
@@ -955,7 +955,7 @@ context.set('key2', 'value2');
 injector.get('token1'); // { param1: 'value1', param2: 'value2' }
 ```
 
-В даному прикладі умовно показано ситуацію, коли значення для `Context` встановлюється в одному місці програми, а використовується це значення в іншому місці - у параметрах методу класу. Точно по цій схемі можна отримати значення контекста у параметрах контролера (якщо ви використовуєте `@ditsmod/rest`). Зверніть увагу, що в даному прикладі до провайдерів додається масив `contextProviders`, де є усі необхідні провайдери, щоб ця схема працювала. В реальних же застосунках, якщо ви використовуєте `@ditsmod/rest`, там вже робиться реекспорт `ContextModule` з усіма необхідними провайдерами.
+В даному прикладі умовно показано ситуацію, коли значення для `Context` встановлюється в одному місці програми, а використовується це значення в іншому місці - у параметрах методу класу. Точно по цій схемі можна отримати значення контекста у параметрах контролера (якщо ви використовуєте `@holu/rest`). Зверніть увагу, що в даному прикладі до провайдерів додається масив `contextProviders`, де є усі необхідні провайдери, щоб ця схема працювала. В реальних же застосунках, якщо ви використовуєте `@holu/rest`, там вже робиться реекспорт `ContextModule` з усіма необхідними провайдерами.
 
 Реальний приклад встановлення значень для контексту можна знайти ось тут:
 
@@ -967,7 +967,7 @@ injector.get('token1'); // { param1: 'value1', param2: 'value2' }
 Рекомендуємо використовувати функцію `createInjectionSymbol<T>()` для ключів у сервісі `Context`, яка дає можливість використовувати тип параметра, що асоціюється з указаним ключем:
 
 ```ts {8,13}
-import { Context, createInjectionSymbol, Injector } from '@ditsmod/core';
+import { Context, createInjectionSymbol, Injector } from '@holu/core';
 
 export interface InterfaceOfSomeValue {
   one: string;
@@ -993,7 +993,7 @@ const value = ctx.get(SOME_KEY); // TypeScript виводить тип "Interfac
 Як [раніше було сказано][2], декоратор `inject` дозволяє вказувати альтернативний токен у параметрах методів, і таким чином можна вказувати будь-які типи залежностей:
 
 ```ts
-import { injectable, inject } from '@ditsmod/core';
+import { injectable, inject } from '@holu/core';
 import { InterfaceOfItem } from './types.js';
 import { SOME_TOKEN } from './tokens.js';
 
@@ -1007,7 +1007,7 @@ export class Service1 {
 Окрім цього, другим аргументом в `inject` також можна передати контекстні дані:
 
 ```ts {11}
-import { injectable, inject, input, Injector } from '@ditsmod/core';
+import { injectable, inject, input, Injector } from '@holu/core';
 
 @injectable()
 class Dependency1 {
@@ -1031,7 +1031,7 @@ service1.dependency1.inputParameter; // input-data
 Ви можете отримати "вхідні" дані у будь-якому провайдері, де можна вказати залежність. До речі, використовуючи декоратор ось так - `@input` - це скорочена версія від `@inject(input)`:
 
 ```ts {5,20}
-import { injectable, inject, Injector, input, type FunctionFactoryProvider } from '@ditsmod/core';
+import { injectable, inject, Injector, input, type FunctionFactoryProvider } from '@holu/core';
 
 @injectable()
 class Service2 {
@@ -1072,7 +1072,7 @@ injector.get(Service1);
 Інколи вам може знадобитись вказати опціональну (необов'язкову) залежність в конструкторі. Давайте розглянемо наступний приклад, де після властивості `firstService` поставлено знак питання, і таким чином вказано для TypeScript що ця властивість є опціональною:
 
 ```ts {6}
-import { injectable } from '@ditsmod/core';
+import { injectable } from '@holu/core';
 import { FirstService } from './first.service.js';
 
 @injectable()
@@ -1085,7 +1085,7 @@ export class SecondService {
 Але оскільки DI працює у JavaScript-коді, а не у TypeScript, він проігнорує цю опціональність і видасть помилку у разі відсутності провайдера з токеном `FirstService`. Щоб даний код працював, необхідно скористатись декоратором `optional`:
 
 ```ts {6}
-import { injectable, optional } from '@ditsmod/core';
+import { injectable, optional } from '@holu/core';
 import { FirstService } from './first.service.js';
 
 @injectable()
@@ -1102,7 +1102,7 @@ export class SecondService {
 Декоратори `fromSelf` та `skipSelf` мають сенс у випадку, коли існує певна ієрархія інжекторів. Декоратор `fromSelf` використовується дуже рідко.
 
 ```ts {7}
-import { injectable, fromSelf, Injector } from '@ditsmod/core';
+import { injectable, fromSelf, Injector } from '@holu/core';
 
 class Service1 {}
 
@@ -1131,7 +1131,7 @@ child.get(Service2);
 Декоратор `skipSelf` використовується частіше, ніж `fromSelf`, але також рідко.
 
 ```ts {7}
-import { injectable, skipSelf, Injector } from '@ditsmod/core';
+import { injectable, skipSelf, Injector } from '@holu/core';
 
 class Service1 {}
 
@@ -1161,8 +1161,8 @@ parent.get(Service2);
 [4]: #multi-providers
 [11]: https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types
 [15]: https://uk.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%B0%D0%BA_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D1%94%D0%BA%D1%82%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F) "Singleton"
-[16]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/body-parser/src/body-parser.interceptor.ts#L16
-[17]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L25
+[16]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/body-parser/src/body-parser.interceptor.ts#L16
+[17]: https://github.com/holu/holu/blob/3.0.0-next.15/examples/14-auth-jwt/src/app/modules/services/auth/bearer.guard.ts#L25
 
 [101]: ../../#installation
 [102]: #injector-and-providers

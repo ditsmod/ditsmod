@@ -7,7 +7,7 @@ sidebar_position: 8
 Встановити рівень логування можна за допомогою передачі провайдера, що має токен `LoggerConfig`:
 
 ```ts {5}
-import { rootModule } from '@ditsmod/core';
+import { rootModule } from '@holu/core';
 // ...
 @rootModule({
   // ...
@@ -19,7 +19,7 @@ export class AppModule {}
 Але кращу підтримку типів має хелпер [ProviderBuilder][2]:
 
 ```ts {5}
-import { rootModule, ProviderBuilder, LoggerConfig } from '@ditsmod/core';
+import { rootModule, ProviderBuilder, LoggerConfig } from '@holu/core';
 // ...
 @rootModule({
   // ...
@@ -31,8 +31,8 @@ export class AppModule {}
 Як бачите, тут `LoggerConfig` передається на рівні застосунку. Якщо вам потрібно щоб у певному модулі діяв інший рівень логування, разом з конфігом для логування необхідно передавати й провайдер з токеном `Logger`:
 
 ```ts {7-9}
-import { Logger, ProviderBuilder } from '@ditsmod/core';
-import { restModule } from '@ditsmod/rest';
+import { Logger, ProviderBuilder } from '@holu/core';
+import { restModule } from '@holu/rest';
 import { PatchLogger } from './patch-logger.js';
 // ...
 @restModule({
@@ -46,7 +46,7 @@ export class SomeModule {}
 
 Зверніть увагу, що ці провайдери передаються на рівні модуля.
 
-Ditsmod використовує клас [Logger][100] у якості інтерфейсу, а також як DI-токен. Для записування логів, по-дефолту використовується [ConsoleLogger][101]. Усього є 8 рівнів логування (запозичено у [log4j][102]):
+Holu використовує клас [Logger][100] у якості інтерфейсу, а також як DI-токен. Для записування логів, по-дефолту використовується [ConsoleLogger][101]. Усього є 8 рівнів логування (запозичено у [log4j][102]):
 
 - `all` - усі події повинні реєструватися.
 - `trace` - детальне повідомлення про зневадження, яке зазвичай фіксує потік через програму.
@@ -59,7 +59,7 @@ Ditsmod використовує клас [Logger][100] у якості інте
 
 У цій документації, коли ми кажемо про "рівні логування", ми маємо на увазі "рівень деталізації логів". Найвищий рівень деталізації - `all`, найнижчий рівень деталізації - `off`.
 
-У системних повідомленнях Ditsmod, ви можете зустріти два типи, що позначають рівень логування:
+У системних повідомленнях Holu, ви можете зустріти два типи, що позначають рівень логування:
 
 - **InputLogLevel** - цим типом позначають рівень логів, що призначений для конкретного повідомлення. Зверніть увагу, що рівень `off` відсутній у `InputLogLevel`. Наприклад, у наступному записі використовується рівень логів - `info`:
   ```ts
@@ -90,10 +90,10 @@ logger.log('info', 'some message');
 
 ## Підміна системного логера {#substitution-the-system-logger}
 
-Якщо ви хочете щоб системні логи, які пише Ditsmod, писались вашим власним логером, він повинен впроваджувати інтерфейс [Logger][100]. Після чого його можна передавати до DI на рівні застосунку:
+Якщо ви хочете щоб системні логи, які пише Holu, писались вашим власним логером, він повинен впроваджувати інтерфейс [Logger][100]. Після чого його можна передавати до DI на рівні застосунку:
 
 ```ts
-import { Logger, rootModule } from '@ditsmod/core';
+import { Logger, rootModule } from '@holu/core';
 import { MyLogger } from './my-loggegr.js';
 
 @rootModule({
@@ -108,7 +108,7 @@ export class AppModule {}
 Давайте спочатку напишемо код для цього провайдера. На даний момент (2023-09-02), одним із самих популярних серед Node.js-логерів є [winston][103]. Для патчінгу ми написали метод класу, перед яким додали декоратор `factoryMethod`:
 
 ```ts {42-44,47-49}
-import { Logger, LoggerConfig, OutputLogLevel, factoryMethod, optional } from '@ditsmod/core';
+import { Logger, LoggerConfig, OutputLogLevel, factoryMethod, optional } from '@holu/core';
 import { createLogger, addColors, format, transports } from 'winston';
 
 export class PatchLogger {
@@ -165,12 +165,12 @@ export class PatchLogger {
 }
 ```
 
-Як бачите, окрім звичних налаштувань для `winston`, у виділених рядках до його інстансу додаються два методи - `setLevel` та `getLevel` - які у нього відсутні, але які є необхідними для того, щоб Ditsmod правильно взаємодіяв з ним.
+Як бачите, окрім звичних налаштувань для `winston`, у виділених рядках до його інстансу додаються два методи - `setLevel` та `getLevel` - які у нього відсутні, але які є необхідними для того, щоб Holu правильно взаємодіяв з ним.
 
 І тепер вже цей клас можна передавати до DI на рівні застосунку:
 
 ```ts
-import { Logger, rootModule } from '@ditsmod/core';
+import { Logger, rootModule } from '@holu/core';
 import { PatchLogger } from './patch-logger.js';
 
 @rootModule({
@@ -182,15 +182,15 @@ import { PatchLogger } from './patch-logger.js';
 export class AppModule {}
 ```
 
-Готові приклади з логерами ви можете проглянути [в репозиторії Ditsmod][104].
+Готові приклади з логерами ви можете проглянути [в репозиторії Holu][104].
 
 ## Робота з логером в продуктовому режимі {#using-the-logger-in-production-mode}
 
 Щоб змінити рівень логування в продуктовому режимі (іншими словами - "на продакті"), не обов'язково заходити в скомпільований код. Для цієї мети ви можете створити спеціальний контролер, захистити його ґардом, а потім викликати відповідний роут для зміни рівня логування, який ви вкажете в URL:
 
 ```ts
-import { AnyObj, ctx, Logger, InputLogLevel } from '@ditsmod/core';
-import { route, QUERY_PARAMS, RequestContext, controller } from '@ditsmod/rest';
+import { AnyObj, ctx, Logger, InputLogLevel } from '@holu/core';
+import { route, QUERY_PARAMS, RequestContext, controller } from '@holu/rest';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';
@@ -219,8 +219,8 @@ export class SomeController {
 [1]: /rest-application/guards#helpers-for-guards-with-parameters
 [2]: /basic-components/providers-helper/
 
-[100]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/core/src/logger/logger.ts
-[101]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/core/src/logger/console-logger.ts
+[100]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/core/src/logger/logger.ts
+[101]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/core/src/logger/console-logger.ts
 [102]: https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Level.html
 [103]: https://github.com/winstonjs/winston
-[104]: https://github.com/ditsmod/ditsmod/tree/3.0.0-next.15/examples/04-logger/src/app/modules
+[104]: https://github.com/holu/holu/tree/3.0.0-next.15/examples/04-logger/src/app/modules

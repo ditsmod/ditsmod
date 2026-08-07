@@ -1,5 +1,5 @@
-import { trpcController, TrpcRouteService, trpcRoute } from '@ditsmod/trpc';
-import { ProviderBuilder } from '@ditsmod/core';
+import { trpcController, TrpcRouteService, trpcRoute } from '@holu/trpc';
+import { ProviderBuilder } from '@holu/core';
 import { z } from 'zod';
 
 import { PostService } from '#post/post.service.js';

@@ -1,4 +1,4 @@
-import type { Provider, ModRefId, ModuleManager, NormalizedModuleMeta, AppProviders } from '@ditsmod/core';
+import type { Provider, ModRefId, ModuleManager, NormalizedModuleMeta, AppProviders } from '@holu/core';
 import {
   isDynamicModule,
   getTokens,
@@ -9,8 +9,8 @@ import {
   getModule,
   getLastProviders,
   getProxyForMixinMeta,
-} from '@ditsmod/core';
-import { ProvidersCollision, LevelCollisionNotFound, AppCollisionNotFound } from '@ditsmod/core/errors';
+} from '@holu/core';
+import { ProvidersCollision, LevelCollisionNotFound, AppCollisionNotFound } from '@holu/core/errors';
 
 import type { ModuleScopedGuard } from '#interceptors/guard.js';
 import type { RestModRefId } from '#init/rest-mixin-meta.js';

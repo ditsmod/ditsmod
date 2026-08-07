@@ -1,4 +1,4 @@
-import type { Class } from '@ditsmod/core';
+import type { Class } from '@holu/core';
 import type { CanActivate } from '../interceptors/guard.js';
 
 /**
@@ -7,7 +7,7 @@ import type { CanActivate } from '../interceptors/guard.js';
  * ### An example of creating a helper
  * 
 ```ts
-import { createGuardHelper } from '@ditsmod/core';
+import { createGuardHelper } from '@holu/core';
 
 import { Permission } from './types.js';
 
@@ -17,7 +17,7 @@ export const requirePermissions = createGuardHelper<Permission>(PermissionsGuard
  * ### Usage
  * 
 ```ts
-import { controller, RequestContext, route } from '@ditsmod/core';
+import { controller, RequestContext, route } from '@holu/core';
 
 import { requirePermissions } from '../auth/guards-utils.js';
 import { Permission } from '../auth/types.js';

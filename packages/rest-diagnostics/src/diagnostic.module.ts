@@ -1,4 +1,4 @@
-import { featureModule } from '@ditsmod/core';
+import { featureModule } from '@holu/core';
 
 @featureModule({})
 export class DiagnosticModule {}

@@ -1,4 +1,4 @@
-import { DecoratorMeta, Reflector } from '@ditsmod/core';
+import { DecoratorMeta, Reflector } from '@holu/core';
 
 import { route, DecoratorRouteMeta } from './route.js';
 import { HttpHandler, HttpInterceptor } from '#interceptors/tokens-and-types.js';

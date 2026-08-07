@@ -2,23 +2,23 @@
 sidebar_position: 4
 ---
 
-# @ditsmod/session-cookie
+# @holu/session-cookie
 
-Модуль `@ditsmod/session-cookie` спрощує роботу з кукою сесії. Готовий приклад використання даного модуля можна знайти в [репозиторії Ditsmod][1].
+Модуль `@holu/session-cookie` спрощує роботу з кукою сесії. Готовий приклад використання даного модуля можна знайти в [репозиторії Holu][1].
 
 ## Встановлення, підключення та використання {#installation-importing-and-usage}
 
 Встановлення:
 
 ```bash
-npm i @ditsmod/session-cookie
+npm i @holu/session-cookie
 ```
 
 Підключення:
 
 ```ts
-import { restModule } from '@ditsmod/rest';
-import { SessionCookieModule } from '@ditsmod/session-cookie';
+import { restModule } from '@holu/rest';
+import { SessionCookieModule } from '@holu/session-cookie';
 
 const sessionDynamicModule = SessionCookieModule.withOpts({
   cookieName: 'custom-session-name',
@@ -38,8 +38,8 @@ export class AppModule {}
 Використання:
 
 ```ts
-import { controller, RequestContext, route } from '@ditsmod/rest';
-import { SessionCookie } from '@ditsmod/session-cookie';
+import { controller, RequestContext, route } from '@holu/rest';
+import { SessionCookie } from '@holu/session-cookie';
 
 @controller()
 export class HelloWorldController {
@@ -60,4 +60,4 @@ export class HelloWorldController {
 
 
 
-[1]: https://github.com/ditsmod/ditsmod/tree/main/examples/19-session-cookie
+[1]: https://github.com/holu/holu/tree/main/examples/19-session-cookie

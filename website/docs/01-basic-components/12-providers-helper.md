@@ -7,8 +7,8 @@ sidebar_position: 12
 Даний клас спрощує додавання провайдерів до DI з одночасним контролем їх типів. Оскільки даний клас впроваджує так званий [Iteration protocols][1], це спрощує перетворення його на масив (зверніть увагу на трикрапку):
 
 ```ts {9}
-import { ProviderBuilder } from '@ditsmod/core';
-import { restModule } from '@ditsmod/rest';
+import { ProviderBuilder } from '@holu/core';
+import { restModule } from '@holu/rest';
 // ...
 @restModule({
   // ...
@@ -23,11 +23,11 @@ import { restModule } from '@ditsmod/rest';
 export class SomeModule {}
 ```
 
-Починаючи з v2.55, Ditsmod дозволяє передавати інстанс `ProviderBuilder` безпосередньо у властивості `providersPer*` метаданих модуля чи контролера:
+Починаючи з v2.55, Holu дозволяє передавати інстанс `ProviderBuilder` безпосередньо у властивості `providersPer*` метаданих модуля чи контролера:
 
 ```ts
-import { ProviderBuilder } from '@ditsmod/core';
-import { restModule } from '@ditsmod/rest';
+import { ProviderBuilder } from '@holu/core';
+import { restModule } from '@holu/rest';
 // ...
 @restModule({
   // ...
@@ -45,8 +45,8 @@ export class SomeModule {}
 Окрім цього, `ProviderBuilder` має спеціальний метод `$if()`, що дозволяє передавати провайдери лише у випадку, якщо він отримує правдиве значення:
 
 ```ts {8}
-import { ProviderBuilder } from '@ditsmod/core';
-import { restModule } from '@ditsmod/rest';
+import { ProviderBuilder } from '@holu/core';
+import { restModule } from '@holu/rest';
 // ...
 @restModule({
   // ...

@@ -1,4 +1,4 @@
-import { controller } from '@ditsmod/rest';
+import { controller } from '@holu/rest';
 
 import { route } from '#decorators/route.js';
 import {

@@ -12,7 +12,7 @@ import {
   ExtensionStatistics,
   Extension,
   InternalExtensionManager,
-} from '@ditsmod/core';
+} from '@holu/core';
 
 import { OverriderConfig } from './types.js';
 import { OVERRIDERS_CONFIG } from './constants.js';

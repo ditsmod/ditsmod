@@ -1,19 +1,19 @@
-# Ditsmod
+# Holu
 
-**DI + TypeScript + Modularity** — Node.js framework for building scalable server-side applications.
+*Holu* is a Hawaiian word for "to run" — and that's what this framework helps you do: **run scalable server-side applications** on Node.js, powered by DI, TypeScript, and true modularity.
 
-[![npm next](https://img.shields.io/npm/v/@ditsmod/core/next.svg?label=npm%40next)](https://www.npmjs.com/package/@ditsmod/core/v/3.0.0-next.17)
+[![npm next](https://img.shields.io/npm/v/@holu/core/next.svg?label=npm%40next)](https://www.npmjs.com/package/@holu/core/v/3.0.0-next.17)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-[English docs](https://ditsmod.github.io/en/) · [Українська документація](https://ditsmod.github.io/)
+[English docs](https://holu.github.io/en/) · [Українська документація](https://holu.github.io/)
 
 ---
 
-## What makes Ditsmod different
+## What makes Holu different
 
-Most Node.js frameworks give you routing and middleware. Ditsmod gives you a full application architecture:
+Most Node.js frameworks give you routing and middleware. Holu gives you a full application architecture:
 
-| Feature | Ditsmod |
+| Feature | Holu |
 |---|---|
 | TypeScript-first, native ESM | ✅ |
 | Hierarchical DI (4 levels) | ✅ |
@@ -66,7 +66,7 @@ export class DbExtension implements Extension<void> {
 ### Quick start
 
 ```bash
-npx @ditsmod/cli new my-app
+npx @holu/cli new my-app
 cd my-app
 npm start:dev
 ```
@@ -74,7 +74,7 @@ npm start:dev
 Or a minimal single file:
 
 ```ts
-import { RestApplication, controller, route, restRootModule } from '@ditsmod/rest';
+import { RestApplication, controller, route, restRootModule } from '@holu/rest';
 
 @controller()
 class HelloController {
@@ -97,21 +97,21 @@ app.server.listen(3000);
 
 | Package | Description |
 |---|---|
-| `@ditsmod/core` | DI, modules, extensions |
-| `@ditsmod/cli` | CLI for scaffolding and development |
-| `@ditsmod/rest` | REST HTTP layer |
-| `@ditsmod/trpc` | tRPC support |
-| `@ditsmod/openapi` | OpenAPI 3.x generation |
-| `@ditsmod/authjs` | [Auth.js](https://authjs.dev/) support |
-| `@ditsmod/typeorm` | [TypeORM](https://typeorm.io/) support |
-| `@ditsmod/body-parser` | Request body parsing |
-| `@ditsmod/cors` | CORS support |
-| `@ditsmod/jwt` | JWT authentication |
-| `@ditsmod/schedule` | Cron/interval/timeout tasks |
-| `@ditsmod/i18n` | Internationalization |
-| `@ditsmod/session-cookie` | Session management |
-| `@ditsmod/sentry` | Sentry error reporting |
-| `@ditsmod/rest-testing` | Testing utilities |
+| `@holu/core` | DI, modules, extensions |
+| `@holu/cli` | CLI for scaffolding and development |
+| `@holu/rest` | REST HTTP layer |
+| `@holu/trpc` | tRPC support |
+| `@holu/openapi` | OpenAPI 3.x generation |
+| `@holu/authjs` | [Auth.js](https://authjs.dev/) support |
+| `@holu/typeorm` | [TypeORM](https://typeorm.io/) support |
+| `@holu/body-parser` | Request body parsing |
+| `@holu/cors` | CORS support |
+| `@holu/jwt` | JWT authentication |
+| `@holu/schedule` | Cron/interval/timeout tasks |
+| `@holu/i18n` | Internationalization |
+| `@holu/session-cookie` | Session management |
+| `@holu/sentry` | Sentry error reporting |
+| `@holu/rest-testing` | Testing utilities |
 
 ---
 
@@ -147,5 +147,5 @@ yarn docs-en
 
 Docs live in `website/i18n/en/docusaurus-plugin-content-docs/current/`.
 
-[4]: https://github.com/ditsmod/vs-webframework
-[10]: https://github.com/ditsmod/vs-webframework/blob/main/req-per-sec-frameworks4.png
+[4]: https://github.com/holu/vs-webframework
+[10]: https://github.com/holu/vs-webframework/blob/main/req-per-sec-frameworks4.png

@@ -1,5 +1,5 @@
-import type { HttpMethod, NormalizedModuleMeta } from '@ditsmod/core';
-import { ModuleInfo, AppModuleMixins } from '@ditsmod/core';
+import type { HttpMethod, NormalizedModuleMeta } from '@holu/core';
+import { ModuleInfo, AppModuleMixins } from '@holu/core';
 
 import type { Tree } from '#services/tree.js';
 import type { ModuleScopedGuard } from '#interceptors/guard.js';

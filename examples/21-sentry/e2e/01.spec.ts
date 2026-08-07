@@ -34,11 +34,11 @@ jest.unstable_mockModule('@sentry/core', async () => {
 });
 
 import request from 'supertest';
-import type { HttpServer } from '@ditsmod/rest';
+import type { HttpServer } from '@holu/rest';
 
 // Import dynamically to apply Sentry mocks
 const Sentry = await import('@sentry/node');
-const { TestRestApplication } = await import('@ditsmod/rest-testing');
+const { TestRestApplication } = await import('@holu/rest-testing');
 const { AppModule } = await import('#app/app.module.js');
 
 describe('21-sentry e2e', () => {
@@ -78,7 +78,7 @@ describe('21-sentry e2e', () => {
       expect.any(Error),
       expect.objectContaining({
         mechanism: expect.objectContaining({
-          type: 'auto.http.ditsmod.error_handler',
+          type: 'auto.http.holu.error_handler',
         }),
       }),
     );
@@ -105,7 +105,7 @@ describe('21-sentry e2e', () => {
       expect.any(Error),
       expect.objectContaining({
         mechanism: expect.objectContaining({
-          type: 'auto.function.ditsmod.exception_captured',
+          type: 'auto.function.holu.exception_captured',
         }),
       }),
     );

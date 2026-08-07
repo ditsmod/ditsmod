@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
-import { injectable } from '@ditsmod/core';
-import type { Provider } from '@ditsmod/core';
+import { injectable } from '@holu/core';
+import type { Provider } from '@holu/core';
 
 import { EntitiesMetadataStorage } from './entities-metadata-storage.js';
 import { TYPEORM_OPTIONS, TYPEORM_ASYNC_OPTIONS } from './constants.js';

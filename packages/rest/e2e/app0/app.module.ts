@@ -1,5 +1,5 @@
-import { rootModule, ProviderBuilder, ctx, LoggerConfig } from '@ditsmod/core';
-import { QUERY_PARAMS, PATH_PARAMS, controller, route, RestModule, RequestContext, mixinRest } from '@ditsmod/rest';
+import { rootModule, ProviderBuilder, ctx, LoggerConfig } from '@holu/core';
+import { QUERY_PARAMS, PATH_PARAMS, controller, route, RestModule, RequestContext, mixinRest } from '@holu/rest';
 
 import { Interceptor1 } from './interceptor1.js';
 

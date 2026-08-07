@@ -1,5 +1,5 @@
-import { Reflector, DecoratorMeta } from '@ditsmod/core';
-import { RequestContext, CanActivate, controller, HttpHandler, HttpInterceptor } from '@ditsmod/rest';
+import { Reflector, DecoratorMeta } from '@holu/core';
+import { RequestContext, CanActivate, controller, HttpHandler, HttpInterceptor } from '@holu/rest';
 
 import { oasRoute, OasRouteMeta } from './oas-route.js';
 

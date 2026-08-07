@@ -1,6 +1,6 @@
-import { controller, route, RequestContext } from '@ditsmod/rest';
-import { AuthjsConfig, AUTHJS_SESSION, AuthjsGuard, AuthjsInterceptor, getSession } from '@ditsmod/authjs';
-import { ctx } from '@ditsmod/core';
+import { controller, route, RequestContext } from '@holu/rest';
+import { AuthjsConfig, AUTHJS_SESSION, AuthjsGuard, AuthjsInterceptor, getSession } from '@holu/authjs';
+import { ctx } from '@holu/core';
 
 @controller()
 export class AuthController {
@@ -29,7 +29,7 @@ export class AuthController {
   home(ctx: RequestContext) {
     ctx.rawRes.setHeader('content-type', 'text/html; charset=utf-8');
     return `
-      <h1>Ditsmod Auth.js Example</h1>
+      <h1>Holu Auth.js Example</h1>
       <p><strong>Test Credentials:</strong> Username: <code>johnsmith</code> | Password: <code>password123</code></p>
       <ul>
         <li><a href="/auth/signin?callbackUrl=/status">Sign in</a></li>

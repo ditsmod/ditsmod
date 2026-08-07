@@ -5,13 +5,13 @@ sidebar_position: 10
 
 ## CustomError {#customerror}
 
-Ditsmod надає два вбудовані класи - `CustomError` та `HttpErrorHandler` - які можна використовувати, відповідно, для кидання та ловіння помилок.
+Holu надає два вбудовані класи - `CustomError` та `HttpErrorHandler` - які можна використовувати, відповідно, для кидання та ловіння помилок.
 
 Клас `CustomError` можна компонувати для створення будь-якої помилки:
 
 ```ts {10}
-import { HttpStatus } from '@ditsmod/core';
-import { CustomError } from '@ditsmod/core/errors';
+import { HttpStatus } from '@holu/core';
+import { CustomError } from '@holu/core/errors';
 
 // ...
 
@@ -72,7 +72,7 @@ interface ErrorInfo {
 Рекомендується використовувати `CustomError` у якості базового класу, на основі якого створювати будь-які інші класи помилок. Наприклад таким чином створюється нова помилка `NormalizationFailure` (префікс `DM_ERR_` до `code` цієї помилки додається автоматично):
 
 ```ts
-import { CustomError } from '@ditsmod/core/errors';
+import { CustomError } from '@holu/core/errors';
 /**
  * `Normalization of ${moduleName} failed`
  */
@@ -98,9 +98,9 @@ export class NormalizationFailure extends CustomError {
 Ви можете створити свій власний обробник помилок, для цього вам потрібно створити клас, що впроваджує інтерфейс [HttpErrorHandler][101]:
 
 ```ts
-import { injectable, Logger, HttpStatus } from '@ditsmod/core';
-import { HttpErrorHandler, RequestContext } from '@ditsmod/rest';
-import { isCustomError } from '@ditsmod/core/errors';
+import { injectable, Logger, HttpStatus } from '@holu/core';
+import { HttpErrorHandler, RequestContext } from '@holu/rest';
+import { isCustomError } from '@holu/core/errors';
 
 @injectable()
 export class MyHttpErrorHandler implements HttpErrorHandler {
@@ -137,8 +137,8 @@ export class MyHttpErrorHandler implements HttpErrorHandler {
 Щоб централізовано додати ваш новий обробник помилок, можете це зробити прямо у кореневому модулі:
 
 ```ts {6-7}
-import { rootModule } from '@ditsmod/core';
-import { HttpErrorHandler } from '@ditsmod/rest';
+import { rootModule } from '@holu/core';
+import { HttpErrorHandler } from '@holu/rest';
 import { MyHttpErrorHandler } from './my-http-error-handler.js';
 
 @rootModule({
@@ -154,7 +154,7 @@ export class AppModule {}
 Якщо ви додаєте такий обробник у метадані некореневого модуля, то навряд чи вам треба його експортувати. З іншого боку, якщо ви захочете написати спеціальний модуль для обробки помилок і захочете все-таки експортувати з нього `HttpErrorHandler`, то майте на увазі, що імпорт його у будь-який модуль вимагатиме вирішення [колізії провайдерів][1]. Ця особливість виникає через те, що дефолтний обробник помилок вже додано у кожен модуль вашого застосунку, і при імпортуванні модуля, зі своїм новим обробником помилок, виникає колізія двох обробників помилок. Її можна вирішити досить просто:
 
 ```ts {8}
-import { restModule, HttpErrorHandler } from '@ditsmod/rest';
+import { restModule, HttpErrorHandler } from '@holu/rest';
 import { ErrorHandlerModule } from './error-handler.module.js';
 
 @restModule({
@@ -179,5 +179,5 @@ export class SomeModule {}
 
 [1]: /basic-components/modules/#provider-collisions
 
-[100]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/services/default-http-error-handler.ts
-[101]: https://github.com/ditsmod/ditsmod/blob/3.0.0-next.15/packages/rest/src/services/http-error-handler.ts
+[100]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/services/default-http-error-handler.ts
+[101]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/services/http-error-handler.ts

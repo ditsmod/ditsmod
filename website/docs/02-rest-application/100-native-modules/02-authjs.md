@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# @ditsmod/authjs
+# @holu/authjs
 
 Даний модуль забезпечує інтеграцію з [Auth.js][1].
 

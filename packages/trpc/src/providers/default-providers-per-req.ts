@@ -1,3 +1,3 @@
-import type { Provider } from '@ditsmod/core';
+import type { Provider } from '@holu/core';
 
 export const defaultProvidersPerReq: Readonly<Provider[]> = [];

@@ -1,13 +1,13 @@
 {
-  "name": "@ditsmod/authjs",
+  "name": "@holu/authjs",
   "type": "module",
   "version": "3.0.0-next.18",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ditsmod/ditsmod.git"
+    "url": "git+https://github.com/holu/holu.git"
   },
-  "homepage": "https://ditsmod.github.io/en/",
-  "description": "Ditsmod module to support Auth.js",
+  "homepage": "https://holu.github.io/en/",
+  "description": "Holu module to support Auth.js",
   "module": "dist/index.js",
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
@@ -39,7 +39,7 @@
     "#mod/*": "./dist/*"
   },
   "keywords": [
-    "ditsmod",
+    "holu",
     "auth.js",
     "authjs",
     "auth",
@@ -54,9 +54,9 @@
     "@auth/core": "^0.41.3"
   },
   "peerDependencies": {
-    "@ditsmod/body-parser": "^3.0.0-next.18",
-    "@ditsmod/core": "^3.0.0-next.18",
-    "@ditsmod/rest": "^3.0.0-next.18"
+    "@holu/body-parser": "^3.0.0-next.18",
+    "@holu/core": "^3.0.0-next.18",
+    "@holu/rest": "^3.0.0-next.18"
   },
   "publishConfig": {
     "access": "public"

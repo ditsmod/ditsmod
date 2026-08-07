@@ -1,5 +1,5 @@
-import { StaticModule, rootModule } from '@ditsmod/core';
-import { AppOptions, mixinRest, Router } from '@ditsmod/rest';
+import { StaticModule, rootModule } from '@holu/core';
+import { AppOptions, mixinRest, Router } from '@holu/rest';
 import { Server } from 'node:http';
 
 import { TestRestApplication } from './test-application.js';

@@ -1,4 +1,4 @@
-import { Class } from '@ditsmod/core';
+import { Class } from '@holu/core';
 
 import { OneSqlExpression } from '../../types.js';
 import { AndOrBuilder } from './and-or-builder.js';

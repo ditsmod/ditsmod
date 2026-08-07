@@ -1,4 +1,4 @@
-import { factoryMethod } from '@ditsmod/core';
+import { factoryMethod } from '@holu/core';
 
 import { AuthjsConfig } from '#mod/authjs.config.js';
 import type { CredentialsConfig } from '#mod/providers/credentials.js';

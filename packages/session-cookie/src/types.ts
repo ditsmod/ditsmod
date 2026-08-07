@@ -1,4 +1,4 @@
-import type { RequestContext } from '@ditsmod/rest';
+import type { RequestContext } from '@holu/rest';
 import { CookieOptions } from '@ts-stack/cookies';
 import type { SessionCookie } from './session-cookie.js';
 

@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import { route, RestModule, controller, RequestDispatcher, HttpErrorHandler, restRootModule } from '@ditsmod/rest';
-import { TestRestApplication, TestRestPlugin } from '@ditsmod/rest-testing';
+import { route, RestModule, controller, RequestDispatcher, HttpErrorHandler, restRootModule } from '@holu/rest';
+import { TestRestApplication, TestRestPlugin } from '@holu/rest-testing';
 
 // 1. Mock Sentry before imports
 const mockSpan = {

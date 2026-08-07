@@ -1,5 +1,5 @@
-import type { HttpMethod } from '@ditsmod/core';
-import { CustomError } from '@ditsmod/core/errors';
+import type { HttpMethod } from '@holu/core';
+import { CustomError } from '@holu/core/errors';
 
 // export class X extends CustomError {
 //   constructor() {

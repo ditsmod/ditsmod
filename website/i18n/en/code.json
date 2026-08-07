@@ -158,14 +158,14 @@
   "Швидкий старт - 5хв ⏱️": {
     "message": "GET STARTED - 5min ⏱️"
   },
-  "Ditsmod має ієрархічний Dependency Injection, що дуже суттєво спрощує розширення та тестування застосунків.": {
-    "message": "Ditsmod has a hierarchical Dependency Injection, which greatly simplifies extensibility and application testing."
+  "Holu має ієрархічний Dependency Injection, що дуже суттєво спрощує розширення та тестування застосунків.": {
+    "message": "Holu has a hierarchical Dependency Injection, which greatly simplifies extensibility and application testing."
   },
-  "Ditsmod написаний на TypeScript, що дозволяє помітно зменшити кількість помилок в коді, а також дозволяє на порядок покращити користувацький досвід написання коду у вашій IDE.": {
-    "message": "Ditsmod is written in TypeScript, which significantly reduces the number of errors in the code, as well as greatly improves the user experience of writing code in your IDE."
+  "Holu написаний на TypeScript, що дозволяє помітно зменшити кількість помилок в коді, а також дозволяє на порядок покращити користувацький досвід написання коду у вашій IDE.": {
+    "message": "Holu is written in TypeScript, which significantly reduces the number of errors in the code, as well as greatly improves the user experience of writing code in your IDE."
   },
-  "Масштабованість застосунків реалізується завдяки модульній архітектурі Ditsmod.": {
-    "message": "The scalability of applications is realized thanks to the modular architecture of Ditsmod."
+  "Масштабованість застосунків реалізується завдяки модульній архітектурі Holu.": {
+    "message": "The scalability of applications is realized thanks to the modular architecture of Holu."
   },
   "Node.js веб-фреймворк для розширюваних та швидких застосунків": {
     "message": "Node.js web framework for extensible and fast applications"

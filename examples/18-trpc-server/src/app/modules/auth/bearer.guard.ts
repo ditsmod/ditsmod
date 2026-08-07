@@ -1,5 +1,5 @@
-import { AnyObj } from '@ditsmod/core';
-import { TrpcCanActivate, trpcGuard, TrpcOpts } from '@ditsmod/trpc';
+import { AnyObj } from '@holu/core';
+import { TrpcCanActivate, trpcGuard, TrpcOpts } from '@holu/trpc';
 
 import { AuthService } from '#auth/auth.service.js';
 

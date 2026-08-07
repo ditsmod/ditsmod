@@ -1,4 +1,4 @@
-import { inject, injectable, optional } from '@ditsmod/core';
+import { inject, injectable, optional } from '@holu/core';
 
 import { HttpBackend, HttpHandler, HttpInterceptor, HttpInterceptorHandler, RouteScopedHttpBackend } from './tokens-and-types.js';
 import { HTTP_INTERCEPTORS } from '../top/constants.js';

@@ -1,7 +1,7 @@
 import 'reflect-metadata/lite';
 import { jest } from '@jest/globals';
 
-import { Injector, Logger, ResolvedModuleMeta } from '@ditsmod/core';
+import { Injector, Logger, ResolvedModuleMeta } from '@holu/core';
 
 import { cron } from './cron.decorator.js';
 import { interval } from './interval.decorator.js';

@@ -1,5 +1,5 @@
-import { HttpStatus } from '@ditsmod/core';
-import { CustomError } from '@ditsmod/core/errors';
+import { HttpStatus } from '@holu/core';
+import { CustomError } from '@holu/core/errors';
 import type { MulterParsedForm } from '@ts-stack/multer';
 import { MulterError } from '@ts-stack/multer';
 

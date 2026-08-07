@@ -1,6 +1,6 @@
-import { restModule } from '@ditsmod/rest';
-import { BodyParserModule } from '@ditsmod/body-parser';
-import { TypeormModule } from '@ditsmod/typeorm';
+import { restModule } from '@holu/rest';
+import { BodyParserModule } from '@holu/body-parser';
+import { TypeormModule } from '@holu/typeorm';
 
 import { UserEntity } from './user.entity.js';
 import { UserController } from './user.controller.js';

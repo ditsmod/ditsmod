@@ -1,9 +1,9 @@
 import supertest from 'supertest';
-import { HttpStatus } from '@ditsmod/core';
-import { controller, RequestContext, RawRequest, restRootModule } from '@ditsmod/rest';
-import { route, HttpServer } from '@ditsmod/rest';
-import { TestRestApplication } from '@ditsmod/rest-testing';
-import { BodyParserModule } from '@ditsmod/body-parser';
+import { HttpStatus } from '@holu/core';
+import { controller, RequestContext, RawRequest, restRootModule } from '@holu/rest';
+import { route, HttpServer } from '@holu/rest';
+import { TestRestApplication } from '@holu/rest-testing';
+import { BodyParserModule } from '@holu/body-parser';
 
 import { toWebRequest, encodeUrlEncoded } from '#mod/http-api-adapters.js';
 

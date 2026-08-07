@@ -1,5 +1,5 @@
-import { featureModule } from '@ditsmod/core';
-import { HttpErrorHandler, RestRouteExtension, DispatcherExtension, RequestDispatcher } from '@ditsmod/rest';
+import { featureModule } from '@holu/core';
+import { HttpErrorHandler, RestRouteExtension, DispatcherExtension, RequestDispatcher } from '@holu/rest';
 
 import { SentryHttpErrorHandler } from './sentry.http-error-handler.js';
 import { SentryExtension } from './sentry.extension.js';

@@ -1,4 +1,4 @@
-import { BaseAppOptions, Context, ContextModule, featureModule, getTokens } from '@ditsmod/core';
+import { BaseAppOptions, Context, ContextModule, featureModule, getTokens } from '@holu/core';
 
 import { DefaultRouter, Router } from '#services/router.js';
 import { RestRouteExtension } from '#extensions/rest-route.extension.js';

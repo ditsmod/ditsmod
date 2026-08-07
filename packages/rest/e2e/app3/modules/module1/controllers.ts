@@ -1,4 +1,4 @@
-import { route, controller } from '@ditsmod/rest';
+import { route, controller } from '@holu/rest';
 
 import { Guard } from '../../guards.js';
 

@@ -1,5 +1,5 @@
-import { LoggerConfig, ProviderBuilder, SystemLogMediator } from '@ditsmod/core';
-import { restRootModule } from '@ditsmod/rest';
+import { LoggerConfig, ProviderBuilder, SystemLogMediator } from '@holu/core';
+import { restRootModule } from '@holu/rest';
 
 import { MyLogMediator } from './my-log-mediator.js';
 import { SomeModule } from './modules/some.module.js';
@@ -9,7 +9,7 @@ import { OtherModule } from './modules/other.module.js';
   imports: [SomeModule],
   providersPerApp: new ProviderBuilder()
     .passThrough(MyLogMediator)
-    .useToken(SystemLogMediator, MyLogMediator) // This allow use MyLogMediator internaly in Ditsmod core
+    .useToken(SystemLogMediator, MyLogMediator) // This allow use MyLogMediator internaly in Holu core
     .useValue(LoggerConfig, { level: 'info' }),
   appends: [OtherModule],
 })

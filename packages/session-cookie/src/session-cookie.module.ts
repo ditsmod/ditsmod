@@ -1,5 +1,5 @@
-import { featureModule, DynamicModule, optional } from '@ditsmod/core';
-import { mixinRest, DispatcherExtension, RestRouteExtension } from '@ditsmod/rest';
+import { featureModule, DynamicModule, optional } from '@holu/core';
+import { mixinRest, DispatcherExtension, RestRouteExtension } from '@holu/rest';
 
 import { SessionCookie } from './session-cookie.js';
 import { SessionLogMediator } from './session-log-mediator.js';

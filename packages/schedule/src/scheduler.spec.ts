@@ -2,7 +2,7 @@ import 'reflect-metadata/lite';
 import { jest } from '@jest/globals';
 import { CronJob } from 'cron';
 
-import type { Logger } from '@ditsmod/core';
+import type { Logger } from '@holu/core';
 
 import { SchedulerOrchestrator } from './scheduler.orchestrator.js';
 import { SchedulerRegistry } from './scheduler.registry.js';

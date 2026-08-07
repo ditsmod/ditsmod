@@ -1,5 +1,5 @@
-import { Injector, HttpStatus } from '@ditsmod/core';
-import type { RequestContext } from '@ditsmod/rest';
+import { Injector, HttpStatus } from '@holu/core';
+import type { RequestContext } from '@holu/rest';
 import { jest } from '@jest/globals';
 
 import { RequestScopedPermissionsGuard } from './permissions.guard.js';

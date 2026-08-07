@@ -1,5 +1,5 @@
-import type { ResolvedProvider, ResolvedGuard, Class } from '@ditsmod/core';
-import { Injector } from '@ditsmod/core';
+import type { ResolvedProvider, ResolvedGuard, Class } from '@holu/core';
+import { Injector } from '@holu/core';
 import { inspect } from 'node:util';
 
 import type { GuardItem, NormalizedGuard } from '#interceptors/trpc-guard.js';

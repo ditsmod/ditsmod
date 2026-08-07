@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { TestRestApplication } from '@ditsmod/rest-testing';
+import { TestRestApplication } from '@holu/rest-testing';
 import {
   Extension,
   injectable,
@@ -7,7 +7,7 @@ import {
   ExtensionDebugMeta,
   ExtensionGroupMeta,
   PartialExtensionGroupMeta,
-} from '@ditsmod/core';
+} from '@holu/core';
 
 import { Router } from '#services/router.js';
 import { restModule, restRootModule } from '#decorators/rest-module-mixins.js';

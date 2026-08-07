@@ -1,4 +1,4 @@
-import { Reflector } from '@ditsmod/core/di';
+import { Reflector } from '@holu/core/di';
 import type { CronJobParams } from 'cron';
 import type { CronOptions } from './types.js';
 

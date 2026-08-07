@@ -1,4 +1,4 @@
-import { Reflector } from '@ditsmod/core';
+import { Reflector } from '@holu/core';
 import { controller } from './controller.js';
 
 describe('Controller decorator', () => {

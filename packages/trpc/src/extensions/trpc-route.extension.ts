@@ -1,4 +1,4 @@
-import { injectable, Extension, ResolvedModuleMeta, type Class, Reflector, Provider } from '@ditsmod/core';
+import { injectable, Extension, ResolvedModuleMeta, type Class, Reflector, Provider } from '@holu/core';
 import { inspect } from 'node:util';
 
 import { TrpcResolvedModuleMeta } from '#init/trpc-deep-modules-importer.js';

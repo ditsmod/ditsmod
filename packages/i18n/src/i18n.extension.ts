@@ -8,8 +8,8 @@ import {
   ExtensionGroupMeta,
   inject,
   PROVIDERS_PER_APP,
-} from '@ditsmod/core';
-import { RouteExtensionMeta, RestRouteExtension } from '@ditsmod/rest';
+} from '@holu/core';
+import { RouteExtensionMeta, RestRouteExtension } from '@holu/rest';
 
 import { I18nTransformer } from './i18n-transformer.js';
 import { I18nLogMediator } from './i18n-log-mediator.js';

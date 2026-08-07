@@ -3,9 +3,9 @@
     "outDir": "dist",
     "types": ["node", "jest"],
     "paths": {
-      "@ditsmod/core": ["../core/src/index.js"],
-      "@ditsmod/rest": ["../rest/src/index.js"],
-      "@ditsmod/rest-testing": ["../rest-testing/src/index.js"],
+      "@holu/core": ["../core/src/index.js"],
+      "@holu/rest": ["../rest/src/index.js"],
+      "@holu/rest-testing": ["../rest-testing/src/index.js"],
       "#src/*": ["./src/*"]
     },
     "module": "nodenext",

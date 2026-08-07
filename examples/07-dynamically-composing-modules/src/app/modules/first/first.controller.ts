@@ -1,5 +1,5 @@
-import { AppReinitializer, MutableModuleManager, DynamicModule, skipSelf } from '@ditsmod/core';
-import { controller, route, RequestContext, RestDynamicOptions } from '@ditsmod/rest';
+import { AppReinitializer, MutableModuleManager, DynamicModule, skipSelf } from '@holu/core';
+import { controller, route, RequestContext, RestDynamicOptions } from '@holu/rest';
 
 import { SecondModule } from '../second.module.js';
 import { ThirdModule } from '../third/third.module.js';

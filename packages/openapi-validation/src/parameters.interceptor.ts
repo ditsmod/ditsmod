@@ -1,6 +1,6 @@
-import { injectable, type AnyObj } from '@ditsmod/core';
-import { CustomError } from '@ditsmod/core/errors';
-import { PATH_PARAMS, QUERY_PARAMS } from '@ditsmod/rest';
+import { injectable, type AnyObj } from '@holu/core';
+import { CustomError } from '@holu/core/errors';
+import { PATH_PARAMS, QUERY_PARAMS } from '@holu/rest';
 import { Cookies } from '@ts-stack/cookies';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
 

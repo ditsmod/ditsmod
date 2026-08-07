@@ -1,7 +1,7 @@
 import { getIsolationScope } from '@sentry/core';
 
-import { injectable, optional } from '@ditsmod/core';
-import type { HttpInterceptor, HttpHandler, BaseRequestContext } from '@ditsmod/rest';
+import { injectable, optional } from '@holu/core';
+import type { HttpInterceptor, HttpHandler, BaseRequestContext } from '@holu/rest';
 
 import type { SentryRouteMeta } from './types.js';
 

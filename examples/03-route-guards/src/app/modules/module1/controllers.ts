@@ -1,4 +1,4 @@
-import { controller, route } from '@ditsmod/rest';
+import { controller, route } from '@holu/rest';
 import { Permission, basicAuth, requirePermissions, RequestScopedBearerGuard, requirePermissionsSngl } from '#auth';
 
 /**

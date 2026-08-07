@@ -1,9 +1,9 @@
 import * as Sentry from '@sentry/node';
 
-import { injectable, HttpStatus, optional, ParentParams } from '@ditsmod/core';
-import { isCustomError } from '@ditsmod/core/errors';
-import { DefaultHttpErrorHandler } from '@ditsmod/rest';
-import type { RequestContext } from '@ditsmod/rest';
+import { injectable, HttpStatus, optional, ParentParams } from '@holu/core';
+import { isCustomError } from '@holu/core/errors';
+import { DefaultHttpErrorHandler } from '@holu/rest';
+import type { RequestContext } from '@holu/rest';
 
 import { SentryOptions } from './types.js';
 
@@ -24,7 +24,7 @@ export class SentryHttpErrorHandler extends DefaultHttpErrorHandler {
       scope.setTag('http.method', ctx.rawReq.method ?? 'UNKNOWN');
       scope.setTag('http.url', ctx.rawReq.url ?? '');
 
-      // Attach Ditsmod-specific metadata from ErrorInfo
+      // Attach Holu-specific metadata from ErrorInfo
       if (isCustomError(err)) {
         scope.setTag('error.code', err.code ?? '');
         scope.setTag('error.level', err.info.level ?? 'warn');
@@ -69,6 +69,6 @@ export class SentryHttpErrorHandler extends DefaultHttpErrorHandler {
   }
 
   protected getMechanismType(err: Error): string {
-    return 'auto.http.ditsmod.error_handler';
+    return 'auto.http.holu.error_handler';
   }
 }

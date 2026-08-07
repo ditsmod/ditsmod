@@ -1,5 +1,5 @@
-import type { InputLogLevel } from '@ditsmod/core';
-import { HttpStatus } from '@ditsmod/core';
+import type { InputLogLevel } from '@holu/core';
+import { HttpStatus } from '@holu/core';
 import { MulterOptions } from '@ts-stack/multer';
 
 export class MulterExtendedOptions extends MulterOptions {

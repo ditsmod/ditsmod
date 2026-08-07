@@ -1,4 +1,4 @@
-import type { Provider } from '@ditsmod/core';
+import type { Provider } from '@holu/core';
 import { DefaultHeadStrategy } from '#services/default-head-strategy.js';
 import { HeadStrategy } from '#services/head-strategy.js';
 

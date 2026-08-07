@@ -307,7 +307,7 @@ export class AppInitializer implements BaseAppInitializer {
   }
 
   /**
-   * Note that this method is used for `@ditsmod/testing`.
+   * Note that this method is used for `@holu/testing`.
    */
   protected getProvidersForExtensions(
     resolvedModuleMeta: ResolvedModuleMeta,
@@ -338,7 +338,7 @@ export class AppInitializer implements BaseAppInitializer {
   /**
    * This method is needed to be able to override the metadata during testing.
    *
-   * See `TestAppInitializer` in `@ditsmod/testing` for more info.
+   * See `TestAppInitializer` in `@holu/testing` for more info.
    */
   protected overrideMetaBeforeExtensionHanling(normalizedModuleMeta: NormalizedModuleMeta, orderedExtensions: ExtensionClass[]) {
     return { normalizedModuleMeta, orderedExtensions };
@@ -347,7 +347,7 @@ export class AppInitializer implements BaseAppInitializer {
   /**
    * This method is needed to be able to override the metadata during testing.
    *
-   * See `TestAppInitializer` in `@ditsmod/testing` for more info.
+   * See `TestAppInitializer` in `@holu/testing` for more info.
    */
   protected overrideMetaAfterStage1(modRefId: ModRefId, providersByLevel: ProvidersByLevel): void {}
 

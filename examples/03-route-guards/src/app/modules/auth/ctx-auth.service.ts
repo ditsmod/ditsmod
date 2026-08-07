@@ -1,5 +1,5 @@
-import { injectable } from '@ditsmod/core';
-import { RequestContext } from '@ditsmod/rest';
+import { injectable } from '@holu/core';
+import { RequestContext } from '@holu/rest';
 
 import { Permission } from './types.js';
 

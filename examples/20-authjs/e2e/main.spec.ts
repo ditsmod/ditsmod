@@ -1,7 +1,7 @@
 import request from 'supertest';
-import { HttpStatus } from '@ditsmod/core';
-import type { HttpServer } from '@ditsmod/rest';
-import { TestRestApplication } from '@ditsmod/rest-testing';
+import { HttpStatus } from '@holu/core';
+import type { HttpServer } from '@holu/rest';
+import { TestRestApplication } from '@holu/rest-testing';
 
 import { AppModule } from '#app/app.module.js';
 
@@ -31,7 +31,7 @@ describe('20-authjs', () => {
     // 1. Verify home page navigation
     const homeRes = await testAgent.get('/');
     expect(homeRes.status).toBe(HttpStatus.OK);
-    expect(homeRes.text).toContain('Ditsmod Auth.js Example');
+    expect(homeRes.text).toContain('Holu Auth.js Example');
 
     // 2. Check public status before logging in
     const guestStatusRes = await testAgent.get('/status');

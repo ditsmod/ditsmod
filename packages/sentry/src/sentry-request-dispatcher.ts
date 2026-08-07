@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/node';
-import { injectable } from '@ditsmod/core';
-import { RequestDispatcher } from '@ditsmod/rest';
-import type { RawRequest, RawResponse } from '@ditsmod/rest';
+import { injectable } from '@holu/core';
+import { RequestDispatcher } from '@holu/rest';
+import type { RawRequest, RawResponse } from '@holu/rest';
 
 @injectable()
 export class SentryRequestDispatcher extends RequestDispatcher {

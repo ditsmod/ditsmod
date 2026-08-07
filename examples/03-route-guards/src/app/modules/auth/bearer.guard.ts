@@ -1,5 +1,5 @@
-import { Injector, Context } from '@ditsmod/core';
-import { CanActivate, guard, RequestContext } from '@ditsmod/rest';
+import { Injector, Context } from '@holu/core';
+import { CanActivate, guard, RequestContext } from '@holu/rest';
 
 import { SESSION } from './types.js';
 import { AuthService } from './auth.service.js';

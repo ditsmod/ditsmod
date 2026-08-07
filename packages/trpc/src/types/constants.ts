@@ -1,4 +1,4 @@
-import { createInjectionSymbol } from '@ditsmod/core';
+import { createInjectionSymbol } from '@holu/core';
 import type { initTRPC } from '@trpc/server';
 
 import type { TrpcOpts } from '#types/types.js';

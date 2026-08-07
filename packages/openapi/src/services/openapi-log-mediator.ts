@@ -1,4 +1,4 @@
-import { injectable, LogMediator } from '@ditsmod/core';
+import { injectable, LogMediator } from '@holu/core';
 
 @injectable()
 export class OpenapiLogMediator extends LogMediator {

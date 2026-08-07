@@ -1,4 +1,4 @@
-import { LogMediator } from '@ditsmod/core';
+import { LogMediator } from '@holu/core';
 
 export class SessionLogMediator extends LogMediator {
   /**

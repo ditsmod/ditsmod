@@ -26,7 +26,7 @@ class Service2 {
 }
  * ```
  *
- * [1]: https://ditsmod.github.io/en/basic-components/dependency-injection/#inject-and-input
+ * [1]: https://holu.github.io/en/basic-components/dependency-injection/#inject-and-input
  */
 export const inject: InjectDecorator = Reflector.makeParamDecorator(
   (token, input?) => ({ token, input }) satisfies InjectTransformResult,
@@ -51,7 +51,7 @@ export interface InjectTransformResult {
  * 
  * ### Example
 ```ts
-import { injectable, inject, input } from '@ditsmod/core';
+import { injectable, inject, input } from '@holu/core';
 
 @injectable()
 class Dependecy1 {
@@ -66,7 +66,7 @@ class Service1 {
 }
 ```
  * 
- * [1]: https://ditsmod.github.io/en/basic-components/dependency-injection/#inject-and-input
+ * [1]: https://holu.github.io/en/basic-components/dependency-injection/#inject-and-input
  */
 export const input = Reflector.makeParamDecorator(
   () => ({ token: forwardRef(() => input) }) satisfies InjectTransformResult,
@@ -136,7 +136,7 @@ export const injectable = Reflector.makeClassDecorator(() => undefined);
  * ### Example
  *
 ```ts
-import { injectable, fromSelf, Injector } from '@ditsmod/core';
+import { injectable, fromSelf, Injector } from '@holu/core';
 
 class Service1 {}
 
@@ -169,7 +169,7 @@ export const fromSelf = Reflector.makeParamDecorator(undefined, 'fromSelf');
  * ### Example
  *
 ```ts
-import { injectable, skipSelf, Injector } from '@ditsmod/core';
+import { injectable, skipSelf, Injector } from '@holu/core';
 
 class Service1 {}
 

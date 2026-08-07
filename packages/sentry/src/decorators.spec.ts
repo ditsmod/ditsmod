@@ -10,8 +10,8 @@ jest.unstable_mockModule('@sentry/node', () => {
 
 // Import dynamically after mock
 const Sentry = await import('@sentry/node');
-const { CustomError } = await import('@ditsmod/core/errors');
-const { HttpStatus } = await import('@ditsmod/core');
+const { CustomError } = await import('@holu/core/errors');
+const { HttpStatus } = await import('@holu/core');
 const { sentryCron, sentryTraced, sentryExceptionCaptured, isExpectedError } = await import('./decorators.js');
 
 describe('isExpectedError', () => {
@@ -80,7 +80,7 @@ describe('Sentry decorators', () => {
           op: 'custom-op',
           name: 'doSomething',
           attributes: {
-            'sentry.origin': 'auto.function.ditsmod.sentry_traced',
+            'sentry.origin': 'auto.function.holu.sentry_traced',
             'sentry.op': 'custom-op',
           },
         },
@@ -102,7 +102,7 @@ describe('Sentry decorators', () => {
 
       expect(() => instance.syncMethod()).toThrow('sync fail');
       expect(Sentry.captureException).toHaveBeenCalledWith(expect.any(Error), {
-        mechanism: { handled: false, type: 'auto.function.ditsmod.exception_captured' },
+        mechanism: { handled: false, type: 'auto.function.holu.exception_captured' },
       });
     });
 
@@ -136,7 +136,7 @@ describe('Sentry decorators', () => {
 
       await expect(instance.asyncMethod()).rejects.toThrow('async fail');
       expect(Sentry.captureException).toHaveBeenCalledWith(expect.any(Error), {
-        mechanism: { handled: false, type: 'auto.function.ditsmod.exception_captured' },
+        mechanism: { handled: false, type: 'auto.function.holu.exception_captured' },
       });
     });
 

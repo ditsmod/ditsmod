@@ -1,6 +1,6 @@
-import { injectable, Logger, HttpStatus } from '@ditsmod/core';
-import { isCustomError } from '@ditsmod/core/errors';
-import { HttpErrorHandler, RequestContext } from '@ditsmod/rest';
+import { injectable, Logger, HttpStatus } from '@holu/core';
+import { isCustomError } from '@holu/core/errors';
+import { HttpErrorHandler, RequestContext } from '@holu/rest';
 
 @injectable()
 export class MyHttpErrorHandler implements HttpErrorHandler {

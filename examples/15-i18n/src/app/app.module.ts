@@ -1,4 +1,4 @@
-import { restRootModule } from '@ditsmod/rest';
+import { restRootModule } from '@holu/rest';
 
 import { SecondModule } from './second.module.js';
 import { FirstModule } from './first.module.js';

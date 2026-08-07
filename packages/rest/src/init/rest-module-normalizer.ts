@@ -1,4 +1,4 @@
-import type { Class, NormalizedModuleMeta, ProviderBuilder, Provider, ForwardRefFn, StaticModule } from '@ditsmod/core';
+import type { Class, NormalizedModuleMeta, ProviderBuilder, Provider, ForwardRefFn, StaticModule } from '@holu/core';
 import {
   isNormalizedProvider,
   Reflector,
@@ -9,8 +9,8 @@ import {
   isTokenProvider,
   getProxyForMixinMeta,
   isRootModule,
-} from '@ditsmod/core';
-import { ForbiddenNormalizedExport, EmptyModuleMeta } from '@ditsmod/core/errors';
+} from '@holu/core';
+import { ForbiddenNormalizedExport, EmptyModuleMeta } from '@holu/core/errors';
 
 import type { RestAppendOptions, RestStaticOptions } from '#init/rest-mixin-raw-meta.js';
 import type { RestModRefId } from '#init/rest-mixin-meta.js';

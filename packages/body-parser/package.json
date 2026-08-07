@@ -1,12 +1,12 @@
 {
-  "name": "@ditsmod/body-parser",
+  "name": "@holu/body-parser",
   "type": "module",
   "version": "3.0.0-next.18",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ditsmod/ditsmod.git"
+    "url": "git+https://github.com/holu/holu.git"
   },
-  "description": "Body parser module for Ditsmod applications",
+  "description": "Body parser module for Holu applications",
   "exports": {
     "./package.json": {
       "default": "./package.json"
@@ -23,7 +23,7 @@
     "esm-jest": "yarn node --experimental-vm-modules --no-warnings=ExperimentalWarning --enable-source-maps ../../scripts/run-jest.mjs"
   },
   "keywords": [
-    "ditsmod"
+    "holu"
   ],
   "author": "",
   "license": "MIT",
@@ -32,8 +32,8 @@
     "@ts-stack/multer": "^1.0.1"
   },
   "peerDependencies": {
-    "@ditsmod/core": "^3.0.0-next.18",
-    "@ditsmod/rest": "^3.0.0-next.18"
+    "@holu/core": "^3.0.0-next.18",
+    "@holu/rest": "^3.0.0-next.18"
   },
   "devDependencies": {
     "jest": "^30.4.2",

@@ -1,6 +1,6 @@
-import { LoggerConfig, ProviderBuilder } from '@ditsmod/core';
-import { restRootModule } from '@ditsmod/rest';
-import { SessionCookieModule } from '@ditsmod/session-cookie';
+import { LoggerConfig, ProviderBuilder } from '@holu/core';
+import { restRootModule } from '@holu/rest';
+import { SessionCookieModule } from '@holu/session-cookie';
 
 import { HelloWorldController, HelloWorldController2 } from './hello-world.controller.js';
 

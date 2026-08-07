@@ -1,5 +1,5 @@
-import { Reflector } from '@ditsmod/core';
-import { RequestContext, CanActivate } from '@ditsmod/rest';
+import { Reflector } from '@holu/core';
+import { RequestContext, CanActivate } from '@holu/rest';
 
 import { oasGuard } from '#decorators/oas-guard.js';
 import { isOasGuard } from './type-guards.js';

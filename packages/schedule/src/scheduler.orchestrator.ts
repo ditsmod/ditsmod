@@ -1,6 +1,6 @@
 import { CronJob } from 'cron';
 
-import { injectable, Logger, BeforeShutdown } from '@ditsmod/core';
+import { injectable, Logger, BeforeShutdown } from '@holu/core';
 
 import { SchedulerRegistry } from './scheduler.registry.js';
 import type { CronOptions } from './types.js';

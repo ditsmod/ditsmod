@@ -1,4 +1,4 @@
-import { CustomError } from '@ditsmod/core/errors';
+import { CustomError } from '@holu/core/errors';
 
 /**
  * `Checking deps in sandbox for "${controllerName}" failed`.

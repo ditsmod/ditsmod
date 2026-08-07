@@ -2,12 +2,12 @@ import { SEMANTIC_ATTRIBUTE_SENTRY_OP, SEMANTIC_ATTRIBUTE_SENTRY_ORIGIN, isThena
 import type { MonitorConfig } from '@sentry/core';
 import * as Sentry from '@sentry/node';
 
-import { HttpStatus } from '@ditsmod/core';
-import { isCustomError } from '@ditsmod/core/errors';
-import type { CustomError } from '@ditsmod/core/errors';
+import { HttpStatus } from '@holu/core';
+import { isCustomError } from '@holu/core/errors';
+import type { CustomError } from '@holu/core/errors';
 
 /**
- * Determines if the exception is an expected Ditsmod control flow or client error.
+ * Determines if the exception is an expected Holu control flow or client error.
  * An ErrorInfo with status < 500 and level='warn'|'debug'|'info' is "expected".
  */
 export function isExpectedError(exception: unknown): boolean {
@@ -56,7 +56,7 @@ export function sentryTraced(op: string = 'function') {
           op: op,
           name: propertyKey,
           attributes: {
-            [SEMANTIC_ATTRIBUTE_SENTRY_ORIGIN]: 'auto.function.ditsmod.sentry_traced',
+            [SEMANTIC_ATTRIBUTE_SENTRY_ORIGIN]: 'auto.function.holu.sentry_traced',
             [SEMANTIC_ATTRIBUTE_SENTRY_OP]: op,
           },
         },
@@ -86,7 +86,7 @@ export function sentryExceptionCaptured() {
           return result.then(undefined, (exception) => {
             if (!isExpectedError(exception)) {
               Sentry.captureException(exception, {
-                mechanism: { handled: false, type: 'auto.function.ditsmod.exception_captured' },
+                mechanism: { handled: false, type: 'auto.function.holu.exception_captured' },
               });
             }
             throw exception;
@@ -96,7 +96,7 @@ export function sentryExceptionCaptured() {
       } catch (exception) {
         if (!isExpectedError(exception)) {
           Sentry.captureException(exception, {
-            mechanism: { handled: false, type: 'auto.function.ditsmod.exception_captured' },
+            mechanism: { handled: false, type: 'auto.function.holu.exception_captured' },
           });
         }
         throw exception;

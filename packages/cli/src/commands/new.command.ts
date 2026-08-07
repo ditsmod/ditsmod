@@ -11,19 +11,19 @@ export interface NewCommandOptions {
 }
 
 export const TEMPLATE_REPOS: Record<string, string> = {
-  rest: 'https://github.com/ditsmod/rest-starter.git',
-  'rest-monorepo': 'https://github.com/ditsmod/rest-monorepo-starter.git',
-  'trpc-monorepo': 'https://github.com/ditsmod/trpc-monorepo-starter.git',
+  rest: 'https://github.com/holu/rest-starter.git',
+  'rest-monorepo': 'https://github.com/holu/rest-monorepo-starter.git',
+  'trpc-monorepo': 'https://github.com/holu/trpc-monorepo-starter.git',
 };
 
 /**
- * Registers the `ditsmod new <directory>` sub-command onto the given Commander program.
+ * Registers the `holu new <directory>` sub-command onto the given Commander program.
  */
 export function newCommand(program: Command): void {
   program
     .command('new <directory>')
     .usage('<directory> [options]\n       dm new <directory> [options]')
-    .description('Create a new Ditsmod application')
+    .description('Create a new Holu application')
     .option('-t, --template <name>', 'App template: rest, rest-monorepo, trpc-monorepo', 'rest')
     .option('-m, --package-manager <name>', 'Package manager: npm, yarn, pnpm', 'npm')
     .option('--skip-install', 'Do not install dependencies', false)
@@ -33,7 +33,7 @@ export function newCommand(program: Command): void {
 
 export async function runNew(directoryArg: string, opts: NewCommandOptions): Promise<void> {
   if (!directoryArg) {
-    throw new Error("Missing required argument 'directory'. Usage: ditsmod new <directory>");
+    throw new Error("Missing required argument 'directory'. Usage: holu new <directory>");
   }
 
   const targetDirName = directoryArg;
@@ -67,7 +67,7 @@ export async function runNew(directoryArg: string, opts: NewCommandOptions): Pro
   process.once('SIGTERM', cleanup);
 
   try {
-    console.log(`\n[ditsmod] Creating a new Ditsmod application in ${targetAbsDir}…\n`);
+    console.log(`\n[holu] Creating a new Holu application in ${targetAbsDir}…\n`);
     console.log(`Using template: ${templateName} (${repoUrl})`);
 
     // 1. Clone starter repository
@@ -103,7 +103,7 @@ export async function runNew(directoryArg: string, opts: NewCommandOptions): Pro
     // 4. Initialize clean git repository if not skipped
     if (!opts.skipGit) {
       try {
-        console.log('\n[ditsmod] Initializing git repository…');
+        console.log('\n[holu] Initializing git repository…');
         execFileSync('git', ['init'], { cwd: targetAbsDir, stdio: 'ignore' });
         execFileSync('git', ['add', '.'], { cwd: targetAbsDir, stdio: 'ignore' });
         execFileSync('git', ['commit', '-m', `Initial commit from ${templateName} template`], {
@@ -111,7 +111,7 @@ export async function runNew(directoryArg: string, opts: NewCommandOptions): Pro
           stdio: 'ignore',
         });
       } catch {
-        console.warn('[ditsmod] Could not initialize git repository.');
+        console.warn('[holu] Could not initialize git repository.');
       }
     }
 
@@ -126,7 +126,7 @@ export async function runNew(directoryArg: string, opts: NewCommandOptions): Pro
       if (!allowedPMs.includes(pm)) {
         throw new Error(`Unsupported package manager "${pm}". Allowed values: ${allowedPMs.join(', ')}.`);
       }
-      console.log(`\n[ditsmod] Installing dependencies using ${pm}…\n`);
+      console.log(`\n[holu] Installing dependencies using ${pm}…\n`);
       execFileSync(pm, ['install'], { cwd: targetAbsDir, stdio: 'inherit' });
     }
 
@@ -138,7 +138,7 @@ export async function runNew(directoryArg: string, opts: NewCommandOptions): Pro
     console.log(`  ${opts.packageManager || 'npm'} start\n`);
   } catch (err: any) {
     if (cancelled || err?.signal === 'SIGINT' || err?.status === 130) {
-      console.log('\n\n[ditsmod] Operation cancelled. Cleaning up temporary files…');
+      console.log('\n\n[holu] Operation cancelled. Cleaning up temporary files…');
       if (createdDir && fs.existsSync(targetAbsDir)) {
         try {
           fs.rmSync(targetAbsDir, { recursive: true, force: true });

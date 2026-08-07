@@ -1,4 +1,4 @@
-import { trpcController, TrpcRouteService, trpcRoute } from '@ditsmod/trpc';
+import { trpcController, TrpcRouteService, trpcRoute } from '@holu/trpc';
 
 import { TrpcContext } from '#app/types.js';
 import { BearerGuard } from '#auth/bearer.guard.js';

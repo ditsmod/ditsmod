@@ -53,7 +53,7 @@ import {
   BaseNormalizedModuleMeta,
   NormalizedModuleMeta,
   RootModuleOptions,
-} from '@ditsmod/core';
+} from '@holu/core';
 // ...
 
 /**
@@ -105,7 +105,7 @@ const mixinSome: MixinDecorator<MyStaticMixinOptions, DynamicMixinOptions, MyNor
 export class SomeModule {}
 ```
 
-[A ready-made example of creating an mixin decorator][2] can be found in the Ditsmod repository tests. In addition, you can check out a more complex but also more complete example of [creating mixin decorators (restRootModule, restModule, and mixinRest)][3], which are located in the `@ditsmod/rest` module.
+[A ready-made example of creating an mixin decorator][2] can be found in the Holu repository tests. In addition, you can check out a more complex but also more complete example of [creating mixin decorators (restRootModule, restModule, and mixinRest)][3], which are located in the `@holu/rest` module.
 
 ## Interaction with Root and Feature Modules {#interaction-with-root-and-feature-modules}
 
@@ -118,7 +118,7 @@ Multiple modifier decorators can be stacked on a single class (for example, to a
 
 ## Grouping Mixin Decorators with `decoratorId` {#grouping-mixin-decorators}
 
-When creating a substitute decorator (with `'root'` or `'feature'` role) using `Reflector.makeClassDecorator()`, you **must** pass the base modifier decorator (e.g. `mixinRest` or `mixinSome`) as the third argument. This third argument serves as the `decoratorId`. It tells Ditsmod that these decorators belong to the same group, enabling the framework to correctly collect, normalize, and associate metadata with the proper group context during initialization.
+When creating a substitute decorator (with `'root'` or `'feature'` role) using `Reflector.makeClassDecorator()`, you **must** pass the base modifier decorator (e.g. `mixinRest` or `mixinSome`) as the third argument. This third argument serves as the `decoratorId`. It tells Holu that these decorators belong to the same group, enabling the framework to correctly collect, normalize, and associate metadata with the proper group context during initialization.
 
 ## Customizing ModuleMixin {#customizing-inithooks}
 
@@ -138,7 +138,7 @@ Separating the mixin decorator's hook definitions from the host feature module i
 Here is an example:
 
 ```ts {12}
-import { featureModule, ModuleMixin, Reflector } from '@ditsmod/core';
+import { featureModule, ModuleMixin, Reflector } from '@holu/core';
 
 // 1. Standard module containing actual logic/providers
 @featureModule({
@@ -182,5 +182,5 @@ When importing a dynamic module in the context of an mixin decorator:
 3. This ensures that options like route prefixes and guards are correctly processed even when importing standard feature modules that have no custom mixin decorator annotations.
 
 [1]: /basic-components/modules/#DynamicModule
-[2]: https://github.com/ditsmod/ditsmod/blob/main/packages/core/src/init/module-normalizer.spec.ts
-[3]: https://github.com/ditsmod/ditsmod/blob/main/packages/rest/src/decorators/rest-module-mixins.ts
+[2]: https://github.com/holu/holu/blob/main/packages/core/src/init/module-normalizer.spec.ts
+[3]: https://github.com/holu/holu/blob/main/packages/rest/src/decorators/rest-module-mixins.ts

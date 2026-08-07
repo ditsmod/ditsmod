@@ -1,4 +1,4 @@
-import { property, REQUIRED } from '@ditsmod/openapi';
+import { property, REQUIRED } from '@holu/openapi';
 
 export class Model1 {
   @property({ minimum: 3, maximum: 50, description: 'ID should be between 3 and 50.' })

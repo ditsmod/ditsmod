@@ -1,6 +1,6 @@
 import * as cliExports from './index.js';
 
-describe('@ditsmod/cli public API', () => {
+describe('@holu/cli public API', () => {
   it('should export WatchCompiler class', () => {
     expect(cliExports.WatchCompiler).toBeDefined();
     expect(typeof cliExports.WatchCompiler).toBe('function');

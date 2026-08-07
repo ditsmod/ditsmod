@@ -1,4 +1,4 @@
-import type { Logger } from '@ditsmod/core';
+import type { Logger } from '@holu/core';
 import { PatchLogger } from './patch-logger.js';
 
 describe('PatchLogger Winston', () => {

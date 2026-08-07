@@ -9,9 +9,9 @@ import {
   AppExtensionGroupMeta,
   inject,
   PROVIDERS_PER_APP,
-} from '@ditsmod/core';
+} from '@holu/core';
 import { CorsOptions, mergeOptions } from '@ts-stack/cors';
-import { RequestContext, ControllerMeta, HTTP_INTERCEPTORS, RouteExtensionMeta, RouteMeta, RestRouteExtension } from '@ditsmod/rest';
+import { RequestContext, ControllerMeta, HTTP_INTERCEPTORS, RouteExtensionMeta, RouteMeta, RestRouteExtension } from '@holu/rest';
 
 import { CorsInterceptor } from './cors.interceptor.js';
 import { ALLOW_METHODS } from './constans.js';

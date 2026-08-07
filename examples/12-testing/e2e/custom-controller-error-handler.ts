@@ -1,5 +1,5 @@
-import { injectable, Logger } from '@ditsmod/core';
-import { DefaultHttpErrorHandler, RequestContext } from '@ditsmod/rest';
+import { injectable, Logger } from '@holu/core';
+import { DefaultHttpErrorHandler, RequestContext } from '@holu/rest';
 
 import { ErrorContainer } from './error-container.js';
 

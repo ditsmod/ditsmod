@@ -1,7 +1,7 @@
-import { injectable, Injector, skipSelf, HttpStatus, Context } from '@ditsmod/core';
-import { CustomError } from '@ditsmod/core/errors';
+import { injectable, Injector, skipSelf, HttpStatus, Context } from '@holu/core';
+import { CustomError } from '@holu/core/errors';
 import { XSchemaObject } from '@ts-stack/openapi-spec';
-import { RawRequest, RawResponse, RequestContext, HttpHandler, HttpInterceptor, RouteMeta } from '@ditsmod/rest';
+import { RawRequest, RawResponse, RequestContext, HttpHandler, HttpInterceptor, RouteMeta } from '@holu/rest';
 
 import { ValidationRouteMeta } from './types.js';
 import { AjvService } from './ajv.service.js';

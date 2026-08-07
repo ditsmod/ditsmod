@@ -6,9 +6,9 @@ import { newCommand } from './commands/new.command.js';
 const program = new Command();
 
 program
-  .name('ditsmod')
+  .name('holu')
   .usage('[options] [command]\n       dm [options] [command]')
-  .description('Ditsmod CLI — development tools for Ditsmod framework')
+  .description('Holu CLI — development tools for Holu framework')
   .version('3.0.0-next.15');
 
 startCommand(program);

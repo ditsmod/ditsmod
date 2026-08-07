@@ -18,7 +18,7 @@ import {
   ResolvedModuleMeta,
   DynamicModule,
   Context,
-} from '@ditsmod/core';
+} from '@holu/core';
 
 import { CanActivate, guard } from '#interceptors/guard.js';
 import { RequestContext } from '#services/request-context.js';

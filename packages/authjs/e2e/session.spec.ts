@@ -1,8 +1,8 @@
 import { jest } from '@jest/globals';
 import supertest from 'supertest';
-import { HttpStatus } from '@ditsmod/core';
-import { route, controller, HttpServer, restRootModule, RequestContext } from '@ditsmod/rest';
-import { TestRestApplication } from '@ditsmod/rest-testing';
+import { HttpStatus } from '@holu/core';
+import { route, controller, HttpServer, restRootModule, RequestContext } from '@holu/rest';
+import { TestRestApplication } from '@holu/rest-testing';
 
 import type * as AuthCore from '@auth/core';
 

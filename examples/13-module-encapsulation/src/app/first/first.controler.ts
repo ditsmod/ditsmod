@@ -1,5 +1,5 @@
-import { inject } from '@ditsmod/core';
-import { controller, route, RequestContext } from '@ditsmod/rest';
+import { inject } from '@holu/core';
+import { controller, route, RequestContext } from '@holu/rest';
 
 @controller()
 export class FirstController {

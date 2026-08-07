@@ -1,6 +1,6 @@
 import { XOasObject } from '@ts-stack/openapi-spec';
-import { featureModule, MixinDynamicOptionsMap, DynamicModule, ProviderBuilder } from '@ditsmod/core';
-import { DispatcherExtension, RestRouteExtension, mixinRest } from '@ditsmod/rest';
+import { featureModule, MixinDynamicOptionsMap, DynamicModule, ProviderBuilder } from '@holu/core';
+import { DispatcherExtension, RestRouteExtension, mixinRest } from '@holu/rest';
 
 import { OpenapiCompilerExtension } from './extensions/openapi-compiler.extension.js';
 import { OpenapiRouteExtension } from './extensions/openapi-routes.extension.js';

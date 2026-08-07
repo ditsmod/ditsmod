@@ -1,5 +1,5 @@
-import type { ModRefId, ModuleManager, NormalizedModuleMeta, AppProviders } from '@ditsmod/core';
-import { isDynamicModule, getProxyForMixinMeta } from '@ditsmod/core';
+import type { ModRefId, ModuleManager, NormalizedModuleMeta, AppProviders } from '@holu/core';
+import { isDynamicModule, getProxyForMixinMeta } from '@holu/core';
 
 import type {
   ImportModulesShallowConfig,

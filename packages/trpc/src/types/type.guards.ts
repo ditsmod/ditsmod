@@ -1,4 +1,4 @@
-import type { AnyObj, Class, DecoratorMeta } from '@ditsmod/core';
+import type { AnyObj, Class, DecoratorMeta } from '@holu/core';
 
 import { trpcRoute } from '#decorators/trpc-route.js';
 import type { TrpcHttpInterceptor } from '#interceptors/tokens-and-types.js';
