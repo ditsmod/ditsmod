@@ -140,7 +140,7 @@ node --watch dist/app/services.js
 Тепер, якщо у `src/app/services.ts`, у функцію `getDependencies()` передати `Service2`, через пару секунд у другому терміналі ви повинні побачити вивід `[ { token: [class Service1], required: true } ]`.
 
 [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect
-[13]: https://github.com/holujs/holu/blob/3.0.0-next.15/packages/core/package.json#L65
+[13]: https://github.com/holujs/holu/blob/v0.1.2/packages/core/package.json#L65
 [14]: https://github.com/tc39/proposal-decorators
 
 [101]: ../../#installation

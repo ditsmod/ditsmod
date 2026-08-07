@@ -71,7 +71,7 @@ npm run setup:agents
 Additionally, you can install [AI agent skills][5] to help them better understand the specifics of Holu applications:
 
 ```bash
-npx skills add https://github.com/holu/agent-skills --skill '*' -y
+npx skills add https://github.com/holujs/agent-skills --skill '*' -y
 ```
 
 AI agent skills are only loaded when needed, when you ask something relevant to them.
@@ -240,15 +240,15 @@ P.S. Although a link to a repository with all the necessary settings for Holu ap
 ```
 
 [1]: #installation
-[2]: https://github.com/holu/rest-starter
-[3]: https://github.com/holu/agent-skills/blob/main/AGENTS.md
+[2]: https://github.com/holujs/rest-starter
+[3]: https://github.com/holujs/agent-skills/blob/main/AGENTS.md
 [4]: https://github.com/holujs/holu/tree/main/examples
 [5]: https://agentskills.io/home
 [9]: https://github.com/angular/angular
 [10]: https://jestjs.io/en/
 [12]: https://en.wikipedia.org/wiki/Singleton_pattern
-[13]: https://github.com/holu/realworld
-[14]: https://github.com/holu/vs-webframework
+[13]: https://github.com/holujs/realworld
+[14]: https://github.com/holujs/vs-webframework
 [16]: https://www.typescriptlang.org/docs/handbook/project-references.html
 [17]: https://github.com/TypeStrong/ts-node
 [18]: https://nodejs.org/api/packages.html#imports

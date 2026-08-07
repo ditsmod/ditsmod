@@ -194,7 +194,7 @@ export class SomeModule {}
 In this case, `AuthGuard` will be automatically added to each route in `OtherModule`. Note that the providers for the specified guard must provide the `SomeModule`, which is why it imports the `AuthModule`.
 
 [1]: https://github.com/holujs/holu/tree/main/examples/03-route-guards
-[2]: https://github.com/holu/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
+[2]: https://github.com/holujs/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
 [3]: /basic-components/dependency-injection#injector-and-providers
 [4]: /rest-application/controllers-and-services/#what-is-a-rest-controller
 [5]: https://developer.mozilla.org/en-US/docs/Web/API/Response

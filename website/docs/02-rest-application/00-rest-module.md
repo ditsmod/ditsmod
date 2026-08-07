@@ -81,6 +81,6 @@ export class MyCustomRouterModule {}
 
 [0]: https://uk.wikipedia.org/wiki/REST
 [1]: https://github.com/holujs/holu/tree/main/examples/01-hello-world
-[2]: https://github.com/holujs/holu/blob/3.0.0-next.15/packages/rest/src/types/types.ts#L22-L28
-[3]: https://github.com/holujs/holu/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L46
+[2]: https://github.com/holujs/holu/blob/v0.1.2/packages/rest/src/types/types.ts#L21-L27
+[3]: https://github.com/holujs/holu/blob/v0.1.2/packages/body-parser/src/body-parser.extension.ts#L46
 [4]: /deep-dive/module-mixins/

@@ -11,7 +11,7 @@ The `@holu/trpc` module provides integration with [@trpc/server][1]. A ready-mad
 You can also use the monorepository, which contains minimal code for a quick start:
 
 ```bash
-git clone --depth 1 https://github.com/holu/trpc-monorepo-starter.git
+git clone --depth 1 https://github.com/holujs/trpc-monorepo-starter.git
 ```
 
 ## How client types are formed at the module level {#how-client-types-are-formed-at-the-module-level}

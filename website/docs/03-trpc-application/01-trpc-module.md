@@ -11,7 +11,7 @@ sidebar_position: 1
 Ви також можете скористатись моно-репозиторієм, в якому є мінімальний код для швидкого старту:
 
 ```bash
-git clone --depth 1 https://github.com/holu/trpc-monorepo-starter.git
+git clone --depth 1 https://github.com/holujs/trpc-monorepo-starter.git
 ```
 
 ## Як формуються типи для клієнта на рівні модуля {#how-client-types-are-formed-at-the-module-level}

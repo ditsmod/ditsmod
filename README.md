@@ -2,7 +2,7 @@
 
 *Holu* is a Hawaiian word for "to run" — and that's what this framework helps you do: **run scalable server-side applications** on Node.js, powered by DI, TypeScript, and true modularity.
 
-[![npm next](https://img.shields.io/npm/v/@holu/core/next.svg?label=npm%40next)](https://www.npmjs.com/package/@holu/core/v/3.0.0-next.17)
+[![npm latest](https://img.shields.io/npm/v/@holu/core/latest.svg?label=npm)](https://www.npmjs.com/package/@holu/core/v/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 [English docs](https://holujs.github.io/en/) · [Українська документація](https://holujs.github.io/)
@@ -147,5 +147,5 @@ yarn docs-en
 
 Docs live in `website/i18n/en/docusaurus-plugin-content-docs/current/`.
 
-[4]: https://github.com/holu/vs-webframework
-[10]: https://github.com/holu/vs-webframework/blob/main/req-per-sec-frameworks4.png
+[4]: https://github.com/holujs/vs-webframework
+[10]: https://github.com/holujs/vs-webframework/blob/main/req-per-sec-frameworks4.png
