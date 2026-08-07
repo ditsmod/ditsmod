@@ -1221,7 +1221,6 @@ __metadata:
   peerDependencies:
     typescript: ">=5.0.0"
   bin:
-    dm: dist/holu.js
     holu: dist/holu.js
   languageName: unknown
   linkType: soft
