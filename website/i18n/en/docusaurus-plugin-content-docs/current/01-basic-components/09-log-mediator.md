@@ -11,7 +11,7 @@ If you want to write a module for a Holu application to publish on, for example,
 The Holu repository has an example [11-override-core-log-messages][1] that demonstrates several uses of `LogMediator`. To try this example, you can first clone the repository and install the dependencies:
 
 ```bash
-git clone https://github.com/holu/holu.git
+git clone https://github.com/holujs/holu.git
 cd holu
 npm i
 cd examples/11-override-core-log-messages
@@ -105,6 +105,6 @@ export class OtherModule {}
 
 
 
-[1]: https://github.com/holu/holu/tree/main/examples/11-override-core-log-messages
+[1]: https://github.com/holujs/holu/tree/main/examples/11-override-core-log-messages
 
 [100]: /basic-components/modules/#provider-collisions

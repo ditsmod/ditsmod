@@ -252,6 +252,6 @@ export class PostController {
 Тобто, метод `routeService.diQuery()` приймає метод сервіса, що працюватиме на рівні HTTP-запиту, а DI у реєстрі шукає провайдера з таким токеном, і повертає його значення. В такому разі, під час кожного запиту буде створюватись інстанс `PostService` та викликатись його метод `method1`.
 
 [1]: https://trpc.io/docs/quickstart
-[2]: https://github.com/holu/holu/tree/main/examples/18-trpc-server
+[2]: https://github.com/holujs/holu/tree/main/examples/18-trpc-server
 [3]: https://github.com/trpc/trpc/discussions/2448
 [4]: /basic-components/dependency-injection/#injector-and-providers

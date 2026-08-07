@@ -1,6 +1,6 @@
 # @holu/cli
 
-Command Line Interface (CLI) and development tools for the [Holu](https://github.com/holu/holu) framework.
+Command Line Interface (CLI) and development tools for the [Holu](https://github.com/holujs/holu) framework.
 
 Provides commands to generate new applications from official starter templates and run applications in development mode with incremental TypeScript watch compilation (with full support for TypeScript Project References / composite builds), graceful process restarts, and asset synchronization.
 

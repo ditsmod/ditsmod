@@ -37,7 +37,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/holu/holu.git"
+    "url": "git+https://github.com/holujs/holu.git"
   },
   "scripts": {
     "build": "tsc -b tsconfig.build.json",

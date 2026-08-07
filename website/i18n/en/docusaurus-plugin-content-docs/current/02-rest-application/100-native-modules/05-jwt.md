@@ -77,5 +77,5 @@ You can read what the guards are in the [Guards][4] section.
 
 [1]: https://github.com/auth0/node-jsonwebtoken
 [2]: https://www.rfc-editor.org/rfc/rfc7519
-[3]: https://github.com/holu/holu/tree/main/examples/14-auth-jwt
+[3]: https://github.com/holujs/holu/tree/main/examples/14-auth-jwt
 [4]: /rest-application/guards

@@ -122,4 +122,4 @@ As you can see, the cookie is set using the `setCookie()` method. In this case, 
 [1]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS
 [2]: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
 [3]: https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request
-[4]: https://github.com/holu/holu/tree/main/examples/17-cors
+[4]: https://github.com/holujs/holu/tree/main/examples/17-cors

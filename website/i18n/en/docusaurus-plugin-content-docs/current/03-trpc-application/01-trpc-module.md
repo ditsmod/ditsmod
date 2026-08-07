@@ -252,6 +252,6 @@ export class PostController {
 That is, the `routeService.diQuery()` method accepts a service method that will operate at the HTTP request level, while DI looks up a provider with such a token in the registry and returns its value. In this case, for each request an instance of `PostService` will be created and its `method1` method will be invoked.
 
 [1]: https://trpc.io/docs/quickstart
-[2]: https://github.com/holu/holu/tree/main/examples/18-trpc-server
+[2]: https://github.com/holujs/holu/tree/main/examples/18-trpc-server
 [3]: https://github.com/trpc/trpc/discussions/2448
 [4]: /basic-components/dependency-injection/#injector-and-providers

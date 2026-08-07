@@ -3,7 +3,7 @@
 If you haven't prepared the examples repository yet, you can do so:
 
 ```bash
-git clone https://github.com/holu/holu.git
+git clone https://github.com/holujs/holu.git
 cd holu
 npm i
 ```

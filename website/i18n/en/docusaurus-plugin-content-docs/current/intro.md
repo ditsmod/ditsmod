@@ -242,7 +242,7 @@ P.S. Although a link to a repository with all the necessary settings for Holu ap
 [1]: #installation
 [2]: https://github.com/holu/rest-starter
 [3]: https://github.com/holu/agent-skills/blob/main/AGENTS.md
-[4]: https://github.com/holu/holu/tree/main/examples
+[4]: https://github.com/holujs/holu/tree/main/examples
 [5]: https://agentskills.io/home
 [9]: https://github.com/angular/angular
 [10]: https://jestjs.io/en/

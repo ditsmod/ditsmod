@@ -25,9 +25,9 @@ Please be respectful and constructive in all interactions. This project follows 
 
 ## Ways to Contribute
 
-- **Report bugs** – Open a [GitHub Issue](https://github.com/holu/holu/issues) with a clear description and reproduction steps.
+- **Report bugs** – Open a [GitHub Issue](https://github.com/holujs/holu/issues) with a clear description and reproduction steps.
 - **Suggest features** – Open an issue tagged `enhancement` to discuss ideas before implementing.
-- **Fix bugs or add features** – Pick up an existing [open issue](https://github.com/holu/holu/issues) (look for `good first issue` or `help wanted` labels).
+- **Fix bugs or add features** – Pick up an existing [open issue](https://github.com/holujs/holu/issues) (look for `good first issue` or `help wanted` labels).
 - **Improve documentation** – Docs live in `website/i18n/en/docusaurus-plugin-content-docs/current/`.
 
 > [!NOTE]

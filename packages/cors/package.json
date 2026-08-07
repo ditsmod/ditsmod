@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/holu/holu.git"
+    "url": "git+https://github.com/holujs/holu.git"
   },
   "description": "Holu module to support CORS and OPTIONS requests",
   "module": "dist/index.js",

@@ -11,7 +11,7 @@ sidebar_position: 9
 У репозиторії Holu є приклад [11-override-core-log-messages][1], де продемонстровано декілька варіантів використання `LogMediator`. Щоб спробувати даний приклад, необхідно спочатку клонувати репозиторій та встановити залежності:
 
 ```bash
-git clone https://github.com/holu/holu.git
+git clone https://github.com/holujs/holu.git
 cd holu
 npm i
 cd examples/11-override-core-log-messages
@@ -102,6 +102,6 @@ import { OtherLogMediator } from './other-log-mediator.js';
 export class OtherModule {}
 ```
 
-[1]: https://github.com/holu/holu/tree/main/examples/11-override-core-log-messages
+[1]: https://github.com/holujs/holu/tree/main/examples/11-override-core-log-messages
 
 [100]: /basic-components/modules/#provider-collisions

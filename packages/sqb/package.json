@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/holu/holu.git",
+    "url": "https://github.com/holujs/holu.git",
     "directory": "packages/sqb"
   },
   "description": "Holu module to simplify the building SQL queries to the database.",

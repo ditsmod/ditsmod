@@ -179,5 +179,5 @@ export class SomeModule {}
 
 [1]: /basic-components/modules/#provider-collisions
 
-[100]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/services/default-http-error-handler.ts
-[101]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/services/http-error-handler.ts
+[100]: https://github.com/holujs/holu/blob/3.0.0-next.15/packages/rest/src/services/default-http-error-handler.ts
+[101]: https://github.com/holujs/holu/blob/3.0.0-next.15/packages/rest/src/services/http-error-handler.ts

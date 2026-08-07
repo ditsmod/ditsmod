@@ -293,7 +293,7 @@ const multerOptions: MulterExtendedOptions = { limits: { files: 20 }, errorLogLe
 export class SomeModule {}
 ```
 
-[1]: https://github.com/holu/holu/tree/main/examples/06-body-parser
+[1]: https://github.com/holujs/holu/tree/main/examples/06-body-parser
 [2]: https://www.npmjs.com/package/@ts-stack/multiparty
 [3]: /rest-application/controllers-and-services/#what-is-a-rest-controller
 [4]: https://github.com/ts-stack/body-parser/

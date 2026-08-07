@@ -182,5 +182,5 @@ When importing a dynamic module in the context of an mixin decorator:
 3. This ensures that options like route prefixes and guards are correctly processed even when importing standard feature modules that have no custom mixin decorator annotations.
 
 [1]: /basic-components/modules/#DynamicModule
-[2]: https://github.com/holu/holu/blob/main/packages/core/src/init/module-normalizer.spec.ts
-[3]: https://github.com/holu/holu/blob/main/packages/rest/src/decorators/rest-module-mixins.ts
+[2]: https://github.com/holujs/holu/blob/main/packages/core/src/init/module-normalizer.spec.ts
+[3]: https://github.com/holujs/holu/blob/main/packages/rest/src/decorators/rest-module-mixins.ts

@@ -80,7 +80,7 @@ This module exports `RestRouteExtension`. This extension returns metadata with t
 This module also exports `DispatcherExtension`. This extension uses the metadata returned by `RestRouteExtension` to create HTTP request handlers.
 
 [0]: https://en.wikipedia.org/wiki/REST
-[1]: https://github.com/holu/holu/tree/main/examples/01-hello-world
-[2]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/types/types.ts#L22-L28
-[3]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L46
+[1]: https://github.com/holujs/holu/tree/main/examples/01-hello-world
+[2]: https://github.com/holujs/holu/blob/3.0.0-next.15/packages/rest/src/types/types.ts#L22-L28
+[3]: https://github.com/holujs/holu/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L46
 [4]: /deep-dive/module-mixins/

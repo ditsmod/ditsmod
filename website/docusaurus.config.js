@@ -31,7 +31,7 @@ module.exports = {
         //   label: 'Документація Holu',
         // },
         {
-          href: 'https://github.com/holu/holu',
+          href: 'https://github.com/holujs/holu',
           position: 'right',
           className: 'header-github-link',
           'aria-label': 'GitHub repository',
@@ -87,7 +87,7 @@ module.exports = {
             // },
             {
               label: 'GitHub',
-              href: 'https://github.com/holu/holu',
+              href: 'https://github.com/holujs/holu',
             },
           ],
         },
@@ -109,13 +109,13 @@ module.exports = {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: ({ version, versionDocsDirPath, docPath, locale }) =>
             locale == 'en'
-              ? `https://github.com/holu/holu/edit/develop/website/i18n/en/docusaurus-plugin-content-docs/${version}/${docPath}`
-              : `https://github.com/holu/holu/edit/develop/website/${versionDocsDirPath}/${docPath}`,
+              ? `https://github.com/holujs/holu/edit/develop/website/i18n/en/docusaurus-plugin-content-docs/${version}/${docPath}`
+              : `https://github.com/holujs/holu/edit/develop/website/${versionDocsDirPath}/${docPath}`,
         },
         // blog: {
         //   showReadingTime: true,
         //   editUrl:
-        //     'https://github.com/holu/holu/edit/main/website/blog/',
+        //     'https://github.com/holujs/holu/edit/main/website/blog/',
         // },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

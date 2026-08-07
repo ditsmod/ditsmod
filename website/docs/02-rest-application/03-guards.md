@@ -193,7 +193,7 @@ export class SomeModule {}
 
 В такому разі `AuthGuard` буде автоматично додаватись до кожного маршруту в `OtherModule`. Майте на увазі, що провайдери для указаного ґарда повинен забезпечувати `SomeModule`, саме тому він імпортує `AuthModule`.
 
-[1]: https://github.com/holu/holu/tree/main/examples/03-route-guards
+[1]: https://github.com/holujs/holu/tree/main/examples/03-route-guards
 [2]: https://github.com/holu/realworld/blob/main/packages/server/src/app/modules/service/auth/bearer.guard.ts
 [3]: /basic-components/dependency-injection#injector-and-providers
 [4]: /rest-application/controllers-and-services/#what-is-a-rest-controller

@@ -80,7 +80,7 @@ export class MyCustomRouterModule {}
 З даного модуля також експортується `DispatcherExtension`. Дане розширення використовує метадані, які повертає `RestRouteExtension`, щоб створювати обробники HTTP-запитів.
 
 [0]: https://uk.wikipedia.org/wiki/REST
-[1]: https://github.com/holu/holu/tree/main/examples/01-hello-world
-[2]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/types/types.ts#L22-L28
-[3]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L46
+[1]: https://github.com/holujs/holu/tree/main/examples/01-hello-world
+[2]: https://github.com/holujs/holu/blob/3.0.0-next.15/packages/rest/src/types/types.ts#L22-L28
+[3]: https://github.com/holujs/holu/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L46
 [4]: /deep-dive/module-mixins/

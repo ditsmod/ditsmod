@@ -182,5 +182,5 @@ export class MyFeatureModule {}
 3. Це забезпечує коректну обробку кастомних опцій (таких як REST префікси маршрутів та гарди), навіть при імпорті стандартних модулів фіч, які не мають кастомних анотацій mixin-декораторів.
 
 [1]: /basic-components/modules/#DynamicModule
-[2]: https://github.com/holu/holu/blob/main/packages/core/src/init/module-normalizer.spec.ts
-[3]: https://github.com/holu/holu/blob/main/packages/rest/src/decorators/rest-module-mixins.ts
+[2]: https://github.com/holujs/holu/blob/main/packages/core/src/init/module-normalizer.spec.ts
+[3]: https://github.com/holujs/holu/blob/main/packages/rest/src/decorators/rest-module-mixins.ts

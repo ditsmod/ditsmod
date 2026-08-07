@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/holu/holu.git"
+    "url": "git+https://github.com/holujs/holu.git"
   },
   "description": "Holu module to support API versions",
   "module": "dist/index.js",

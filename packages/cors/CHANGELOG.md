@@ -1,55 +1,55 @@
 <a name="cors-2.10.0"></a>
-# [cors-2.10.0](https://github.com/holu/holu/releases/tag/cors-2.10.0) (2024-10-28)
+# [cors-2.10.0](https://github.com/holujs/holu/releases/tag/cors-2.10.0) (2024-10-28)
 
 | Commit | Type | Description |
 | -- | -- | -- |
-| [e2edf7dfa2](https://github.com/holu/holu/commit/e2edf7dfa237fdc5) | refactor | replaced `decoratorMetadata` by `decoratorMeta`. |
+| [e2edf7dfa2](https://github.com/holujs/holu/commit/e2edf7dfa237fdc5) | refactor | replaced `decoratorMetadata` by `decoratorMeta`. |
 
 <a name="cors-2.9.0"></a>
-# [cors-2.9.0](https://github.com/holu/holu/releases/tag/cors-2.9.0) (2024-10-21)
+# [cors-2.9.0](https://github.com/holujs/holu/releases/tag/cors-2.9.0) (2024-10-21)
 
 | Commit | Type | Description |
 | -- | -- | -- |
-| [1f96386c5b](https://github.com/holu/holu/commit/1f96386c5b58b9987) | refactor | migration to core-2.60. |
+| [1f96386c5b](https://github.com/holujs/holu/commit/1f96386c5b58b9987) | refactor | migration to core-2.60. |
 
 <a name="cors-2.8.0"></a>
-## [cors-2.8.0](https://github.com/holu/holu/releases/tag/cors-2.8.0) (2024-09-29)
+## [cors-2.8.0](https://github.com/holujs/holu/releases/tag/cors-2.8.0) (2024-09-29)
 
 | Commit | Type | Description |
 | -- | -- | -- |
-| [14af3eb125](https://github.com/holu/holu/commit/14af3eb1256df917acf) | refactor | migration to core-2.58. |
+| [14af3eb125](https://github.com/holujs/holu/commit/14af3eb1256df917acf) | refactor | migration to core-2.58. |
 
 <a name="cors-2.7.1"></a>
-## [cors-2.7.1](https://github.com/holu/holu/releases/tag/cors-2.7.1) (2024-09-20)
+## [cors-2.7.1](https://github.com/holujs/holu/releases/tag/cors-2.7.1) (2024-09-20)
 
 | Commit | Type | Description |
 | -- | -- | -- |
-| [6df8cc63e2](https://github.com/holu/holu/commit/6df8cc63e2f5857) | fix | fixed `corsExtension.prepareDataAndSetInterceptors()`. |
-| [e62e7ddfb8](https://github.com/holu/holu/commit/e62e7ddfb8c690) | refactor | introduced `perApp` parameter for `extensionManager.init()`. |
+| [6df8cc63e2](https://github.com/holujs/holu/commit/6df8cc63e2f5857) | fix | fixed `corsExtension.prepareDataAndSetInterceptors()`. |
+| [e62e7ddfb8](https://github.com/holujs/holu/commit/e62e7ddfb8c690) | refactor | introduced `perApp` parameter for `extensionManager.init()`. |
 
 <a name="cors-2.6.0"></a>
-## [cors-2.6.0](https://github.com/holu/holu/releases/tag/cors-2.6.0) (2024-04-02)
+## [cors-2.6.0](https://github.com/holujs/holu/releases/tag/cors-2.6.0) (2024-04-02)
 
 | Commit | Type | Description |
 | -- | -- | -- |
-| [46ad9a08ad](https://github.com/holu/holu/commit/46ad9a08ad47176fc4886186b14ea656c019fea4) | refactor | apply new methods for `RequestContext`. |
+| [46ad9a08ad](https://github.com/holujs/holu/commit/46ad9a08ad47176fc4886186b14ea656c019fea4) | refactor | apply new methods for `RequestContext`. |
 
 <a name="cors-2.5.1"></a>
-## [cors-2.5.1](https://github.com/holu/holu/releases/tag/cors-2.5.1) (2023-10-03)
+## [cors-2.5.1](https://github.com/holujs/holu/releases/tag/cors-2.5.1) (2023-10-03)
 
 ### Bug fixes
 
 - Added support for sigleton HTTP interceptors.
 
 <a name="cors-2.5.0"></a>
-## [cors-2.5.0](https://github.com/holu/holu/releases/tag/cors-2.5.0) (2023-09-30)
+## [cors-2.5.0](https://github.com/holujs/holu/releases/tag/cors-2.5.0) (2023-09-30)
 
 ### Features
 
 - Migration to core-2.50.0.
 
 <a name="cors-2.4.0"></a>
-## [cors-2.4.0](https://github.com/holu/holu/releases/tag/cors-2.4.0) (2023-08-28)
+## [cors-2.4.0](https://github.com/holujs/holu/releases/tag/cors-2.4.0) (2023-08-28)
 
 ### Features and Breaking changes
 

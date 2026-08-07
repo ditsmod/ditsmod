@@ -484,6 +484,6 @@ After this, any service or controller in the application can inject `DbClient` v
 [10]: /rest-application/http-interceptors/
 [11]: /basic-components/dependency-injection/#provider
 [100]: https://nodejs.org/api/repl.html
-[101]: https://github.com/holu/holu/tree/main/examples/06-body-parser
-[102]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L46
-[103]: https://github.com/holu/holu/tree/main/examples/00-standalone-application
+[101]: https://github.com/holujs/holu/tree/main/examples/06-body-parser
+[102]: https://github.com/holujs/holu/blob/3.0.0-next.15/packages/body-parser/src/body-parser.extension.ts#L46
+[103]: https://github.com/holujs/holu/tree/main/examples/00-standalone-application

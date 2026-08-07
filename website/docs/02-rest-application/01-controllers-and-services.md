@@ -493,7 +493,7 @@ export class SomeModule {}
 [2]: /basic-components/modules/#DynamicModule
 [3]: /basic-components/dependency-injection/#injector-and-providers
 [5]: /rest-application/native-modules/body-parser/#retrieving-the-request-body
-[6]: https://github.com/holu/holu/blob/3.0.0-next.15/packages/rest/src/services/request-dispatcher.ts
+[6]: https://github.com/holujs/holu/blob/3.0.0-next.15/packages/rest/src/services/request-dispatcher.ts
 [7]: /basic-components/dependency-injection/
 [9]: /basic-components/extensions/
 [10]: #request-scoped-controller

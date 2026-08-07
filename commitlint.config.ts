@@ -26,7 +26,7 @@ const Configuration: UserConfig = {
     'body-max-line-length': [0],
   },
   helpUrl:
-    'https://github.com/holu/holu/blob/main/CONTRIBUTING.md\n\n' +
+    'https://github.com/holujs/holu/blob/main/CONTRIBUTING.md\n\n' +
     '  Correct pattern:\n' +
     '  type(scope): subject\n\n' +
     '  Example:\n' +
