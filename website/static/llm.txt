@@ -16,7 +16,7 @@ npx skills add holu/agent-skills --skill '*' -y
 2. **Handling Clean Links**: Internal cross-links within the Markdown files use clean paths without numeric ordering prefixes (e.g., `/basic-components/extensions/`). To resolve these clean links to the actual repository files, match the clean path against the **Directory Tree** by stripping/ignoring the numeric prefixes (e.g., `01-`, `03-`, etc.) from both directory and file names.
 
 ### Base URL:
-`https://raw.githubusercontent.com/holu/holu/refs/heads/main/website/i18n/en/docusaurus-plugin-content-docs/current/`
+`https://raw.githubusercontent.com/holujs/holu/refs/heads/main/website/i18n/en/docusaurus-plugin-content-docs/current/`
 
 ---
 

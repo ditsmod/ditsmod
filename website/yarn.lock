@@ -7892,24 +7892,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ditsmod.github.io@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "ditsmod.github.io@workspace:."
-  dependencies:
-    "@docusaurus/core": "npm:^3.10.2"
-    "@docusaurus/module-type-aliases": "npm:^3.10.2"
-    "@docusaurus/plugin-client-redirects": "npm:^3.10.2"
-    "@docusaurus/preset-classic": "npm:^3.10.2"
-    "@docusaurus/theme-mermaid": "npm:^3.10.2"
-    "@docusaurus/types": "npm:^3.10.2"
-    "@mdx-js/react": "npm:^3.0.0"
-    clsx: "npm:^2.0.0"
-    prism-react-renderer: "npm:^2.3.0"
-    react: "npm:^18.0.0"
-    react-dom: "npm:^18.0.0"
-  languageName: unknown
-  linkType: soft
-
 "dns-packet@npm:^5.2.2":
   version: 5.6.1
   resolution: "dns-packet@npm:5.6.1"
@@ -9217,6 +9199,24 @@ __metadata:
   checksum: 10c0/fe0889169e845d738b59b64badf5e55fa3cf20454f9203d1eb088df322d49d4318df774828e789898dcb280e8a5521bb59b3203385662ca5e9218a6ca5820e74
   languageName: node
   linkType: hard
+
+"holujs.github.io@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "holujs.github.io@workspace:."
+  dependencies:
+    "@docusaurus/core": "npm:^3.10.2"
+    "@docusaurus/module-type-aliases": "npm:^3.10.2"
+    "@docusaurus/plugin-client-redirects": "npm:^3.10.2"
+    "@docusaurus/preset-classic": "npm:^3.10.2"
+    "@docusaurus/theme-mermaid": "npm:^3.10.2"
+    "@docusaurus/types": "npm:^3.10.2"
+    "@mdx-js/react": "npm:^3.0.0"
+    clsx: "npm:^2.0.0"
+    prism-react-renderer: "npm:^2.3.0"
+    react: "npm:^18.0.0"
+    react-dom: "npm:^18.0.0"
+  languageName: unknown
+  linkType: soft
 
 "hpack.js@npm:^2.1.6":
   version: 2.1.6

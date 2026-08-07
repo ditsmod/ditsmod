@@ -5,6 +5,8 @@ sidebar_position: 0
 
 # Що таке Holu
 
+*Holu* - це гавайське слово, що означає рух — і це саме те, що цей фреймворк допомагає тобі робити: **запускати масштабовані бекенд застосунки** на Node.js, що опираються на DI, TypeScript, та справжню модульність.
+
 ## Ознайомлення з Holu {#introduction-to-holu}
 
 Holu - це веб-фреймворк на базі Node.js, призначений для створення добре-розширюваних та швидких застосунків, його назва складається з **DI** + **TS** + **Mod**, щоб підкреслити важливі складові: він має **D**ependency **I**njection, написаний на **T**ype**S**cript у форматі ESM, та спроектований для хорошої **Мод**ульності.
@@ -253,4 +255,4 @@ P.S. Хоча вище вже надано лінк на репозиторій 
 [17]: https://github.com/TypeStrong/ts-node
 [18]: https://nodejs.org/api/packages.html#imports
 [21]: https://uk.wikipedia.org/wiki/%D0%9F%D1%80%D0%B8%D0%BD%D1%86%D0%B8%D0%BF_%D1%94%D0%B4%D0%B8%D0%BD%D0%BE%D1%97_%D0%B2%D1%96%D0%B4%D0%BF%D0%BE%D0%B2%D1%96%D0%B4%D0%B0%D0%BB%D1%8C%D0%BD%D0%BE%D1%81%D1%82%D1%96
-[22]: https://raw.githubusercontent.com/holu/vs-webframework/refs/heads/main/req-per-sec-frameworks4.png
+[22]: https://raw.githubusercontent.com/holujs/vs-webframework/refs/heads/main/req-per-sec-frameworks4.png

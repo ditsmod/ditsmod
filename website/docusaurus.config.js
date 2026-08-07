@@ -9,7 +9,7 @@ module.exports = {
   onBrokenLinks: 'throw',
   markdown: { hooks: { onBrokenMarkdownLinks: 'throw' } },
   favicon: 'img/favicon.ico',
-  organizationName: 'holu', // Usually your GitHub org/user name.
+  organizationName: 'holujs', // Usually your GitHub org/user name.
   projectName: 'holujs.github.io', // Usually your repo name.
   trailingSlash: true,
   markdown: {
