@@ -21,7 +21,7 @@
     "winston": "^3.19.0"
   },
   "devDependencies": {
-    "@holu/cli": "^3.0.0-next.18",
+    "@holu/cli": "^0.1.0",
     "@types/bunyan": "^1.8.11",
     "jest": "^30.4.2",
     "typescript-7": "npm:typescript@^7.0.2"

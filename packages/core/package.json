@@ -1,7 +1,7 @@
 {
   "name": "@holu/core",
   "type": "module",
-  "version": "3.0.0-next.18",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/holu/holu.git"
@@ -63,6 +63,9 @@
   "dependencies": {
     "@ts-stack/chain-error": "^1.5.1",
     "reflect-metadata": "^0.2.2"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "jest": "^30.4.2",

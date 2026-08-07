@@ -1,7 +1,8 @@
 {
+  "private": "true",
   "name": "@holu/testing",
   "type": "module",
-  "version": "3.0.0-next.18",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/holu/holu.git"
@@ -33,8 +34,11 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@holu/core": "^3.0.0-next.18",
-    "@holu/rest": "^3.0.0-next.18"
+    "@holu/core": "^0.1.0",
+    "@holu/rest": "^0.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "jest": "^30.4.2",
