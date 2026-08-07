@@ -59,4 +59,4 @@ jobs:
       - name: Publish
         run: |
           cd packages/${{ matrix.package }}
-          yarn npm publish --provenance --access public --tag next
+          yarn npm publish --provenance --access public --tag latest
