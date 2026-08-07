@@ -84,9 +84,9 @@ describe('newCommand options & parsing', () => {
   });
 
   it('should contain valid template repositories map', () => {
-    expect(TEMPLATE_REPOS['rest']).toBe('https://github.com/holu/rest-starter.git');
-    expect(TEMPLATE_REPOS['rest-monorepo']).toBe('https://github.com/holu/rest-monorepo-starter.git');
-    expect(TEMPLATE_REPOS['trpc-monorepo']).toBe('https://github.com/holu/trpc-monorepo-starter.git');
+    expect(TEMPLATE_REPOS['rest']).toBe('https://github.com/holujs/rest-starter.git');
+    expect(TEMPLATE_REPOS['rest-monorepo']).toBe('https://github.com/holujs/rest-monorepo-starter.git');
+    expect(TEMPLATE_REPOS['trpc-monorepo']).toBe('https://github.com/holujs/trpc-monorepo-starter.git');
   });
 });
 

@@ -11,9 +11,9 @@ export interface NewCommandOptions {
 }
 
 export const TEMPLATE_REPOS: Record<string, string> = {
-  rest: 'https://github.com/holu/rest-starter.git',
-  'rest-monorepo': 'https://github.com/holu/rest-monorepo-starter.git',
-  'trpc-monorepo': 'https://github.com/holu/trpc-monorepo-starter.git',
+  rest: 'https://github.com/holujs/rest-starter.git',
+  'rest-monorepo': 'https://github.com/holujs/rest-monorepo-starter.git',
+  'trpc-monorepo': 'https://github.com/holujs/trpc-monorepo-starter.git',
 };
 
 /**
