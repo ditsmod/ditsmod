@@ -3,13 +3,13 @@
     "message": "Next",
     "description": "The label for version current"
   },
-  "sidebar.tutorialSidebar.category.basic-components-native-modules": {
-    "message": "Native modules",
-    "description": "The label for category 'Native modules' in sidebar 'tutorialSidebar'"
+  "sidebar.tutorialSidebar.category.basic-components-official-modules": {
+    "message": "Official modules",
+    "description": "The label for category 'Official modules' in sidebar 'tutorialSidebar'"
   },
-  "sidebar.tutorialSidebar.category.rest-application-native-modules": {
-    "message": "Native modules",
-    "description": "The label for category 'Native modules' in sidebar 'tutorialSidebar'"
+  "sidebar.tutorialSidebar.category.rest-application-official-modules": {
+    "message": "Official modules",
+    "description": "The label for category 'Official modules' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.basic-components": {
     "message": "Basic components",

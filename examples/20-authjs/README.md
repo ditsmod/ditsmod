@@ -28,4 +28,4 @@ npm run start
 
 Open your browser at http://localhost:3000/
 
-For more comprehensive information, see the Holu documentation: https://holujs.github.io/en/native-modules/authjs/
+For more comprehensive information, see the Holu documentation: https://holujs.github.io/en/official-modules/authjs/

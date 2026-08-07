@@ -261,7 +261,7 @@ export class SomeController {
 
 ### MulterExtendedOptions {#multerextendedoptions}
 
-У модулях, де буде працювати `@holu/body-parser` для форм з даними у форматі `multipart/form-data`, можете передавати до DI провайдер з токеном `MulterExtendedOptions`. Цей клас має на дві опції більше, ніж рідний для `@ts-stack/multer` клас `MulterOptions`:
+У модулях, де буде працювати `@holu/body-parser` для форм з даними у форматі `multipart/form-data`, можете передавати до DI провайдер з токеном `MulterExtendedOptions`. Цей клас має на дві опції більше, ніж базовий клас `MulterOptions` з `@ts-stack/multer`:
 
 ```ts
 import { InputLogLevel, HttpStatus } from '@holu/core';

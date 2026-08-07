@@ -25,4 +25,4 @@ curl -i localhost:3000 -d '{"one":1}' -H 'content-type: application/json'
 
 To try uploading files via the HTML form, go to [http://0.0.0.0:3000/file-upload](http://0.0.0.0:3000/file-upload) in your browser. If the upload was successful, you should see the corresponding files in the `examples/06-body-parser/uploaded-files` folder.
 
-Fore more info see [@holu/body-parser](https://holujs.github.io/en/rest-application/rest-application/native-modules/body-parser/).
+Fore more info see [@holu/body-parser](https://holujs.github.io/en/rest-application/rest-application/official-modules/body-parser/).

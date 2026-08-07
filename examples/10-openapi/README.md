@@ -26,4 +26,4 @@ curl -i 0.0.0.0:3000
 curl -i 0.0.0.0:3000/resource/123
 ```
 
-For more info see the [docs](https://holujs.github.io/en/rest-application/native-modules/openapi/).
+For more info see the [docs](https://holujs.github.io/en/rest-application/official-modules/openapi/).

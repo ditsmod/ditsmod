@@ -38,7 +38,7 @@ npx skills add holu/agent-skills --skill '*' -y
 │   ├── 01-controllers-and-services.md
 │   ├── 02-http-interceptors.md
 │   ├── 03-guards.md
-│   ├── 100-native-modules
+│   ├── 100-official-modules
 │   │   ├── 02-authjs.md
 │   │   ├── 03-body-parser.md
 │   │   ├── 04-session-cookie.md

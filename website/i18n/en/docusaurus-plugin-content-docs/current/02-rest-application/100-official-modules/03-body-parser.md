@@ -261,7 +261,7 @@ A maximum of two properties from these four can be filled in one parsing: the `t
 
 ### MulterExtendedOptions {#multerextendedoptions}
 
-In modules where `@holu/body-parser` will be used for forms with data in `multipart/form-data` format, you can pass a provider with the token `MulterExtendedOptions` to DI. This class has two more options than the native `MulterOptions` class from `@ts-stack/multer`:
+In modules where `@holu/body-parser` will be used for forms with data in `multipart/form-data` format, you can pass a provider with the token `MulterExtendedOptions` to DI. This class has two more options than the base `MulterOptions` class from `@ts-stack/multer`:
 
 ```ts
 import { InputLogLevel, HttpStatus } from '@holu/core';

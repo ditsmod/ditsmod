@@ -478,7 +478,7 @@ After this, any service or controller in the application can inject `DbClient` v
 
 [2]: #group-of-extensions
 [4]: /basic-components/dependency-injection/#injector-and-providers
-[6]: /rest-application/native-modules/openapi
+[6]: /rest-application/official-modules/openapi
 [7]: #dynamic-addition-of-providers
 [8]: /basic-components/dependency-injection#hierarchy-of-injectors-in-the-holu-application
 [10]: /rest-application/http-interceptors/
