@@ -5,7 +5,7 @@
 [![npm next](https://img.shields.io/npm/v/@holu/core/next.svg?label=npm%40next)](https://www.npmjs.com/package/@holu/core/v/3.0.0-next.17)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-[English docs](https://holu.github.io/en/) · [Українська документація](https://holu.github.io/)
+[English docs](https://holujs.github.io/en/) · [Українська документація](https://holujs.github.io/)
 
 ---
 

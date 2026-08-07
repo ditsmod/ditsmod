@@ -4,13 +4,13 @@ const i18n = require('./i18n');
 module.exports = {
   i18n,
   title: 'Holu',
-  url: 'https://holu.github.io',
+  url: 'https://holujs.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   markdown: { hooks: { onBrokenMarkdownLinks: 'throw' } },
   favicon: 'img/favicon.ico',
   organizationName: 'holu', // Usually your GitHub org/user name.
-  projectName: 'holu.github.io', // Usually your repo name.
+  projectName: 'holujs.github.io', // Usually your repo name.
   trailingSlash: true,
   markdown: {
     mermaid: true,

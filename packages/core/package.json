@@ -6,7 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/holu/holu.git"
   },
-  "homepage": "https://holu.github.io/en/",
+  "homepage": "https://holujs.github.io/en/",
   "description": "NodeJS web framework writen in TypeScript",
   "module": "dist/index.js",
   "scripts": {

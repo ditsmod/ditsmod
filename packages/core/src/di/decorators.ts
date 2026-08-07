@@ -26,7 +26,7 @@ class Service2 {
 }
  * ```
  *
- * [1]: https://holu.github.io/en/basic-components/dependency-injection/#inject-and-input
+ * [1]: https://holujs.github.io/en/basic-components/dependency-injection/#inject-and-input
  */
 export const inject: InjectDecorator = Reflector.makeParamDecorator(
   (token, input?) => ({ token, input }) satisfies InjectTransformResult,
@@ -66,7 +66,7 @@ class Service1 {
 }
 ```
  * 
- * [1]: https://holu.github.io/en/basic-components/dependency-injection/#inject-and-input
+ * [1]: https://holujs.github.io/en/basic-components/dependency-injection/#inject-and-input
  */
 export const input = Reflector.makeParamDecorator(
   () => ({ token: forwardRef(() => input) }) satisfies InjectTransformResult,

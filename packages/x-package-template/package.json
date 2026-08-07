@@ -7,7 +7,7 @@
     "type": "git",
     "url": "git+https://github.com/holu/holu.git"
   },
-  "homepage": "https://holu.github.io/en/",
+  "homepage": "https://holujs.github.io/en/",
   "description": "Holu module to support...",
   "module": "dist/index.js",
   "exports": {

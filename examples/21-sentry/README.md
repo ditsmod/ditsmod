@@ -61,4 +61,4 @@ Once the application is running, you can test the following endpoints to see Sen
 
 For more details on `@holu/sentry` configuration and options, see:
 
-- [Sentry Module Documentation](https://holu.github.io/en/native-modules/sentry/) (or the local [08-sentry.md](file:///srv/git/holu/holu/website/docs/02-rest-application/100-native-modules/08-sentry.md))
+- [Sentry Module Documentation](https://holujs.github.io/en/native-modules/sentry/) (or the local [08-sentry.md](file:///srv/git/holu/holu/website/docs/02-rest-application/100-native-modules/08-sentry.md))

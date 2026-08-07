@@ -166,7 +166,7 @@ export interface MixinDynamicOptionsMap {
  * - `DynamicMixinOptions`: Options passed when applying the mixin dynamically.
  * - `NormalizedMixinMeta`: The normalized metadata type resulting from `ModuleMixin.normalize()`.
  *
- * For a complete guide, see the [Mixin Decorators documentation](http://holu.github.io/en/deep-dive/module-mixins/).
+ * For a complete guide, see the [Mixin Decorators documentation](http://holujs.github.io/en/deep-dive/module-mixins/).
  *
  * ### Example
  *

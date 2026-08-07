@@ -1,3 +1,3 @@
 ## About the project
 
-Core module of [Holu](https://holu.github.io/en/).
+Core module of [Holu](https://holujs.github.io/en/).

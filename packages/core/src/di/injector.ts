@@ -556,7 +556,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    * If that provider specifies a dependency on [input][1] decorator, it can retrieve this data. If you pass
    * context data, the injector does not use or create a cache for the provider with the specified token.
    *
-   * [1]: https://holu.github.io/en/basic-components/dependency-injection/#inject-and-input
+   * [1]: https://holujs.github.io/en/basic-components/dependency-injection/#inject-and-input
    */
   get<T extends Class | AbstractClass>(
     token: T,
@@ -581,7 +581,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    * If that provider specifies a dependency on [input][1] decorator, it can retrieve this data. If you pass
    * context data, the injector does not use or create a cache for the provider with the specified token.
    *
-   * [1]: https://holu.github.io/en/basic-components/dependency-injection/#inject-and-input
+   * [1]: https://holujs.github.io/en/basic-components/dependency-injection/#inject-and-input
    */
   getAny<T = any>(token: NonNullable<unknown>, defaultValue: any = NoDefaultValue, input?: any, visibility: Visibility = null): T {
     return this.selectInjectorAndGet(KeyRegistry.get(token), new PathTracer(), visibility, defaultValue, input);
@@ -606,7 +606,7 @@ expect(car).not.toBe(injector.resolveAndInstantiate(Car));
    * If that provider specifies a dependency on [input][1] decorator, it can retrieve this data. If you pass
    * context data, the injector does not use or create a cache for the provider with the specified token.
    *
-   * [1]: https://holu.github.io/en/basic-components/dependency-injection/#inject-and-input
+   * [1]: https://holujs.github.io/en/basic-components/dependency-injection/#inject-and-input
    */
   getOrderedMultiValues<T extends Provider = Provider, A = any>(
     token: NonNullable<unknown>,

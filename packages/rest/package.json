@@ -3,7 +3,7 @@
   "type": "module",
   "version": "3.0.0-next.18",
   "author": "Костя Третяк <ktretiak.in.ua@gmail.com>",
-  "homepage": "https://holu.github.io/en/",
+  "homepage": "https://holujs.github.io/en/",
   "description": "Rest module for Holu applications",
   "module": "dist/index.js",
   "exports": {
