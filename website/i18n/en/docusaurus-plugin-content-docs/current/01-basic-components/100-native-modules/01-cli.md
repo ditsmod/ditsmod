@@ -41,10 +41,10 @@ holu new my-app [options]
 
 ```bash
 # Create a REST application using Yarn
-dm new my-rest-api -m yarn
+holu new my-rest-api -m yarn
 
 # Create a tRPC monorepo without installing packages
-dm new my-trpc-app -t trpc-monorepo --skip-install
+holu new my-trpc-app -t trpc-monorepo --skip-install
 ```
 
 ### `holu start` {#holu-start}
@@ -69,10 +69,10 @@ holu start [entryFile] [options]
 
 ```bash
 # Start application with custom entry file and debug mode enabled
-dm start tmp.ts -d 9229
+holu start tmp.ts -d 9229
 
 # Start with environment file and watch JSON files
-dm start --env-file .env.local --watch-assets "src/**/*.json"
+holu start --env-file .env.local --watch-assets "src/**/*.json"
 ```
 
 ## Programmatic API {#programmatic-api}

@@ -30,7 +30,7 @@ export interface ResolvedProjectConfig {
 export function startCommand(program: Command): void {
   program
     .command('start [entryFile]')
-    .usage('[options] [entryFile]\n       dm start [options] [entryFile]')
+    .usage('[options] [entryFile]\n       holu start [options] [entryFile]')
     .description('Run Holu application')
     .option('-p, --project <path>', 'Path to TypeScript config file or project directory', 'tsconfig.build.json')
     .option('-e, --exec <binary>', 'Binary to run', 'node')

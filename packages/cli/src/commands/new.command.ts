@@ -22,7 +22,7 @@ export const TEMPLATE_REPOS: Record<string, string> = {
 export function newCommand(program: Command): void {
   program
     .command('new <directory>')
-    .usage('<directory> [options]\n       dm new <directory> [options]')
+    .usage('<directory> [options]\n       holu new <directory> [options]')
     .description('Create a new Holu application')
     .option('-t, --template <name>', 'App template: rest, rest-monorepo, trpc-monorepo', 'rest')
     .option('-m, --package-manager <name>', 'Package manager: npm, yarn, pnpm', 'npm')

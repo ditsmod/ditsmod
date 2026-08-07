@@ -37,20 +37,20 @@ npm i -g @holu/cli
 To see the list of all available commands and options of `@holu/cli`, run:
 
 ```bash
-dm --help
+holu --help
 ```
 
 Or to see the help for a specific command (e.g., `new` or `start`):
 
 ```bash
-dm new --help
-dm start --help
+holu new --help
+holu start --help
 ```
 
 This is how you can create a starter REST application project:
 
 ```bash
-dm new my-app
+holu new my-app
 ```
 
 You can also use `@holu/cli` without a global installation:
@@ -88,8 +88,6 @@ Or directly using Holu CLI:
 
 ```bash
 holu start
-# or using the shorthand alias:
-dm start
 ```
 
 The `@holu/cli` utility automatically handles incremental TypeScript compilation and restarts the Holu application whenever source files are changed, eliminating the need to run separate compiler and server terminals.

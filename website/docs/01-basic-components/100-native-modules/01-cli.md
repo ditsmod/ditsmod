@@ -41,10 +41,10 @@ holu new my-app [options]
 
 ```bash
 # Створення REST застосунку за допомогою Yarn
-dm new my-rest-api -m yarn
+holu new my-rest-api -m yarn
 
 # Створення tRPC монорепозиторію без встановлення пакетів
-dm new my-trpc-app -t trpc-monorepo --skip-install
+holu new my-trpc-app -t trpc-monorepo --skip-install
 ```
 
 ### `holu start` {#holu-start}
@@ -69,10 +69,10 @@ holu start [entryFile] [options]
 
 ```bash
 # Запуск застосунку з кастомним вхідним файлом та увімкненим режимом відлагодження
-dm start tmp.ts -d 9229
+holu start tmp.ts -d 9229
 
 # Запуск із файлом оточення та відстеженням змін у JSON-файлах
-dm start --env-file .env.local --watch-assets "src/**/*.json"
+holu start --env-file .env.local --watch-assets "src/**/*.json"
 ```
 
 ## Програмний API {#programmatic-api}

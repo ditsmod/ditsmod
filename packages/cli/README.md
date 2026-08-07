@@ -24,7 +24,7 @@ _Note:_ Binary aliases `holu` and `dm` are available when installed.
 
 ## Commands
 
-### `holu new <directory>` / `dm new <directory>`
+### `holu new <directory>`
 
 Creates a new Holu application in the specified directory using official starter templates.
 
@@ -43,15 +43,15 @@ holu new my-app
 
 ```bash
 # Create a REST application using Yarn
-dm new my-rest-api -m yarn
+holu new my-rest-api -m yarn
 
 # Create a tRPC monorepo without installing packages
-dm new my-trpc-app -t trpc-monorepo --skip-install
+holu new my-trpc-app -t trpc-monorepo --skip-install
 ```
 
 ---
 
-### `holu start [entryFile]` / `dm start [entryFile]`
+### `holu start [entryFile]`
 
 Runs the Holu application in development mode. Monitors TypeScript source files, incrementally compiles changes (including cross-package changes in monorepos via TypeScript Project References), and gracefully restarts the Node.js application process.
 
@@ -73,13 +73,13 @@ holu start
 
 ```bash
 # Start application with custom entry file and inspect debugger enabled
-dm start tmp.ts -d 9229
+holu start tmp.ts -d 9229
 
 # Start with environment file and asset watcher for JSON files
-dm start --env-file .env.local --watch-assets "src/**/*.json"
+holu start --env-file .env.local --watch-assets "src/**/*.json"
 
 # Forward extra arguments directly to the child process after `--`
-dm start -- --port=8080 --host=0.0.0.0
+holu start -- --port=8080 --host=0.0.0.0
 ```
 
 ---
