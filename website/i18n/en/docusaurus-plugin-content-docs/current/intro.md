@@ -5,11 +5,9 @@ sidebar_position: 0
 
 # What is Holu
 
-*Holu* is a Hawaiian word for "to run" — and that's what this framework helps you do: **run scalable server-side applications** on Node.js, powered by DI, TypeScript, and true modularity.
-
 ## Introduction to Holu {#introduction-to-holu}
 
-Holu is a Node.js-based web framework designed for building highly extensible and fast applications. Its name combines **DI** + **TS** + **Mod** to highlight its key features: it includes **D**ependency **I**njection, is written in **T**ype**S**cript in ESM format, and is designed with strong **Mod**ularity in mind.
+Holu is a Node.js-based web framework designed for building highly extensible and fast applications. *Holu* is a Hawaiian word for "to run" — and that's what this framework helps you do: **run scalable server-side applications** on Node.js, powered by DI, TypeScript, and true modularity.
 
 ### Key Features of Holu {#key-features-of-holu}
 
